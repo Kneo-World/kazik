@@ -35,6 +35,7 @@
             overflow-x: hidden;
         }
 
+        /* ============ HEADER ============ */
         header {
             background: #11141d;
             padding: 12px 16px;
@@ -67,8 +68,16 @@
             display: flex; align-items: center; gap: 6px;
             font-weight: 800; color: var(--accent-gold); font-size: 15px;
             box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
+            transition: transform 0.2s;
+        }
+        .balance-badge.bump { animation: bump 0.4s ease; }
+        @keyframes bump {
+            0% { transform: scale(1); }
+            40% { transform: scale(1.15); color: #fff; }
+            100% { transform: scale(1); }
         }
 
+        /* ============ TABS ============ */
         .tabs { display: flex; background: #11141d; border-bottom: 1px solid var(--border-color); }
 
         .tab-btn {
@@ -85,6 +94,7 @@
             background: rgba(43, 107, 243, 0.05);
         }
 
+        /* ============ SECTIONS ============ */
         .section { display: none; padding: 16px; }
         .section.active { display: block; }
 
@@ -93,6 +103,7 @@
             color: var(--text-main); display: flex; align-items: center; gap: 8px;
         }
 
+        /* ============ CASES ============ */
         .cases-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
 
         .case-card {
@@ -111,13 +122,17 @@
         .case-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
         .case-price { font-size: 13px; color: var(--accent-gold); font-weight: 700; }
 
+        /* ============ MODALS ============ */
         .modal {
             display: none; position: fixed; top: 0; left: 0;
             width: 100%; height: 100%; background: rgba(0,0,0,0.85);
             backdrop-filter: blur(5px); z-index: 200;
             justify-content: center; align-items: center; padding: 16px;
+            animation: fadeIn 0.2s ease;
         }
         .modal.active { display: flex; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         .modal-content {
             background: var(--card-bg); border: 1px solid var(--border-color);
@@ -125,14 +140,22 @@
             text-align: center; position: relative;
             max-height: 90vh; overflow-y: auto;
             box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            animation: modalIn 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes modalIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to   { transform: scale(1); opacity: 1; }
         }
 
         .close-modal {
             position: absolute; top: 14px; right: 16px;
             font-size: 22px; color: var(--text-muted);
             cursor: pointer; transition: color 0.2s;
+            width: 30px; height: 30px; line-height: 28px; text-align: center;
+            border-radius: 50%;
         }
-        .close-modal:hover { color: var(--text-main); }
+        .close-modal:hover { color: var(--text-main); background: rgba(255,255,255,0.05); }
 
         .multiplier-selector { display: flex; justify-content: center; gap: 10px; margin: 16px 0; }
 
@@ -156,6 +179,7 @@
         .btn-action:active { transform: scale(0.98); }
         .btn-action:disabled { background: #2a3245; color: #5d667a; cursor: not-allowed; }
 
+        /* ============ ROULETTE ============ */
         .roulette-container {
             width: 100%; height: 110px; background: #0d1017;
             border: 2px solid var(--border-color); border-radius: 12px;
@@ -167,6 +191,13 @@
             width: 4px; height: 100%; background: var(--accent-gold);
             z-index: 10; box-shadow: 0 0 10px var(--accent-gold);
         }
+        .roulette-pointer::before,
+        .roulette-pointer::after {
+            content: ''; position: absolute; left: 50%; transform: translateX(-50%);
+            width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent;
+        }
+        .roulette-pointer::before { top: -2px; border-top: 8px solid var(--accent-gold); }
+        .roulette-pointer::after  { bottom: -2px; border-bottom: 8px solid var(--accent-gold); }
 
         .roulette-track {
             display: flex; position: absolute; left: 0; top: 10px; height: 90px;
@@ -182,6 +213,7 @@
         }
         .roulette-item img { width: 45px; height: 45px; object-fit: contain; }
 
+        /* ============ LOOT PREVIEW ============ */
         .case-preview-loot {
             margin-top: 18px; border-top: 1px solid var(--border-color); padding-top: 14px;
         }
@@ -202,6 +234,7 @@
             display: flex; align-items: center; justify-content: center;
         }
 
+        /* ============ WON CARDS ============ */
         .won-items-container {
             display: flex; justify-content: center; gap: 10px;
             flex-wrap: wrap; margin: 15px 0;
@@ -227,6 +260,7 @@
         }
         .won-card-price { font-size: 11px; color: var(--accent-gold); font-weight: 800; }
 
+        /* ============ UPGRADER ============ */
         .upgrade-slots { display: flex; gap: 12px; margin-bottom: 20px; align-items: center; }
 
         .slot {
@@ -259,14 +293,21 @@
             transform: translate(-50%, -50%); text-align: center; z-index: 5;
         }
 
+        /* ============ INVENTORY ============ */
         .inventory-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
 
         .item-card {
             background: var(--card-bg); border-radius: 12px; padding: 10px;
             border: 1px solid var(--border-color); text-align: center;
-            cursor: pointer; transition: transform 0.1s;
+            cursor: pointer; transition: transform 0.1s, border-color 0.2s;
+            animation: itemAppear 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes itemAppear {
+            from { transform: scale(0.7); opacity: 0; }
+            to   { transform: scale(1); opacity: 1; }
         }
         .item-card:active { transform: scale(0.96); }
+        .item-card:hover { border-color: rgba(43, 107, 243, 0.5); }
         .item-card img { width: 55px; height: 55px; object-fit: contain; margin-bottom: 6px; }
 
         .item-name {
@@ -280,13 +321,16 @@
             border: 1px solid rgba(231, 76, 60, 0.3); border-radius: 6px;
             padding: 5px 8px; font-size: 10px; font-weight: 700;
             margin-top: 6px; cursor: pointer; width: 100%;
+            transition: background 0.2s;
         }
+        .sell-btn:hover { background: rgba(231, 76, 60, 0.3); }
 
         .empty-inv {
             grid-column: span 3; text-align: center;
             color: var(--text-muted); padding: 40px 0; font-size: 14px;
         }
 
+        /* ============ SELECTOR GRID ============ */
         .selector-grid {
             display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;
             margin-top: 15px; max-height: 300px; overflow-y: auto;
@@ -300,6 +344,197 @@
         }
         .selector-item:hover { border-color: var(--accent-blue); }
         .selector-item img { width: 40px; height: 40px; object-fit: contain; }
+
+        /* ====================================================== */
+        /* ================  TOAST NOTIFICATIONS  =============== */
+        /* ====================================================== */
+
+        .bf-toast-container {
+            position: fixed;
+            top: 78px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            width: calc(100% - 24px);
+            max-width: 420px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+            padding: 0 4px;
+        }
+
+        .bf-toast {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            border-radius: 14px;
+            background: #1c2230;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 1.3;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+            pointer-events: auto;
+            cursor: pointer;
+            overflow: hidden;
+            transform: translateY(-120%);
+            opacity: 0;
+            animation: toastIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        .bf-toast.closing {
+            animation: toastOut 0.3s ease forwards;
+        }
+
+        @keyframes toastIn {
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes toastOut {
+            to { transform: translateY(-120%); opacity: 0; }
+        }
+
+        .bf-toast__icon {
+            flex-shrink: 0;
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .bf-toast__body { flex: 1; min-width: 0; }
+
+        .bf-toast__title {
+            font-size: 13px;
+            font-weight: 800;
+            margin-bottom: 2px;
+            letter-spacing: 0.2px;
+        }
+
+        .bf-toast__msg {
+            font-size: 12.5px;
+            font-weight: 500;
+            color: var(--text-muted);
+            word-wrap: break-word;
+        }
+
+        .bf-toast__progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            width: 100%;
+            transform-origin: left center;
+            animation: toastProgress linear forwards;
+        }
+
+        @keyframes toastProgress {
+            from { transform: scaleX(1); }
+            to   { transform: scaleX(0); }
+        }
+
+        /* Variants */
+        .bf-toast--success { border-color: rgba(46, 204, 113, 0.5); background: linear-gradient(90deg, rgba(46,204,113,0.12), #1c2230 40%); }
+        .bf-toast--success .bf-toast__icon { background: rgba(46, 204, 113, 0.2); color: var(--accent-green); }
+        .bf-toast--success .bf-toast__progress { background: var(--accent-green); }
+
+        .bf-toast--error { border-color: rgba(231, 76, 60, 0.5); background: linear-gradient(90deg, rgba(231,76,60,0.12), #1c2230 40%); }
+        .bf-toast--error .bf-toast__icon { background: rgba(231, 76, 60, 0.2); color: var(--accent-red); }
+        .bf-toast--error .bf-toast__progress { background: var(--accent-red); }
+
+        .bf-toast--warning { border-color: rgba(245, 166, 35, 0.5); background: linear-gradient(90deg, rgba(245,166,35,0.12), #1c2230 40%); }
+        .bf-toast--warning .bf-toast__icon { background: rgba(245, 166, 35, 0.2); color: var(--accent-gold); }
+        .bf-toast--warning .bf-toast__progress { background: var(--accent-gold); }
+
+        .bf-toast--info { border-color: rgba(43, 107, 243, 0.5); background: linear-gradient(90deg, rgba(43,107,243,0.12), #1c2230 40%); }
+        .bf-toast--info .bf-toast__icon { background: rgba(43, 107, 243, 0.2); color: var(--accent-blue); }
+        .bf-toast--info .bf-toast__progress { background: var(--accent-blue); }
+
+        /* ====================================================== */
+        /* ==================  CONFIRM DIALOG  ================== */
+        /* ====================================================== */
+
+        .bf-confirm-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(6px);
+            z-index: 10000;
+            display: flex; align-items: center; justify-content: center;
+            padding: 20px;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .bf-confirm {
+            width: 100%; max-width: 380px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 24px 20px 20px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.9);
+            animation: modalIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .bf-confirm__icon {
+            width: 60px; height: 60px;
+            border-radius: 50%;
+            margin: 0 auto 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 26px;
+            background: rgba(43, 107, 243, 0.15);
+            color: var(--accent-blue);
+        }
+        .bf-confirm__icon--danger { background: rgba(231, 76, 60, 0.15); color: var(--accent-red); }
+        .bf-confirm__icon--warning { background: rgba(245, 166, 35, 0.15); color: var(--accent-gold); }
+
+        .bf-confirm__title {
+            font-size: 18px; font-weight: 800;
+            margin-bottom: 8px; color: var(--text-main);
+        }
+
+        .bf-confirm__msg {
+            font-size: 13.5px; line-height: 1.5;
+            color: var(--text-muted); margin-bottom: 20px;
+        }
+
+        .bf-confirm__actions {
+            display: flex; gap: 10px;
+        }
+
+        .bf-confirm__btn {
+            flex: 1;
+            padding: 12px 14px;
+            border-radius: 12px;
+            font-size: 14px; font-weight: 800;
+            border: none; cursor: pointer;
+            transition: transform 0.1s, background 0.2s;
+        }
+        .bf-confirm__btn:active { transform: scale(0.97); }
+
+        .bf-confirm__btn--cancel {
+            background: #1c2230;
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+        }
+        .bf-confirm__btn--cancel:hover { color: var(--text-main); }
+
+        .bf-confirm__btn--confirm {
+            background: var(--accent-blue);
+            color: #fff;
+        }
+        .bf-confirm__btn--confirm:hover { filter: brightness(1.1); }
+
+        .bf-confirm__btn--danger {
+            background: var(--accent-red);
+            color: #fff;
+        }
+        .bf-confirm__btn--danger:hover { filter: brightness(1.1); }
     </style>
 </head>
 <body>
@@ -312,7 +547,7 @@
                 <div style="font-size: 11px; color: var(--text-muted);">Brainrots Funny</div>
             </div>
         </div>
-        <div class="balance-badge">
+        <div class="balance-badge" id="balance-badge">
             <i class="fa-solid fa-coins"></i>
             <span id="balance">0</span>
         </div>
@@ -440,11 +675,11 @@
 
         /* ============================ CONFIG ============================ */
         const BASE_CASE_PRICE = 9;
-        const FREE_COOLDOWN   = 12 * 3600 * 1000;   // 12 часов
-        const MAX_UPGRADE_CHANCE = 95;              // потолок шанса, %
-        const ROULETTE_WIN_INDEX = 20;              // в какой ячейке ленты лежит выигрыш
+        const FREE_COOLDOWN   = 12 * 3600 * 1000;
+        const MAX_UPGRADE_CHANCE = 95;
+        const ROULETTE_WIN_INDEX = 20;
         const ROULETTE_ITEMS_TOTAL = 26;
-        const CIRCUMFERENCE = 2 * Math.PI * 90;     // 565.48…
+        const CIRCUMFERENCE = 2 * Math.PI * 90;
 
         const ITEMS = [
             { id: 'trios',     name: 'Los Trios',           price: 4,     img: 'assets/brainrots/los_trios.png' },
@@ -478,7 +713,152 @@
             }
         }
 
-        /* ========================== STORAGE ============================ */
+        /* =========================================================== */
+        /* ================== CUSTOM NOTIFICATION API ================= */
+        /* =========================================================== */
+
+        const TOAST_ICONS = {
+            success: 'fa-circle-check',
+            error:   'fa-circle-xmark',
+            warning: 'fa-triangle-exclamation',
+            info:    'fa-circle-info'
+        };
+        const TOAST_TITLES = {
+            success: 'Успех',
+            error:   'Ошибка',
+            warning: 'Внимание',
+            info:    'Инфо'
+        };
+
+        let toastContainer = null;
+        function getToastContainer() {
+            if (toastContainer && document.body.contains(toastContainer)) return toastContainer;
+            toastContainer = document.createElement('div');
+            toastContainer.className = 'bf-toast-container';
+            document.body.appendChild(toastContainer);
+            return toastContainer;
+        }
+
+        /**
+         * Показать тост-уведомление.
+         * @param {Object} opts
+         * @param {'success'|'error'|'warning'|'info'} [opts.type='info']
+         * @param {string} [opts.title]
+         * @param {string} opts.message
+         * @param {number} [opts.duration=3500]
+         */
+        function notify(opts) {
+            if (typeof opts === 'string') opts = { message: opts };
+            const type = opts.type || 'info';
+            const duration = Math.max(1000, opts.duration || 3500);
+            const title = opts.title || TOAST_TITLES[type] || 'Инфо';
+            const message = opts.message || '';
+
+            const container = getToastContainer();
+
+            const el = document.createElement('div');
+            el.className = 'bf-toast bf-toast--' + type;
+            el.innerHTML =
+                '<div class="bf-toast__icon"><i class="fa-solid ' + (TOAST_ICONS[type] || TOAST_ICONS.info) + '"></i></div>' +
+                '<div class="bf-toast__body">' +
+                    '<div class="bf-toast__title">' + escapeHtml(title) + '</div>' +
+                    '<div class="bf-toast__msg">' + escapeHtml(message) + '</div>' +
+                '</div>' +
+                '<div class="bf-toast__progress" style="animation-duration: ' + duration + 'ms;"></div>';
+
+            container.appendChild(el);
+
+            let closed = false;
+            const close = () => {
+                if (closed) return;
+                closed = true;
+                el.classList.add('closing');
+                el.addEventListener('animationend', () => el.remove(), { once: true });
+                // страховка на случай если animationend не сработал
+                setTimeout(() => el.remove(), 400);
+            };
+
+            const timer = setTimeout(close, duration);
+            el.addEventListener('click', () => { clearTimeout(timer); close(); });
+
+            return { close: close, el: el };
+        }
+
+        /**
+         * Кастомный confirm. Возвращает Promise<boolean>.
+         * @param {Object} opts
+         * @param {string} [opts.title='Подтверждение']
+         * @param {string} [opts.message='']
+         * @param {string} [opts.confirmText='OK']
+         * @param {string} [opts.cancelText='Отмена']
+         * @param {'default'|'danger'|'warning'} [opts.variant='default']
+         * @param {string} [opts.icon]
+         */
+        function confirmDialog(opts) {
+            opts = opts || {};
+            return new Promise(resolve => {
+                const variant = opts.variant || 'default';
+                const iconClass =
+                    opts.icon ||
+                    (variant === 'danger' ? 'fa-trash-can'
+                     : variant === 'warning' ? 'fa-triangle-exclamation'
+                     : 'fa-circle-question');
+
+                const overlay = document.createElement('div');
+                overlay.className = 'bf-confirm-overlay';
+                overlay.innerHTML =
+                    '<div class="bf-confirm">' +
+                        '<div class="bf-confirm__icon' +
+                            (variant === 'danger' ? ' bf-confirm__icon--danger' : '') +
+                            (variant === 'warning' ? ' bf-confirm__icon--warning' : '') +
+                        '"><i class="fa-solid ' + iconClass + '"></i></div>' +
+                        '<div class="bf-confirm__title">' + escapeHtml(opts.title || 'Подтверждение') + '</div>' +
+                        '<div class="bf-confirm__msg">' + escapeHtml(opts.message || '') + '</div>' +
+                        '<div class="bf-confirm__actions">' +
+                            '<button class="bf-confirm__btn bf-confirm__btn--cancel" data-act="cancel">' +
+                                escapeHtml(opts.cancelText || 'Отмена') +
+                            '</button>' +
+                            '<button class="bf-confirm__btn ' +
+                                (variant === 'danger' ? 'bf-confirm__btn--danger' : 'bf-confirm__btn--confirm') +
+                                '" data-act="ok">' +
+                                escapeHtml(opts.confirmText || 'OK') +
+                            '</button>' +
+                        '</div>' +
+                    '</div>';
+
+                document.body.appendChild(overlay);
+
+                const finish = (result) => {
+                    overlay.style.animation = 'fadeIn 0.2s ease reverse';
+                    setTimeout(() => overlay.remove(), 180);
+                    resolve(result);
+                };
+
+                overlay.querySelector('[data-act="ok"]').addEventListener('click', () => finish(true));
+                overlay.querySelector('[data-act="cancel"]').addEventListener('click', () => finish(false));
+                overlay.addEventListener('click', e => { if (e.target === overlay) finish(false); });
+
+                // Esc для отмены
+                const escHandler = (e) => {
+                    if (e.key === 'Escape') { document.removeEventListener('keydown', escHandler); finish(false); }
+                };
+                document.addEventListener('keydown', escHandler);
+            });
+        }
+
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        /* =========================================================== */
+        /* ========================== STORAGE ========================= */
+        /* =========================================================== */
+
         function loadNumber(key) {
             const v = parseInt(localStorage.getItem(key), 10);
             return Number.isFinite(v) ? v : 0;
@@ -511,9 +891,21 @@
             localStorage.setItem('bf_last_free', String(lastFreeTime));
         }
 
+        function bumpBalance() {
+            const el = $('balance-badge');
+            if (!el) return;
+            el.classList.remove('bump');
+            void el.offsetWidth;
+            el.classList.add('bump');
+        }
+
         /* ============================ UI =============================== */
+        let prevBalance = balance;
         function updateUI() {
             $('balance').innerText = balance;
+            if (balance !== prevBalance) bumpBalance();
+            prevBalance = balance;
+
             saveState();
             renderInventory();
             checkFreeTimer();
@@ -549,7 +941,6 @@
                 el.style.color = 'var(--text-muted)';
             }
 
-            // если модалка открыта — обновляем кнопку (например, КД истёк)
             if ($('case-modal').classList.contains('active') && !isOpening) {
                 updateModalBtn();
             }
@@ -567,7 +958,6 @@
             $('roulette-box').style.display = 'none';
             $('modal-case-img').style.display = 'block';
 
-            // Бесплатный кейс — только x1 (иначе это эксплойт)
             $('mult-selector-box').style.display = (type === 'free') ? 'none' : 'flex';
 
             if (type === 'free') {
@@ -597,7 +987,7 @@
 
         function setMultiplier(mult) {
             if (isOpening) return;
-            if (activeCaseType === 'free') mult = 1;   // защита от эксплойта
+            if (activeCaseType === 'free') mult = 1;
             activeMultiplier = mult;
 
             document.querySelectorAll('.mult-btn').forEach(b => {
@@ -630,11 +1020,11 @@
                 if (i.type === 'coin') {
                     return '<div class="loot-item-mini">' +
                            '<div class="coin-icon"><i class="fa-solid fa-coins" style="font-size:26px; color:var(--accent-gold);"></i></div>' +
-                           '<div>' + i.name + '</div></div>';
+                           '<div>' + escapeHtml(i.name) + '</div></div>';
                 }
                 return '<div class="loot-item-mini">' +
                        '<img src="' + i.img + '" onerror="this.onerror=null;this.src=\'https://via.placeholder.com/38?text=ROT\'">' +
-                       '<div>' + i.name + '</div>' +
+                       '<div>' + escapeHtml(i.name) + '</div>' +
                        '<div style="color:var(--accent-gold); font-weight:800;">' + i.price + '</div></div>';
             }).join('');
         }
@@ -664,13 +1054,11 @@
             const track       = $('roulette-track');
             rouletteBox.style.display = 'block';
 
-            // 1. Определяем выигрыш(и)
             const wonResults = [];
             for (let i = 0; i < activeMultiplier; i++) {
                 wonResults.push(rollDrop(activeCaseType));
             }
 
-            // 2. Строим ленту
             const trackItems = [];
             for (let i = 0; i < ROULETTE_ITEMS_TOTAL; i++) {
                 trackItems.push(ITEMS[Math.floor(Math.random() * ITEMS.length)]);
@@ -689,23 +1077,21 @@
                     ? '<i class="fa-solid fa-coins" style="font-size:30px; color:var(--accent-gold); margin-bottom:4px;"></i>'
                     : '<img src="' + item.img + '" onerror="this.onerror=null;this.src=\'https://via.placeholder.com/45\'">';
                 return '<div class="roulette-item">' + imgHTML +
-                       '<div style="font-weight:700;">' + item.name + '</div></div>';
+                       '<div style="font-weight:700;">' + escapeHtml(item.name) + '</div></div>';
             }).join('');
 
-            // 3. Считаем точное смещение, чтобы выигрыш встал под указатель
             const winEl       = track.children[ROULETTE_WIN_INDEX];
             const containerW  = rouletteBox.clientWidth;
             let translateX;
 
             if (winEl && containerW > 0) {
                 const winCenter = winEl.offsetLeft + winEl.offsetWidth / 2;
-                const jitter    = (Math.random() - 0.5) * 40;          // ±20px, в пределах ячейки (90px)
+                const jitter    = (Math.random() - 0.5) * 40;
                 translateX = winCenter - containerW / 2 + jitter;
             } else {
-                translateX = ROULETTE_WIN_INDEX * 100 + 50 - 190;      // фолбэк
+                translateX = ROULETTE_WIN_INDEX * 100 + 50 - 190;
             }
 
-            // 4. Запускаем анимацию (двойной rAF — гарантия применения стилей)
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
                     track.style.transition = 'transform 3s cubic-bezier(0.1, 1, 0.1, 1)';
@@ -713,7 +1099,6 @@
                 });
             });
 
-            // 5. Финализируем
             setTimeout(() => {
                 isOpening = false;
                 let html = '<div class="won-items-container">';
@@ -725,10 +1110,10 @@
                                 '<i class="fa-solid fa-coins" style="font-size:36px; color:var(--accent-gold); margin:6px 0;"></i>' +
                                 '<div class="won-card-title">+' + win.amount + ' МОНЕТ</div></div>';
                     } else {
-                        inventory.push(Object.assign({}, win.item));   // копия, чтобы не шейрить ссылку
+                        inventory.push(Object.assign({}, win.item));
                         html += '<div class="won-card">' +
                                 '<img src="' + win.item.img + '" onerror="this.onerror=null;this.src=\'https://via.placeholder.com/50\'">' +
-                                '<div class="won-card-title">' + win.item.name + '</div>' +
+                                '<div class="won-card-title">' + escapeHtml(win.item.name) + '</div>' +
                                 '<div class="won-card-price">' + win.item.price + ' монет</div></div>';
                     }
                 });
@@ -737,13 +1122,34 @@
                 $('modal-win-area').innerHTML = html;
                 updateUI();
                 updateModalBtn();
+
+                // Итоговое уведомление
+                if (activeMultiplier === 1) {
+                    const w = wonResults[0];
+                    if (w.type === 'coin') {
+                        notify({
+                            type: 'success',
+                            title: 'Монеты!',
+                            message: 'Вы получили +' + w.amount + ' монет из кейса.'
+                        });
+                    } else {
+                        notify({
+                            type: 'success',
+                            title: 'Дроп!',
+                            message: 'Вам выпал «' + w.item.name + '» (' + w.item.price + ' монет).'
+                        });
+                    }
+                } else {
+                    notify({
+                        type: 'success',
+                        title: 'Открыто x' + activeMultiplier,
+                        message: 'Все ' + activeMultiplier + ' предмета добавлены в инвентарь.'
+                    });
+                }
             }, 3200);
         }
 
         /* ========================== DROP RATES ========================= */
-        // ВНИМАНИЕ: у базового кейса 4% на предмет за 13154 монеты при цене кейса 9 —
-        // мат. ожидание ~531 монеты за открытие. Это не баг кода, а вопрос баланса.
-        // Если хотите убрать «джекпот-экономику» — снизьте последний процент до 0.1–0.5.
         function rollDrop(type) {
             const rand = Math.random() * 100;
 
@@ -751,8 +1157,8 @@
                 if (rand < 45) return { type: 'coin', amount: 2 };
                 if (rand < 75) return { type: 'coin', amount: 3 };
                 if (rand < 90) return { type: 'coin', amount: 5 };
-                if (rand < 97) return { type: 'item', item: ITEMS[0] };   // Los Trios
-                return { type: 'item', item: ITEMS[1] };                  // 67
+                if (rand < 97) return { type: 'item', item: ITEMS[0] };
+                return { type: 'item', item: ITEMS[1] };
             }
 
             if (rand < 40) return { type: 'item', item: ITEMS[0] };
@@ -773,7 +1179,7 @@
             container.innerHTML = inventory.map((item, index) =>
                 '<div class="item-card" onclick="BF.selectForUpgrade(' + index + ')">' +
                     '<img src="' + item.img + '" onerror="this.onerror=null;this.src=\'https://via.placeholder.com/55\'">' +
-                    '<div class="item-name">' + item.name + '</div>' +
+                    '<div class="item-name">' + escapeHtml(item.name) + '</div>' +
                     '<div class="item-price">' + item.price + ' монет</div>' +
                     '<button class="sell-btn" onclick="event.stopPropagation();BF.sellItem(' + index + ')">Продать</button>' +
                 '</div>'
@@ -805,15 +1211,44 @@
             inventory.splice(index, 1);
             updateUI();
             calculateUpgradeChance();
+
+            notify({
+                type: 'info',
+                title: 'Продано',
+                message: '«' + item.name + '» продан за ' + item.price + ' монет.'
+            });
         }
 
-        function sellAll() {
-            if (!inventory.length) return;
+        async function sellAll() {
+            if (!inventory.length) {
+                notify({ type: 'warning', message: 'Инвентарь уже пуст.' });
+                return;
+            }
+
+            const total = inventory.reduce((sum, i) => sum + i.price, 0);
+            const count = inventory.length;
+
+            const ok = await confirmDialog({
+                title: 'Продать всё?',
+                message: 'Будет продано ' + count + ' предмет(ов) за ' + total + ' монет. Действие нельзя отменить.',
+                confirmText: 'Продать',
+                cancelText: 'Отмена',
+                variant: 'danger',
+                icon: 'fa-sack-dollar'
+            });
+            if (!ok) return;
+
             inventory.forEach(item => { balance += item.price; });
             inventory = [];
             clearInputSelection();
             updateUI();
             calculateUpgradeChance();
+
+            notify({
+                type: 'success',
+                title: 'Всё продано',
+                message: 'Вы получили ' + total + ' монет за ' + count + ' предмет(ов).'
+            });
         }
 
         /* ========================= UPGRADER ============================ */
@@ -826,7 +1261,7 @@
             slot.classList.add('selected');
             slot.innerHTML =
                 '<img src="' + item.img + '" onerror="this.onerror=null;this.src=\'https://via.placeholder.com/55\'">' +
-                '<div style="font-size:10px; font-weight:700; margin-top:2px;">' + item.name + '</div>' +
+                '<div style="font-size:10px; font-weight:700; margin-top:2px;">' + escapeHtml(item.name) + '</div>' +
                 '<div style="font-size:10px; color:var(--accent-gold); font-weight:800;">' + item.price + '</div>';
 
             calculateUpgradeChance();
@@ -839,7 +1274,7 @@
                 '<div class="selector-item" onclick="BF.chooseTargetItem(\'' + item.id + '\')">' +
                     '<img src="' + item.img + '" onerror="this.onerror=null;this.src=\'https://via.placeholder.com/40\'">' +
                     '<div>' +
-                        '<div style="font-size:12px; font-weight:700;">' + item.name + '</div>' +
+                        '<div style="font-size:12px; font-weight:700;">' + escapeHtml(item.name) + '</div>' +
                         '<div style="font-size:11px; color:var(--accent-gold); font-weight:800;">' + item.price + ' монет</div>' +
                     '</div>' +
                 '</div>'
@@ -860,14 +1295,13 @@
             slot.classList.add('selected');
             slot.innerHTML =
                 '<img src="' + item.img + '" onerror="this.onerror=null;this.src=\'https://via.placeholder.com/55\'">' +
-                '<div style="font-size:10px; font-weight:700; margin-top:2px;">' + item.name + '</div>' +
+                '<div style="font-size:10px; font-weight:700; margin-top:2px;">' + escapeHtml(item.name) + '</div>' +
                 '<div style="font-size:10px; color:var(--accent-gold); font-weight:800;">' + item.price + '</div>';
 
             closeTargetModal();
             calculateUpgradeChance();
         }
 
-        // ЕДИНЫЙ источник правды по шансу — используется и для отображения, и для броска
         function getUpgradeChance() {
             if (!selectedInputItem || !selectedTargetItem) return 0;
             const raw = (selectedInputItem.price / selectedTargetItem.price) * 100;
@@ -889,7 +1323,7 @@
 
             const idx = inventory.indexOf(selectedInputItem);
             if (idx === -1) {
-                alert('Этот предмет больше не в инвентаре.');
+                notify({ type: 'error', message: 'Этот предмет больше не в инвентаре.' });
                 clearInputSelection();
                 calculateUpgradeChance();
                 return;
@@ -898,13 +1332,10 @@
             isUpgrading = true;
             $('btn-upgrade').disabled = true;
 
-            const chance      = getUpgradeChance();          // ← тот же шанс, что и на экране
-            const chanceAngle = chance * 3.6;                // сектор успеха в градусах
+            const chance      = getUpgradeChance();
+            const chanceAngle = chance * 3.6;
             const isSuccess   = (Math.random() * 100) <= chance;
 
-            // Стрелка при rotate(0) смотрит ВНИЗ (экранный угол 180°),
-            // а дуга шанса начинается с 12 часов (0°) и идёт по часовой.
-            // Поэтому: screenAngle = (180 + rotation) mod 360  →  rotation = screenAngle - 180.
             const screenAngle = isSuccess
                 ? Math.random() * chanceAngle
                 : chanceAngle + Math.random() * (360 - chanceAngle);
@@ -913,18 +1344,33 @@
             const totalRotation = 360 * 6 + targetAngle;
 
             const arrow = $('upgrader-arrow');
-            void arrow.offsetWidth;                          // сброс transition
+            void arrow.offsetWidth;
             arrow.style.transition = 'transform 3.5s cubic-bezier(0.15, 0.9, 0.2, 1)';
             arrow.style.transform  = 'translate(-50%, 0) rotate(' + totalRotation + 'deg)';
+
+            // запоминаем имена для уведомления
+            const inputName  = selectedInputItem.name;
+            const targetName = selectedTargetItem.name;
+            const targetItemCopy = Object.assign({}, selectedTargetItem);
 
             setTimeout(() => {
                 inventory.splice(idx, 1);
 
                 if (isSuccess) {
-                    inventory.push(Object.assign({}, selectedTargetItem));
-                    alert('🎉 УСПЕХ! Вы прокачали брейнрот до ' + selectedTargetItem.name + '!');
+                    inventory.push(targetItemCopy);
+                    notify({
+                        type: 'success',
+                        title: '🎉 Апгрейд удался!',
+                        message: '«' + inputName + '» → «' + targetName + '» (' + targetItemCopy.price + ' монет).',
+                        duration: 4500
+                    });
                 } else {
-                    alert('💥 НЕУДАЧА! Стрелка попала в красный сектор. Предмет сгорел.');
+                    notify({
+                        type: 'error',
+                        title: '💥 Апгрейд провален',
+                        message: '«' + inputName + '» сгорел. Стрелка попала в красный сектор.',
+                        duration: 4500
+                    });
                 }
 
                 isUpgrading = false;
@@ -953,16 +1399,18 @@
         window.BF = {
             selectForUpgrade,
             sellItem,
-            chooseTargetItem
+            chooseTargetItem,
+            notify,
+            confirm: confirmDialog
         };
-        window.switchTab        = switchTab;
-        window.openCaseModal    = openCaseModal;
-        window.closeModal       = closeModal;
-        window.setMultiplier    = setMultiplier;
-        window.startCaseOpening = startCaseOpening;
-        window.sellAll          = sellAll;
-        window.openTargetSelector = openTargetSelector;
-        window.closeTargetModal   = closeTargetModal;
+        window.switchTab           = switchTab;
+        window.openCaseModal       = openCaseModal;
+        window.closeModal          = closeModal;
+        window.setMultiplier       = setMultiplier;
+        window.startCaseOpening    = startCaseOpening;
+        window.sellAll             = sellAll;
+        window.openTargetSelector  = openTargetSelector;
+        window.closeTargetModal    = closeTargetModal;
         window.runUpgradeAnimation = runUpgradeAnimation;
 
         /* =========================== INIT ============================== */
