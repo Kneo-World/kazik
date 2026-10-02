@@ -33,6 +33,7 @@
             font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
             padding-bottom: 30px;
             overflow-x: hidden;
+            transition: background-color 0.3s;
         }
 
         /* ============ HEADER ============ */
@@ -46,6 +47,7 @@
             position: sticky;
             top: 0;
             z-index: 100;
+            transition: background 0.3s;
         }
 
         .user-profile { display: flex; align-items: center; gap: 10px; }
@@ -62,6 +64,8 @@
         .user-info { display: flex; flex-direction: column; }
         .user-name { font-size: 14px; font-weight: 700; }
 
+        .header-right { display: flex; align-items: center; gap: 8px; }
+
         .balance-badge {
             background: #1c2230; padding: 6px 14px; border-radius: 20px;
             border: 1px solid var(--border-color);
@@ -77,17 +81,25 @@
             100% { transform: scale(1); }
         }
 
+        .icon-btn {
+            width: 36px; height: 36px; border-radius: 10px;
+            background: #1c2230; border: 1px solid var(--border-color);
+            color: var(--text-muted); display: flex; align-items: center; justify-content: center;
+            cursor: pointer; font-size: 15px; transition: all 0.2s;
+        }
+        .icon-btn:hover { color: var(--text-main); border-color: var(--accent-blue); }
+
         /* ============ TABS ============ */
-        .tabs { display: flex; background: #11141d; border-bottom: 1px solid var(--border-color); }
+        .tabs { display: flex; background: #11141d; border-bottom: 1px solid var(--border-color); transition: background 0.3s; }
 
         .tab-btn {
-            flex: 1; padding: 12px 0; text-align: center;
+            flex: 1; padding: 10px 0; text-align: center;
             background: none; border: none; color: var(--text-muted);
-            font-size: 13px; font-weight: 700; cursor: pointer;
+            font-size: 10.5px; font-weight: 700; cursor: pointer;
             transition: all 0.2s;
-            display: flex; flex-direction: column; align-items: center; gap: 4px;
+            display: flex; flex-direction: column; align-items: center; gap: 3px;
         }
-        .tab-btn i { font-size: 16px; }
+        .tab-btn i { font-size: 15px; }
         .tab-btn.active {
             color: var(--accent-blue);
             border-bottom: 3px solid var(--accent-blue);
@@ -103,6 +115,54 @@
             color: var(--text-main); display: flex; align-items: center; gap: 8px;
         }
 
+        /* ============ DROP FEED ============ */
+        .drop-feed {
+            background: var(--card-bg); border: 1px solid var(--border-color);
+            border-radius: 12px; padding: 10px 12px; margin-bottom: 14px;
+            transition: background 0.3s;
+        }
+        .drop-feed__title {
+            font-size: 11px; color: var(--text-muted); font-weight: 700;
+            margin-bottom: 8px; display: flex; align-items: center; gap: 6px;
+        }
+        .drop-feed__live {
+            display: inline-block; width: 7px; height: 7px;
+            background: var(--accent-red); border-radius: 50%;
+            box-shadow: 0 0 6px var(--accent-red);
+            animation: livePulse 1.5s ease infinite;
+        }
+        @keyframes livePulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+        .drop-feed__list { display: flex; flex-direction: column; gap: 6px; max-height: 96px; overflow: hidden; }
+
+        .drop-row {
+            display: flex; align-items: center; gap: 8px;
+            font-size: 11.5px;
+            animation: dropAppear 0.4s ease;
+        }
+        @keyframes dropAppear {
+            from { opacity: 0; transform: translateY(-6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .drop-row__avatar {
+            width: 20px; height: 20px; border-radius: 50%;
+            background: var(--accent-blue);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 10px; font-weight: 800; flex-shrink: 0;
+            color: #fff;
+        }
+        .drop-row__nick {
+            color: var(--text-muted); font-weight: 600;
+            max-width: 72px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+        }
+        .drop-row__arrow { color: var(--text-muted); font-size: 10px; }
+        .drop-row__img { width: 20px; height: 20px; object-fit: contain; flex-shrink: 0; }
+        .drop-row__item {
+            font-weight: 700; color: var(--text-main);
+            overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1;
+        }
+        .drop-row--you .drop-row__nick { color: var(--accent-gold); }
+
         /* ============ CASES ============ */
         .cases-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
 
@@ -110,7 +170,7 @@
             background: var(--card-bg); border-radius: 14px; padding: 16px;
             border: 1px solid var(--border-color); text-align: center;
             position: relative; cursor: pointer;
-            transition: transform 0.15s, border-color 0.2s;
+            transition: transform 0.15s, border-color 0.2s, background 0.3s;
         }
         .case-card:hover { border-color: rgba(43, 107, 243, 0.5); }
         .case-card:active { transform: scale(0.96); }
@@ -136,13 +196,13 @@
 
         .modal-content {
             background: var(--card-bg); border: 1px solid var(--border-color);
-            border-radius: 20px; width: 100%; max-width: 420px; padding: 20px;
+            border-radius: 20px; width: 100%; max-width: 440px; padding: 20px;
             text-align: center; position: relative;
             max-height: 90vh; overflow-y: auto;
             box-shadow: 0 10px 30px rgba(0,0,0,0.8);
             animation: modalIn 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: background 0.3s;
         }
-
         @keyframes modalIn {
             from { transform: scale(0.9); opacity: 0; }
             to   { transform: scale(1); opacity: 1; }
@@ -153,8 +213,7 @@
             font-size: 22px; color: var(--text-muted);
             cursor: pointer; transition: color 0.2s;
             width: 30px; height: 30px; line-height: 28px; text-align: center;
-            border-radius: 50%;
-            z-index: 2;
+            border-radius: 50%; z-index: 2;
         }
         .close-modal:hover { color: var(--text-main); background: rgba(255,255,255,0.05); }
 
@@ -182,19 +241,14 @@
 
         /* ============ ROULETTES STACK ============ */
         .roulettes-stack {
-            display: none;
-            flex-direction: column;
-            gap: 10px;
-            margin: 15px 0;
+            display: none; flex-direction: column;
+            gap: 10px; margin: 15px 0;
         }
-
         .roulette-container {
             width: 100%; height: 110px; background: #0d1017;
             border: 2px solid var(--border-color); border-radius: 12px;
             position: relative; overflow: hidden;
         }
-        .roulettes-stack .roulette-container { margin: 0; }
-
         .roulette-pointer {
             position: absolute; top: 0; left: 50%; transform: translateX(-50%);
             width: 4px; height: 100%; background: var(--accent-gold);
@@ -208,10 +262,7 @@
         .roulette-pointer::before { top: -2px; border-top: 8px solid var(--accent-gold); }
         .roulette-pointer::after  { bottom: -2px; border-bottom: 8px solid var(--accent-gold); }
 
-        .roulette-track {
-            display: flex; position: absolute; left: 0; top: 10px; height: 90px;
-        }
-
+        .roulette-track { display: flex; position: absolute; left: 0; top: 10px; height: 90px; }
         .roulette-item {
             min-width: 90px; width: 90px; height: 90px;
             background: #151921; border: 1px solid var(--border-color);
@@ -226,18 +277,15 @@
         .case-preview-loot {
             margin-top: 18px; border-top: 1px solid var(--border-color); padding-top: 14px;
         }
-
         .loot-grid {
             display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
             margin-top: 10px; max-height: 180px; overflow-y: auto;
         }
-
         .loot-item-mini {
             background: #1c2230; border-radius: 10px; padding: 8px 4px;
             font-size: 11px; border: 1px solid rgba(255,255,255,0.05);
             display: flex; flex-direction: column; align-items: center; gap: 4px;
         }
-
         .loot-item-mini img, .loot-item-mini .coin-icon {
             width: 38px; height: 38px; object-fit: contain;
             display: flex; align-items: center; justify-content: center;
@@ -248,59 +296,188 @@
             display: flex; justify-content: center; gap: 10px;
             flex-wrap: wrap; margin: 15px 0;
         }
-
         .won-card {
             background: #1c2230; border: 2px solid var(--accent-gold);
             border-radius: 12px; padding: 10px; width: 95px; text-align: center;
             animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             box-shadow: 0 0 15px rgba(245, 166, 35, 0.3);
         }
-
         @keyframes popIn {
             0% { transform: scale(0.3); opacity: 0; }
             100% { transform: scale(1); opacity: 1; }
         }
-
         .won-card img { width: 50px; height: 50px; object-fit: contain; }
-
         .won-card-title {
             font-size: 11px; font-weight: 700; margin-top: 6px;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
         .won-card-price { font-size: 11px; color: var(--accent-gold); font-weight: 800; }
 
-        /* ============ UPGRADER ============ */
-        .upgrade-slots { display: flex; gap: 12px; margin-bottom: 20px; align-items: center; }
-
-        .slot {
-            flex: 1; background: var(--card-bg);
-            border: 2px dashed var(--border-color); border-radius: 14px;
-            height: 110px; display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            cursor: pointer; padding: 8px; transition: all 0.2s;
+        /* ============ MULTI-UPGRADER ============ */
+        .upg-inputs {
+            display: grid; grid-template-columns: repeat(5, 1fr);
+            gap: 6px; margin-bottom: 10px;
         }
-        .slot.selected {
+        .upg-slot {
+            aspect-ratio: 1; background: var(--card-bg);
+            border: 2px dashed var(--border-color); border-radius: 10px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            cursor: pointer; padding: 3px; min-width: 0;
+            transition: all 0.2s; position: relative;
+        }
+        .upg-slot.filled {
             border-style: solid; border-color: var(--accent-blue); background: #182030;
         }
-        .slot img { width: 55px; height: 55px; object-fit: contain; }
+        .upg-slot img { max-width: 42px; max-height: 42px; object-fit: contain; }
+        .upg-slot .plus { font-size: 16px; color: var(--text-muted); }
+        .upg-slot .price-tag {
+            position: absolute; bottom: 1px; right: 3px;
+            font-size: 9px; color: var(--accent-gold); font-weight: 800;
+        }
 
-        .upgrader-circle-box { position: relative; width: 220px; height: 220px; margin: 20px auto; }
+        .upg-arrow-down {
+            text-align: center; color: var(--accent-gold);
+            font-size: 18px; margin: 6px 0 10px;
+        }
+
+        .upg-target-wrap { display: flex; justify-content: center; margin-bottom: 16px; }
+        .upg-target {
+            width: 110px; height: 110px; background: var(--card-bg);
+            border: 2px dashed var(--border-color); border-radius: 14px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            cursor: pointer; padding: 6px; transition: all 0.2s; position: relative;
+        }
+        .upg-target.filled {
+            border-style: solid; border-color: var(--accent-gold); background: #1e1a10;
+        }
+        .upg-target img { max-width: 60px; max-height: 60px; object-fit: contain; }
+        .upg-target .label {
+            font-size: 10px; font-weight: 700; margin-top: 3px;
+            text-align: center; overflow: hidden; text-overflow: ellipsis;
+            max-width: 100%; white-space: nowrap;
+        }
+        .upg-target .price { font-size: 10px; color: var(--accent-gold); font-weight: 800; }
+        .upg-target .plus { font-size: 22px; color: var(--text-muted); }
+        .upg-target .hint { font-size: 10px; color: var(--text-muted); margin-top: 3px; }
+
+        .upg-inputs-label {
+            font-size: 11px; color: var(--text-muted); font-weight: 700;
+            text-align: center; margin-bottom: 8px;
+        }
+
+        .upgrader-circle-box { position: relative; width: 200px; height: 200px; margin: 20px auto; }
         .circle-svg { transform: rotate(-90deg); }
-
         .upgrader-arrow {
             position: absolute; top: 50%; left: 50%;
-            width: 4px; height: 80px;
+            width: 4px; height: 70px;
             background: linear-gradient(to top, transparent, var(--accent-gold));
             transform-origin: top center;
             transform: translate(-50%, 0) rotate(0deg);
             z-index: 10; border-radius: 2px;
             box-shadow: 0 0 8px var(--accent-gold);
         }
-
         .upgrader-info {
             position: absolute; top: 50%; left: 50%;
             transform: translate(-50%, -50%); text-align: center; z-index: 5;
         }
+
+        /* ============ PVP ============ */
+        .pvp-arena {
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 8px; margin: 20px 0;
+        }
+        .pvp-side { flex: 1; text-align: center; }
+        .pvp-side__slot {
+            width: 100%; aspect-ratio: 1; margin: 0 auto 8px;
+            background: var(--card-bg); border: 2px dashed var(--border-color);
+            border-radius: 14px; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            cursor: pointer; padding: 8px; transition: all 0.2s;
+            max-height: 140px;
+        }
+        .pvp-side__slot.filled { border-style: solid; }
+        .pvp-side--you .pvp-side__slot.filled { border-color: var(--accent-blue); }
+        .pvp-side--bot .pvp-side__slot.filled { border-color: var(--accent-red); }
+        .pvp-side--bot .pvp-side__slot { cursor: default; }
+        .pvp-side__slot img { max-width: 70px; max-height: 70px; object-fit: contain; }
+        .pvp-side__slot .plus { font-size: 24px; color: var(--text-muted); }
+        .pvp-side__slot .label {
+            font-size: 10px; font-weight: 700; margin-top: 4px;
+            max-width: 100%; overflow: hidden;
+            text-overflow: ellipsis; white-space: nowrap; text-align: center;
+        }
+        .pvp-side__slot .price { font-size: 10px; color: var(--accent-gold); font-weight: 800; }
+        .pvp-side__label {
+            font-size: 11px; color: var(--text-muted); font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .pvp-vs {
+            font-size: 24px; font-weight: 900; color: var(--accent-gold);
+            text-shadow: 0 0 12px var(--accent-gold);
+            animation: pulse 2s ease infinite;
+        }
+        @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+
+        .pvp-slot-shake { animation: shake 0.15s linear infinite; }
+        @keyframes shake {
+            0% { transform: translate(0,0); }
+            25% { transform: translate(-2px,2px); }
+            50% { transform: translate(2px,-2px); }
+            75% { transform: translate(-2px,-2px); }
+            100% { transform: translate(0,0); }
+        }
+
+        .pvp-info {
+            background: var(--card-bg); border: 1px solid var(--border-color);
+            border-radius: 12px; padding: 12px; font-size: 12px;
+            color: var(--text-muted); text-align: center; line-height: 1.5;
+        }
+
+        /* ============ QUESTS ============ */
+        .quests-section-title {
+            font-size: 14px; font-weight: 800; margin: 20px 0 12px;
+            display: flex; align-items: center; gap: 8px; color: var(--text-main);
+        }
+        .quests-section-title:first-child { margin-top: 0; }
+        .quests-section-title i { color: var(--accent-gold); }
+
+        .quest-list { display: flex; flex-direction: column; gap: 10px; }
+
+        .quest-card {
+            background: var(--card-bg); border: 1px solid var(--border-color);
+            border-radius: 12px; padding: 12px;
+            display: flex; align-items: center; gap: 12px;
+            transition: all 0.3s;
+        }
+        .quest-card.done {
+            border-color: rgba(46,204,113,0.4);
+            background: linear-gradient(90deg, rgba(46,204,113,0.08), var(--card-bg) 60%);
+        }
+        .quest-card__icon {
+            width: 40px; height: 40px; border-radius: 10px;
+            background: rgba(43,107,243,0.15); color: var(--accent-blue);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; flex-shrink: 0;
+        }
+        .quest-card.done .quest-card__icon {
+            background: rgba(46,204,113,0.15); color: var(--accent-green);
+        }
+        .quest-card__body { flex: 1; min-width: 0; }
+        .quest-card__title { font-size: 13px; font-weight: 700; }
+        .quest-card__desc { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+        .quest-card__progress {
+            margin-top: 6px; height: 5px; background: #1c2230;
+            border-radius: 3px; overflow: hidden;
+        }
+        .quest-card__progress-bar {
+            height: 100%; background: var(--accent-blue); transition: width 0.4s;
+        }
+        .quest-card.done .quest-card__progress-bar { background: var(--accent-green); }
+        .quest-card__reward {
+            font-size: 12px; color: var(--accent-gold); font-weight: 800;
+            text-align: center; flex-shrink: 0; min-width: 44px;
+        }
+        .quest-card__reward i { display: block; font-size: 14px; margin-bottom: 2px; }
 
         /* ============ INVENTORY ============ */
         .inventory-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
@@ -308,8 +485,9 @@
         .item-card {
             background: var(--card-bg); border-radius: 12px; padding: 10px;
             border: 1px solid var(--border-color); text-align: center;
-            cursor: pointer; transition: transform 0.1s, border-color 0.2s;
+            cursor: pointer; transition: transform 0.1s, border-color 0.2s, background 0.3s;
             animation: itemAppear 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
         }
         @keyframes itemAppear {
             from { transform: scale(0.7); opacity: 0; }
@@ -317,6 +495,7 @@
         }
         .item-card:active { transform: scale(0.96); }
         .item-card:hover { border-color: rgba(43, 107, 243, 0.5); }
+        .item-card.in-upgrader { border-color: var(--accent-blue); background: #182030; }
         .item-card img { width: 55px; height: 55px; object-fit: contain; margin-bottom: 6px; }
 
         .item-name {
@@ -342,9 +521,8 @@
         /* ============ SELECTOR GRID ============ */
         .selector-grid {
             display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;
-            margin-top: 15px; max-height: 300px; overflow-y: auto;
+            margin-top: 15px; max-height: 320px; overflow-y: auto;
         }
-
         .selector-item {
             background: #1c2230; border: 1px solid var(--border-color);
             border-radius: 10px; padding: 10px;
@@ -354,169 +532,167 @@
         .selector-item:hover { border-color: var(--accent-blue); }
         .selector-item img { width: 40px; height: 40px; object-fit: contain; }
 
-        /* ====================================================== */
-        /* ================  TOAST NOTIFICATIONS  =============== */
-        /* ====================================================== */
+        /* ============ SETTINGS MODAL ============ */
+        .settings-tabs {
+            display: flex; gap: 6px; margin: 12px 0;
+        }
+        .settings-tab {
+            flex: 1; padding: 8px 4px;
+            background: #1c2230; border: 1px solid var(--border-color);
+            border-radius: 10px; color: var(--text-muted);
+            font-size: 11.5px; font-weight: 700; cursor: pointer;
+            transition: all 0.2s;
+            display: flex; flex-direction: column; align-items: center; gap: 3px;
+        }
+        .settings-tab i { font-size: 14px; }
+        .settings-tab.active {
+            background: var(--accent-blue); border-color: var(--accent-blue); color: #fff;
+        }
 
+        .settings-panel { display: none; padding: 4px 0; text-align: left; }
+        .settings-panel.active { display: block; }
+
+        .theme-card {
+            display: flex; align-items: center; gap: 12px;
+            padding: 12px; background: #1c2230;
+            border: 1px solid var(--border-color); border-radius: 12px;
+            margin-bottom: 8px; cursor: pointer; transition: all 0.2s;
+        }
+        .theme-card.active { border-color: var(--accent-blue); }
+        .theme-card.locked { opacity: 0.85; }
+        .theme-card__preview {
+            width: 48px; height: 48px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden; flex-shrink: 0;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .theme-card__body { flex: 1; min-width: 0; }
+        .theme-card__name { font-size: 13px; font-weight: 700; color: var(--text-main); }
+        .theme-card__status { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+        .theme-card__status.owned { color: var(--accent-green); }
+        .theme-card__status.equipped { color: var(--accent-blue); }
+        .theme-card__price { color: var(--accent-gold); font-weight: 800; font-size: 12px; }
+
+        .stat-row {
+            display: flex; justify-content: space-between;
+            padding: 9px 0; border-bottom: 1px solid var(--border-color);
+            font-size: 13px;
+        }
+        .stat-row:last-child { border-bottom: none; }
+        .stat-row__label { color: var(--text-muted); }
+        .stat-row__value { color: var(--text-main); font-weight: 700; }
+
+        .ref-box {
+            background: #1c2230; border: 1px dashed var(--border-color);
+            border-radius: 12px; padding: 12px; margin: 8px 0;
+            word-break: break-all; font-family: 'Courier New', monospace;
+            font-size: 11px; color: var(--text-muted);
+        }
+
+        .ref-btn {
+            background: var(--accent-blue); color: #fff;
+            border: none; width: 100%; padding: 11px;
+            border-radius: 10px; font-weight: 800; font-size: 13px;
+            cursor: pointer; margin-top: 6px;
+            transition: filter 0.2s;
+        }
+        .ref-btn:hover { filter: brightness(1.1); }
+        .ref-btn.secondary {
+            background: #1c2230; color: var(--text-main);
+            border: 1px solid var(--border-color);
+        }
+
+        .settings-hint {
+            font-size: 12px; color: var(--text-muted);
+            line-height: 1.5; margin: 8px 0;
+        }
+
+        /* ============ TOASTS ============ */
         .bf-toast-container {
             position: fixed;
-            top: 78px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 9999;
-            width: calc(100% - 24px);
-            max-width: 420px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            pointer-events: none;
-            padding: 0 4px;
+            top: 78px; left: 50%; transform: translateX(-50%);
+            z-index: 9999; width: calc(100% - 24px); max-width: 420px;
+            display: flex; flex-direction: column; gap: 10px;
+            pointer-events: none; padding: 0 4px;
         }
-
         .bf-toast {
-            position: relative;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 14px 16px;
-            border-radius: 14px;
-            background: #1c2230;
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            font-size: 14px;
-            font-weight: 600;
-            line-height: 1.3;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
-            pointer-events: auto;
-            cursor: pointer;
-            overflow: hidden;
-            transform: translateY(-120%);
-            opacity: 0;
+            position: relative; display: flex; align-items: center;
+            gap: 12px; padding: 14px 16px; border-radius: 14px;
+            background: #1c2230; border: 1px solid var(--border-color);
+            color: var(--text-main); font-size: 14px; font-weight: 600;
+            line-height: 1.3; box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+            pointer-events: auto; cursor: pointer; overflow: hidden;
+            transform: translateY(-120%); opacity: 0;
             animation: toastIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
-
         .bf-toast.closing { animation: toastOut 0.3s ease forwards; }
-
         @keyframes toastIn { to { transform: translateY(0); opacity: 1; } }
         @keyframes toastOut { to { transform: translateY(-120%); opacity: 0; } }
-
         .bf-toast__icon {
-            flex-shrink: 0;
-            width: 34px; height: 34px;
-            border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 16px;
+            flex-shrink: 0; width: 34px; height: 34px;
+            border-radius: 10px; display: flex; align-items: center;
+            justify-content: center; font-size: 16px;
         }
-
         .bf-toast__body { flex: 1; min-width: 0; }
-
-        .bf-toast__title {
-            font-size: 13px; font-weight: 800;
-            margin-bottom: 2px; letter-spacing: 0.2px;
-        }
-
-        .bf-toast__msg {
-            font-size: 12.5px; font-weight: 500;
-            color: var(--text-muted); word-wrap: break-word;
-        }
-
+        .bf-toast__title { font-size: 13px; font-weight: 800; margin-bottom: 2px; }
+        .bf-toast__msg { font-size: 12.5px; font-weight: 500; color: var(--text-muted); word-wrap: break-word; }
         .bf-toast__progress {
-            position: absolute;
-            bottom: 0; left: 0;
-            height: 3px; width: 100%;
-            transform-origin: left center;
+            position: absolute; bottom: 0; left: 0; height: 3px;
+            width: 100%; transform-origin: left center;
             animation: toastProgress linear forwards;
         }
-
-        @keyframes toastProgress {
-            from { transform: scaleX(1); }
-            to   { transform: scaleX(0); }
-        }
-
+        @keyframes toastProgress { from { transform: scaleX(1); } to { transform: scaleX(0); } }
         .bf-toast--success { border-color: rgba(46, 204, 113, 0.5); background: linear-gradient(90deg, rgba(46,204,113,0.12), #1c2230 40%); }
         .bf-toast--success .bf-toast__icon { background: rgba(46, 204, 113, 0.2); color: var(--accent-green); }
         .bf-toast--success .bf-toast__progress { background: var(--accent-green); }
-
         .bf-toast--error { border-color: rgba(231, 76, 60, 0.5); background: linear-gradient(90deg, rgba(231,76,60,0.12), #1c2230 40%); }
         .bf-toast--error .bf-toast__icon { background: rgba(231, 76, 60, 0.2); color: var(--accent-red); }
         .bf-toast--error .bf-toast__progress { background: var(--accent-red); }
-
         .bf-toast--warning { border-color: rgba(245, 166, 35, 0.5); background: linear-gradient(90deg, rgba(245,166,35,0.12), #1c2230 40%); }
         .bf-toast--warning .bf-toast__icon { background: rgba(245, 166, 35, 0.2); color: var(--accent-gold); }
         .bf-toast--warning .bf-toast__progress { background: var(--accent-gold); }
-
         .bf-toast--info { border-color: rgba(43, 107, 243, 0.5); background: linear-gradient(90deg, rgba(43,107,243,0.12), #1c2230 40%); }
         .bf-toast--info .bf-toast__icon { background: rgba(43, 107, 243, 0.2); color: var(--accent-blue); }
         .bf-toast--info .bf-toast__progress { background: var(--accent-blue); }
 
-        /* ====================================================== */
-        /* ==================  CONFIRM DIALOG  ================== */
-        /* ====================================================== */
-
+        /* ============ CONFIRM ============ */
         .bf-confirm-overlay {
-            position: fixed; inset: 0;
-            background: rgba(0,0,0,0.75);
-            backdrop-filter: blur(6px);
-            z-index: 10000;
+            position: fixed; inset: 0; background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(6px); z-index: 10000;
             display: flex; align-items: center; justify-content: center;
-            padding: 20px;
-            animation: fadeIn 0.2s ease;
+            padding: 20px; animation: fadeIn 0.2s ease;
         }
-
         .bf-confirm {
-            width: 100%; max-width: 380px;
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            padding: 24px 20px 20px;
-            text-align: center;
+            width: 100%; max-width: 380px; background: var(--card-bg);
+            border: 1px solid var(--border-color); border-radius: 20px;
+            padding: 24px 20px 20px; text-align: center;
             box-shadow: 0 20px 60px rgba(0,0,0,0.9);
             animation: modalIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-
         .bf-confirm__icon {
-            width: 60px; height: 60px;
-            border-radius: 50%;
-            margin: 0 auto 14px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 26px;
-            background: rgba(43, 107, 243, 0.15);
-            color: var(--accent-blue);
+            width: 60px; height: 60px; border-radius: 50%;
+            margin: 0 auto 14px; display: flex; align-items: center;
+            justify-content: center; font-size: 26px;
+            background: rgba(43, 107, 243, 0.15); color: var(--accent-blue);
         }
         .bf-confirm__icon--danger { background: rgba(231, 76, 60, 0.15); color: var(--accent-red); }
         .bf-confirm__icon--warning { background: rgba(245, 166, 35, 0.15); color: var(--accent-gold); }
-
-        .bf-confirm__title {
-            font-size: 18px; font-weight: 800;
-            margin-bottom: 8px; color: var(--text-main);
-        }
-
-        .bf-confirm__msg {
-            font-size: 13.5px; line-height: 1.5;
-            color: var(--text-muted); margin-bottom: 20px;
-        }
-
+        .bf-confirm__title { font-size: 18px; font-weight: 800; margin-bottom: 8px; color: var(--text-main); }
+        .bf-confirm__msg { font-size: 13.5px; line-height: 1.5; color: var(--text-muted); margin-bottom: 20px; }
         .bf-confirm__actions { display: flex; gap: 10px; }
-
         .bf-confirm__btn {
-            flex: 1;
-            padding: 12px 14px;
-            border-radius: 12px;
-            font-size: 14px; font-weight: 800;
-            border: none; cursor: pointer;
+            flex: 1; padding: 12px 14px; border-radius: 12px;
+            font-size: 14px; font-weight: 800; border: none; cursor: pointer;
             transition: transform 0.1s, background 0.2s;
         }
         .bf-confirm__btn:active { transform: scale(0.97); }
-
         .bf-confirm__btn--cancel {
             background: #1c2230; color: var(--text-muted);
             border: 1px solid var(--border-color);
         }
         .bf-confirm__btn--cancel:hover { color: var(--text-main); }
-
         .bf-confirm__btn--confirm { background: var(--accent-blue); color: #fff; }
         .bf-confirm__btn--confirm:hover { filter: brightness(1.1); }
-
         .bf-confirm__btn--danger { background: var(--accent-red); color: #fff; }
         .bf-confirm__btn--danger:hover { filter: brightness(1.1); }
     </style>
@@ -531,83 +707,147 @@
                 <div style="font-size: 11px; color: var(--text-muted);">Brainrots Funny</div>
             </div>
         </div>
-        <div class="balance-badge" id="balance-badge">
-            <i class="fa-solid fa-coins"></i>
-            <span id="balance">0</span>
+        <div class="header-right">
+            <div class="balance-badge" id="balance-badge">
+                <i class="fa-solid fa-coins"></i>
+                <span id="balance">0</span>
+            </div>
+            <button class="icon-btn" onclick="openSettings()" title="Настройки">
+                <i class="fa-solid fa-gear"></i>
+            </button>
         </div>
     </header>
 
     <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab('cases')">
+        <button class="tab-btn active" data-tab="cases" onclick="switchTab('cases')">
             <i class="fa-solid fa-box-open"></i> Кейсы
         </button>
-        <button class="tab-btn" onclick="switchTab('upgrader')">
-            <i class="fa-solid fa-bolt"></i> Апгрейдер
+        <button class="tab-btn" data-tab="upgrader" onclick="switchTab('upgrader')">
+            <i class="fa-solid fa-bolt"></i> Апгрейд
         </button>
-        <button class="tab-btn" onclick="switchTab('inventory')">
+        <button class="tab-btn" data-tab="pvp" onclick="switchTab('pvp')">
+            <i class="fa-solid fa-hand-fist"></i> PvP
+        </button>
+        <button class="tab-btn" data-tab="quests" onclick="switchTab('quests')">
+            <i class="fa-solid fa-trophy"></i> Задания
+        </button>
+        <button class="tab-btn" data-tab="inventory" onclick="switchTab('inventory')">
             <i class="fa-solid fa-sack-dollar"></i> Инвентарь
         </button>
     </div>
 
+    <!-- CASES -->
     <div id="section-cases" class="section active">
+        <div class="drop-feed" id="drop-feed">
+            <div class="drop-feed__title">
+                <span class="drop-feed__live"></span>
+                Последние дропы
+            </div>
+            <div class="drop-feed__list" id="drop-feed-list"></div>
+        </div>
+
         <div class="section-title"><i class="fa-solid fa-cubes"></i> Доступные Кейсы</div>
         <div class="cases-grid">
-
             <div class="case-card" onclick="openCaseModal('free')">
                 <img src="assets/cases/free.png" class="case-img" alt="Free Case"
                      onerror="this.onerror=null;this.src='https://via.placeholder.com/110?text=FREE+CASE'">
                 <div class="case-title">Бесплатный</div>
                 <div class="case-price" id="free-timer-text">БЕСПЛАТНО</div>
             </div>
-
             <div class="case-card" onclick="openCaseModal('base')">
                 <img src="assets/cases/base.png" class="case-img" alt="Base Case"
                      onerror="this.onerror=null;this.src='https://via.placeholder.com/110?text=BASE+CASE'">
                 <div class="case-title">Начальный</div>
                 <div class="case-price"><i class="fa-solid fa-coins"></i> 9 монет</div>
             </div>
-
             <div class="case-card" onclick="openCaseModal('bro')">
                 <img src="assets/cases/bro.png" class="case-img" alt="Bro Case"
                      onerror="this.onerror=null;this.src='https://via.placeholder.com/110?text=BRO+CASE'">
                 <div class="case-title">Про Бро</div>
                 <div class="case-price"><i class="fa-solid fa-coins"></i> 25 монет</div>
             </div>
-
         </div>
     </div>
 
+    <!-- UPGRADER -->
     <div id="section-upgrader" class="section">
         <div class="section-title"><i class="fa-solid fa-bolt"></i> Прокачка Брейнротов</div>
 
-        <div class="upgrade-slots">
-            <div class="slot" id="slot-input" onclick="switchTab('inventory')">
-                <i class="fa-solid fa-plus-circle" style="font-size:24px; color:var(--text-muted); margin-bottom:6px;"></i>
-                <span style="font-size: 11px; color: var(--text-muted); text-align:center;">Из инвентаря</span>
-            </div>
-            <div style="color: var(--text-muted); font-size: 18px;"><i class="fa-solid fa-arrow-right"></i></div>
-            <div class="slot" id="slot-target" onclick="openTargetSelector()">
-                <i class="fa-solid fa-bullseye" style="font-size:24px; color:var(--text-muted); margin-bottom:6px;"></i>
-                <span style="font-size: 11px; color: var(--text-muted); text-align:center;">Выбрать цель</span>
+        <div class="upg-inputs-label">
+            ВХОД (до 5 предметов) — <span id="upg-inputs-count">0/5</span>
+        </div>
+        <div class="upg-inputs" id="upg-inputs">
+            <div class="upg-slot" data-idx="0" onclick="onUpgSlotClick(0)"></div>
+            <div class="upg-slot" data-idx="1" onclick="onUpgSlotClick(1)"></div>
+            <div class="upg-slot" data-idx="2" onclick="onUpgSlotClick(2)"></div>
+            <div class="upg-slot" data-idx="3" onclick="onUpgSlotClick(3)"></div>
+            <div class="upg-slot" data-idx="4" onclick="onUpgSlotClick(4)"></div>
+        </div>
+
+        <div class="upg-arrow-down"><i class="fa-solid fa-arrow-down"></i></div>
+
+        <div class="upg-target-wrap">
+            <div class="upg-target" id="upg-target" onclick="onUpgTargetClick()">
+                <i class="fa-solid fa-bullseye plus"></i>
+                <div class="hint">Цель</div>
             </div>
         </div>
 
         <div class="upgrader-circle-box">
-            <svg class="circle-svg" width="220" height="220">
-                <circle cx="110" cy="110" r="90" stroke="#1c2230" stroke-width="14" fill="none" />
-                <circle id="upgrade-progress" cx="110" cy="110" r="90" stroke="var(--accent-blue)" stroke-width="14" fill="none"
-                        stroke-dasharray="565.5" stroke-dashoffset="565.5" style="transition: stroke-dashoffset 0.4s ease;" />
+            <svg class="circle-svg" width="200" height="200">
+                <circle cx="100" cy="100" r="80" stroke="#1c2230" stroke-width="14" fill="none" />
+                <circle id="upgrade-progress" cx="100" cy="100" r="80" stroke="var(--accent-blue)" stroke-width="14" fill="none"
+                        stroke-dasharray="502.65" stroke-dashoffset="502.65" style="transition: stroke-dashoffset 0.4s ease;" />
             </svg>
             <div class="upgrader-arrow" id="upgrader-arrow"></div>
             <div class="upgrader-info">
                 <div style="font-size: 11px; color: var(--text-muted); font-weight:700;">ШАНС</div>
-                <div id="upgrade-chance" style="font-size: 28px; font-weight: 900; color: var(--text-main);">0%</div>
+                <div id="upgrade-chance" style="font-size: 26px; font-weight: 900; color: var(--text-main);">0%</div>
             </div>
         </div>
 
         <button class="btn-action" id="btn-upgrade" onclick="runUpgradeAnimation()" disabled>ПРОКАЧАТЬ</button>
     </div>
 
+    <!-- PVP -->
+    <div id="section-pvp" class="section">
+        <div class="section-title"><i class="fa-solid fa-hand-fist"></i> PvP Арена</div>
+
+        <div class="pvp-arena">
+            <div class="pvp-side pvp-side--you">
+                <div class="pvp-side__slot" id="pvp-you-slot" onclick="openPvpPicker()">
+                    <i class="fa-solid fa-plus plus"></i>
+                </div>
+                <div class="pvp-side__label">Вы</div>
+            </div>
+            <div class="pvp-vs" id="pvp-vs">VS</div>
+            <div class="pvp-side pvp-side--bot">
+                <div class="pvp-side__slot" id="pvp-bot-slot">
+                    <i class="fa-solid fa-robot plus"></i>
+                </div>
+                <div class="pvp-side__label">Бот</div>
+            </div>
+        </div>
+
+        <div class="pvp-info" id="pvp-info">
+            Выберите предмет из инвентаря — бот подберёт соперника похожей цены. Победитель забирает оба предмета. Шанс 50/50.
+        </div>
+
+        <button class="btn-action" id="btn-pvp" onclick="runPvp()" disabled>НАЧАТЬ БОЙ</button>
+    </div>
+
+    <!-- QUESTS -->
+    <div id="section-quests" class="section">
+        <div class="section-title"><i class="fa-solid fa-trophy"></i> Задания</div>
+
+        <div class="quests-section-title"><i class="fa-solid fa-calendar-day"></i> Ежедневные</div>
+        <div class="quest-list" id="daily-quest-list"></div>
+
+        <div class="quests-section-title"><i class="fa-solid fa-medal"></i> Достижения</div>
+        <div class="quest-list" id="achievements-list"></div>
+    </div>
+
+    <!-- INVENTORY -->
     <div id="section-inventory" class="section">
         <div class="section-title" style="justify-content: space-between;">
             <span><i class="fa-solid fa-sack-dollar"></i> Мой Инвентарь</span>
@@ -618,7 +858,7 @@
         </div>
     </div>
 
-    <!-- MODAL: CASE -->
+    <!-- CASE MODAL -->
     <div class="modal" id="case-modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeModal()">&times;</span>
@@ -647,13 +887,47 @@
         </div>
     </div>
 
-    <!-- MODAL: TARGET SELECTOR -->
+    <!-- TARGET SELECTOR -->
     <div class="modal" id="target-modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeTargetModal()">&times;</span>
             <h3>Выберите целевой Брейнрот</h3>
-            <div style="font-size: 12px; color: var(--text-muted); margin-top:4px;">Чем дороже предмет, тем ниже шанс удачи</div>
+            <div style="font-size: 12px; color: var(--text-muted); margin-top:4px;">Чем дороже цель, тем ниже шанс</div>
             <div class="selector-grid" id="target-selector-list"></div>
+        </div>
+    </div>
+
+    <!-- PVP PICKER -->
+    <div class="modal" id="pvp-picker-modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closePvpPicker()">&times;</span>
+            <h3>Выберите предмет для боя</h3>
+            <div style="font-size: 12px; color: var(--text-muted); margin-top:4px;">Предмет будет потерян при проигрыше</div>
+            <div class="selector-grid" id="pvp-picker-list"></div>
+        </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="modal" id="settings-modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeSettings()">&times;</span>
+            <h3 style="font-size: 19px;">Настройки</h3>
+
+            <div class="settings-tabs">
+                <button class="settings-tab active" data-panel="themes" onclick="showSettingsPanel('themes')">
+                    <i class="fa-solid fa-palette"></i> Темы
+                </button>
+                <button class="settings-tab" data-panel="referral" onclick="showSettingsPanel('referral')">
+                    <i class="fa-solid fa-user-group"></i> Реферал
+                </button>
+                <button class="settings-tab" data-panel="stats" onclick="showSettingsPanel('stats')">
+                    <i class="fa-solid fa-chart-simple"></i> Стата
+                </button>
+            </div>
+
+            <div class="settings-panel active" id="panel-themes"></div>
+            <div class="settings-panel" id="panel-referral"></div>
+            <div class="settings-panel" id="panel-stats"></div>
         </div>
     </div>
 
@@ -666,7 +940,7 @@
         const MAX_UPGRADE_CHANCE = 95;
         const ROULETTE_WIN_INDEX = 20;
         const ROULETTE_ITEMS_TOTAL = 26;
-        const CIRCUMFERENCE = 2 * Math.PI * 90;
+        const CIRCUMFERENCE = 2 * Math.PI * 80; // r=80 => 502.65
 
         const ITEMS = [
             { id: 'trios',     name: 'Los Trios',           price: 4,     img: 'assets/brainrots/los_trios.png' },
@@ -683,25 +957,8 @@
             { id: 'skibidi',   name: 'Skibidi Toilet',      price: 13154, img: 'assets/brainrots/skibidi_toilet.png' }
         ];
 
-        /* ============================================================== */
-        /* ================= КОНФИГУРАЦИЯ КЕЙСОВ ======================= */
-        /* ============================================================== */
-        /* ВАЖНО: предметы в loot.items — единственный источник дропа.    */
-        /* Если предмета тут нет — он НЕ выпадет из этого кейса.          */
-        /* Skibidi Toilet намеренно отсутствует во всех кейсах —          */
-        /* получить его можно ТОЛЬКО через апгрейдер.                     */
-        const CASE_PRICES = {
-            free: 0,
-            base: 9,
-            bro:  25
-        };
-
-        const CASE_TITLES = {
-            free: 'Бесплатный Кейс',
-            base: 'Начальный Кейс',
-            bro:  'Про Бро Кейс'
-        };
-
+        const CASE_PRICES = { free: 0, base: 9, bro: 25 };
+        const CASE_TITLES = { free: 'Бесплатный Кейс', base: 'Начальный Кейс', bro: 'Про Бро Кейс' };
         const CASE_IMAGES = {
             free: 'assets/cases/free.png',
             base: 'assets/cases/base.png',
@@ -709,79 +966,140 @@
         };
 
         const CASE_LOOT = {
-            // Бесплатный: 90% монеты, 10% предметы (только дешёвые)
             free: {
                 coinChance: 90,
-                coins: [
-                    { amount: 2, weight: 30 },
-                    { amount: 3, weight: 40 },
-                    { amount: 5, weight: 30 }
-                ],
-                items: [
-                    { item: ITEMS[0], weight: 70 },   // Los Trios
-                    { item: ITEMS[1], weight: 30 }    // 67
-                ]
+                coins: [{ amount: 2, weight: 30 }, { amount: 3, weight: 40 }, { amount: 5, weight: 30 }],
+                items: [{ item: ITEMS[0], weight: 70 }, { item: ITEMS[1], weight: 30 }]
             },
-            // Начальный: только 4 предмета, никаких дорогих дропов
             base: {
-                coinChance: 0,
-                coins: [],
+                coinChance: 0, coins: [],
                 items: [
-                    { item: ITEMS[0], weight: 30 },   // Los Trios
-                    { item: ITEMS[1], weight: 30 },   // 67
-                    { item: ITEMS[3], weight: 25 },   // Candy Slap
-                    { item: ITEMS[6], weight: 15 }    // La Grande
+                    { item: ITEMS[0], weight: 30 },
+                    { item: ITEMS[1], weight: 30 },
+                    { item: ITEMS[3], weight: 25 },
+                    { item: ITEMS[6], weight: 15 }
                 ]
             },
-            // Про Бро: всё, что не попало в другие кейсы и не Skibidi
             bro: {
-                coinChance: 0,
-                coins: [],
+                coinChance: 0, coins: [],
                 items: [
-                    { item: ITEMS[2],  weight: 25 },  // Spinny Hammy (5)
-                    { item: ITEMS[4],  weight: 20 },  // Los Noobinis (7)
-                    { item: ITEMS[5],  weight: 18 },  // Tang Tang Keletang (8)
-                    { item: ITEMS[7],  weight: 15 },  // Tictac Sahur (12)
-                    { item: ITEMS[8],  weight: 10 },  // Bacuru and Egguru (12)
-                    { item: ITEMS[9],  weight: 8  },  // Los 67 (12)
-                    { item: ITEMS[10], weight: 4  }   // Yin Yang Slap (20)
+                    { item: ITEMS[2],  weight: 25 },
+                    { item: ITEMS[4],  weight: 20 },
+                    { item: ITEMS[5],  weight: 18 },
+                    { item: ITEMS[7],  weight: 15 },
+                    { item: ITEMS[8],  weight: 10 },
+                    { item: ITEMS[9],  weight: 8  },
+                    { item: ITEMS[10], weight: 4  }
                 ]
             }
         };
 
+        /* ======================== THEMES ============================== */
+        const THEMES = {
+            dark: {
+                name: 'Тёмная',
+                price: 0,
+                vars: {
+                    '--bg-color': '#0b0e14',
+                    '--card-bg': '#151921',
+                    '--accent-blue': '#2b6bf3',
+                    '--accent-gold': '#f5a623',
+                    '--accent-green': '#2ecc71',
+                    '--accent-red': '#e74c3c',
+                    '--text-main': '#ffffff',
+                    '--text-muted': '#8c93a4',
+                    '--border-color': '#222834'
+                },
+                preview: ['#0b0e14', '#2b6bf3', '#f5a623']
+            },
+            neon: {
+                name: 'Неоновая',
+                price: 100,
+                vars: {
+                    '--bg-color': '#08001a',
+                    '--card-bg': '#170a33',
+                    '--accent-blue': '#a855f7',
+                    '--accent-gold': '#f472b6',
+                    '--accent-green': '#22d3ee',
+                    '--accent-red': '#f43f5e',
+                    '--text-main': '#f5f3ff',
+                    '--text-muted': '#a78bfa',
+                    '--border-color': '#3b1a72'
+                },
+                preview: ['#08001a', '#a855f7', '#f472b6']
+            },
+            gold: {
+                name: 'Золотая',
+                price: 500,
+                vars: {
+                    '--bg-color': '#140d04',
+                    '--card-bg': '#241808',
+                    '--accent-blue': '#fbbf24',
+                    '--accent-gold': '#f59e0b',
+                    '--accent-green': '#84cc16',
+                    '--accent-red': '#dc2626',
+                    '--text-main': '#fef9c3',
+                    '--text-muted': '#a16207',
+                    '--border-color': '#4a3410'
+                },
+                preview: ['#140d04', '#fbbf24', '#f59e0b']
+            }
+        };
+
+        /* ==================== ACHIEVEMENTS ============================= */
+        const ACHIEVEMENTS = [
+            { id: 'case1',   icon: 'fa-box',                title: 'Первый кейс',    desc: 'Открой 1 кейс',                stat: 'casesOpened',    goal: 1,    reward: 5 },
+            { id: 'case10',  icon: 'fa-box-open',           title: 'Крутила',        desc: 'Открой 10 кейсов',             stat: 'casesOpened',    goal: 10,   reward: 25 },
+            { id: 'case50',  icon: 'fa-boxes-stacked',      title: 'Кейсоголик',     desc: 'Открой 50 кейсов',             stat: 'casesOpened',    goal: 50,   reward: 100 },
+            { id: 'case200', icon: 'fa-tornado',            title: 'Легенда кейсов', desc: 'Открой 200 кейсов',            stat: 'casesOpened',    goal: 200,  reward: 500 },
+            { id: 'sell1',   icon: 'fa-tag',                title: 'Первая сделка',  desc: 'Продай 1 предмет',             stat: 'itemsSold',      goal: 1,    reward: 3 },
+            { id: 'sell25',  icon: 'fa-store',              title: 'Торговец',       desc: 'Продай 25 предметов',          stat: 'itemsSold',      goal: 25,   reward: 30 },
+            { id: 'sell100', icon: 'fa-hand-holding-dollar',title: 'Барыга',         desc: 'Продай 100 предметов',         stat: 'itemsSold',      goal: 100,  reward: 150 },
+            { id: 'up1',     icon: 'fa-bolt',               title: 'Первый апгрейд', desc: 'Успешный апгрейд',             stat: 'upgradeSuccess', goal: 1,    reward: 10 },
+            { id: 'up10',    icon: 'fa-hammer',             title: 'Кузнец',         desc: '10 успешных апгрейдов',        stat: 'upgradeSuccess', goal: 10,   reward: 50 },
+            { id: 'up50',    icon: 'fa-fire',               title: 'Мастер апгрейда',desc: '50 успешных апгрейдов',        stat: 'upgradeSuccess', goal: 50,   reward: 200 },
+            { id: 'pvp1',    icon: 'fa-hand-fist',          title: 'Дуэлянт',        desc: 'Выиграй 1 PvP',                stat: 'pvpWins',        goal: 1,    reward: 10 },
+            { id: 'pvp10',   icon: 'fa-shield-halved',      title: 'Гладиатор',      desc: 'Выиграй 10 PvP',               stat: 'pvpWins',        goal: 10,   reward: 80 },
+            { id: 'col5',    icon: 'fa-layer-group',        title: 'Коллекционер',   desc: 'Собери 5 разных брейнротов',   stat: 'uniqueCount',    goal: 5,    reward: 40 },
+            { id: 'col10',   icon: 'fa-images',             title: 'Фанат',          desc: 'Собери 10 разных брейнротов',  stat: 'uniqueCount',    goal: 10,   reward: 200 },
+            { id: 'col12',   icon: 'fa-crown',              title: 'Полный сет',     desc: 'Собери все 12 брейнротов',     stat: 'uniqueCount',    goal: 12,   reward: 1500 },
+            { id: 'bal500',  icon: 'fa-coins',              title: 'Сотка',          desc: 'Заработай 500 монет всего',    stat: 'totalEarned',    goal: 500,  reward: 25 },
+            { id: 'bal5000', icon: 'fa-sack-dollar',        title: 'Богач',          desc: 'Заработай 5000 монет всего',   stat: 'totalEarned',    goal: 5000, reward: 250 }
+        ];
+
+        const DAILY_QUESTS = [
+            { id: 'd_case3', icon: 'fa-box',  title: 'Разминка',        desc: 'Открой 3 кейса сегодня',           stat: 'casesOpened',    goal: 3, reward: 12 },
+            { id: 'd_sell5', icon: 'fa-tag',  title: 'Скупщик',         desc: 'Продай 5 предметов сегодня',       stat: 'itemsSold',      goal: 5, reward: 10 },
+            { id: 'd_up1',   icon: 'fa-bolt', title: 'Удачный апгрейд', desc: 'Сделай успешный апгрейд',          stat: 'upgradeSuccess', goal: 1, reward: 15 }
+        ];
+
+        const FAKE_NICKS = [
+            'Алексей', 'Максим', 'Neo', 'Dark_X', 'Санёк', 'ProGamer',
+            'Лёха', 'K1LL3R', 'Соня', 'Витя', 'Z0MB1E', 'Артём',
+            'Никита', 'Smoke', 'Женя', 'Ghost', 'Raven', 'Кирилл'
+        ];
+
         /* ======================= TELEGRAM INIT ========================= */
         const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+        let tgUser = null;
         if (tg) {
-            tg.ready();
-            tg.expand();
-            const u = tg.initDataUnsafe && tg.initDataUnsafe.user;
-            if (u) {
-                document.getElementById('user-name').innerText = u.first_name || 'Игрок';
+            tg.ready(); tg.expand();
+            tgUser = tg.initDataUnsafe && tg.initDataUnsafe.user;
+            if (tgUser) {
+                document.getElementById('user-name').innerText = tgUser.first_name || 'Игрок';
                 const avatar = document.getElementById('user-avatar');
-                if (u.photo_url) {
-                    avatar.innerHTML = '<img src="' + u.photo_url + '" alt="">';
-                } else {
-                    avatar.innerText = (u.first_name || 'U').charAt(0);
-                }
+                if (tgUser.photo_url) avatar.innerHTML = '<img src="' + tgUser.photo_url + '" alt="">';
+                else avatar.innerText = (tgUser.first_name || 'U').charAt(0);
             }
         }
+        const MY_NAME = (tgUser && tgUser.first_name) ? tgUser.first_name : 'Вы';
+        const MY_ID = (tgUser && tgUser.id) ? tgUser.id : null;
 
         /* =========================================================== */
         /* ================== CUSTOM NOTIFICATION API ================= */
         /* =========================================================== */
-
-        const TOAST_ICONS = {
-            success: 'fa-circle-check',
-            error:   'fa-circle-xmark',
-            warning: 'fa-triangle-exclamation',
-            info:    'fa-circle-info'
-        };
-        const TOAST_TITLES = {
-            success: 'Успех',
-            error:   'Ошибка',
-            warning: 'Внимание',
-            info:    'Инфо'
-        };
+        const TOAST_ICONS = { success: 'fa-circle-check', error: 'fa-circle-xmark', warning: 'fa-triangle-exclamation', info: 'fa-circle-info' };
+        const TOAST_TITLES = { success: 'Успех', error: 'Ошибка', warning: 'Внимание', info: 'Инфо' };
 
         let toastContainer = null;
         function getToastContainer() {
@@ -800,7 +1118,6 @@
             const message = opts.message || '';
 
             const container = getToastContainer();
-
             const el = document.createElement('div');
             el.className = 'bf-toast bf-toast--' + type;
             el.innerHTML =
@@ -810,7 +1127,6 @@
                     '<div class="bf-toast__msg">' + escapeHtml(message) + '</div>' +
                 '</div>' +
                 '<div class="bf-toast__progress" style="animation-duration: ' + duration + 'ms;"></div>';
-
             container.appendChild(el);
 
             let closed = false;
@@ -821,19 +1137,16 @@
                 el.addEventListener('animationend', () => el.remove(), { once: true });
                 setTimeout(() => el.remove(), 400);
             };
-
             const timer = setTimeout(close, duration);
             el.addEventListener('click', () => { clearTimeout(timer); close(); });
-
-            return { close: close, el: el };
+            return { close };
         }
 
         function confirmDialog(opts) {
             opts = opts || {};
             return new Promise(resolve => {
                 const variant = opts.variant || 'default';
-                const iconClass =
-                    opts.icon ||
+                const iconClass = opts.icon ||
                     (variant === 'danger' ? 'fa-trash-can'
                      : variant === 'warning' ? 'fa-triangle-exclamation'
                      : 'fa-circle-question');
@@ -850,78 +1163,128 @@
                         '<div class="bf-confirm__msg">' + escapeHtml(opts.message || '') + '</div>' +
                         '<div class="bf-confirm__actions">' +
                             '<button class="bf-confirm__btn bf-confirm__btn--cancel" data-act="cancel">' +
-                                escapeHtml(opts.cancelText || 'Отмена') +
-                            '</button>' +
+                                escapeHtml(opts.cancelText || 'Отмена') + '</button>' +
                             '<button class="bf-confirm__btn ' +
                                 (variant === 'danger' ? 'bf-confirm__btn--danger' : 'bf-confirm__btn--confirm') +
-                                '" data-act="ok">' +
-                                escapeHtml(opts.confirmText || 'OK') +
-                            '</button>' +
+                                '" data-act="ok">' + escapeHtml(opts.confirmText || 'OK') + '</button>' +
                         '</div>' +
                     '</div>';
-
                 document.body.appendChild(overlay);
 
-                const finish = (result) => {
+                const finish = (r) => {
                     overlay.style.animation = 'fadeIn 0.2s ease reverse';
                     setTimeout(() => overlay.remove(), 180);
-                    resolve(result);
+                    resolve(r);
                 };
-
                 overlay.querySelector('[data-act="ok"]').addEventListener('click', () => finish(true));
                 overlay.querySelector('[data-act="cancel"]').addEventListener('click', () => finish(false));
                 overlay.addEventListener('click', e => { if (e.target === overlay) finish(false); });
-
-                const escHandler = (e) => {
-                    if (e.key === 'Escape') { document.removeEventListener('keydown', escHandler); finish(false); }
-                };
-                document.addEventListener('keydown', escHandler);
+                const esc = (e) => { if (e.key === 'Escape') { document.removeEventListener('keydown', esc); finish(false); } };
+                document.addEventListener('keydown', esc);
             });
         }
 
         function escapeHtml(str) {
-            return String(str)
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#39;');
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
         }
 
-        /* =========================================================== */
-        /* ========================== STORAGE ========================= */
-        /* =========================================================== */
-
-        function loadNumber(key) {
-            const v = parseInt(localStorage.getItem(key), 10);
-            return Number.isFinite(v) ? v : 0;
+        /* ===================== STORAGE HELPERS ======================== */
+        function loadNumber(k) { const v = parseInt(localStorage.getItem(k), 10); return Number.isFinite(v) ? v : 0; }
+        function loadJSON(k, def) {
+            try { const r = JSON.parse(localStorage.getItem(k)); return r == null ? def : r; }
+            catch (e) { return def; }
         }
         function loadInventory() {
             try {
                 const raw = JSON.parse(localStorage.getItem('bf_inventory'));
-                return Array.isArray(raw) ? raw.filter(i => i && i.id) : [];
+                if (!Array.isArray(raw)) return [];
+                return raw.filter(i => i && i.id).map(it => it.uid ? it : Object.assign({}, it, { uid: genUid() }));
             } catch (e) { return []; }
         }
+        function loadArray(k) { const a = loadJSON(k, []); return Array.isArray(a) ? a : []; }
+        function loadObject(k) { const o = loadJSON(k, {}); return (o && typeof o === 'object') ? o : {}; }
 
-        let balance       = loadNumber('bf_balance');
-        let inventory     = loadInventory();
-        let lastFreeTime  = loadNumber('bf_last_free');
+        function genUid() { return 'u_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8); }
+        function makeInvItem(item) { return Object.assign({}, item, { uid: genUid() }); }
 
-        let activeCaseType   = null;
+        /* ============================ STATE ============================ */
+        let balance      = loadNumber('bf_balance');
+        let inventory    = loadInventory();
+        let lastFreeTime = loadNumber('bf_last_free');
+
+        let stats = Object.assign({
+            casesOpened: 0, itemsSold: 0,
+            upgradeSuccess: 0, upgradeFail: 0,
+            pvpWins: 0, pvpLosses: 0,
+            totalEarned: 0,
+            uniqueCollected: []
+        }, loadObject('bf_stats'));
+
+        let achievements = Object.assign({}, loadObject('bf_achievements')); // { id: true }
+
+        let daily = Object.assign({ date: todayKey(), casesOpened: 0, itemsSold: 0, upgradeSuccess: 0, claimed: {} },
+                                  loadObject('bf_daily'));
+        if (daily.date !== todayKey()) {
+            daily = { date: todayKey(), casesOpened: 0, itemsSold: 0, upgradeSuccess: 0, claimed: {} };
+        }
+
+        let ownedThemes = loadArray('bf_themes');
+        if (!ownedThemes.includes('dark')) ownedThemes.push('dark');
+        let currentTheme = localStorage.getItem('bf_theme') || 'dark';
+        if (!ownedThemes.includes(currentTheme)) currentTheme = 'dark';
+
+        let dropFeed = loadArray('bf_dropfeed').slice(-15);
+        if (!Array.isArray(dropFeed)) dropFeed = [];
+        let referrals = loadNumber('bf_referrals');
+        let refUsed = localStorage.getItem('bf_ref_used') === '1';
+
+        let activeCaseType = null;
         let activeMultiplier = 1;
-        let isOpening        = false;
+        let isOpening = false;
 
-        let selectedInputItem  = null;
-        let selectedTargetItem = null;
-        let isUpgrading        = false;
+        // Upgrader state: array of uids, max 5
+        const UPG_MAX = 5;
+        let upgInputUids = [];  // array of inventory item uids
+        let upgTargetItem = null; // item object (from ITEMS)
+        let isUpgrading = false;
 
-        /* ========================== HELPERS ============================ */
+        // PvP state
+        let pvpMyUid = null;
+        let pvpBotItem = null;
+        let isPvPing = false;
+
+        function todayKey() { return new Date().toISOString().slice(0, 10); }
+
+        /* ========================== HELPERS =========================== */
         const $ = id => document.getElementById(id);
 
         function saveState() {
             localStorage.setItem('bf_balance', String(balance));
             localStorage.setItem('bf_inventory', JSON.stringify(inventory));
             localStorage.setItem('bf_last_free', String(lastFreeTime));
+        }
+        function saveStats() { localStorage.setItem('bf_stats', JSON.stringify(stats)); }
+        function saveAchievements() { localStorage.setItem('bf_achievements', JSON.stringify(achievements)); }
+        function saveDaily() { localStorage.setItem('bf_daily', JSON.stringify(daily)); }
+        function saveThemes() {
+            localStorage.setItem('bf_themes', JSON.stringify(ownedThemes));
+            localStorage.setItem('bf_theme', currentTheme);
+        }
+        function saveDropFeed() { localStorage.setItem('bf_dropfeed', JSON.stringify(dropFeed.slice(-15))); }
+
+        function addCoins(amount, opts) {
+            balance += amount;
+            stats.totalEarned += Math.max(0, amount);
+            saveStats();
+        }
+
+        function trackUnique(item) {
+            if (!item || !item.id) return;
+            if (!stats.uniqueCollected.includes(item.id)) {
+                stats.uniqueCollected.push(item.id);
+                saveStats();
+            }
         }
 
         function bumpBalance() {
@@ -935,11 +1298,21 @@
         function weightedPick(list) {
             const total = list.reduce((s, i) => s + (i.weight || 1), 0);
             let r = Math.random() * total;
-            for (const entry of list) {
-                r -= (entry.weight || 1);
-                if (r <= 0) return entry;
+            for (const e of list) {
+                r -= (e.weight || 1);
+                if (r <= 0) return e;
             }
             return list[list.length - 1];
+        }
+
+        /* ============================ THEME ============================ */
+        function applyTheme(name) {
+            const theme = THEMES[name];
+            if (!theme) return;
+            const root = document.documentElement;
+            Object.entries(theme.vars).forEach(([k, v]) => root.style.setProperty(k, v));
+            currentTheme = name;
+            saveThemes();
         }
 
         /* ============================ UI =============================== */
@@ -948,31 +1321,28 @@
             $('balance').innerText = balance;
             if (balance !== prevBalance) bumpBalance();
             prevBalance = balance;
-
             saveState();
             renderInventory();
             checkFreeTimer();
+            checkAchievements();
+            renderQuests();
         }
 
         function switchTab(tab) {
             const tabs = document.querySelectorAll('.tab-btn');
-            const idx  = { cases: 0, upgrader: 1, inventory: 2 }[tab];
+            const idx = { cases: 0, upgrader: 1, pvp: 2, quests: 3, inventory: 4 }[tab];
             if (idx === undefined) return;
-
-            tabs.forEach(b => b.classList.remove('active'));
-            tabs[idx].classList.add('active');
-
+            tabs.forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            const section = $('section-' + tab);
-            if (section) section.classList.add('active');
+            const sec = $('section-' + tab);
+            if (sec) sec.classList.add('active');
         }
 
-        /* ======================= FREE CASE TIMER ======================= */
+        /* ======================= FREE CASE TIMER ====================== */
         function checkFreeTimer() {
             const diff = Date.now() - lastFreeTime;
             const el = $('free-timer-text');
             if (!el) return;
-
             if (diff >= FREE_COOLDOWN) {
                 el.innerText = 'БЕСПЛАТНО';
                 el.style.color = 'var(--accent-gold)';
@@ -983,14 +1353,67 @@
                 el.innerText = 'через ' + h + 'ч ' + m + 'м';
                 el.style.color = 'var(--text-muted)';
             }
-
-            if ($('case-modal').classList.contains('active') && !isOpening) {
-                updateModalBtn();
-            }
+            if ($('case-modal').classList.contains('active') && !isOpening) updateModalBtn();
         }
         setInterval(checkFreeTimer, 10000);
 
-        /* ========================= CASE MODAL ========================== */
+        /* ======================== DROP FEED ========================== */
+        function renderDropFeed() {
+            const list = $('drop-feed-list');
+            if (!list) return;
+            const recent = dropFeed.slice(-4).reverse();
+            if (!recent.length) {
+                list.innerHTML = '<div class="drop-row"><div class="drop-row__nick" style="max-width:none;">Ждём первые дропы...</div></div>';
+                return;
+            }
+            list.innerHTML = recent.map(d => {
+                const avatarLetter = d.nick.charAt(0).toUpperCase();
+                const isMe = d.me;
+                const itemHtml = d.itemImg
+                    ? '<img class="drop-row__img" src="' + d.itemImg + '" onerror="this.onerror=null;this.src=\'https://via.placeholder.com/20\'">'
+                    : '<i class="fa-solid fa-coins" style="color:var(--accent-gold); font-size:14px; width:20px; text-align:center;"></i>';
+                return '<div class="drop-row' + (isMe ? ' drop-row--you' : '') + '">' +
+                    '<div class="drop-row__avatar">' + escapeHtml(avatarLetter) + '</div>' +
+                    '<div class="drop-row__nick">' + escapeHtml(d.nick) + '</div>' +
+                    '<div class="drop-row__arrow">выбил</div>' +
+                    itemHtml +
+                    '<div class="drop-row__item">' + escapeHtml(d.itemName) + '</div>' +
+                '</div>';
+            }).join('');
+        }
+
+        function pushDrop(entry) {
+            dropFeed.push(entry);
+            if (dropFeed.length > 15) dropFeed = dropFeed.slice(-15);
+            saveDropFeed();
+            renderDropFeed();
+        }
+
+        function pushMyDrop(win) {
+            if (win.type === 'coin') {
+                pushDrop({ nick: MY_NAME, itemName: win.amount + ' монет', itemImg: null, me: true, ts: Date.now() });
+            } else {
+                pushDrop({ nick: MY_NAME, itemName: win.item.name, itemImg: win.item.img, me: true, ts: Date.now() });
+            }
+        }
+
+        // Fake drop generator
+        function generateFakeDrop() {
+            const nick = FAKE_NICKS[Math.floor(Math.random() * FAKE_NICKS.length)];
+            const item = ITEMS[Math.floor(Math.random() * (ITEMS.length - 1))]; // без Skibidi
+            pushDrop({ nick, itemName: item.name, itemImg: item.img, me: false, ts: Date.now() });
+        }
+
+        let fakeTimer = null;
+        function scheduleFakeDrop() {
+            const delay = 8000 + Math.random() * 7000;
+            fakeTimer = setTimeout(() => {
+                generateFakeDrop();
+                scheduleFakeDrop();
+            }, delay);
+        }
+
+        /* ======================= CASE MODAL =========================== */
         function openCaseModal(type) {
             if (isOpening) return;
             if (!CASE_LOOT[type]) return;
@@ -1005,15 +1428,11 @@
             stack.style.display = 'none';
             $('modal-case-img').style.display = 'block';
 
-            // Free-кейс — множители недоступны
             $('mult-selector-box').style.display = (type === 'free') ? 'none' : 'flex';
 
             $('modal-case-title').innerText = CASE_TITLES[type];
             $('modal-case-img').src = CASE_IMAGES[type];
-
-            // Превью строится из реальной таблицы дропа этого кейса
             renderLootGrid(getCasePreview(type));
-
             $('case-modal').classList.add('active');
             updateModalBtn();
         }
@@ -1021,10 +1440,10 @@
         function getCasePreview(type) {
             const cfg = CASE_LOOT[type];
             if (!cfg) return [];
-            const preview = [];
-            cfg.coins.forEach(c => preview.push({ name: c.amount + ' Монет', type: 'coin', val: c.amount }));
-            cfg.items.forEach(e => preview.push(e.item));
-            return preview;
+            const p = [];
+            cfg.coins.forEach(c => p.push({ name: c.amount + ' Монет', type: 'coin', val: c.amount }));
+            cfg.items.forEach(e => p.push(e.item));
+            return p;
         }
 
         function closeModal() {
@@ -1037,10 +1456,8 @@
 
         function setMultiplier(mult) {
             if (isOpening) return;
-            // В free-кейсе множители запрещены
             if (activeCaseType === 'free') mult = 1;
             activeMultiplier = mult;
-
             document.querySelectorAll('.mult-btn').forEach(b => {
                 b.classList.toggle('active', Number(b.dataset.mult) === mult);
             });
@@ -1050,14 +1467,11 @@
         function updateModalBtn() {
             const btn = $('modal-open-btn');
             if (!btn) return;
-
             if (activeCaseType === 'free') {
                 if (Date.now() - lastFreeTime < FREE_COOLDOWN) {
-                    btn.disabled = true;
-                    btn.innerText = 'Еще не доступен';
+                    btn.disabled = true; btn.innerText = 'Еще не доступен';
                 } else {
-                    btn.disabled = false;
-                    btn.innerText = 'Открыть (Бесплатно)';
+                    btn.disabled = false; btn.innerText = 'Открыть (Бесплатно)';
                 }
             } else {
                 const price = CASE_PRICES[activeCaseType] * activeMultiplier;
@@ -1070,22 +1484,20 @@
             $('modal-loot-grid').innerHTML = items.map(i => {
                 if (i.type === 'coin') {
                     return '<div class="loot-item-mini">' +
-                           '<div class="coin-icon"><i class="fa-solid fa-coins" style="font-size:26px; color:var(--accent-gold);"></i></div>' +
-                           '<div>' + escapeHtml(i.name) + '</div></div>';
+                        '<div class="coin-icon"><i class="fa-solid fa-coins" style="font-size:26px; color:var(--accent-gold);"></i></div>' +
+                        '<div>' + escapeHtml(i.name) + '</div></div>';
                 }
                 return '<div class="loot-item-mini">' +
-                       '<img src="' + i.img + '" onerror="this.onerror=null;this.src=\'https://via.placeholder.com/38?text=ROT\'">' +
-                       '<div>' + escapeHtml(i.name) + '</div>' +
-                       '<div style="color:var(--accent-gold); font-weight:800;">' + i.price + '</div></div>';
+                    '<img src="' + i.img + '" onerror="this.onerror=null;this.src=\'https://via.placeholder.com/38?text=ROT\'">' +
+                    '<div>' + escapeHtml(i.name) + '</div>' +
+                    '<div style="color:var(--accent-gold); font-weight:800;">' + i.price + '</div></div>';
             }).join('');
         }
 
-        /* ======================== DROP LOGIC =========================== */
-        // Возвращает { type: 'coin', amount } | { type: 'item', item }
+        /* ======================= DROP LOGIC ========================== */
         function rollDrop(type) {
             const cfg = CASE_LOOT[type];
             if (!cfg) return null;
-
             if (cfg.coins.length > 0 && Math.random() * 100 < cfg.coinChance) {
                 const picked = weightedPick(cfg.coins);
                 return { type: 'coin', amount: picked.amount };
@@ -1094,15 +1506,13 @@
             return { type: 'item', item: picked.item };
         }
 
-        /* ======================= CASE OPENING ========================== */
+        /* ====================== CASE OPENING ========================= */
         function startCaseOpening() {
             if (isOpening) return;
-
             if (activeCaseType === 'free') {
                 if (Date.now() - lastFreeTime < FREE_COOLDOWN) return;
                 lastFreeTime = Date.now();
-                saveState();
-                checkFreeTimer();
+                saveState(); checkFreeTimer();
             } else {
                 const price = CASE_PRICES[activeCaseType] * activeMultiplier;
                 if (balance < price) return;
@@ -1115,17 +1525,12 @@
             $('mult-selector-box').style.display = 'none';
             $('modal-win-area').innerHTML = '';
 
-            // Генерируем выигрыши
             const wonResults = [];
-            for (let i = 0; i < activeMultiplier; i++) {
-                wonResults.push(rollDrop(activeCaseType));
-            }
+            for (let i = 0; i < activeMultiplier; i++) wonResults.push(rollDrop(activeCaseType));
 
-            // Строим N рулеток в стеке
             const stack = $('roulettes-stack');
             stack.innerHTML = '';
             stack.style.display = 'flex';
-
             const instances = [];
             for (let i = 0; i < activeMultiplier; i++) {
                 const inst = createRoulette(wonResults[i], activeCaseType);
@@ -1133,32 +1538,27 @@
                 instances.push(inst);
             }
 
-            // Запускаем все анимации одновременно
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
                     instances.forEach(inst => {
                         const winEl = inst.track.children[ROULETTE_WIN_INDEX];
                         const containerW = inst.wrapper.clientWidth;
-                        let translateX;
-
+                        let tx;
                         if (winEl && containerW > 0) {
                             const winCenter = winEl.offsetLeft + winEl.offsetWidth / 2;
                             const jitter = (Math.random() - 0.5) * 40;
-                            translateX = winCenter - containerW / 2 + jitter;
+                            tx = winCenter - containerW / 2 + jitter;
                         } else {
-                            translateX = ROULETTE_WIN_INDEX * 100 + 50 - 190;
+                            tx = ROULETTE_WIN_INDEX * 100 + 50 - 190;
                         }
-
                         inst.track.style.transition = 'transform 3s cubic-bezier(0.1, 1, 0.1, 1)';
-                        inst.track.style.transform = 'translateX(-' + translateX + 'px)';
+                        inst.track.style.transform = 'translateX(-' + tx + 'px)';
                     });
                 });
             });
 
-            // Финализируем
             setTimeout(() => {
                 isOpening = false;
-
                 let html = '<div class="won-items-container">';
                 let totalCoins = 0;
                 const itemNames = [];
@@ -1166,184 +1566,166 @@
                 wonResults.forEach(win => {
                     if (!win) return;
                     if (win.type === 'coin') {
-                        balance += win.amount;
+                        addCoins(win.amount);
                         totalCoins += win.amount;
                         html += '<div class="won-card">' +
-                                '<i class="fa-solid fa-coins" style="font-size:36px; color:var(--accent-gold); margin:6px 0;"></i>' +
-                                '<div class="won-card-title">+' + win.amount + ' МОНЕТ</div></div>';
+                            '<i class="fa-solid fa-coins" style="font-size:36px; color:var(--accent-gold); margin:6px 0;"></i>' +
+                            '<div class="won-card-title">+' + win.amount + ' МОНЕТ</div></div>';
                     } else {
-                        inventory.push(Object.assign({}, win.item));
+                        const inv = makeInvItem(win.item);
+                        inventory.push(inv);
+                        trackUnique(win.item);
                         itemNames.push(win.item.name);
                         html += '<div class="won-card">' +
-                                '<img src="' + win.item.img + '" onerror="this.onerror=null;this.src=\'https://via.placeholder.com/50\'">' +
-                                '<div class="won-card-title">' + escapeHtml(win.item.name) + '</div>' +
-                                '<div class="won-card-price">' + win.item.price + ' монет</div></div>';
+                            '<img src="' + win.item.img + '" onerror="this.onerror=null;this.src=\'https://via.placeholder.com/50\'">' +
+                            '<div class="won-card-title">' + escapeHtml(win.item.name) + '</div>' +
+                            '<div class="won-card-price">' + win.item.price + ' монет</div></div>';
                     }
                 });
                 html += '</div>';
-
                 $('modal-win-area').innerHTML = html;
+
+                // Stats
+                stats.casesOpened += activeMultiplier;
+                daily.casesOpened += activeMultiplier;
+                saveStats(); saveDaily();
+
+                // Drop feed — по одному дропу
+                wonResults.forEach(w => { if (w) pushMyDrop(w); });
+
                 updateUI();
                 updateModalBtn();
 
-                // Итоговый тост
+                // Toast
                 if (activeMultiplier === 1) {
                     const w = wonResults[0];
                     if (w && w.type === 'coin') {
-                        notify({
-                            type: 'success',
-                            title: 'Монеты!',
-                            message: 'Вы получили +' + w.amount + ' монет из кейса.'
-                        });
+                        notify({ type: 'success', title: 'Монеты!', message: 'Вы получили +' + w.amount + ' монет.' });
                     } else if (w) {
-                        notify({
-                            type: 'success',
-                            title: 'Дроп!',
-                            message: 'Вам выпал «' + w.item.name + '» (' + w.item.price + ' монет).'
-                        });
+                        notify({ type: 'success', title: 'Дроп!', message: 'Вам выпал «' + w.item.name + '» (' + w.item.price + ' монет).' });
                     }
                 } else {
                     const parts = [];
                     if (totalCoins > 0) parts.push('+' + totalCoins + ' монет');
                     if (itemNames.length > 0) parts.push(itemNames.length + ' предмет(ов)');
-                    notify({
-                        type: 'success',
-                        title: 'Открыто x' + activeMultiplier,
-                        message: 'Получено: ' + parts.join(', ') + '.'
-                    });
+                    notify({ type: 'success', title: 'Открыто x' + activeMultiplier, message: 'Получено: ' + parts.join(', ') + '.' });
                 }
             }, 3200);
         }
 
-        // Создаёт одну рулетку и возвращает { wrapper, track }
         function createRoulette(win, caseType) {
             const wrapper = document.createElement('div');
             wrapper.className = 'roulette-container';
             wrapper.innerHTML = '<div class="roulette-pointer"></div><div class="roulette-track"></div>';
             const track = wrapper.querySelector('.roulette-track');
-
-            // Лента собирается из настоящих дропов этого кейса — никаких «лишних» предметов
-            const trackEntries = [];
-            for (let i = 0; i < ROULETTE_ITEMS_TOTAL; i++) {
-                trackEntries.push(rollDrop(caseType));
-            }
-            trackEntries[ROULETTE_WIN_INDEX] = win;
+            const entries = [];
+            for (let i = 0; i < ROULETTE_ITEMS_TOTAL; i++) entries.push(rollDrop(caseType));
+            entries[ROULETTE_WIN_INDEX] = win;
 
             track.style.transition = 'none';
             track.style.transform = 'translateX(0px)';
-            track.innerHTML = trackEntries.map(entry => {
-                if (!entry) return '';
-                if (entry.type === 'coin') {
+            track.innerHTML = entries.map(e => {
+                if (!e) return '';
+                if (e.type === 'coin') {
                     return '<div class="roulette-item">' +
                         '<i class="fa-solid fa-coins" style="font-size:30px; color:var(--accent-gold); margin-bottom:4px;"></i>' +
-                        '<div style="font-weight:700;">' + entry.amount + ' Монет</div></div>';
+                        '<div style="font-weight:700;">' + e.amount + ' Монет</div></div>';
                 }
                 return '<div class="roulette-item">' +
-                    '<img src="' + entry.item.img + '" onerror="this.onerror=null;this.src=\'https://via.placeholder.com/45\'">' +
-                    '<div style="font-weight:700;">' + escapeHtml(entry.item.name) + '</div></div>';
+                    '<img src="' + e.item.img + '" onerror="this.onerror=null;this.src=\'https://via.placeholder.com/45\'">' +
+                    '<div style="font-weight:700;">' + escapeHtml(e.item.name) + '</div></div>';
             }).join('');
-
             return { wrapper, track };
         }
 
-        /* ========================= INVENTORY =========================== */
-        function renderInventory() {
-            const container = $('inventory-list');
-            if (!inventory.length) {
-                container.innerHTML = '<div class="empty-inv">Инвентарь пуст</div>';
-                return;
+        /* ==================== MULTI-UPGRADER ========================= */
+        function getUpgInputItems() {
+            return upgInputUids.map(uid => inventory.find(i => i.uid === uid)).filter(Boolean);
+        }
+        function getUpgInputSum() {
+            return getUpgInputItems().reduce((s, i) => s + i.price, 0);
+        }
+        function getUpgradeChance() {
+            if (!upgTargetItem || upgInputUids.length === 0) return 0;
+            const raw = (getUpgInputSum() / upgTargetItem.price) * 100;
+            return Math.max(0, Math.min(MAX_UPGRADE_CHANCE, raw));
+        }
+
+        function renderUpgSlots() {
+            const items = getUpgInputItems();
+            // Clean up uids that no longer exist
+            upgInputUids = items.map(i => i.uid);
+
+            document.querySelectorAll('.upg-slot').forEach((slot, idx) => {
+                const item = items[idx];
+                if (item) {
+                    slot.classList.add('filled');
+                    slot.innerHTML =
+                        '<img src="' + item.img + '" onerror="this.onerror=null;this.src=\'https://via.placeholder.com/40\'">' +
+                        '<div class="price-tag">' + item.price + '</div>';
+                } else {
+                    slot.classList.remove('filled');
+                    slot.innerHTML = '<i class="fa-solid fa-plus plus"></i>';
+                }
+            });
+            const countEl = $('upg-inputs-count');
+            if (countEl) countEl.innerText = items.length + '/' + UPG_MAX;
+        }
+
+        function renderUpgTarget() {
+            const el = $('upg-target');
+            if (!el) return;
+            if (upgTargetItem) {
+                el.classList.add('filled');
+                el.innerHTML =
+                    '<img src="' + upgTargetItem.img + '" onerror="this.onerror=null;this.src=\'https://via.placeholder.com/55\'">' +
+                    '<div class="label">' + escapeHtml(upgTargetItem.name) + '</div>' +
+                    '<div class="price">' + upgTargetItem.price + ' монет</div>';
+            } else {
+                el.classList.remove('filled');
+                el.innerHTML = '<i class="fa-solid fa-bullseye plus"></i><div class="hint">Цель</div>';
             }
-
-            container.innerHTML = inventory.map((item, index) =>
-                '<div class="item-card" onclick="BF.selectForUpgrade(' + index + ')">' +
-                    '<img src="' + item.img + '" onerror="this.onerror=null;this.src=\'https://via.placeholder.com/55\'">' +
-                    '<div class="item-name">' + escapeHtml(item.name) + '</div>' +
-                    '<div class="item-price">' + item.price + ' монет</div>' +
-                    '<button class="sell-btn" onclick="event.stopPropagation();BF.sellItem(' + index + ')">Продать</button>' +
-                '</div>'
-            ).join('');
         }
 
-        function clearInputSelection() {
-            selectedInputItem = null;
-            const slot = $('slot-input');
-            slot.classList.remove('selected');
-            slot.innerHTML = '<i class="fa-solid fa-plus-circle" style="font-size:24px; color:var(--text-muted); margin-bottom:6px;"></i>' +
-                             '<span style="font-size: 11px; color: var(--text-muted);">Из инвентаря</span>';
-        }
-
-        function clearTargetSelection() {
-            selectedTargetItem = null;
-            const slot = $('slot-target');
-            slot.classList.remove('selected');
-            slot.innerHTML = '<i class="fa-solid fa-bullseye" style="font-size:24px; color:var(--text-muted); margin-bottom:6px;"></i>' +
-                             '<span style="font-size: 11px; color: var(--text-muted);">Выбрать цель</span>';
-        }
-
-        function sellItem(index) {
-            const item = inventory[index];
-            if (!item) return;
-            if (selectedInputItem === item) clearInputSelection();
-
-            balance += item.price;
-            inventory.splice(index, 1);
-            updateUI();
-            calculateUpgradeChance();
-
-            notify({
-                type: 'info',
-                title: 'Продано',
-                message: '«' + item.name + '» продан за ' + item.price + ' монет.'
-            });
-        }
-
-        async function sellAll() {
-            if (!inventory.length) {
-                notify({ type: 'warning', message: 'Инвентарь уже пуст.' });
-                return;
+        function calculateUpgradeChance() {
+            const chance = getUpgradeChance();
+            const chanceEl = $('upgrade-chance');
+            if (chanceEl) chanceEl.innerText = chance.toFixed(1) + '%';
+            const circle = $('upgrade-progress');
+            if (circle) {
+                const offset = CIRCUMFERENCE - (CIRCUMFERENCE * (chance / 100));
+                circle.style.strokeDashoffset = offset;
             }
-
-            const total = inventory.reduce((sum, i) => sum + i.price, 0);
-            const count = inventory.length;
-
-            const ok = await confirmDialog({
-                title: 'Продать всё?',
-                message: 'Будет продано ' + count + ' предмет(ов) за ' + total + ' монет. Действие нельзя отменить.',
-                confirmText: 'Продать',
-                cancelText: 'Отмена',
-                variant: 'danger',
-                icon: 'fa-sack-dollar'
-            });
-            if (!ok) return;
-
-            inventory.forEach(item => { balance += item.price; });
-            inventory = [];
-            clearInputSelection();
-            updateUI();
-            calculateUpgradeChance();
-
-            notify({
-                type: 'success',
-                title: 'Всё продано',
-                message: 'Вы получили ' + total + ' монет за ' + count + ' предмет(ов).'
-            });
+            const btn = $('btn-upgrade');
+            if (btn) btn.disabled = !(upgInputUids.length > 0 && upgTargetItem);
         }
 
-        /* ========================= UPGRADER ============================ */
-        function selectForUpgrade(index) {
-            const item = inventory[index];
-            if (!item) return;
+        function onUpgSlotClick(idx) {
+            if (isUpgrading) return;
+            const items = getUpgInputItems();
+            const item = items[idx];
+            if (item) {
+                // remove
+                upgInputUids = upgInputUids.filter(u => u !== item.uid);
+                renderUpgSlots();
+                renderInventory();
+                calculateUpgradeChance();
+            } else {
+                // hint: go pick from inventory
+                notify({ type: 'info', message: 'Выберите предмет в инвентаре, чтобы добавить его в апгрейд.' });
+                switchTab('inventory');
+            }
+        }
 
-            selectedInputItem = item;
-            const slot = $('slot-input');
-            slot.classList.add('selected');
-            slot.innerHTML =
-                '<img src="' + item.img + '" onerror="this.onerror=null;this.src=\'https://via.placeholder.com/55\'">' +
-                '<div style="font-size:10px; font-weight:700; margin-top:2px;">' + escapeHtml(item.name) + '</div>' +
-                '<div style="font-size:10px; color:var(--accent-gold); font-weight:800;">' + item.price + '</div>';
-
-            calculateUpgradeChance();
-            switchTab('upgrader');
+        function onUpgTargetClick() {
+            if (isUpgrading) return;
+            if (upgTargetItem) {
+                upgTargetItem = null;
+                renderUpgTarget();
+                calculateUpgradeChance();
+            } else {
+                openTargetSelector();
+            }
         }
 
         function openTargetSelector() {
@@ -1360,139 +1742,619 @@
             $('target-modal').classList.add('active');
         }
 
-        function closeTargetModal() {
-            $('target-modal').classList.remove('active');
-        }
+        function closeTargetModal() { $('target-modal').classList.remove('active'); }
 
         function chooseTargetItem(id) {
             const item = ITEMS.find(i => i.id === id);
             if (!item) return;
-
-            selectedTargetItem = item;
-            const slot = $('slot-target');
-            slot.classList.add('selected');
-            slot.innerHTML =
-                '<img src="' + item.img + '" onerror="this.onerror=null;this.src=\'https://via.placeholder.com/55\'">' +
-                '<div style="font-size:10px; font-weight:700; margin-top:2px;">' + escapeHtml(item.name) + '</div>' +
-                '<div style="font-size:10px; color:var(--accent-gold); font-weight:800;">' + item.price + '</div>';
-
-            closeTargetModal();
+            upgTargetItem = item;
+            renderUpgTarget();
             calculateUpgradeChance();
-        }
-
-        function getUpgradeChance() {
-            if (!selectedInputItem || !selectedTargetItem) return 0;
-            const raw = (selectedInputItem.price / selectedTargetItem.price) * 100;
-            return Math.max(0, Math.min(MAX_UPGRADE_CHANCE, raw));
-        }
-
-        function calculateUpgradeChance() {
-            const chance = getUpgradeChance();
-            $('upgrade-chance').innerText = chance.toFixed(1) + '%';
-
-            const offset = CIRCUMFERENCE - (CIRCUMFERENCE * (chance / 100));
-            $('upgrade-progress').style.strokeDashoffset = offset;
-
-            $('btn-upgrade').disabled = !(selectedInputItem && selectedTargetItem);
+            closeTargetModal();
         }
 
         function runUpgradeAnimation() {
-            if (!selectedInputItem || !selectedTargetItem || isUpgrading) return;
-
-            const idx = inventory.indexOf(selectedInputItem);
-            if (idx === -1) {
-                notify({ type: 'error', message: 'Этот предмет больше не в инвентаре.' });
-                clearInputSelection();
-                calculateUpgradeChance();
-                return;
-            }
+            if (isUpgrading) return;
+            const inputs = getUpgInputItems();
+            if (inputs.length === 0 || !upgTargetItem) return;
 
             isUpgrading = true;
             $('btn-upgrade').disabled = true;
 
-            const chance      = getUpgradeChance();
+            const chance = getUpgradeChance();
             const chanceAngle = chance * 3.6;
-            const isSuccess   = (Math.random() * 100) <= chance;
+            const isSuccess = (Math.random() * 100) <= chance;
 
             const screenAngle = isSuccess
                 ? Math.random() * chanceAngle
                 : chanceAngle + Math.random() * (360 - chanceAngle);
-
-            const targetAngle   = ((screenAngle - 180) % 360 + 360) % 360;
+            const targetAngle = ((screenAngle - 180) % 360 + 360) % 360;
             const totalRotation = 360 * 6 + targetAngle;
 
             const arrow = $('upgrader-arrow');
             void arrow.offsetWidth;
             arrow.style.transition = 'transform 3.5s cubic-bezier(0.15, 0.9, 0.2, 1)';
-            arrow.style.transform  = 'translate(-50%, 0) rotate(' + totalRotation + 'deg)';
+            arrow.style.transform = 'translate(-50%, 0) rotate(' + totalRotation + 'deg)';
 
-            const inputName  = selectedInputItem.name;
-            const targetName = selectedTargetItem.name;
-            const targetItemCopy = Object.assign({}, selectedTargetItem);
+            const inputNames = inputs.map(i => i.name).join(', ');
+            const inputSum = getUpgInputSum();
+            const targetName = upgTargetItem.name;
+            const targetItemCopy = Object.assign({}, upgTargetItem);
+            const inputUids = inputs.map(i => i.uid);
 
             setTimeout(() => {
-                inventory.splice(idx, 1);
+                // Remove inputs from inventory
+                inputUids.forEach(uid => {
+                    const i = inventory.findIndex(it => it.uid === uid);
+                    if (i !== -1) inventory.splice(i, 1);
+                });
 
                 if (isSuccess) {
-                    inventory.push(targetItemCopy);
+                    const newItem = makeInvItem(targetItemCopy);
+                    inventory.push(newItem);
+                    trackUnique(targetItemCopy);
+                    stats.upgradeSuccess += 1;
+                    daily.upgradeSuccess += 1;
+                    saveStats(); saveDaily();
                     notify({
                         type: 'success',
                         title: '🎉 Апгрейд удался!',
-                        message: '«' + inputName + '» → «' + targetName + '» (' + targetItemCopy.price + ' монет).',
+                        message: inputs.length + ' предмет(ов) (' + inputSum + ') → «' + targetName + '» (' + targetItemCopy.price + ' монет).',
                         duration: 4500
                     });
+                    // Feed
+                    pushDrop({ nick: MY_NAME, itemName: targetName, itemImg: targetItemCopy.img, me: true, ts: Date.now() });
                 } else {
+                    stats.upgradeFail += 1;
+                    saveStats();
                     notify({
                         type: 'error',
                         title: '💥 Апгрейд провален',
-                        message: '«' + inputName + '» сгорел. Стрелка попала в красный сектор.',
+                        message: 'Потеряно ' + inputs.length + ' предмет(ов) на ' + inputSum + ' монет.',
                         duration: 4500
                     });
                 }
 
                 isUpgrading = false;
-                clearInputSelection();
-                clearTargetSelection();
-
+                upgInputUids = [];
+                upgTargetItem = null;
                 arrow.style.transition = 'none';
-                arrow.style.transform  = 'translate(-50%, 0) rotate(0deg)';
+                arrow.style.transform = 'translate(-50%, 0) rotate(0deg)';
                 void arrow.offsetWidth;
 
+                renderUpgSlots();
+                renderUpgTarget();
                 calculateUpgradeChance();
                 updateUI();
             }, 3600);
         }
 
-        /* ==================== BACKDROP CLOSE (UX) ====================== */
+        /* ============================ PVP ============================= */
+        function openPvpPicker() {
+            if (isPvPing) return;
+            if (!inventory.length) {
+                notify({ type: 'warning', message: 'Инвентарь пуст — нечего ставить.' });
+                return;
+            }
+            const list = $('pvp-picker-list');
+            list.innerHTML = inventory.map((item, idx) =>
+                '<div class="selector-item" onclick="BF.choosePvpItem(' + idx + ')">' +
+                    '<img src="' + item.img + '" onerror="this.onerror=null;this.src=\'https://via.placeholder.com/40\'">' +
+                    '<div>' +
+                        '<div style="font-size:12px; font-weight:700;">' + escapeHtml(item.name) + '</div>' +
+                        '<div style="font-size:11px; color:var(--accent-gold); font-weight:800;">' + item.price + ' монет</div>' +
+                    '</div>' +
+                '</div>'
+            ).join('');
+            $('pvp-picker-modal').classList.add('active');
+        }
+        function closePvpPicker() { $('pvp-picker-modal').classList.remove('active'); }
+
+        function choosePvpItem(idx) {
+            const item = inventory[idx];
+            if (!item) return;
+            pvpMyUid = item.uid;
+
+            // Bot picks similar price
+            const lo = item.price / 4;
+            const hi = item.price * 4;
+            let pool = ITEMS.filter(i => i.price >= lo && i.price <= hi);
+            if (!pool.length) {
+                // closest by price
+                const sorted = ITEMS.slice().sort((a, b) => Math.abs(a.price - item.price) - Math.abs(b.price - item.price));
+                pool = [sorted[0]];
+            }
+            pvpBotItem = pool[Math.floor(Math.random() * pool.length)];
+
+            renderPvpSlots();
+            closePvpPicker();
+            $('pvp-info').innerHTML = 'Против вас: <b>«' + escapeHtml(pvpBotItem.name) + '»</b> (' + pvpBotItem.price + ' монет). Шанс 50/50.';
+        }
+
+        function renderPvpSlots() {
+            const youEl = $('pvp-you-slot');
+            const botEl = $('pvp-bot-slot');
+            const myItem = pvpMyUid ? inventory.find(i => i.uid === pvpMyUid) : null;
+
+            if (myItem) {
+                youEl.classList.add('filled');
+                youEl.innerHTML =
+                    '<img src="' + myItem.img + '" onerror="this.onerror=null;this.src=\'https://via.placeholder.com/70\'">' +
+                    '<div class="label">' + escapeHtml(myItem.name) + '</div>' +
+                    '<div class="price">' + myItem.price + ' монет</div>';
+            } else {
+                youEl.classList.remove('filled');
+                youEl.innerHTML = '<i class="fa-solid fa-plus plus"></i>';
+            }
+
+            if (pvpBotItem) {
+                botEl.classList.add('filled');
+                botEl.innerHTML =
+                    '<img src="' + pvpBotItem.img + '" onerror="this.onerror=null;this.src=\'https://placeholder.com/70\'">' +
+                    '<div class="label">' + escapeHtml(pvpBotItem.name) + '</div>' +
+                    '<div class="price">' + pvpBotItem.price + ' монет</div>';
+            } else {
+                botEl.classList.remove('filled');
+                botEl.innerHTML = '<i class="fa-solid fa-robot plus"></i>';
+            }
+
+            $('btn-pvp').disabled = !(myItem && pvpBotItem);
+        }
+
+        function runPvp() {
+            if (isPvPing) return;
+            const myItem = pvpMyUid ? inventory.find(i => i.uid === pvpMyUid) : null;
+            if (!myItem || !pvpBotItem) return;
+
+            isPvPing = true;
+            $('btn-pvp').disabled = true;
+            $('pvp-you-slot').classList.add('pvp-slot-shake');
+            $('pvp-bot-slot').classList.add('pvp-slot-shake');
+            $('pvp-info').innerHTML = '⚔️ Бой идёт...';
+
+            setTimeout(() => {
+                $('pvp-you-slot').classList.remove('pvp-slot-shake');
+                $('pvp-bot-slot').classList.remove('pvp-slot-shake');
+
+                const iWin = Math.random() < 0.5;
+
+                if (iWin) {
+                    // Win: remove my item, get both items
+                    const myIdx = inventory.findIndex(i => i.uid === myItem.uid);
+                    if (myIdx !== -1) inventory.splice(myIdx, 1);
+                    inventory.push(makeInvItem(pvpBotItem));
+                    trackUnique(pvpBotItem);
+                    stats.pvpWins += 1;
+                    saveStats();
+                    notify({
+                        type: 'success',
+                        title: '⚔️ Победа!',
+                        message: 'Вы забрали «' + myItem.name + '» + «' + pvpBotItem.name + '».',
+                        duration: 4500
+                    });
+                    pushDrop({ nick: MY_NAME, itemName: pvpBotItem.name, itemImg: pvpBotItem.img, me: true, ts: Date.now() });
+                } else {
+                    // Lose: lose my item
+                    const myIdx = inventory.findIndex(i => i.uid === myItem.uid);
+                    if (myIdx !== -1) inventory.splice(myIdx, 1);
+                    stats.pvpLosses += 1;
+                    saveStats();
+                    notify({
+                        type: 'error',
+                        title: '💀 Поражение',
+                        message: 'Потерян «' + myItem.name + '».',
+                        duration: 4500
+                    });
+                }
+
+                isPvPing = false;
+                pvpMyUid = null;
+                pvpBotItem = null;
+                $('pvp-info').innerHTML = 'Выберите предмет из инвентаря — бот подберёт соперника похожей цены. Победитель забирает оба предмета. Шанс 50/50.';
+                renderPvpSlots();
+                updateUI();
+            }, 2600);
+        }
+
+        /* ========================== QUESTS ============================ */
+        function getStatValue(key) {
+            if (key === 'uniqueCount') return stats.uniqueCollected.length;
+            return stats[key] || 0;
+        }
+
+        function checkAchievements() {
+            let anyNew = false;
+            ACHIEVEMENTS.forEach(a => {
+                if (achievements[a.id]) return;
+                const cur = getStatValue(a.stat);
+                if (cur >= a.goal) {
+                    achievements[a.id] = true;
+                    addCoins(a.reward);
+                    anyNew = true;
+                    notify({
+                        type: 'success',
+                        title: '🏆 Достижение!',
+                        message: '«' + a.title + '» — награда: +' + a.reward + ' монет.',
+                        duration: 5000
+                    });
+                }
+            });
+            if (anyNew) saveAchievements();
+        }
+
+        function checkDailyQuests() {
+            let anyNew = false;
+            DAILY_QUESTS.forEach(q => {
+                if (daily.claimed[q.id]) return;
+                const cur = daily[q.stat] || 0;
+                if (cur >= q.goal) {
+                    daily.claimed[q.id] = true;
+                    addCoins(q.reward);
+                    anyNew = true;
+                    notify({
+                        type: 'success',
+                        title: '✅ Ежедневка!',
+                        message: '«' + q.title + '» — награда: +' + q.reward + ' монет.',
+                        duration: 4500
+                    });
+                }
+            });
+            if (anyNew) saveDaily();
+        }
+
+        function renderQuests() {
+            checkDailyQuests();
+
+            const dailyEl = $('daily-quest-list');
+            if (dailyEl) {
+                dailyEl.innerHTML = DAILY_QUESTS.map(q => {
+                    const cur = Math.min(daily[q.stat] || 0, q.goal);
+                    const done = !!daily.claimed[q.id];
+                    const pct = (cur / q.goal) * 100;
+                    return '<div class="quest-card' + (done ? ' done' : '') + '">' +
+                        '<div class="quest-card__icon"><i class="fa-solid ' + q.icon + '"></i></div>' +
+                        '<div class="quest-card__body">' +
+                            '<div class="quest-card__title">' + escapeHtml(q.title) + '</div>' +
+                            '<div class="quest-card__desc">' + escapeHtml(q.desc) + '</div>' +
+                            '<div class="quest-card__progress"><div class="quest-card__progress-bar" style="width:' + pct + '%"></div></div>' +
+                        '</div>' +
+                        '<div class="quest-card__reward">' +
+                            (done ? '<i class="fa-solid fa-circle-check" style="color:var(--accent-green);"></i>' : '<i class="fa-solid fa-coins"></i>+' + q.reward) +
+                        '</div>' +
+                    '</div>';
+                }).join('');
+            }
+
+            const achEl = $('achievements-list');
+            if (achEl) {
+                achEl.innerHTML = ACHIEVEMENTS.map(a => {
+                    const cur = Math.min(getStatValue(a.stat), a.goal);
+                    const done = !!achievements[a.id];
+                    const pct = (cur / a.goal) * 100;
+                    return '<div class="quest-card' + (done ? ' done' : '') + '">' +
+                        '<div class="quest-card__icon"><i class="fa-solid ' + a.icon + '"></i></div>' +
+                        '<div class="quest-card__body">' +
+                            '<div class="quest-card__title">' + escapeHtml(a.title) + '</div>' +
+                            '<div class="quest-card__desc">' + escapeHtml(a.desc) + ' (' + cur + '/' + a.goal + ')</div>' +
+                            '<div class="quest-card__progress"><div class="quest-card__progress-bar" style="width:' + pct + '%"></div></div>' +
+                        '</div>' +
+                        '<div class="quest-card__reward">' +
+                            (done ? '<i class="fa-solid fa-circle-check" style="color:var(--accent-green);"></i>' : '<i class="fa-solid fa-coins"></i>+' + a.reward) +
+                        '</div>' +
+                    '</div>';
+                }).join('');
+            }
+        }
+
+        /* ======================== SETTINGS ============================ */
+        function openSettings() {
+            renderSettingsThemes();
+            renderSettingsReferral();
+            renderSettingsStats();
+            showSettingsPanel('themes');
+            $('settings-modal').classList.add('active');
+        }
+        function closeSettings() { $('settings-modal').classList.remove('active'); }
+
+        function showSettingsPanel(name) {
+            document.querySelectorAll('.settings-tab').forEach(t => t.classList.toggle('active', t.dataset.panel === name));
+            document.querySelectorAll('.settings-panel').forEach(p => p.classList.remove('active'));
+            const panel = $('panel-' + name);
+            if (panel) panel.classList.add('active');
+        }
+
+        function renderSettingsThemes() {
+            const el = $('panel-themes');
+            const themeList = Object.entries(THEMES).map(([key, t]) => {
+                const owned = ownedThemes.includes(key);
+                const equipped = currentTheme === key;
+                const previewDots = t.preview.map(c =>
+                    '<div style="flex:1; height:100%; background:' + c + ';"></div>'
+                ).join('');
+
+                let status = '';
+                if (equipped) status = '<div class="theme-card__status equipped">✓ Активна</div>';
+                else if (owned) status = '<div class="theme-card__status owned">Куплена</div>';
+                else status = '<div class="theme-card__status">Купить за <span class="theme-card__price">' + t.price + ' монет</span></div>';
+
+                return '<div class="theme-card' + (equipped ? ' active' : '') + (owned ? '' : ' locked') + '" onclick="BF.selectTheme(\'' + key + '\')">' +
+                    '<div class="theme-card__preview" style="display:flex;">' + previewDots + '</div>' +
+                    '<div class="theme-card__body">' +
+                        '<div class="theme-card__name">' + escapeHtml(t.name) + '</div>' +
+                        status +
+                    '</div>' +
+                '</div>';
+            }).join('');
+            el.innerHTML = themeList;
+        }
+
+        async function selectTheme(key) {
+            const theme = THEMES[key];
+            if (!theme) return;
+
+            if (!ownedThemes.includes(key)) {
+                if (balance < theme.price) {
+                    notify({ type: 'error', message: 'Недостаточно монет. Нужно ' + theme.price + '.' });
+                    return;
+                }
+                const ok = await confirmDialog({
+                    title: 'Купить тему?',
+                    message: '«' + theme.name + '» за ' + theme.price + ' монет.',
+                    confirmText: 'Купить', cancelText: 'Отмена'
+                });
+                if (!ok) return;
+
+                balance -= theme.price;
+                ownedThemes.push(key);
+                saveThemes();
+                notify({ type: 'success', title: 'Тема куплена!', message: '«' + theme.name + '» активирована.' });
+            }
+
+            applyTheme(key);
+            renderSettingsThemes();
+            updateUI();
+            notify({ type: 'info', title: 'Тема', message: 'Установлена «' + theme.name + '».' });
+        }
+
+        function renderSettingsReferral() {
+            const el = $('panel-referral');
+            const code = MY_ID ? ('ref_' + MY_ID) : 'ref_demo';
+            const baseUrl = window.location.href.split('?')[0].split('#')[0];
+            const link = baseUrl + '?start=' + code;
+
+            el.innerHTML =
+                '<div class="settings-hint">Приглашай друзей — за каждого приглашённого ты получаешь <b style="color:var(--accent-gold);">+100 монет</b>, а друг <b style="color:var(--accent-gold);">+50 монет</b> при первом входе.</div>' +
+                '<div style="font-size:12px; color:var(--text-muted); margin: 10px 0 4px; font-weight:700;">Ваш код:</div>' +
+                '<div class="ref-box">' + escapeHtml(code) + '</div>' +
+                '<div style="font-size:12px; color:var(--text-muted); margin: 10px 0 4px; font-weight:700;">Ссылка для приглашения:</div>' +
+                '<div class="ref-box" id="ref-link-box">' + escapeHtml(link) + '</div>' +
+                '<button class="ref-btn" onclick="BF.copyRefLink()">📋 Скопировать ссылку</button>' +
+                '<button class="ref-btn secondary" onclick="BF.shareRefLink()" style="margin-top:8px;">📤 Поделиться</button>' +
+                '<div class="stat-row" style="margin-top:16px;"><span class="stat-row__label">Приглашено друзей</span><span class="stat-row__value">' + referrals + '</span></div>';
+        }
+
+        function copyRefLink() {
+            const code = MY_ID ? ('ref_' + MY_ID) : 'ref_demo';
+            const baseUrl = window.location.href.split('?')[0].split('#')[0];
+            const link = baseUrl + '?start=' + code;
+            navigator.clipboard.writeText(link).then(() => {
+                notify({ type: 'success', message: 'Ссылка скопирована в буфер.' });
+            }).catch(() => {
+                notify({ type: 'error', message: 'Не удалось скопировать. Скопируйте вручную.' });
+            });
+        }
+
+        function shareRefLink() {
+            const code = MY_ID ? ('ref_' + MY_ID) : 'ref_demo';
+            const baseUrl = window.location.href.split('?')[0].split('#')[0];
+            const link = baseUrl + '?start=' + code;
+            const text = 'Попробуй Brainrots Funny! Мой код: ' + code;
+            if (navigator.share) {
+                navigator.share({ title: 'Brainrots Funny', text: text, url: link }).catch(() => {});
+            } else if (tg && tg.openTelegramLink) {
+                const shareUrl = 'https://t.me/share/url?url=' + encodeURIComponent(link) + '&text=' + encodeURIComponent(text);
+                tg.openTelegramLink(shareUrl);
+            } else {
+                navigator.clipboard.writeText(link);
+                notify({ type: 'info', message: 'Ссылка скопирована.' });
+            }
+        }
+
+        function renderSettingsStats() {
+            const el = $('panel-stats');
+            const totalCases = stats.casesOpened || 0;
+            const totalSold = stats.itemsSold || 0;
+            const upOk = stats.upgradeSuccess || 0;
+            const upFail = stats.upgradeFail || 0;
+            const pvpW = stats.pvpWins || 0;
+            const pvpL = stats.pvpLosses || 0;
+            const unique = stats.uniqueCollected.length;
+            const earned = stats.totalEarned || 0;
+
+            el.innerHTML =
+                '<div class="stat-row"><span class="stat-row__label">Баланс</span><span class="stat-row__value" style="color:var(--accent-gold);">' + balance + '</span></div>' +
+                '<div class="stat-row"><span class="stat-row__label">Всего заработано</span><span class="stat-row__value">' + earned + '</span></div>' +
+                '<div class="stat-row"><span class="stat-row__label">Открыто кейсов</span><span class="stat-row__value">' + totalCases + '</span></div>' +
+                '<div class="stat-row"><span class="stat-row__label">Продано предметов</span><span class="stat-row__value">' + totalSold + '</span></div>' +
+                '<div class="stat-row"><span class="stat-row__label">Успешных апгрейдов</span><span class="stat-row__value" style="color:var(--accent-green);">' + upOk + '</span></div>' +
+                '<div class="stat-row"><span class="stat-row__label">Проваленных апгрейдов</span><span class="stat-row__value" style="color:var(--accent-red);">' + upFail + '</span></div>' +
+                '<div class="stat-row"><span class="stat-row__label">PvP побед</span><span class="stat-row__value" style="color:var(--accent-green);">' + pvpW + '</span></div>' +
+                '<div class="stat-row"><span class="stat-row__label">PvP поражений</span><span class="stat-row__value" style="color:var(--accent-red);">' + pvpL + '</span></div>' +
+                '<div class="stat-row"><span class="stat-row__label">Уникальных брейнротов</span><span class="stat-row__value">' + unique + ' / ' + ITEMS.length + '</span></div>' +
+                '<div class="stat-row"><span class="stat-row__label">Предметов в инвентаре</span><span class="stat-row__value">' + inventory.length + '</span></div>';
+        }
+
+        /* ========================= INVENTORY ========================== */
+        function renderInventory() {
+            const container = $('inventory-list');
+            if (!inventory.length) {
+                container.innerHTML = '<div class="empty-inv">Инвентарь пуст</div>';
+                return;
+            }
+            container.innerHTML = inventory.map((item, index) => {
+                const inUpg = upgInputUids.includes(item.uid);
+                return '<div class="item-card' + (inUpg ? ' in-upgrader' : '') + '" onclick="BF.addToUpgrader(' + index + ')">' +
+                    '<img src="' + item.img + '" onerror="this.onerror=null;this.src=\'https://via.placeholder.com/55\'">' +
+                    '<div class="item-name">' + escapeHtml(item.name) + '</div>' +
+                    '<div class="item-price">' + item.price + ' монет</div>' +
+                    '<button class="sell-btn" onclick="event.stopPropagation();BF.sellItem(' + index + ')">Продать</button>' +
+                '</div>';
+            }).join('');
+        }
+
+        function addToUpgrader(index) {
+            const item = inventory[index];
+            if (!item) return;
+
+            // If already in upgrader — remove
+            if (upgInputUids.includes(item.uid)) {
+                upgInputUids = upgInputUids.filter(u => u !== item.uid);
+                renderUpgSlots();
+                renderInventory();
+                calculateUpgradeChance();
+                return;
+            }
+
+            if (upgInputUids.length >= UPG_MAX) {
+                notify({ type: 'warning', message: 'Уже выбрано максимум ' + UPG_MAX + ' предметов.' });
+                return;
+            }
+            upgInputUids.push(item.uid);
+            renderUpgSlots();
+            renderInventory();
+            calculateUpgradeChance();
+            switchTab('upgrader');
+        }
+
+        function sellItem(index) {
+            const item = inventory[index];
+            if (!item) return;
+
+            if (upgInputUids.includes(item.uid)) {
+                upgInputUids = upgInputUids.filter(u => u !== item.uid);
+            }
+            if (pvpMyUid === item.uid) {
+                pvpMyUid = null;
+                renderPvpSlots();
+            }
+
+            addCoins(item.price);
+            inventory.splice(index, 1);
+            stats.itemsSold += 1;
+            daily.itemsSold += 1;
+            saveStats(); saveDaily();
+
+            renderUpgSlots();
+            renderUpgTarget();
+            calculateUpgradeChance();
+            updateUI();
+
+            notify({ type: 'info', title: 'Продано', message: '«' + item.name + '» продан за ' + item.price + ' монет.' });
+        }
+
+        async function sellAll() {
+            if (!inventory.length) {
+                notify({ type: 'warning', message: 'Инвентарь уже пуст.' });
+                return;
+            }
+            const total = inventory.reduce((s, i) => s + i.price, 0);
+            const count = inventory.length;
+            const ok = await confirmDialog({
+                title: 'Продать всё?',
+                message: 'Будет продано ' + count + ' предмет(ов) за ' + total + ' монет.',
+                confirmText: 'Продать', cancelText: 'Отмена',
+                variant: 'danger', icon: 'fa-sack-dollar'
+            });
+            if (!ok) return;
+
+            inventory.forEach(it => { addCoins(it.price); });
+            inventory = [];
+            upgInputUids = [];
+            pvpMyUid = null;
+            stats.itemsSold += count;
+            daily.itemsSold += count;
+            saveStats(); saveDaily();
+
+            renderUpgSlots();
+            renderUpgTarget();
+            calculateUpgradeChance();
+            renderPvpSlots();
+            updateUI();
+
+            notify({ type: 'success', title: 'Всё продано', message: 'Получено ' + total + ' монет за ' + count + ' предмет(ов).' });
+        }
+
+        /* ==================== BACKDROP CLOSE ======================== */
         document.querySelectorAll('.modal').forEach(modal => {
             modal.addEventListener('click', e => {
                 if (e.target !== modal) return;
                 if (modal.id === 'case-modal') closeModal();
                 if (modal.id === 'target-modal') closeTargetModal();
+                if (modal.id === 'pvp-picker-modal') closePvpPicker();
+                if (modal.id === 'settings-modal') closeSettings();
             });
         });
 
-        /* ======================== PUBLIC API =========================== */
-        window.BF = {
-            selectForUpgrade,
-            sellItem,
-            chooseTargetItem,
-            notify,
-            confirm: confirmDialog
-        };
-        window.switchTab           = switchTab;
-        window.openCaseModal       = openCaseModal;
-        window.closeModal          = closeModal;
-        window.setMultiplier       = setMultiplier;
-        window.startCaseOpening    = startCaseOpening;
-        window.sellAll             = sellAll;
-        window.openTargetSelector  = openTargetSelector;
-        window.closeTargetModal    = closeTargetModal;
-        window.runUpgradeAnimation = runUpgradeAnimation;
+        /* ==================== REFERRAL CHECK ======================== */
+        function checkReferral() {
+            if (refUsed) return;
+            const params = new URLSearchParams(window.location.search);
+            const start = params.get('start');
+            if (!start || !start.startsWith('ref_')) return;
 
-        /* =========================== INIT ============================== */
+            const refId = start.slice(4);
+            if (MY_ID && String(MY_ID) === refId) return; // self
+
+            refUsed = true;
+            localStorage.setItem('bf_ref_used', '1');
+
+            // Invitee reward
+            addCoins(50);
+            notify({
+                type: 'success',
+                title: '🎁 Бонус за вход',
+                message: 'Вы пришли по приглашению! Получено +50 монет.',
+                duration: 5000
+            });
+            updateUI();
+        }
+
+        /* ==================== PUBLIC API ============================ */
+        window.BF = {
+            notify, confirm: confirmDialog,
+            addToUpgrader, sellItem, chooseTargetItem,
+            choosePvpItem,
+            selectTheme,
+            copyRefLink, shareRefLink
+        };
+        window.switchTab = switchTab;
+        window.openCaseModal = openCaseModal;
+        window.closeModal = closeModal;
+        window.setMultiplier = setMultiplier;
+        window.startCaseOpening = startCaseOpening;
+        window.sellAll = sellAll;
+        window.openTargetSelector = openTargetSelector;
+        window.closeTargetModal = closeTargetModal;
+        window.onUpgSlotClick = onUpgSlotClick;
+        window.onUpgTargetClick = onUpgTargetClick;
+        window.runUpgradeAnimation = runUpgradeAnimation;
+        window.openPvpPicker = openPvpPicker;
+        window.closePvpPicker = closePvpPicker;
+        window.runPvp = runPvp;
+        window.openSettings = openSettings;
+        window.closeSettings = closeSettings;
+        window.showSettingsPanel = showSettingsPanel;
+
+        /* =========================== INIT =========================== */
+        applyTheme(currentTheme);
         updateUI();
+        renderUpgSlots();
+        renderUpgTarget();
         calculateUpgradeChance();
+        renderPvpSlots();
+        renderDropFeed();
+        scheduleFakeDrop();
+        checkReferral();
     })();
     </script>
 </body>
