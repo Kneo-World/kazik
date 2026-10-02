@@ -154,6 +154,7 @@
             cursor: pointer; transition: color 0.2s;
             width: 30px; height: 30px; line-height: 28px; text-align: center;
             border-radius: 50%;
+            z-index: 2;
         }
         .close-modal:hover { color: var(--text-main); background: rgba(255,255,255,0.05); }
 
@@ -179,12 +180,20 @@
         .btn-action:active { transform: scale(0.98); }
         .btn-action:disabled { background: #2a3245; color: #5d667a; cursor: not-allowed; }
 
-        /* ============ ROULETTE ============ */
+        /* ============ ROULETTES STACK ============ */
+        .roulettes-stack {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
         .roulette-container {
             width: 100%; height: 110px; background: #0d1017;
             border: 2px solid var(--border-color); border-radius: 12px;
-            position: relative; overflow: hidden; margin: 15px 0; display: none;
+            position: relative; overflow: hidden;
         }
+        .roulettes-stack .roulette-container { margin: 0; }
 
         .roulette-pointer {
             position: absolute; top: 0; left: 50%; transform: translateX(-50%);
@@ -386,50 +395,35 @@
             animation: toastIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
 
-        .bf-toast.closing {
-            animation: toastOut 0.3s ease forwards;
-        }
+        .bf-toast.closing { animation: toastOut 0.3s ease forwards; }
 
-        @keyframes toastIn {
-            to { transform: translateY(0); opacity: 1; }
-        }
-        @keyframes toastOut {
-            to { transform: translateY(-120%); opacity: 0; }
-        }
+        @keyframes toastIn { to { transform: translateY(0); opacity: 1; } }
+        @keyframes toastOut { to { transform: translateY(-120%); opacity: 0; } }
 
         .bf-toast__icon {
             flex-shrink: 0;
-            width: 34px;
-            height: 34px;
+            width: 34px; height: 34px;
             border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: flex; align-items: center; justify-content: center;
             font-size: 16px;
         }
 
         .bf-toast__body { flex: 1; min-width: 0; }
 
         .bf-toast__title {
-            font-size: 13px;
-            font-weight: 800;
-            margin-bottom: 2px;
-            letter-spacing: 0.2px;
+            font-size: 13px; font-weight: 800;
+            margin-bottom: 2px; letter-spacing: 0.2px;
         }
 
         .bf-toast__msg {
-            font-size: 12.5px;
-            font-weight: 500;
-            color: var(--text-muted);
-            word-wrap: break-word;
+            font-size: 12.5px; font-weight: 500;
+            color: var(--text-muted); word-wrap: break-word;
         }
 
         .bf-toast__progress {
             position: absolute;
-            bottom: 0;
-            left: 0;
-            height: 3px;
-            width: 100%;
+            bottom: 0; left: 0;
+            height: 3px; width: 100%;
             transform-origin: left center;
             animation: toastProgress linear forwards;
         }
@@ -439,7 +433,6 @@
             to   { transform: scaleX(0); }
         }
 
-        /* Variants */
         .bf-toast--success { border-color: rgba(46, 204, 113, 0.5); background: linear-gradient(90deg, rgba(46,204,113,0.12), #1c2230 40%); }
         .bf-toast--success .bf-toast__icon { background: rgba(46, 204, 113, 0.2); color: var(--accent-green); }
         .bf-toast--success .bf-toast__progress { background: var(--accent-green); }
@@ -503,9 +496,7 @@
             color: var(--text-muted); margin-bottom: 20px;
         }
 
-        .bf-confirm__actions {
-            display: flex; gap: 10px;
-        }
+        .bf-confirm__actions { display: flex; gap: 10px; }
 
         .bf-confirm__btn {
             flex: 1;
@@ -518,22 +509,15 @@
         .bf-confirm__btn:active { transform: scale(0.97); }
 
         .bf-confirm__btn--cancel {
-            background: #1c2230;
-            color: var(--text-muted);
+            background: #1c2230; color: var(--text-muted);
             border: 1px solid var(--border-color);
         }
         .bf-confirm__btn--cancel:hover { color: var(--text-main); }
 
-        .bf-confirm__btn--confirm {
-            background: var(--accent-blue);
-            color: #fff;
-        }
+        .bf-confirm__btn--confirm { background: var(--accent-blue); color: #fff; }
         .bf-confirm__btn--confirm:hover { filter: brightness(1.1); }
 
-        .bf-confirm__btn--danger {
-            background: var(--accent-red);
-            color: #fff;
-        }
+        .bf-confirm__btn--danger { background: var(--accent-red); color: #fff; }
         .bf-confirm__btn--danger:hover { filter: brightness(1.1); }
     </style>
 </head>
@@ -581,6 +565,13 @@
                      onerror="this.onerror=null;this.src='https://via.placeholder.com/110?text=BASE+CASE'">
                 <div class="case-title">Начальный</div>
                 <div class="case-price"><i class="fa-solid fa-coins"></i> 9 монет</div>
+            </div>
+
+            <div class="case-card" onclick="openCaseModal('bro')">
+                <img src="assets/cases/bro.png" class="case-img" alt="Bro Case"
+                     onerror="this.onerror=null;this.src='https://via.placeholder.com/110?text=BRO+CASE'">
+                <div class="case-title">Про Бро</div>
+                <div class="case-price"><i class="fa-solid fa-coins"></i> 25 монет</div>
             </div>
 
         </div>
@@ -633,10 +624,7 @@
             <span class="close-modal" onclick="closeModal()">&times;</span>
             <h3 id="modal-case-title" style="font-size: 20px;">Кейс</h3>
 
-            <div class="roulette-container" id="roulette-box">
-                <div class="roulette-pointer"></div>
-                <div class="roulette-track" id="roulette-track"></div>
-            </div>
+            <div class="roulettes-stack" id="roulettes-stack"></div>
 
             <img id="modal-case-img" src="" alt=""
                  style="width: 100px; height: 100px; object-fit: contain; margin: 10px 0;"
@@ -674,7 +662,6 @@
         'use strict';
 
         /* ============================ CONFIG ============================ */
-        const BASE_CASE_PRICE = 9;
         const FREE_COOLDOWN   = 12 * 3600 * 1000;
         const MAX_UPGRADE_CHANCE = 95;
         const ROULETTE_WIN_INDEX = 20;
@@ -695,6 +682,72 @@
             { id: 'yinyang',   name: 'Yin Yang Slap',       price: 20,    img: 'assets/brainrots/YinYangSlap.png' },
             { id: 'skibidi',   name: 'Skibidi Toilet',      price: 13154, img: 'assets/brainrots/skibidi_toilet.png' }
         ];
+
+        /* ============================================================== */
+        /* ================= КОНФИГУРАЦИЯ КЕЙСОВ ======================= */
+        /* ============================================================== */
+        /* ВАЖНО: предметы в loot.items — единственный источник дропа.    */
+        /* Если предмета тут нет — он НЕ выпадет из этого кейса.          */
+        /* Skibidi Toilet намеренно отсутствует во всех кейсах —          */
+        /* получить его можно ТОЛЬКО через апгрейдер.                     */
+        const CASE_PRICES = {
+            free: 0,
+            base: 9,
+            bro:  25
+        };
+
+        const CASE_TITLES = {
+            free: 'Бесплатный Кейс',
+            base: 'Начальный Кейс',
+            bro:  'Про Бро Кейс'
+        };
+
+        const CASE_IMAGES = {
+            free: 'assets/cases/free.png',
+            base: 'assets/cases/base.png',
+            bro:  'assets/cases/bro.png'
+        };
+
+        const CASE_LOOT = {
+            // Бесплатный: 90% монеты, 10% предметы (только дешёвые)
+            free: {
+                coinChance: 90,
+                coins: [
+                    { amount: 2, weight: 30 },
+                    { amount: 3, weight: 40 },
+                    { amount: 5, weight: 30 }
+                ],
+                items: [
+                    { item: ITEMS[0], weight: 70 },   // Los Trios
+                    { item: ITEMS[1], weight: 30 }    // 67
+                ]
+            },
+            // Начальный: только 4 предмета, никаких дорогих дропов
+            base: {
+                coinChance: 0,
+                coins: [],
+                items: [
+                    { item: ITEMS[0], weight: 30 },   // Los Trios
+                    { item: ITEMS[1], weight: 30 },   // 67
+                    { item: ITEMS[3], weight: 25 },   // Candy Slap
+                    { item: ITEMS[6], weight: 15 }    // La Grande
+                ]
+            },
+            // Про Бро: всё, что не попало в другие кейсы и не Skibidi
+            bro: {
+                coinChance: 0,
+                coins: [],
+                items: [
+                    { item: ITEMS[2],  weight: 25 },  // Spinny Hammy (5)
+                    { item: ITEMS[4],  weight: 20 },  // Los Noobinis (7)
+                    { item: ITEMS[5],  weight: 18 },  // Tang Tang Keletang (8)
+                    { item: ITEMS[7],  weight: 15 },  // Tictac Sahur (12)
+                    { item: ITEMS[8],  weight: 10 },  // Bacuru and Egguru (12)
+                    { item: ITEMS[9],  weight: 8  },  // Los 67 (12)
+                    { item: ITEMS[10], weight: 4  }   // Yin Yang Slap (20)
+                ]
+            }
+        };
 
         /* ======================= TELEGRAM INIT ========================= */
         const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
@@ -739,14 +792,6 @@
             return toastContainer;
         }
 
-        /**
-         * Показать тост-уведомление.
-         * @param {Object} opts
-         * @param {'success'|'error'|'warning'|'info'} [opts.type='info']
-         * @param {string} [opts.title]
-         * @param {string} opts.message
-         * @param {number} [opts.duration=3500]
-         */
         function notify(opts) {
             if (typeof opts === 'string') opts = { message: opts };
             const type = opts.type || 'info';
@@ -774,7 +819,6 @@
                 closed = true;
                 el.classList.add('closing');
                 el.addEventListener('animationend', () => el.remove(), { once: true });
-                // страховка на случай если animationend не сработал
                 setTimeout(() => el.remove(), 400);
             };
 
@@ -784,16 +828,6 @@
             return { close: close, el: el };
         }
 
-        /**
-         * Кастомный confirm. Возвращает Promise<boolean>.
-         * @param {Object} opts
-         * @param {string} [opts.title='Подтверждение']
-         * @param {string} [opts.message='']
-         * @param {string} [opts.confirmText='OK']
-         * @param {string} [opts.cancelText='Отмена']
-         * @param {'default'|'danger'|'warning'} [opts.variant='default']
-         * @param {string} [opts.icon]
-         */
         function confirmDialog(opts) {
             opts = opts || {};
             return new Promise(resolve => {
@@ -838,7 +872,6 @@
                 overlay.querySelector('[data-act="cancel"]').addEventListener('click', () => finish(false));
                 overlay.addEventListener('click', e => { if (e.target === overlay) finish(false); });
 
-                // Esc для отмены
                 const escHandler = (e) => {
                     if (e.key === 'Escape') { document.removeEventListener('keydown', escHandler); finish(false); }
                 };
@@ -899,6 +932,16 @@
             el.classList.add('bump');
         }
 
+        function weightedPick(list) {
+            const total = list.reduce((s, i) => s + (i.weight || 1), 0);
+            let r = Math.random() * total;
+            for (const entry of list) {
+                r -= (entry.weight || 1);
+                if (r <= 0) return entry;
+            }
+            return list[list.length - 1];
+        }
+
         /* ============================ UI =============================== */
         let prevBalance = balance;
         function updateUI() {
@@ -950,43 +993,51 @@
         /* ========================= CASE MODAL ========================== */
         function openCaseModal(type) {
             if (isOpening) return;
+            if (!CASE_LOOT[type]) return;
+
             activeCaseType = type;
             activeMultiplier = 1;
             setMultiplier(1);
 
             $('modal-win-area').innerHTML = '';
-            $('roulette-box').style.display = 'none';
+            const stack = $('roulettes-stack');
+            stack.innerHTML = '';
+            stack.style.display = 'none';
             $('modal-case-img').style.display = 'block';
 
+            // Free-кейс — множители недоступны
             $('mult-selector-box').style.display = (type === 'free') ? 'none' : 'flex';
 
-            if (type === 'free') {
-                $('modal-case-title').innerText = 'Бесплатный Кейс';
-                $('modal-case-img').src = 'assets/cases/free.png';
-                renderLootGrid([
-                    { name: '2 Монеты', type: 'coin', val: 2 },
-                    { name: '3 Монеты', type: 'coin', val: 3 },
-                    { name: '5 Монет',  type: 'coin', val: 5 },
-                    ITEMS[0],
-                    ITEMS[1]
-                ]);
-            } else {
-                $('modal-case-title').innerText = 'Начальный Кейс';
-                $('modal-case-img').src = 'assets/cases/base.png';
-                renderLootGrid(ITEMS.slice(0, 8));
-            }
+            $('modal-case-title').innerText = CASE_TITLES[type];
+            $('modal-case-img').src = CASE_IMAGES[type];
+
+            // Превью строится из реальной таблицы дропа этого кейса
+            renderLootGrid(getCasePreview(type));
 
             $('case-modal').classList.add('active');
             updateModalBtn();
         }
 
+        function getCasePreview(type) {
+            const cfg = CASE_LOOT[type];
+            if (!cfg) return [];
+            const preview = [];
+            cfg.coins.forEach(c => preview.push({ name: c.amount + ' Монет', type: 'coin', val: c.amount }));
+            cfg.items.forEach(e => preview.push(e.item));
+            return preview;
+        }
+
         function closeModal() {
             if (isOpening) return;
             $('case-modal').classList.remove('active');
+            const stack = $('roulettes-stack');
+            stack.innerHTML = '';
+            stack.style.display = 'none';
         }
 
         function setMultiplier(mult) {
             if (isOpening) return;
+            // В free-кейсе множители запрещены
             if (activeCaseType === 'free') mult = 1;
             activeMultiplier = mult;
 
@@ -1009,7 +1060,7 @@
                     btn.innerText = 'Открыть (Бесплатно)';
                 }
             } else {
-                const price = BASE_CASE_PRICE * activeMultiplier;
+                const price = CASE_PRICES[activeCaseType] * activeMultiplier;
                 btn.disabled = balance < price;
                 btn.innerText = 'Открыть x' + activeMultiplier + ' за ' + price + ' монет';
             }
@@ -1029,6 +1080,20 @@
             }).join('');
         }
 
+        /* ======================== DROP LOGIC =========================== */
+        // Возвращает { type: 'coin', amount } | { type: 'item', item }
+        function rollDrop(type) {
+            const cfg = CASE_LOOT[type];
+            if (!cfg) return null;
+
+            if (cfg.coins.length > 0 && Math.random() * 100 < cfg.coinChance) {
+                const picked = weightedPick(cfg.coins);
+                return { type: 'coin', amount: picked.amount };
+            }
+            const picked = weightedPick(cfg.items);
+            return { type: 'item', item: picked.item };
+        }
+
         /* ======================= CASE OPENING ========================== */
         function startCaseOpening() {
             if (isOpening) return;
@@ -1039,7 +1104,7 @@
                 saveState();
                 checkFreeTimer();
             } else {
-                const price = BASE_CASE_PRICE * activeMultiplier;
+                const price = CASE_PRICES[activeCaseType] * activeMultiplier;
                 if (balance < price) return;
                 balance -= price;
             }
@@ -1050,67 +1115,65 @@
             $('mult-selector-box').style.display = 'none';
             $('modal-win-area').innerHTML = '';
 
-            const rouletteBox = $('roulette-box');
-            const track       = $('roulette-track');
-            rouletteBox.style.display = 'block';
-
+            // Генерируем выигрыши
             const wonResults = [];
             for (let i = 0; i < activeMultiplier; i++) {
                 wonResults.push(rollDrop(activeCaseType));
             }
 
-            const trackItems = [];
-            for (let i = 0; i < ROULETTE_ITEMS_TOTAL; i++) {
-                trackItems.push(ITEMS[Math.floor(Math.random() * ITEMS.length)]);
-            }
-            const mainWin = wonResults[0];
-            if (mainWin.type === 'coin') {
-                trackItems[ROULETTE_WIN_INDEX] = { name: mainWin.amount + ' Монет', img: 'COIN', price: mainWin.amount };
-            } else {
-                trackItems[ROULETTE_WIN_INDEX] = mainWin.item;
-            }
+            // Строим N рулеток в стеке
+            const stack = $('roulettes-stack');
+            stack.innerHTML = '';
+            stack.style.display = 'flex';
 
-            track.style.transition = 'none';
-            track.style.transform  = 'translateX(0px)';
-            track.innerHTML = trackItems.map(item => {
-                const imgHTML = item.img === 'COIN'
-                    ? '<i class="fa-solid fa-coins" style="font-size:30px; color:var(--accent-gold); margin-bottom:4px;"></i>'
-                    : '<img src="' + item.img + '" onerror="this.onerror=null;this.src=\'https://via.placeholder.com/45\'">';
-                return '<div class="roulette-item">' + imgHTML +
-                       '<div style="font-weight:700;">' + escapeHtml(item.name) + '</div></div>';
-            }).join('');
-
-            const winEl       = track.children[ROULETTE_WIN_INDEX];
-            const containerW  = rouletteBox.clientWidth;
-            let translateX;
-
-            if (winEl && containerW > 0) {
-                const winCenter = winEl.offsetLeft + winEl.offsetWidth / 2;
-                const jitter    = (Math.random() - 0.5) * 40;
-                translateX = winCenter - containerW / 2 + jitter;
-            } else {
-                translateX = ROULETTE_WIN_INDEX * 100 + 50 - 190;
+            const instances = [];
+            for (let i = 0; i < activeMultiplier; i++) {
+                const inst = createRoulette(wonResults[i], activeCaseType);
+                stack.appendChild(inst.wrapper);
+                instances.push(inst);
             }
 
+            // Запускаем все анимации одновременно
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
-                    track.style.transition = 'transform 3s cubic-bezier(0.1, 1, 0.1, 1)';
-                    track.style.transform  = 'translateX(-' + translateX + 'px)';
+                    instances.forEach(inst => {
+                        const winEl = inst.track.children[ROULETTE_WIN_INDEX];
+                        const containerW = inst.wrapper.clientWidth;
+                        let translateX;
+
+                        if (winEl && containerW > 0) {
+                            const winCenter = winEl.offsetLeft + winEl.offsetWidth / 2;
+                            const jitter = (Math.random() - 0.5) * 40;
+                            translateX = winCenter - containerW / 2 + jitter;
+                        } else {
+                            translateX = ROULETTE_WIN_INDEX * 100 + 50 - 190;
+                        }
+
+                        inst.track.style.transition = 'transform 3s cubic-bezier(0.1, 1, 0.1, 1)';
+                        inst.track.style.transform = 'translateX(-' + translateX + 'px)';
+                    });
                 });
             });
 
+            // Финализируем
             setTimeout(() => {
                 isOpening = false;
+
                 let html = '<div class="won-items-container">';
+                let totalCoins = 0;
+                const itemNames = [];
 
                 wonResults.forEach(win => {
+                    if (!win) return;
                     if (win.type === 'coin') {
                         balance += win.amount;
+                        totalCoins += win.amount;
                         html += '<div class="won-card">' +
                                 '<i class="fa-solid fa-coins" style="font-size:36px; color:var(--accent-gold); margin:6px 0;"></i>' +
                                 '<div class="won-card-title">+' + win.amount + ' МОНЕТ</div></div>';
                     } else {
                         inventory.push(Object.assign({}, win.item));
+                        itemNames.push(win.item.name);
                         html += '<div class="won-card">' +
                                 '<img src="' + win.item.img + '" onerror="this.onerror=null;this.src=\'https://via.placeholder.com/50\'">' +
                                 '<div class="won-card-title">' + escapeHtml(win.item.name) + '</div>' +
@@ -1123,16 +1186,16 @@
                 updateUI();
                 updateModalBtn();
 
-                // Итоговое уведомление
+                // Итоговый тост
                 if (activeMultiplier === 1) {
                     const w = wonResults[0];
-                    if (w.type === 'coin') {
+                    if (w && w.type === 'coin') {
                         notify({
                             type: 'success',
                             title: 'Монеты!',
                             message: 'Вы получили +' + w.amount + ' монет из кейса.'
                         });
-                    } else {
+                    } else if (w) {
                         notify({
                             type: 'success',
                             title: 'Дроп!',
@@ -1140,32 +1203,47 @@
                         });
                     }
                 } else {
+                    const parts = [];
+                    if (totalCoins > 0) parts.push('+' + totalCoins + ' монет');
+                    if (itemNames.length > 0) parts.push(itemNames.length + ' предмет(ов)');
                     notify({
                         type: 'success',
                         title: 'Открыто x' + activeMultiplier,
-                        message: 'Все ' + activeMultiplier + ' предмета добавлены в инвентарь.'
+                        message: 'Получено: ' + parts.join(', ') + '.'
                     });
                 }
             }, 3200);
         }
 
-        /* ========================== DROP RATES ========================= */
-        function rollDrop(type) {
-            const rand = Math.random() * 100;
+        // Создаёт одну рулетку и возвращает { wrapper, track }
+        function createRoulette(win, caseType) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'roulette-container';
+            wrapper.innerHTML = '<div class="roulette-pointer"></div><div class="roulette-track"></div>';
+            const track = wrapper.querySelector('.roulette-track');
 
-            if (type === 'free') {
-                if (rand < 45) return { type: 'coin', amount: 2 };
-                if (rand < 75) return { type: 'coin', amount: 3 };
-                if (rand < 90) return { type: 'coin', amount: 5 };
-                if (rand < 97) return { type: 'item', item: ITEMS[0] };
-                return { type: 'item', item: ITEMS[1] };
+            // Лента собирается из настоящих дропов этого кейса — никаких «лишних» предметов
+            const trackEntries = [];
+            for (let i = 0; i < ROULETTE_ITEMS_TOTAL; i++) {
+                trackEntries.push(rollDrop(caseType));
             }
+            trackEntries[ROULETTE_WIN_INDEX] = win;
 
-            if (rand < 40) return { type: 'item', item: ITEMS[0] };
-            if (rand < 68) return { type: 'item', item: ITEMS[1] };
-            if (rand < 85) return { type: 'item', item: ITEMS[3] };
-            if (rand < 96) return { type: 'item', item: ITEMS[6] };
-            return { type: 'item', item: ITEMS[11] };
+            track.style.transition = 'none';
+            track.style.transform = 'translateX(0px)';
+            track.innerHTML = trackEntries.map(entry => {
+                if (!entry) return '';
+                if (entry.type === 'coin') {
+                    return '<div class="roulette-item">' +
+                        '<i class="fa-solid fa-coins" style="font-size:30px; color:var(--accent-gold); margin-bottom:4px;"></i>' +
+                        '<div style="font-weight:700;">' + entry.amount + ' Монет</div></div>';
+                }
+                return '<div class="roulette-item">' +
+                    '<img src="' + entry.item.img + '" onerror="this.onerror=null;this.src=\'https://via.placeholder.com/45\'">' +
+                    '<div style="font-weight:700;">' + escapeHtml(entry.item.name) + '</div></div>';
+            }).join('');
+
+            return { wrapper, track };
         }
 
         /* ========================= INVENTORY =========================== */
@@ -1348,7 +1426,6 @@
             arrow.style.transition = 'transform 3.5s cubic-bezier(0.15, 0.9, 0.2, 1)';
             arrow.style.transform  = 'translate(-50%, 0) rotate(' + totalRotation + 'deg)';
 
-            // запоминаем имена для уведомления
             const inputName  = selectedInputItem.name;
             const targetName = selectedTargetItem.name;
             const targetItemCopy = Object.assign({}, selectedTargetItem);
