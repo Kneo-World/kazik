@@ -86,6 +86,31 @@
             font-weight: 700;
         }
 
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .promo-btn {
+            background: #1c2230;
+            border: 1px solid var(--border-color);
+            color: var(--accent-blue);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 800;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: background 0.2s;
+        }
+
+        .promo-btn:active {
+            transform: scale(0.95);
+        }
+
         .balance-badge {
             background: #1c2230;
             padding: 6px 14px;
@@ -295,6 +320,32 @@
             background: #2a3245;
             color: #5d667a;
             cursor: not-allowed;
+        }
+
+        /* PROMO INPUT STYLES */
+        .promo-input-box {
+            margin: 20px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .promo-input {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            background: #11141d;
+            border: 1px solid var(--border-color);
+            color: #fff;
+            font-size: 15px;
+            text-align: center;
+            font-weight: 700;
+            outline: none;
+            text-transform: uppercase;
+        }
+
+        .promo-input:focus {
+            border-color: var(--accent-blue);
         }
 
         /* CASE OPEN ANIMATION ROULETTE */
@@ -614,9 +665,14 @@
                 <div style="font-size: 11px; color: var(--text-muted);">Brainrots Funny</div>
             </div>
         </div>
-        <div class="balance-badge">
-            <i class="fa-solid fa-coins"></i>
-            <span id="balance">0</span>
+        <div class="header-actions">
+            <button class="promo-btn" onclick="openPromoModal()">
+                <i class="fa-solid fa-ticket"></i> Промо
+            </button>
+            <div class="balance-badge">
+                <i class="fa-solid fa-coins"></i>
+                <span id="balance">0</span>
+            </div>
         </div>
     </header>
 
@@ -738,6 +794,18 @@
         </div>
     </div>
 
+    <!-- MODAL PROMO CODE -->
+    <div class="modal" id="promo-modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closePromoModal()">&times;</span>
+            <h3>Активация промокода</h3>
+            <div class="promo-input-box">
+                <input type="text" id="promo-code-input" class="promo-input" placeholder="Введите промокод">
+                <button class="btn-action" onclick="applyPromoCode()">Активировать</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // TELEGRAM WEBAPP INIT
         const tg = window.Telegram ? window.Telegram.WebApp : null;
@@ -774,6 +842,7 @@
         let balance = parseInt(localStorage.getItem('bf_balance')) || 0;
         let inventory = JSON.parse(localStorage.getItem('bf_inventory')) || [];
         let lastFreeTime = parseInt(localStorage.getItem('bf_last_free')) || 0;
+        let usedPromos = JSON.parse(localStorage.getItem('bf_used_promos')) || [];
 
         let activeCaseType = null;
         let activeMultiplier = 1;
@@ -806,6 +875,37 @@
             } else if (tab === 'inventory') {
                 document.querySelectorAll('.tab-btn')[2].classList.add('active');
                 document.getElementById('section-inventory').classList.add('active');
+            }
+        }
+
+        // PROMO CODE SYSTEM
+        function openPromoModal() {
+            document.getElementById('promo-modal').classList.add('active');
+            document.getElementById('promo-code-input').value = '';
+        }
+
+        function closePromoModal() {
+            document.getElementById('promo-modal').classList.remove('active');
+        }
+
+        function applyPromoCode() {
+            const input = document.getElementById('promo-code-input').value.trim().toLowerCase();
+            if (!input) return;
+
+            if (usedPromos.includes(input)) {
+                alert('⚠️ Вы уже активировали этот промокод!');
+                return;
+            }
+
+            if (input === 'free2026') {
+                balance += 2026;
+                usedPromos.push('free2026');
+                localStorage.setItem('bf_used_promos', JSON.stringify(usedPromos));
+                updateUI();
+                closePromoModal();
+                alert('🎉 Промокод активирован! Вы получили 2026 монет!');
+            } else {
+                alert('❌ Неверный промокод!');
             }
         }
 
@@ -947,12 +1047,29 @@
                 wonResults.push(rollDrop(activeCaseType));
             }
 
-            // Build Roulette Items Track
+            // Pool of items that ONLY belong to this specific case type
+            let casePool = [];
+            if (activeCaseType === 'free') {
+                casePool = [
+                    { name: '2 Монеты', img: 'COIN', price: 2 },
+                    { name: '3 Монеты', img: 'COIN', price: 3 },
+                    { name: '5 Монет', img: 'COIN', price: 5 },
+                    ITEMS[0],
+                    ITEMS[1]
+                ];
+            } else {
+                casePool = [
+                    ITEMS[0], ITEMS[1], ITEMS[3], ITEMS[6], ITEMS[11]
+                ];
+            }
+
+            // Build Roulette Items Track from current case pool only
             let trackItems = [];
             for (let i = 0; i < 25; i++) {
-                let randomItem = ITEMS[Math.floor(Math.random() * ITEMS.length)];
+                let randomItem = casePool[Math.floor(Math.random() * casePool.length)];
                 trackItems.push(randomItem);
             }
+
             // Put primary win result at position 20
             const mainWin = wonResults[0];
             if (mainWin.type === 'coin') {
@@ -975,7 +1092,6 @@
             // Trigger Animation
             setTimeout(() => {
                 track.style.transition = 'transform 3s cubic-bezier(0.1, 1, 0.1, 1)';
-                // Item width (90) + margin (10) = 100px. Target pos ~ 20 * 100 = -2000px
                 const randomOffset = Math.floor(Math.random() * 40) - 20;
                 track.style.transform = `translateX(-${1900 + randomOffset}px)`;
             }, 50);
@@ -1131,17 +1247,29 @@
             const btn = document.getElementById('btn-upgrade');
             btn.disabled = true;
 
-            const chance = (selectedInputItem.price / selectedTargetItem.price) * 100;
-            const isSuccess = (Math.random() * 100) <= chance;
+            let chance = (selectedInputItem.price / selectedTargetItem.price) * 100;
+            if (chance > 95) chance = 95;
 
+            const isSuccess = (Math.random() * 100) <= chance;
             const arrow = document.getElementById('upgrader-arrow');
             
-            // Random total angle: 5 to 8 full spins + target angle
-            let targetAngle = isSuccess 
-                ? Math.floor(Math.random() * (chance * 3.6)) 
-                : Math.floor((chance * 3.6) + Math.random() * ((100 - chance) * 3.6));
+            // Blue zone angle span from top (0 deg to winAngleDeg)
+            const winAngleDeg = (chance / 100) * 360;
 
-            let totalRotation = 360 * 6 + targetAngle;
+            let targetAngle;
+            if (isSuccess) {
+                // Land strictly inside blue sector (with 2 deg padding)
+                const minA = Math.min(2, winAngleDeg);
+                const maxA = Math.max(minA, winAngleDeg - 2);
+                targetAngle = minA + Math.random() * (maxA - minA);
+            } else {
+                // Land strictly inside dark/red sector
+                const minA = Math.min(358, winAngleDeg + 2);
+                const maxA = 358;
+                targetAngle = minA + Math.random() * (maxA - minA);
+            }
+
+            let totalRotation = (360 * 6) + targetAngle;
 
             arrow.style.transition = 'transform 3.5s cubic-bezier(0.15, 0.9, 0.2, 1)';
             arrow.style.transform = `translate(-50%, 0) rotate(${totalRotation}deg)`;
