@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Brainrots Funny</title>
-    <!-- Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <!-- FontAwesome icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -37,7 +35,6 @@
             overflow-x: hidden;
         }
 
-        /* HEADER */
         header {
             background: #11141d;
             padding: 12px 16px;
@@ -50,362 +47,169 @@
             z-index: 100;
         }
 
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        .user-profile { display: flex; align-items: center; gap: 10px; }
 
         .user-avatar {
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
+            width: 38px; height: 38px; border-radius: 50%;
             background: var(--accent-blue);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 16px;
-            overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: bold; font-size: 16px; overflow: hidden;
             border: 1px solid rgba(255,255,255,0.1);
         }
+        .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
-        .user-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .user-info {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .user-name {
-            font-size: 14px;
-            font-weight: 700;
-        }
+        .user-info { display: flex; flex-direction: column; }
+        .user-name { font-size: 14px; font-weight: 700; }
 
         .balance-badge {
-            background: #1c2230;
-            padding: 6px 14px;
-            border-radius: 20px;
+            background: #1c2230; padding: 6px 14px; border-radius: 20px;
             border: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-weight: 800;
-            color: var(--accent-gold);
-            font-size: 15px;
+            display: flex; align-items: center; gap: 6px;
+            font-weight: 800; color: var(--accent-gold); font-size: 15px;
             box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
         }
 
-        /* NAV TABS */
-        .tabs {
-            display: flex;
-            background: #11141d;
-            border-bottom: 1px solid var(--border-color);
-        }
+        .tabs { display: flex; background: #11141d; border-bottom: 1px solid var(--border-color); }
 
         .tab-btn {
-            flex: 1;
-            padding: 12px 0;
-            text-align: center;
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
+            flex: 1; padding: 12px 0; text-align: center;
+            background: none; border: none; color: var(--text-muted);
+            font-size: 13px; font-weight: 700; cursor: pointer;
             transition: all 0.2s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
+            display: flex; flex-direction: column; align-items: center; gap: 4px;
         }
-
-        .tab-btn i {
-            font-size: 16px;
-        }
-
+        .tab-btn i { font-size: 16px; }
         .tab-btn.active {
             color: var(--accent-blue);
             border-bottom: 3px solid var(--accent-blue);
             background: rgba(43, 107, 243, 0.05);
         }
 
-        /* SECTIONS */
-        .section {
-            display: none;
-            padding: 16px;
-        }
-
-        .section.active {
-            display: block;
-        }
+        .section { display: none; padding: 16px; }
+        .section.active { display: block; }
 
         .section-title {
-            font-size: 17px;
-            font-weight: 800;
-            margin-bottom: 14px;
-            color: var(--text-main);
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            font-size: 17px; font-weight: 800; margin-bottom: 14px;
+            color: var(--text-main); display: flex; align-items: center; gap: 8px;
         }
 
-        /* CASES GRID */
-        .cases-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-        }
+        .cases-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
 
         .case-card {
-            background: var(--card-bg);
-            border-radius: 14px;
-            padding: 16px;
-            border: 1px solid var(--border-color);
-            text-align: center;
-            position: relative;
-            cursor: pointer;
+            background: var(--card-bg); border-radius: 14px; padding: 16px;
+            border: 1px solid var(--border-color); text-align: center;
+            position: relative; cursor: pointer;
             transition: transform 0.15s, border-color 0.2s;
         }
-
-        .case-card:hover {
-            border-color: rgba(43, 107, 243, 0.5);
-        }
-
-        .case-card:active {
-            transform: scale(0.96);
-        }
+        .case-card:hover { border-color: rgba(43, 107, 243, 0.5); }
+        .case-card:active { transform: scale(0.96); }
 
         .case-img {
-            width: 110px;
-            height: 110px;
-            object-fit: contain;
-            margin: 0 auto 10px;
-            filter: drop-shadow(0 6px 12px rgba(0,0,0,0.6));
+            width: 110px; height: 110px; object-fit: contain;
+            margin: 0 auto 10px; filter: drop-shadow(0 6px 12px rgba(0,0,0,0.6));
         }
+        .case-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+        .case-price { font-size: 13px; color: var(--accent-gold); font-weight: 700; }
 
-        .case-title {
-            font-size: 15px;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-
-        .case-price {
-            font-size: 13px;
-            color: var(--accent-gold);
-            font-weight: 700;
-        }
-
-        /* MODAL WINDOWS */
         .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(5px);
-            z-index: 200;
-            justify-content: center;
-            align-items: center;
-            padding: 16px;
+            display: none; position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%; background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(5px); z-index: 200;
+            justify-content: center; align-items: center; padding: 16px;
         }
-
-        .modal.active {
-            display: flex;
-        }
+        .modal.active { display: flex; }
 
         .modal-content {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            width: 100%;
-            max-width: 420px;
-            padding: 20px;
-            text-align: center;
-            position: relative;
-            max-height: 90vh;
-            overflow-y: auto;
+            background: var(--card-bg); border: 1px solid var(--border-color);
+            border-radius: 20px; width: 100%; max-width: 420px; padding: 20px;
+            text-align: center; position: relative;
+            max-height: 90vh; overflow-y: auto;
             box-shadow: 0 10px 30px rgba(0,0,0,0.8);
         }
 
         .close-modal {
-            position: absolute;
-            top: 14px;
-            right: 16px;
-            font-size: 22px;
-            color: var(--text-muted);
-            cursor: pointer;
-            transition: color 0.2s;
+            position: absolute; top: 14px; right: 16px;
+            font-size: 22px; color: var(--text-muted);
+            cursor: pointer; transition: color 0.2s;
         }
+        .close-modal:hover { color: var(--text-main); }
 
-        .close-modal:hover {
-            color: var(--text-main);
-        }
-
-        .multiplier-selector {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin: 16px 0;
-        }
+        .multiplier-selector { display: flex; justify-content: center; gap: 10px; margin: 16px 0; }
 
         .mult-btn {
-            background: #1c2230;
-            border: 1px solid var(--border-color);
-            color: var(--text-muted);
-            padding: 8px 18px;
-            border-radius: 10px;
-            font-weight: 800;
-            cursor: pointer;
-            transition: all 0.2s;
+            background: #1c2230; border: 1px solid var(--border-color);
+            color: var(--text-muted); padding: 8px 18px; border-radius: 10px;
+            font-weight: 800; cursor: pointer; transition: all 0.2s;
         }
-
         .mult-btn.active {
-            background: var(--accent-blue);
-            color: #fff;
+            background: var(--accent-blue); color: #fff;
             border-color: var(--accent-blue);
             box-shadow: 0 0 12px rgba(43, 107, 243, 0.4);
         }
 
         .btn-action {
-            background: var(--accent-blue);
-            color: white;
-            border: none;
-            width: 100%;
-            padding: 14px;
-            border-radius: 12px;
-            font-weight: 800;
-            font-size: 16px;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: background 0.2s, transform 0.1s;
+            background: var(--accent-blue); color: white; border: none;
+            width: 100%; padding: 14px; border-radius: 12px;
+            font-weight: 800; font-size: 16px; cursor: pointer;
+            margin-top: 10px; transition: background 0.2s, transform 0.1s;
         }
+        .btn-action:active { transform: scale(0.98); }
+        .btn-action:disabled { background: #2a3245; color: #5d667a; cursor: not-allowed; }
 
-        .btn-action:active {
-            transform: scale(0.98);
-        }
-
-        .btn-action:disabled {
-            background: #2a3245;
-            color: #5d667a;
-            cursor: not-allowed;
-        }
-
-        /* CASE OPEN ANIMATION ROULETTE */
         .roulette-container {
-            width: 100%;
-            height: 110px;
-            background: #0d1017;
-            border: 2px solid var(--border-color);
-            border-radius: 12px;
-            position: relative;
-            overflow: hidden;
-            margin: 15px 0;
-            display: none;
+            width: 100%; height: 110px; background: #0d1017;
+            border: 2px solid var(--border-color); border-radius: 12px;
+            position: relative; overflow: hidden; margin: 15px 0; display: none;
         }
 
         .roulette-pointer {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 4px;
-            height: 100%;
-            background: var(--accent-gold);
-            z-index: 10;
-            box-shadow: 0 0 10px var(--accent-gold);
+            position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+            width: 4px; height: 100%; background: var(--accent-gold);
+            z-index: 10; box-shadow: 0 0 10px var(--accent-gold);
         }
 
         .roulette-track {
-            display: flex;
-            position: absolute;
-            left: 0;
-            top: 10px;
-            height: 90px;
-            transition: transform 3s cubic-bezier(0.1, 1, 0.1, 1);
+            display: flex; position: absolute; left: 0; top: 10px; height: 90px;
         }
 
         .roulette-item {
-            min-width: 90px;
-            height: 90px;
-            background: #151921;
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            margin: 0 5px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            font-size: 11px;
-            text-align: center;
-            padding: 4px;
+            min-width: 90px; width: 90px; height: 90px;
+            background: #151921; border: 1px solid var(--border-color);
+            border-radius: 10px; margin: 0 5px;
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center; font-size: 11px; text-align: center;
+            padding: 4px; flex-shrink: 0;
         }
+        .roulette-item img { width: 45px; height: 45px; object-fit: contain; }
 
-        .roulette-item img {
-            width: 45px;
-            height: 45px;
-            object-fit: contain;
-        }
-
-        /* LOOT PREVIEW GRID */
         .case-preview-loot {
-            margin-top: 18px;
-            border-top: 1px solid var(--border-color);
-            padding-top: 14px;
+            margin-top: 18px; border-top: 1px solid var(--border-color); padding-top: 14px;
         }
 
         .loot-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            margin-top: 10px;
-            max-height: 180px;
-            overflow-y: auto;
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+            margin-top: 10px; max-height: 180px; overflow-y: auto;
         }
 
         .loot-item-mini {
-            background: #1c2230;
-            border-radius: 10px;
-            padding: 8px 4px;
-            font-size: 11px;
-            border: 1px solid rgba(255,255,255,0.05);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
+            background: #1c2230; border-radius: 10px; padding: 8px 4px;
+            font-size: 11px; border: 1px solid rgba(255,255,255,0.05);
+            display: flex; flex-direction: column; align-items: center; gap: 4px;
         }
 
         .loot-item-mini img, .loot-item-mini .coin-icon {
-            width: 38px;
-            height: 38px;
-            object-fit: contain;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: 38px; height: 38px; object-fit: contain;
+            display: flex; align-items: center; justify-content: center;
         }
 
-        /* WIN WINNER CARDS DISPLAY */
         .won-items-container {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin: 15px 0;
+            display: flex; justify-content: center; gap: 10px;
+            flex-wrap: wrap; margin: 15px 0;
         }
 
         .won-card {
-            background: #1c2230;
-            border: 2px solid var(--accent-gold);
-            border-radius: 12px;
-            padding: 10px;
-            width: 95px;
-            text-align: center;
+            background: #1c2230; border: 2px solid var(--accent-gold);
+            border-radius: 12px; padding: 10px; width: 95px; text-align: center;
             animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             box-shadow: 0 0 15px rgba(245, 166, 35, 0.3);
         }
@@ -415,197 +219,91 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
-        .won-card img {
-            width: 50px;
-            height: 50px;
-            object-fit: contain;
-        }
+        .won-card img { width: 50px; height: 50px; object-fit: contain; }
 
         .won-card-title {
-            font-size: 11px;
-            font-weight: 700;
-            margin-top: 6px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            font-size: 11px; font-weight: 700; margin-top: 6px;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
+        .won-card-price { font-size: 11px; color: var(--accent-gold); font-weight: 800; }
 
-        .won-card-price {
-            font-size: 11px;
-            color: var(--accent-gold);
-            font-weight: 800;
-        }
-
-        /* UPGRADER SECTION */
-        .upgrade-slots {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 20px;
-            align-items: center;
-        }
+        .upgrade-slots { display: flex; gap: 12px; margin-bottom: 20px; align-items: center; }
 
         .slot {
-            flex: 1;
-            background: var(--card-bg);
-            border: 2px dashed var(--border-color);
-            border-radius: 14px;
-            height: 110px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            padding: 8px;
-            transition: all 0.2s;
+            flex: 1; background: var(--card-bg);
+            border: 2px dashed var(--border-color); border-radius: 14px;
+            height: 110px; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            cursor: pointer; padding: 8px; transition: all 0.2s;
         }
-
         .slot.selected {
-            border-style: solid;
-            border-color: var(--accent-blue);
-            background: #182030;
+            border-style: solid; border-color: var(--accent-blue); background: #182030;
         }
+        .slot img { width: 55px; height: 55px; object-fit: contain; }
 
-        .slot img {
-            width: 55px;
-            height: 55px;
-            object-fit: contain;
-        }
-
-        .upgrader-circle-box {
-            position: relative;
-            width: 220px;
-            height: 220px;
-            margin: 20px auto;
-        }
-
-        .circle-svg {
-            transform: rotate(-90deg);
-        }
+        .upgrader-circle-box { position: relative; width: 220px; height: 220px; margin: 20px auto; }
+        .circle-svg { transform: rotate(-90deg); }
 
         .upgrader-arrow {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 4px;
-            height: 80px;
+            position: absolute; top: 50%; left: 50%;
+            width: 4px; height: 80px;
             background: linear-gradient(to top, transparent, var(--accent-gold));
             transform-origin: top center;
             transform: translate(-50%, 0) rotate(0deg);
-            z-index: 10;
-            border-radius: 2px;
+            z-index: 10; border-radius: 2px;
             box-shadow: 0 0 8px var(--accent-gold);
         }
 
         .upgrader-info {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            z-index: 5;
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%); text-align: center; z-index: 5;
         }
 
-        /* INVENTORY GRID */
-        .inventory-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-        }
+        .inventory-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
 
         .item-card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            text-align: center;
-            cursor: pointer;
-            transition: transform 0.1s;
+            background: var(--card-bg); border-radius: 12px; padding: 10px;
+            border: 1px solid var(--border-color); text-align: center;
+            cursor: pointer; transition: transform 0.1s;
         }
-
-        .item-card:active {
-            transform: scale(0.96);
-        }
-
-        .item-card img {
-            width: 55px;
-            height: 55px;
-            object-fit: contain;
-            margin-bottom: 6px;
-        }
+        .item-card:active { transform: scale(0.96); }
+        .item-card img { width: 55px; height: 55px; object-fit: contain; margin-bottom: 6px; }
 
         .item-name {
-            font-size: 11px;
-            font-weight: 700;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            font-size: 11px; font-weight: 700;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
-
-        .item-price {
-            font-size: 12px;
-            color: var(--accent-gold);
-            font-weight: 800;
-            margin-top: 2px;
-        }
+        .item-price { font-size: 12px; color: var(--accent-gold); font-weight: 800; margin-top: 2px; }
 
         .sell-btn {
-            background: rgba(231, 76, 60, 0.15);
-            color: var(--accent-red);
-            border: 1px solid rgba(231, 76, 60, 0.3);
-            border-radius: 6px;
-            padding: 5px 8px;
-            font-size: 10px;
-            font-weight: 700;
-            margin-top: 6px;
-            cursor: pointer;
-            width: 100%;
+            background: rgba(231, 76, 60, 0.15); color: var(--accent-red);
+            border: 1px solid rgba(231, 76, 60, 0.3); border-radius: 6px;
+            padding: 5px 8px; font-size: 10px; font-weight: 700;
+            margin-top: 6px; cursor: pointer; width: 100%;
         }
 
         .empty-inv {
-            grid-column: span 3;
-            text-align: center;
-            color: var(--text-muted);
-            padding: 40px 0;
-            font-size: 14px;
+            grid-column: span 3; text-align: center;
+            color: var(--text-muted); padding: 40px 0; font-size: 14px;
         }
 
-        /* ITEM SELECTOR MODAL GRID */
         .selector-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-top: 15px;
-            max-height: 300px;
-            overflow-y: auto;
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;
+            margin-top: 15px; max-height: 300px; overflow-y: auto;
         }
 
         .selector-item {
-            background: #1c2230;
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 10px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            text-align: left;
-            transition: border-color 0.2s;
+            background: #1c2230; border: 1px solid var(--border-color);
+            border-radius: 10px; padding: 10px;
+            display: flex; align-items: center; gap: 10px;
+            cursor: pointer; text-align: left; transition: border-color 0.2s;
         }
-
-        .selector-item:hover {
-            border-color: var(--accent-blue);
-        }
-
-        .selector-item img {
-            width: 40px;
-            height: 40px;
-            object-fit: contain;
-        }
+        .selector-item:hover { border-color: var(--accent-blue); }
+        .selector-item img { width: 40px; height: 40px; object-fit: contain; }
     </style>
 </head>
 <body>
 
-    <!-- HEADER -->
     <header>
         <div class="user-profile">
             <div class="user-avatar" id="user-avatar">?</div>
@@ -620,7 +318,6 @@
         </div>
     </header>
 
-    <!-- NAVIGATION TABS -->
     <div class="tabs">
         <button class="tab-btn active" onclick="switchTab('cases')">
             <i class="fa-solid fa-box-open"></i> Кейсы
@@ -633,21 +330,20 @@
         </button>
     </div>
 
-    <!-- SECTION 1: CASES -->
     <div id="section-cases" class="section active">
         <div class="section-title"><i class="fa-solid fa-cubes"></i> Доступные Кейсы</div>
         <div class="cases-grid">
-            
-            <!-- FREE CASE -->
+
             <div class="case-card" onclick="openCaseModal('free')">
-                <img src="assets/cases/free.png" class="case-img" alt="Free Case" onerror="this.src='https://via.placeholder.com/110?text=FREE+CASE'">
+                <img src="assets/cases/free.png" class="case-img" alt="Free Case"
+                     onerror="this.onerror=null;this.src='https://via.placeholder.com/110?text=FREE+CASE'">
                 <div class="case-title">Бесплатный</div>
                 <div class="case-price" id="free-timer-text">БЕСПЛАТНО</div>
             </div>
 
-            <!-- BASE CASE -->
             <div class="case-card" onclick="openCaseModal('base')">
-                <img src="assets/cases/base.png" class="case-img" alt="Base Case" onerror="this.src='https://via.placeholder.com/110?text=BASE+CASE'">
+                <img src="assets/cases/base.png" class="case-img" alt="Base Case"
+                     onerror="this.onerror=null;this.src='https://via.placeholder.com/110?text=BASE+CASE'">
                 <div class="case-title">Начальный</div>
                 <div class="case-price"><i class="fa-solid fa-coins"></i> 9 монет</div>
             </div>
@@ -655,10 +351,9 @@
         </div>
     </div>
 
-    <!-- SECTION 2: UPGRADER -->
     <div id="section-upgrader" class="section">
         <div class="section-title"><i class="fa-solid fa-bolt"></i> Прокачка Брейнротов</div>
-        
+
         <div class="upgrade-slots">
             <div class="slot" id="slot-input" onclick="switchTab('inventory')">
                 <i class="fa-solid fa-plus-circle" style="font-size:24px; color:var(--text-muted); margin-bottom:6px;"></i>
@@ -674,8 +369,8 @@
         <div class="upgrader-circle-box">
             <svg class="circle-svg" width="220" height="220">
                 <circle cx="110" cy="110" r="90" stroke="#1c2230" stroke-width="14" fill="none" />
-                <circle id="upgrade-progress" cx="110" cy="110" r="90" stroke="var(--accent-blue)" stroke-width="14" fill="none" 
-                        stroke-dasharray="565" stroke-dashoffset="565" style="transition: stroke-dashoffset 0.4s ease;" />
+                <circle id="upgrade-progress" cx="110" cy="110" r="90" stroke="var(--accent-blue)" stroke-width="14" fill="none"
+                        stroke-dasharray="565.5" stroke-dashoffset="565.5" style="transition: stroke-dashoffset 0.4s ease;" />
             </svg>
             <div class="upgrader-arrow" id="upgrader-arrow"></div>
             <div class="upgrader-info">
@@ -687,7 +382,6 @@
         <button class="btn-action" id="btn-upgrade" onclick="runUpgradeAnimation()" disabled>ПРОКАЧАТЬ</button>
     </div>
 
-    <!-- SECTION 3: INVENTORY -->
     <div id="section-inventory" class="section">
         <div class="section-title" style="justify-content: space-between;">
             <span><i class="fa-solid fa-sack-dollar"></i> Мой Инвентарь</span>
@@ -698,28 +392,30 @@
         </div>
     </div>
 
-    <!-- MODAL OPEN CASE -->
+    <!-- MODAL: CASE -->
     <div class="modal" id="case-modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeModal()">&times;</span>
             <h3 id="modal-case-title" style="font-size: 20px;">Кейс</h3>
-            
+
             <div class="roulette-container" id="roulette-box">
                 <div class="roulette-pointer"></div>
                 <div class="roulette-track" id="roulette-track"></div>
             </div>
 
-            <img id="modal-case-img" src="" style="width: 100px; height: 100px; object-fit: contain; margin: 10px 0;">
-            
+            <img id="modal-case-img" src="" alt=""
+                 style="width: 100px; height: 100px; object-fit: contain; margin: 10px 0;"
+                 onerror="this.onerror=null;this.src='https://via.placeholder.com/100?text=CASE'">
+
             <div class="multiplier-selector" id="mult-selector-box">
-                <button class="mult-btn active" onclick="setMultiplier(1)">x1</button>
-                <button class="mult-btn" onclick="setMultiplier(2)">x2</button>
-                <button class="mult-btn" onclick="setMultiplier(5)">x5</button>
+                <button class="mult-btn active" data-mult="1" onclick="setMultiplier(1)">x1</button>
+                <button class="mult-btn" data-mult="2" onclick="setMultiplier(2)">x2</button>
+                <button class="mult-btn" data-mult="5" onclick="setMultiplier(5)">x5</button>
             </div>
 
             <div id="modal-win-area"></div>
 
-            <button class="btn-action" id="modal-open-btn" onclick="startCaseOpening()">Открыть за 9 монет</button>
+            <button class="btn-action" id="modal-open-btn" onclick="startCaseOpening()">Открыть</button>
 
             <div class="case-preview-loot">
                 <div style="font-size: 12px; color: var(--text-muted); font-weight:700;">Возможно выпадет:</div>
@@ -728,7 +424,7 @@
         </div>
     </div>
 
-    <!-- MODAL TARGET SELECTOR FOR UPGRADER -->
+    <!-- MODAL: TARGET SELECTOR -->
     <div class="modal" id="target-modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeTargetModal()">&times;</span>
@@ -739,448 +435,540 @@
     </div>
 
     <script>
-        // TELEGRAM WEBAPP INIT
-        const tg = window.Telegram ? window.Telegram.WebApp : null;
+    (function () {
+        'use strict';
+
+        /* ============================ CONFIG ============================ */
+        const BASE_CASE_PRICE = 9;
+        const FREE_COOLDOWN   = 12 * 3600 * 1000;   // 12 часов
+        const MAX_UPGRADE_CHANCE = 95;              // потолок шанса, %
+        const ROULETTE_WIN_INDEX = 20;              // в какой ячейке ленты лежит выигрыш
+        const ROULETTE_ITEMS_TOTAL = 26;
+        const CIRCUMFERENCE = 2 * Math.PI * 90;     // 565.48…
+
+        const ITEMS = [
+            { id: 'trios',     name: 'Los Trios',           price: 4,     img: 'assets/brainrots/los_trios.png' },
+            { id: 'rot67',     name: '67',                  price: 5,     img: 'assets/brainrots/67.png' },
+            { id: 'hammy',     name: 'Spinny Hammy',        price: 5,     img: 'assets/brainrots/spinny_hammy.png' },
+            { id: 'candyslap', name: 'Candy Slap',          price: 7,     img: 'assets/brainrots/CandySlap.png' },
+            { id: 'noobinis',  name: 'Los Noobinis',        price: 7,     img: 'assets/brainrots/Los_Noobinis.png' },
+            { id: 'tangtang',  name: 'Tang Tang Keletang',  price: 8,     img: 'assets/brainrots/TangTangKeletang.png' },
+            { id: 'lagrande',  name: 'La Grande',           price: 9,     img: 'assets/brainrots/La_Grande_Combinasion.png' },
+            { id: 'tictac',    name: 'Tictac Sahur',        price: 12,    img: 'assets/brainrots/Tictac-Sahur.png' },
+            { id: 'bacuru',    name: 'Bacuru and Egguru',   price: 12,    img: 'assets/brainrots/Bacuru_and_Egguru.png' },
+            { id: 'los67',     name: 'Los 67',              price: 12,    img: 'assets/brainrots/Los_67.png' },
+            { id: 'yinyang',   name: 'Yin Yang Slap',       price: 20,    img: 'assets/brainrots/YinYangSlap.png' },
+            { id: 'skibidi',   name: 'Skibidi Toilet',      price: 13154, img: 'assets/brainrots/skibidi_toilet.png' }
+        ];
+
+        /* ======================= TELEGRAM INIT ========================= */
+        const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
         if (tg) {
+            tg.ready();
             tg.expand();
-            if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-                const u = tg.initDataUnsafe.user;
+            const u = tg.initDataUnsafe && tg.initDataUnsafe.user;
+            if (u) {
                 document.getElementById('user-name').innerText = u.first_name || 'Игрок';
+                const avatar = document.getElementById('user-avatar');
                 if (u.photo_url) {
-                    document.getElementById('user-avatar').innerHTML = `<img src="${u.photo_url}">`;
+                    avatar.innerHTML = '<img src="' + u.photo_url + '" alt="">';
                 } else {
-                    document.getElementById('user-avatar').innerText = (u.first_name || 'U')[0];
+                    avatar.innerText = (u.first_name || 'U').charAt(0);
                 }
             }
         }
 
-        // EXACT REPOSITORY ITEM LIST
-        const ITEMS = [
-            { id: 'trios', name: 'Los Trios', price: 4, img: 'assets/brainrots/los_trios.png' },
-            { id: 'rot67', name: '67', price: 5, img: 'assets/brainrots/67.png' },
-            { id: 'hammy', name: 'Spinny Hammy', price: 5, img: 'assets/brainrots/spinny_hammy.png' },
-            { id: 'candyslap', name: 'Candy Slap', price: 7, img: 'assets/brainrots/CandySlap.png' },
-            { id: 'noobinis', name: 'Los Noobinis', price: 7, img: 'assets/brainrots/Los_Noobinis.png' },
-            { id: 'tangtang', name: 'Tang Tang Keletang', price: 8, img: 'assets/brainrots/TangTangKeletang.png' },
-            { id: 'lagrande', name: 'La Grande', price: 9, img: 'assets/brainrots/La_Grande_Combinasion.png' },
-            { id: 'tictac', name: 'Tictac Sahur', price: 12, img: 'assets/brainrots/Tictac-Sahur.png' },
-            { id: 'bacuru', name: 'Bacuru and Egguru', price: 12, img: 'assets/brainrots/Bacuru_and_Egguru.png' },
-            { id: 'los67', name: 'Los 67', price: 12, img: 'assets/brainrots/Los_67.png' },
-            { id: 'yinyang', name: 'Yin Yang Slap', price: 20, img: 'assets/brainrots/YinYangSlap.png' },
-            { id: 'skibidi', name: 'Skibidi Toilet', price: 13154, img: 'assets/brainrots/skibidi_toilet.png' }
-        ];
+        /* ========================== STORAGE ============================ */
+        function loadNumber(key) {
+            const v = parseInt(localStorage.getItem(key), 10);
+            return Number.isFinite(v) ? v : 0;
+        }
+        function loadInventory() {
+            try {
+                const raw = JSON.parse(localStorage.getItem('bf_inventory'));
+                return Array.isArray(raw) ? raw.filter(i => i && i.id) : [];
+            } catch (e) { return []; }
+        }
 
-        // STATE VARIABLES
-        let balance = parseInt(localStorage.getItem('bf_balance')) || 0;
-        let inventory = JSON.parse(localStorage.getItem('bf_inventory')) || [];
-        let lastFreeTime = parseInt(localStorage.getItem('bf_last_free')) || 0;
+        let balance       = loadNumber('bf_balance');
+        let inventory     = loadInventory();
+        let lastFreeTime  = loadNumber('bf_last_free');
 
-        let activeCaseType = null;
+        let activeCaseType   = null;
         let activeMultiplier = 1;
-        let isOpening = false;
+        let isOpening        = false;
 
-        let selectedInputItem = null;
+        let selectedInputItem  = null;
         let selectedTargetItem = null;
-        let isUpgrading = false;
+        let isUpgrading        = false;
 
-        // UI SYNC
-        function updateUI() {
-            document.getElementById('balance').innerText = balance;
-            localStorage.setItem('bf_balance', balance);
+        /* ========================== HELPERS ============================ */
+        const $ = id => document.getElementById(id);
+
+        function saveState() {
+            localStorage.setItem('bf_balance', String(balance));
             localStorage.setItem('bf_inventory', JSON.stringify(inventory));
+            localStorage.setItem('bf_last_free', String(lastFreeTime));
+        }
+
+        /* ============================ UI =============================== */
+        function updateUI() {
+            $('balance').innerText = balance;
+            saveState();
             renderInventory();
             checkFreeTimer();
         }
 
-        // TABS SWITCHER
         function switchTab(tab) {
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            const tabs = document.querySelectorAll('.tab-btn');
+            const idx  = { cases: 0, upgrader: 1, inventory: 2 }[tab];
+            if (idx === undefined) return;
+
+            tabs.forEach(b => b.classList.remove('active'));
+            tabs[idx].classList.add('active');
+
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            
-            if (tab === 'cases') {
-                document.querySelectorAll('.tab-btn')[0].classList.add('active');
-                document.getElementById('section-cases').classList.add('active');
-            } else if (tab === 'upgrader') {
-                document.querySelectorAll('.tab-btn')[1].classList.add('active');
-                document.getElementById('section-upgrader').classList.add('active');
-            } else if (tab === 'inventory') {
-                document.querySelectorAll('.tab-btn')[2].classList.add('active');
-                document.getElementById('section-inventory').classList.add('active');
-            }
+            const section = $('section-' + tab);
+            if (section) section.classList.add('active');
         }
 
-        // CHECK TIMER FOR FREE CASE
+        /* ======================= FREE CASE TIMER ======================= */
         function checkFreeTimer() {
-            const now = Date.now();
-            const diff = now - lastFreeTime;
-            const twelveHours = 12 * 3600 * 1000;
+            const diff = Date.now() - lastFreeTime;
+            const el = $('free-timer-text');
+            if (!el) return;
 
-            if (diff >= twelveHours) {
-                document.getElementById('free-timer-text').innerText = "БЕСПЛАТНО";
-                document.getElementById('free-timer-text').style.color = "var(--accent-gold)";
+            if (diff >= FREE_COOLDOWN) {
+                el.innerText = 'БЕСПЛАТНО';
+                el.style.color = 'var(--accent-gold)';
             } else {
-                const rem = twelveHours - diff;
+                const rem = FREE_COOLDOWN - diff;
                 const h = Math.floor(rem / 3600000);
                 const m = Math.floor((rem % 3600000) / 60000);
-                document.getElementById('free-timer-text').innerText = `через ${h}ч ${m}м`;
-                document.getElementById('free-timer-text').style.color = "var(--text-muted)";
+                el.innerText = 'через ' + h + 'ч ' + m + 'м';
+                el.style.color = 'var(--text-muted)';
+            }
+
+            // если модалка открыта — обновляем кнопку (например, КД истёк)
+            if ($('case-modal').classList.contains('active') && !isOpening) {
+                updateModalBtn();
             }
         }
         setInterval(checkFreeTimer, 10000);
 
+        /* ========================= CASE MODAL ========================== */
         function openCaseModal(type) {
             if (isOpening) return;
             activeCaseType = type;
             activeMultiplier = 1;
             setMultiplier(1);
 
-            const modal = document.getElementById('case-modal');
-            document.getElementById('modal-win-area').innerHTML = '';
-            document.getElementById('roulette-box').style.display = 'none';
-            document.getElementById('modal-case-img').style.display = 'block';
-            document.getElementById('mult-selector-box').style.display = 'flex';
-            
+            $('modal-win-area').innerHTML = '';
+            $('roulette-box').style.display = 'none';
+            $('modal-case-img').style.display = 'block';
+
+            // Бесплатный кейс — только x1 (иначе это эксплойт)
+            $('mult-selector-box').style.display = (type === 'free') ? 'none' : 'flex';
+
             if (type === 'free') {
-                document.getElementById('modal-case-title').innerText = 'Бесплатный Кейс';
-                document.getElementById('modal-case-img').src = 'assets/cases/free.png';
+                $('modal-case-title').innerText = 'Бесплатный Кейс';
+                $('modal-case-img').src = 'assets/cases/free.png';
                 renderLootGrid([
                     { name: '2 Монеты', type: 'coin', val: 2 },
                     { name: '3 Монеты', type: 'coin', val: 3 },
-                    { name: '5 Монет', type: 'coin', val: 5 },
+                    { name: '5 Монет',  type: 'coin', val: 5 },
                     ITEMS[0],
                     ITEMS[1]
                 ]);
             } else {
-                document.getElementById('modal-case-title').innerText = 'Начальный Кейс';
-                document.getElementById('modal-case-img').src = 'assets/cases/base.png';
+                $('modal-case-title').innerText = 'Начальный Кейс';
+                $('modal-case-img').src = 'assets/cases/base.png';
                 renderLootGrid(ITEMS.slice(0, 8));
             }
 
-            modal.classList.add('active');
+            $('case-modal').classList.add('active');
             updateModalBtn();
         }
 
         function closeModal() {
             if (isOpening) return;
-            document.getElementById('case-modal').classList.remove('active');
+            $('case-modal').classList.remove('active');
         }
 
         function setMultiplier(mult) {
             if (isOpening) return;
+            if (activeCaseType === 'free') mult = 1;   // защита от эксплойта
             activeMultiplier = mult;
+
             document.querySelectorAll('.mult-btn').forEach(b => {
-                b.classList.remove('active');
-                if (b.innerText === 'x' + mult) b.classList.add('active');
+                b.classList.toggle('active', Number(b.dataset.mult) === mult);
             });
             updateModalBtn();
         }
 
         function updateModalBtn() {
-            const btn = document.getElementById('modal-open-btn');
+            const btn = $('modal-open-btn');
+            if (!btn) return;
+
             if (activeCaseType === 'free') {
-                const now = Date.now();
-                const twelveHours = 12 * 3600 * 1000;
-                if (now - lastFreeTime < twelveHours) {
+                if (Date.now() - lastFreeTime < FREE_COOLDOWN) {
                     btn.disabled = true;
                     btn.innerText = 'Еще не доступен';
                 } else {
                     btn.disabled = false;
-                    btn.innerText = `Открыть x${activeMultiplier} (Бесплатно)`;
+                    btn.innerText = 'Открыть (Бесплатно)';
                 }
             } else {
-                const price = 9 * activeMultiplier;
+                const price = BASE_CASE_PRICE * activeMultiplier;
                 btn.disabled = balance < price;
-                btn.innerText = `Открыть x${activeMultiplier} за ${price} монет`;
+                btn.innerText = 'Открыть x' + activeMultiplier + ' за ' + price + ' монет';
             }
         }
 
         function renderLootGrid(items) {
-            const grid = document.getElementById('modal-loot-grid');
-            grid.innerHTML = items.map(i => {
+            $('modal-loot-grid').innerHTML = items.map(i => {
                 if (i.type === 'coin') {
-                    return `
-                        <div class="loot-item-mini">
-                            <div class="coin-icon"><i class="fa-solid fa-coins" style="font-size:26px; color:var(--accent-gold);"></i></div>
-                            <div>${i.name}</div>
-                        </div>
-                    `;
+                    return '<div class="loot-item-mini">' +
+                           '<div class="coin-icon"><i class="fa-solid fa-coins" style="font-size:26px; color:var(--accent-gold);"></i></div>' +
+                           '<div>' + i.name + '</div></div>';
                 }
-                return `
-                    <div class="loot-item-mini">
-                        <img src="${i.img}" onerror="this.src='https://via.placeholder.com/38?text=ROT'">
-                        <div>${i.name}</div>
-                        <div style="color:var(--accent-gold); font-weight:800;">${i.price}</div>
-                    </div>
-                `;
+                return '<div class="loot-item-mini">' +
+                       '<img src="' + i.img + '" onerror="this.onerror=null;this.src=\'https://via.placeholder.com/38?text=ROT\'">' +
+                       '<div>' + i.name + '</div>' +
+                       '<div style="color:var(--accent-gold); font-weight:800;">' + i.price + '</div></div>';
             }).join('');
         }
 
-        // ROULETTE & OPENING ANIMATION
+        /* ======================= CASE OPENING ========================== */
         function startCaseOpening() {
             if (isOpening) return;
 
             if (activeCaseType === 'free') {
-                const now = Date.now();
-                const twelveHours = 12 * 3600 * 1000;
-                if (now - lastFreeTime < twelveHours) return;
-                lastFreeTime = now;
-                localStorage.setItem('bf_last_free', lastFreeTime);
+                if (Date.now() - lastFreeTime < FREE_COOLDOWN) return;
+                lastFreeTime = Date.now();
+                saveState();
+                checkFreeTimer();
             } else {
-                const price = 9 * activeMultiplier;
+                const price = BASE_CASE_PRICE * activeMultiplier;
                 if (balance < price) return;
                 balance -= price;
             }
 
             isOpening = true;
-            document.getElementById('modal-open-btn').disabled = true;
-            document.getElementById('modal-case-img').style.display = 'none';
-            document.getElementById('mult-selector-box').style.display = 'none';
-            document.getElementById('modal-win-area').innerHTML = '';
+            $('modal-open-btn').disabled = true;
+            $('modal-case-img').style.display = 'none';
+            $('mult-selector-box').style.display = 'none';
+            $('modal-win-area').innerHTML = '';
 
-            const rouletteBox = document.getElementById('roulette-box');
-            const track = document.getElementById('roulette-track');
+            const rouletteBox = $('roulette-box');
+            const track       = $('roulette-track');
             rouletteBox.style.display = 'block';
 
-            // Generate dropped prizes
-            let wonResults = [];
+            // 1. Определяем выигрыш(и)
+            const wonResults = [];
             for (let i = 0; i < activeMultiplier; i++) {
                 wonResults.push(rollDrop(activeCaseType));
             }
 
-            // Build Roulette Items Track
-            let trackItems = [];
-            for (let i = 0; i < 25; i++) {
-                let randomItem = ITEMS[Math.floor(Math.random() * ITEMS.length)];
-                trackItems.push(randomItem);
+            // 2. Строим ленту
+            const trackItems = [];
+            for (let i = 0; i < ROULETTE_ITEMS_TOTAL; i++) {
+                trackItems.push(ITEMS[Math.floor(Math.random() * ITEMS.length)]);
             }
-            // Put primary win result at position 20
             const mainWin = wonResults[0];
             if (mainWin.type === 'coin') {
-                trackItems[20] = { name: mainWin.amount + ' Монет', img: 'COIN', price: mainWin.amount };
+                trackItems[ROULETTE_WIN_INDEX] = { name: mainWin.amount + ' Монет', img: 'COIN', price: mainWin.amount };
             } else {
-                trackItems[20] = mainWin.item;
+                trackItems[ROULETTE_WIN_INDEX] = mainWin.item;
             }
 
             track.style.transition = 'none';
-            track.style.transform = 'translateX(0px)';
-            track.innerHTML = trackItems.map(item => `
-                <div class="roulette-item">
-                    ${item.img === 'COIN' 
-                        ? '<i class="fa-solid fa-coins" style="font-size:30px; color:var(--accent-gold); margin-bottom:4px;"></i>' 
-                        : `<img src="${item.img}" onerror="this.src='https://via.placeholder.com/45'">`}
-                    <div style="font-weight:700;">${item.name}</div>
-                </div>
-            `).join('');
+            track.style.transform  = 'translateX(0px)';
+            track.innerHTML = trackItems.map(item => {
+                const imgHTML = item.img === 'COIN'
+                    ? '<i class="fa-solid fa-coins" style="font-size:30px; color:var(--accent-gold); margin-bottom:4px;"></i>'
+                    : '<img src="' + item.img + '" onerror="this.onerror=null;this.src=\'https://via.placeholder.com/45\'">';
+                return '<div class="roulette-item">' + imgHTML +
+                       '<div style="font-weight:700;">' + item.name + '</div></div>';
+            }).join('');
 
-            // Trigger Animation
-            setTimeout(() => {
-                track.style.transition = 'transform 3s cubic-bezier(0.1, 1, 0.1, 1)';
-                // Item width (90) + margin (10) = 100px. Target pos ~ 20 * 100 = -2000px
-                const randomOffset = Math.floor(Math.random() * 40) - 20;
-                track.style.transform = `translateX(-${1900 + randomOffset}px)`;
-            }, 50);
+            // 3. Считаем точное смещение, чтобы выигрыш встал под указатель
+            const winEl       = track.children[ROULETTE_WIN_INDEX];
+            const containerW  = rouletteBox.clientWidth;
+            let translateX;
 
-            // Finish Animation
+            if (winEl && containerW > 0) {
+                const winCenter = winEl.offsetLeft + winEl.offsetWidth / 2;
+                const jitter    = (Math.random() - 0.5) * 40;          // ±20px, в пределах ячейки (90px)
+                translateX = winCenter - containerW / 2 + jitter;
+            } else {
+                translateX = ROULETTE_WIN_INDEX * 100 + 50 - 190;      // фолбэк
+            }
+
+            // 4. Запускаем анимацию (двойной rAF — гарантия применения стилей)
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    track.style.transition = 'transform 3s cubic-bezier(0.1, 1, 0.1, 1)';
+                    track.style.transform  = 'translateX(-' + translateX + 'px)';
+                });
+            });
+
+            // 5. Финализируем
             setTimeout(() => {
                 isOpening = false;
-                let wonHTML = '<div class="won-items-container">';
-                
+                let html = '<div class="won-items-container">';
+
                 wonResults.forEach(win => {
                     if (win.type === 'coin') {
                         balance += win.amount;
-                        wonHTML += `
-                            <div class="won-card">
-                                <i class="fa-solid fa-coins" style="font-size:36px; color:var(--accent-gold); margin:6px 0;"></i>
-                                <div class="won-card-title">+${win.amount} МОНЕТ</div>
-                            </div>
-                        `;
+                        html += '<div class="won-card">' +
+                                '<i class="fa-solid fa-coins" style="font-size:36px; color:var(--accent-gold); margin:6px 0;"></i>' +
+                                '<div class="won-card-title">+' + win.amount + ' МОНЕТ</div></div>';
                     } else {
-                        inventory.push(win.item);
-                        wonHTML += `
-                            <div class="won-card">
-                                <img src="${win.item.img}" onerror="this.src='https://via.placeholder.com/50'">
-                                <div class="won-card-title">${win.item.name}</div>
-                                <div class="won-card-price">${win.item.price} монет</div>
-                            </div>
-                        `;
+                        inventory.push(Object.assign({}, win.item));   // копия, чтобы не шейрить ссылку
+                        html += '<div class="won-card">' +
+                                '<img src="' + win.item.img + '" onerror="this.onerror=null;this.src=\'https://via.placeholder.com/50\'">' +
+                                '<div class="won-card-title">' + win.item.name + '</div>' +
+                                '<div class="won-card-price">' + win.item.price + ' монет</div></div>';
                     }
                 });
-                wonHTML += '</div>';
+                html += '</div>';
 
-                document.getElementById('modal-win-area').innerHTML = wonHTML;
+                $('modal-win-area').innerHTML = html;
                 updateUI();
                 updateModalBtn();
             }, 3200);
         }
 
-        // DROP CHANCES (FREE = 90% COINS, 10% BRAINROTS)
+        /* ========================== DROP RATES ========================= */
+        // ВНИМАНИЕ: у базового кейса 4% на предмет за 13154 монеты при цене кейса 9 —
+        // мат. ожидание ~531 монеты за открытие. Это не баг кода, а вопрос баланса.
+        // Если хотите убрать «джекпот-экономику» — снизьте последний процент до 0.1–0.5.
         function rollDrop(type) {
             const rand = Math.random() * 100;
+
             if (type === 'free') {
                 if (rand < 45) return { type: 'coin', amount: 2 };
                 if (rand < 75) return { type: 'coin', amount: 3 };
                 if (rand < 90) return { type: 'coin', amount: 5 };
-                if (rand < 97) return { type: 'item', item: ITEMS[0] }; // Los Trios
-                return { type: 'item', item: ITEMS[1] }; // 67
-            } else {
-                if (rand < 40) return { type: 'item', item: ITEMS[0] };
-                if (rand < 68) return { type: 'item', item: ITEMS[1] };
-                if (rand < 85) return { type: 'item', item: ITEMS[3] };
-                if (rand < 96) return { type: 'item', item: ITEMS[6] };
-                return { type: 'item', item: ITEMS[11] }; // Skibidi Toilet
+                if (rand < 97) return { type: 'item', item: ITEMS[0] };   // Los Trios
+                return { type: 'item', item: ITEMS[1] };                  // 67
             }
+
+            if (rand < 40) return { type: 'item', item: ITEMS[0] };
+            if (rand < 68) return { type: 'item', item: ITEMS[1] };
+            if (rand < 85) return { type: 'item', item: ITEMS[3] };
+            if (rand < 96) return { type: 'item', item: ITEMS[6] };
+            return { type: 'item', item: ITEMS[11] };
         }
 
+        /* ========================= INVENTORY =========================== */
         function renderInventory() {
-            const container = document.getElementById('inventory-list');
-            if (inventory.length === 0) {
-                container.innerHTML = `<div class="empty-inv">Инвентарь пуст</div>`;
+            const container = $('inventory-list');
+            if (!inventory.length) {
+                container.innerHTML = '<div class="empty-inv">Инвентарь пуст</div>';
                 return;
             }
 
-            container.innerHTML = inventory.map((item, index) => `
-                <div class="item-card" onclick="selectForUpgrade(${index})">
-                    <img src="${item.img}" onerror="this.src='https://via.placeholder.com/55'">
-                    <div class="item-name">${item.name}</div>
-                    <div class="item-price">${item.price} монет</div>
-                    <button class="sell-btn" onclick="event.stopPropagation(); sellItem(${index})">Продать</button>
-                </div>
-            `).join('');
+            container.innerHTML = inventory.map((item, index) =>
+                '<div class="item-card" onclick="BF.selectForUpgrade(' + index + ')">' +
+                    '<img src="' + item.img + '" onerror="this.onerror=null;this.src=\'https://via.placeholder.com/55\'">' +
+                    '<div class="item-name">' + item.name + '</div>' +
+                    '<div class="item-price">' + item.price + ' монет</div>' +
+                    '<button class="sell-btn" onclick="event.stopPropagation();BF.sellItem(' + index + ')">Продать</button>' +
+                '</div>'
+            ).join('');
+        }
+
+        function clearInputSelection() {
+            selectedInputItem = null;
+            const slot = $('slot-input');
+            slot.classList.remove('selected');
+            slot.innerHTML = '<i class="fa-solid fa-plus-circle" style="font-size:24px; color:var(--text-muted); margin-bottom:6px;"></i>' +
+                             '<span style="font-size: 11px; color: var(--text-muted);">Из инвентаря</span>';
+        }
+
+        function clearTargetSelection() {
+            selectedTargetItem = null;
+            const slot = $('slot-target');
+            slot.classList.remove('selected');
+            slot.innerHTML = '<i class="fa-solid fa-bullseye" style="font-size:24px; color:var(--text-muted); margin-bottom:6px;"></i>' +
+                             '<span style="font-size: 11px; color: var(--text-muted);">Выбрать цель</span>';
         }
 
         function sellItem(index) {
-            balance += inventory[index].price;
+            const item = inventory[index];
+            if (!item) return;
+            if (selectedInputItem === item) clearInputSelection();
+
+            balance += item.price;
             inventory.splice(index, 1);
             updateUI();
+            calculateUpgradeChance();
         }
 
         function sellAll() {
-            inventory.forEach(item => balance += item.price);
+            if (!inventory.length) return;
+            inventory.forEach(item => { balance += item.price; });
             inventory = [];
+            clearInputSelection();
             updateUI();
+            calculateUpgradeChance();
         }
 
-        // SELECT ITEM FOR UPGRADER FROM INVENTORY
+        /* ========================= UPGRADER ============================ */
         function selectForUpgrade(index) {
-            selectedInputItem = inventory[index];
-            const slot = document.getElementById('slot-input');
+            const item = inventory[index];
+            if (!item) return;
+
+            selectedInputItem = item;
+            const slot = $('slot-input');
             slot.classList.add('selected');
-            slot.innerHTML = `
-                <img src="${selectedInputItem.img}">
-                <div style="font-size:10px; font-weight:700; margin-top:2px;">${selectedInputItem.name}</div>
-                <div style="font-size:10px; color:var(--accent-gold); font-weight:800;">${selectedInputItem.price}</div>
-            `;
+            slot.innerHTML =
+                '<img src="' + item.img + '" onerror="this.onerror=null;this.src=\'https://via.placeholder.com/55\'">' +
+                '<div style="font-size:10px; font-weight:700; margin-top:2px;">' + item.name + '</div>' +
+                '<div style="font-size:10px; color:var(--accent-gold); font-weight:800;">' + item.price + '</div>';
+
             calculateUpgradeChance();
             switchTab('upgrader');
         }
 
-        // TARGET SELECTOR MODAL
         function openTargetSelector() {
-            const modal = document.getElementById('target-modal');
-            const list = document.getElementById('target-selector-list');
-
-            list.innerHTML = ITEMS.map(item => `
-                <div class="selector-item" onclick="chooseTargetItem('${item.id}')">
-                    <img src="${item.img}" onerror="this.src='https://via.placeholder.com/40'">
-                    <div>
-                        <div style="font-size:12px; font-weight:700;">${item.name}</div>
-                        <div style="font-size:11px; color:var(--accent-gold); font-weight:800;">${item.price} монет</div>
-                    </div>
-                </div>
-            `).join('');
-
-            modal.classList.add('active');
+            const list = $('target-selector-list');
+            list.innerHTML = ITEMS.map(item =>
+                '<div class="selector-item" onclick="BF.chooseTargetItem(\'' + item.id + '\')">' +
+                    '<img src="' + item.img + '" onerror="this.onerror=null;this.src=\'https://via.placeholder.com/40\'">' +
+                    '<div>' +
+                        '<div style="font-size:12px; font-weight:700;">' + item.name + '</div>' +
+                        '<div style="font-size:11px; color:var(--accent-gold); font-weight:800;">' + item.price + ' монет</div>' +
+                    '</div>' +
+                '</div>'
+            ).join('');
+            $('target-modal').classList.add('active');
         }
 
         function closeTargetModal() {
-            document.getElementById('target-modal').classList.remove('active');
+            $('target-modal').classList.remove('active');
         }
 
         function chooseTargetItem(id) {
-            selectedTargetItem = ITEMS.find(i => i.id === id);
-            const slot = document.getElementById('slot-target');
+            const item = ITEMS.find(i => i.id === id);
+            if (!item) return;
+
+            selectedTargetItem = item;
+            const slot = $('slot-target');
             slot.classList.add('selected');
-            slot.innerHTML = `
-                <img src="${selectedTargetItem.img}">
-                <div style="font-size:10px; font-weight:700; margin-top:2px;">${selectedTargetItem.name}</div>
-                <div style="font-size:10px; color:var(--accent-gold); font-weight:800;">${selectedTargetItem.price}</div>
-            `;
+            slot.innerHTML =
+                '<img src="' + item.img + '" onerror="this.onerror=null;this.src=\'https://via.placeholder.com/55\'">' +
+                '<div style="font-size:10px; font-weight:700; margin-top:2px;">' + item.name + '</div>' +
+                '<div style="font-size:10px; color:var(--accent-gold); font-weight:800;">' + item.price + '</div>';
+
             closeTargetModal();
             calculateUpgradeChance();
         }
 
-        function calculateUpgradeChance() {
-            if (!selectedInputItem || !selectedTargetItem) return;
-            let chance = (selectedInputItem.price / selectedTargetItem.price) * 100;
-            if (chance > 95) chance = 95;
-            
-            document.getElementById('upgrade-chance').innerText = chance.toFixed(1) + '%';
-            
-            const circle = document.getElementById('upgrade-progress');
-            // Full circle length = 2 * PI * 90 = ~565
-            const offset = 565 - (565 * (chance / 100));
-            circle.style.strokeDashoffset = offset;
+        // ЕДИНЫЙ источник правды по шансу — используется и для отображения, и для броска
+        function getUpgradeChance() {
+            if (!selectedInputItem || !selectedTargetItem) return 0;
+            const raw = (selectedInputItem.price / selectedTargetItem.price) * 100;
+            return Math.max(0, Math.min(MAX_UPGRADE_CHANCE, raw));
+        }
 
-            document.getElementById('btn-upgrade').disabled = false;
+        function calculateUpgradeChance() {
+            const chance = getUpgradeChance();
+            $('upgrade-chance').innerText = chance.toFixed(1) + '%';
+
+            const offset = CIRCUMFERENCE - (CIRCUMFERENCE * (chance / 100));
+            $('upgrade-progress').style.strokeDashoffset = offset;
+
+            $('btn-upgrade').disabled = !(selectedInputItem && selectedTargetItem);
         }
 
         function runUpgradeAnimation() {
             if (!selectedInputItem || !selectedTargetItem || isUpgrading) return;
+
+            const idx = inventory.indexOf(selectedInputItem);
+            if (idx === -1) {
+                alert('Этот предмет больше не в инвентаре.');
+                clearInputSelection();
+                calculateUpgradeChance();
+                return;
+            }
+
             isUpgrading = true;
+            $('btn-upgrade').disabled = true;
 
-            const btn = document.getElementById('btn-upgrade');
-            btn.disabled = true;
+            const chance      = getUpgradeChance();          // ← тот же шанс, что и на экране
+            const chanceAngle = chance * 3.6;                // сектор успеха в градусах
+            const isSuccess   = (Math.random() * 100) <= chance;
 
-            const chance = (selectedInputItem.price / selectedTargetItem.price) * 100;
-            const isSuccess = (Math.random() * 100) <= chance;
+            // Стрелка при rotate(0) смотрит ВНИЗ (экранный угол 180°),
+            // а дуга шанса начинается с 12 часов (0°) и идёт по часовой.
+            // Поэтому: screenAngle = (180 + rotation) mod 360  →  rotation = screenAngle - 180.
+            const screenAngle = isSuccess
+                ? Math.random() * chanceAngle
+                : chanceAngle + Math.random() * (360 - chanceAngle);
 
-            const arrow = document.getElementById('upgrader-arrow');
-            
-            // Random total angle: 5 to 8 full spins + target angle
-            let targetAngle = isSuccess 
-                ? Math.floor(Math.random() * (chance * 3.6)) 
-                : Math.floor((chance * 3.6) + Math.random() * ((100 - chance) * 3.6));
+            const targetAngle   = ((screenAngle - 180) % 360 + 360) % 360;
+            const totalRotation = 360 * 6 + targetAngle;
 
-            let totalRotation = 360 * 6 + targetAngle;
-
+            const arrow = $('upgrader-arrow');
+            void arrow.offsetWidth;                          // сброс transition
             arrow.style.transition = 'transform 3.5s cubic-bezier(0.15, 0.9, 0.2, 1)';
-            arrow.style.transform = `translate(-50%, 0) rotate(${totalRotation}deg)`;
+            arrow.style.transform  = 'translate(-50%, 0) rotate(' + totalRotation + 'deg)';
 
             setTimeout(() => {
-                // Remove item from inventory
-                const idx = inventory.findIndex(i => i.id === selectedInputItem.id);
-                if (idx !== -1) inventory.splice(idx, 1);
+                inventory.splice(idx, 1);
 
                 if (isSuccess) {
-                    inventory.push(selectedTargetItem);
-                    alert(`🎉 УСПЕХ! Вы прокачали брейнрот до ${selectedTargetItem.name}!`);
+                    inventory.push(Object.assign({}, selectedTargetItem));
+                    alert('🎉 УСПЕХ! Вы прокачали брейнрот до ' + selectedTargetItem.name + '!');
                 } else {
-                    alert(`💥 НЕУДАЧА! Стрелка попала в красный сектор. Предмет сгорел.`);
+                    alert('💥 НЕУДАЧА! Стрелка попала в красный сектор. Предмет сгорел.');
                 }
 
-                // Reset Upgrader UI
-                selectedInputItem = null;
-                selectedTargetItem = null;
                 isUpgrading = false;
+                clearInputSelection();
+                clearTargetSelection();
 
                 arrow.style.transition = 'none';
-                arrow.style.transform = `translate(-50%, 0) rotate(0deg)`;
+                arrow.style.transform  = 'translate(-50%, 0) rotate(0deg)';
+                void arrow.offsetWidth;
 
-                document.getElementById('slot-input').classList.remove('selected');
-                document.getElementById('slot-input').innerHTML = `<i class="fa-solid fa-plus-circle" style="font-size:24px; color:var(--text-muted); margin-bottom:6px;"></i><span style="font-size: 11px; color: var(--text-muted);">Из инвентаря</span>`;
-                
-                document.getElementById('slot-target').classList.remove('selected');
-                document.getElementById('slot-target').innerHTML = `<i class="fa-solid fa-bullseye" style="font-size:24px; color:var(--text-muted); margin-bottom:6px;"></i><span style="font-size: 11px; color: var(--text-muted);">Выбрать цель</span>`;
-                
-                document.getElementById('upgrade-chance').innerText = '0%';
-                document.getElementById('upgrade-progress').style.strokeDashoffset = 565;
-
+                calculateUpgradeChance();
                 updateUI();
             }, 3600);
         }
 
-        // INITIALIZE APP
+        /* ==================== BACKDROP CLOSE (UX) ====================== */
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', e => {
+                if (e.target !== modal) return;
+                if (modal.id === 'case-modal') closeModal();
+                if (modal.id === 'target-modal') closeTargetModal();
+            });
+        });
+
+        /* ======================== PUBLIC API =========================== */
+        window.BF = {
+            selectForUpgrade,
+            sellItem,
+            chooseTargetItem
+        };
+        window.switchTab        = switchTab;
+        window.openCaseModal    = openCaseModal;
+        window.closeModal       = closeModal;
+        window.setMultiplier    = setMultiplier;
+        window.startCaseOpening = startCaseOpening;
+        window.sellAll          = sellAll;
+        window.openTargetSelector = openTargetSelector;
+        window.closeTargetModal   = closeTargetModal;
+        window.runUpgradeAnimation = runUpgradeAnimation;
+
+        /* =========================== INIT ============================== */
         updateUI();
+        calculateUpgradeChance();
+    })();
     </script>
 </body>
 </html>
