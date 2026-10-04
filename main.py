@@ -7,17 +7,11 @@ Brainrots Funny — Telegram Mini App + Stars Payments
 - Отдаёт index.html по корню "/"
 - Обрабатывает Telegram webhook по "/webhook/tg"
 - Создаёт инвойсы для Stars по "/api/create-invoice-link"
-- Обрабатывает успешную оплату и зачисляет монеты (в памяти, для демо)
+- Диагностика: /debug и /health
 
-Деплой на Render:
-1. Загрузи этот файл + index.html + requirements.txt в репозиторий
-2. На Render выбери "Web Service"
-3. Build Command: pip install -r requirements.txt
-4. Start Command: uvicorn main:app --host 0.0.0.0 --port $PORT
-5. Добавь переменные окружения:
-   BOT_TOKEN=твой_токен_от_BotFather
-   WEBHOOK_URL=https://твой-сервис.onrender.com
-   RENDER_EXTERNAL_URL=https://твой-сервис.onrender.com  (Render подставляет сам)
+Поведение:
+- Даже если BOT_TOKEN не задан или вебхук не установился — сайт работает.
+- Все ошибки бота логируются, но приложение не падает.
 """
 
 import os
@@ -26,38 +20,29 @@ import asyncio
 import logging
 from contextlib import asynccontextmanager
 from pathlib import Path
-from typing import Optional
 
 import aiohttp
 from dotenv import load_dotenv
 from fastapi import FastAPI, Request, HTTPException
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from aiogram import Bot, Dispatcher, Router, types
-from aiogram.types import (
-    Update,
-    LabeledPrice,
-    PreCheckoutQuery,
-    Message,
-)
-from aiogram.methods import CreateInvoiceLink
+from aiogram.types import Update, LabeledPrice, PreCheckoutQuery, Message
+
 
 # ============================================================
 # КОНФИГ
 # ============================================================
 load_dotenv()
 
-BOT_TOKEN = os.getenv("BOT_TOKEN", "")
-WEBHOOK_URL = os.getenv("WEBHOOK_URL", "").rstrip("/")
-RENDER_URL = os.getenv("RENDER_EXTERNAL_URL", "").rstrip("/")
+BOT_TOKEN = (os.getenv("BOT_TOKEN") or "").strip()
+WEBHOOK_URL = (os.getenv("WEBHOOK_URL") or "").strip().rstrip("/")
+RENDER_URL = (os.getenv("RENDER_EXTERNAL_URL") or "").strip().rstrip("/")
 PORT = int(os.getenv("PORT", "10000"))
 
-if not BOT_TOKEN:
-    raise RuntimeError("BOT_TOKEN не установлен в переменных окружения")
-
-# Папка с файлами (там же где main.py)
 BASE_DIR = Path(__file__).parent.resolve()
 INDEX_HTML = BASE_DIR / "index.html"
+ASSETS_DIR = BASE_DIR / "assets"
 
 logging.basicConfig(
     level=logging.INFO,
@@ -65,20 +50,29 @@ logging.basicConfig(
 )
 log = logging.getLogger("brainrots")
 
+
 # ============================================================
-# БОТ И ДИСПЕТЧЕР
+# БОТ И ДИСПЕТЧЕР (с защитой от краха)
 # ============================================================
-bot = Bot(token=BOT_TOKEN, default=None)
 dp = Dispatcher()
 router = Router()
 dp.include_router(router)
 
-# Память для балансов (в проде — база данных!)
-# { user_id: {"coins": int, "stars_spent": int, "purchases": int} }
+bot: Bot | None = None
+if BOT_TOKEN:
+    try:
+        bot = Bot(token=BOT_TOKEN)
+        log.info("Bot создан (token=%s...)", BOT_TOKEN[:8])
+    except Exception as e:
+        log.exception("Не удалось создать Bot: %s", e)
+        bot = None
+else:
+    log.error("BOT_TOKEN не задан — бот и оплата будут недоступны")
+
+
+# Память (в проде — БД)
 USER_BALANCES: dict[int, dict] = {}
 
-# Соответствие package_id -> (stars, coins, bonus%)
-# Должно совпадать с STARS_PACKAGES во фронтенде!
 STARS_PACKAGES = {
     "p10":  {"stars": 10,  "coins": 50,   "bonus": 0},
     "p25":  {"stars": 25,  "coins": 135,  "bonus": 8},
@@ -88,50 +82,49 @@ STARS_PACKAGES = {
     "p500": {"stars": 500, "coins": 4000, "bonus": 60},
 }
 
+
 def get_user(user_id: int) -> dict:
     if user_id not in USER_BALANCES:
         USER_BALANCES[user_id] = {"coins": 0, "stars_spent": 0, "purchases": 0}
     return USER_BALANCES[user_id]
 
+
 # ============================================================
 # ХЕНДЛЕРЫ БОТА
 # ============================================================
-
 @router.message(types.ContentType.TEXT)
 async def handle_text(message: Message):
-    """Приветствие + кнопка Mini App."""
     if message.text and message.text.startswith("/start"):
+        base = WEBHOOK_URL or RENDER_URL or "https://example.com"
         await message.answer(
-            "🎮 <b>Brainrots Funny</b>\n\n"
-            "Открывай приложение и крути кейсы!",
+            "🎮 <b>Brainrots Funny</b>\n\nОткрывай приложение и крути кейсы!",
             reply_markup=types.InlineKeyboardMarkup(
                 inline_keyboard=[[
                     types.InlineKeyboardButton(
                         text="🎮 Открыть Brainrots Funny",
-                        web_app=types.WebAppInfo(url=RENDER_URL or WEBHOOK_URL or "https://example.com")
+                        web_app=types.WebAppInfo(url=base),
                     )
                 ]]
             ),
         )
 
+
 @router.pre_checkout_query()
 async def pre_checkout(query: PreCheckoutQuery):
-    """Обязательно ответить в течение 10 секунд."""
     try:
         payload = json.loads(query.invoice_payload)
         pack_id = payload.get("package_id")
         if pack_id not in STARS_PACKAGES:
             await query.answer(ok=False, error_message="Неизвестный пакет")
             return
-        # Можно проверить, не куплен ли уже этот пакет
         await query.answer(ok=True)
-    except Exception as e:
+    except Exception:
         log.exception("pre_checkout error")
         await query.answer(ok=False, error_message="Ошибка валидации")
 
+
 @router.message(types.ContentType.SUCCESSFUL_PAYMENT)
 async def successful_payment(message: Message):
-    """Зачисляем монеты после оплаты."""
     sp = message.successful_payment
     try:
         payload = json.loads(sp.invoice_payload)
@@ -150,10 +143,8 @@ async def successful_payment(message: Message):
     u["stars_spent"] += pack["stars"]
     u["purchases"] += 1
 
-    log.info(
-        "Payment: user=%s pack=%s stars=%s coins=%s",
-        user_id, pack_id, pack["stars"], pack["coins"]
-    )
+    log.info("Payment: user=%s pack=%s stars=%s coins=%s",
+             user_id, pack_id, pack["stars"], pack["coins"])
 
     await message.answer(
         f"⭐ <b>Оплата прошла!</b>\n\n"
@@ -162,48 +153,12 @@ async def successful_payment(message: Message):
         f"Баланс: <b>{u['coins']} монет</b>"
     )
 
+
 # ============================================================
-# LIFESPAN — установка/удаление вебхука
+# LIFESPAN
 # ============================================================
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    """Устанавливаем вебхук при старте, удаляем при остановке."""
-    if not WEBHOOK_URL and not RENDER_URL:
-        log.warning("WEBHOOK_URL/RENDER_URL не заданы — вебхук не установлен")
-        yield
-        return
-
-    base = WEBHOOK_URL or RENDER_URL
-    webhook_path = "/webhook/tg"
-    webhook_full = f"{base}{webhook_path}"
-    log.info("Устанавливаю вебхук: %s", webhook_full)
-
-    await bot.set_webhook(
-        url=webhook_full,
-        allowed_updates=dp.resolve_used_update_types(),
-        drop_pending_updates=True,
-    )
-
-    # Self-ping (чтобы Render Free не засыпал)
-    ping_task = None
-    if RENDER_URL:
-        ping_task = asyncio.create_task(self_ping_loop(RENDER_URL))
-
-    yield
-
-    if ping_task:
-        ping_task.cancel()
-        try:
-            await ping_task
-        except asyncio.CancelledError:
-            pass
-
-    await bot.delete_webhook()
-    await bot.session.close()
-
 async def self_ping_loop(base_url: str):
-    """Пингуем себя каждые 10 минут, чтобы Render не уснул."""
+    """Пинг себя, чтобы Render Free не засыпал."""
     url = f"{base_url}/health"
     async with aiohttp.ClientSession() as session:
         while True:
@@ -214,49 +169,128 @@ async def self_ping_loop(base_url: str):
                 log.warning("Self-ping failed: %s", e)
             await asyncio.sleep(600)  # 10 минут
 
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # === Диагностика на старте ===
+    log.info("========== STARTUP DIAGNOSTICS ==========")
+    log.info("BOT_TOKEN set:        %s", bool(BOT_TOKEN))
+    log.info("WEBHOOK_URL:          %s", WEBHOOK_URL or "(none)")
+    log.info("RENDER_EXTERNAL_URL:  %s", RENDER_URL or "(none)")
+    log.info("index.html exists:    %s", INDEX_HTML.exists())
+    log.info("assets/ exists:       %s", ASSETS_DIR.exists())
+    log.info("Bot initialized:      %s", bot is not None)
+    log.info("=========================================")
+
+    # === Установка вебхука (не критично если упадёт) ===
+    if bot and (WEBHOOK_URL or RENDER_URL):
+        base = WEBHOOK_URL or RENDER_URL
+        webhook_full = f"{base}/webhook/tg"
+        try:
+            await bot.set_webhook(
+                url=webhook_full,
+                allowed_updates=dp.resolve_used_update_types(),
+                drop_pending_updates=True,
+            )
+            log.info("Webhook установлен: %s", webhook_full)
+        except Exception as e:
+            log.exception("Не удалось установить вебхук: %s", e)
+    elif bot:
+        log.warning("Ни WEBHOOK_URL, ни RENDER_EXTERNAL_URL не заданы — вебхук не установлен")
+
+    # === Self-ping ===
+    ping_task = None
+    if RENDER_URL:
+        ping_task = asyncio.create_task(self_ping_loop(RENDER_URL))
+        log.info("Self-ping запущен на %s/health", RENDER_URL)
+
+    # === Отдаём управление приложению ===
+    yield
+
+    # === Остановка ===
+    if ping_task:
+        ping_task.cancel()
+        try:
+            await ping_task
+        except asyncio.CancelledError:
+            pass
+    if bot:
+        try:
+            await bot.delete_webhook()
+        except Exception:
+            pass
+        try:
+            await bot.session.close()
+        except Exception:
+            pass
+    log.info("Shutdown complete")
+
+
 # ============================================================
 # FASTAPI
 # ============================================================
-
 app = FastAPI(lifespan=lifespan, title="Brainrots Funny API")
 
-# Отдаём статику (картинки кейсов, брейнротов) если лежат рядом
-if (BASE_DIR / "assets").exists():
-    app.mount("/assets", StaticFiles(directory=BASE_DIR / "assets"), name="assets")
+if ASSETS_DIR.exists():
+    app.mount("/assets", StaticFiles(directory=ASSETS_DIR), name="assets")
+
 
 @app.get("/", response_class=HTMLResponse)
 async def root():
-    """Отдаём index.html."""
     if not INDEX_HTML.exists():
         return HTMLResponse(
-            "<h1>index.html не найден</h1><p>Положи его рядом с main.py</p>",
+            "<h1>index.html не найден</h1>"
+            "<p>Положи index.html рядом с main.py</p>",
             status_code=404,
         )
     return HTMLResponse(INDEX_HTML.read_text(encoding="utf-8"))
 
+
 @app.get("/health")
 async def health():
-    """Health-check и self-ping эндпоинт."""
     return {"ok": True, "service": "brainrots-funny"}
+
+
+@app.get("/debug")
+async def debug():
+    """Диагностика: зайди сюда чтобы понять что не так."""
+    return {
+        "bot_token_set": bool(BOT_TOKEN),
+        "bot_initialized": bot is not None,
+        "webhook_url": WEBHOOK_URL or None,
+        "render_url": RENDER_URL or None,
+        "index_html_exists": INDEX_HTML.exists(),
+        "assets_exists": ASSETS_DIR.exists(),
+        "packages": list(STARS_PACKAGES.keys()),
+        "webhook_path": "/webhook/tg",
+    }
+
 
 @app.post("/webhook/tg")
 async def telegram_webhook(request: Request):
-    """Принимаем апдейты от Telegram."""
+    if bot is None:
+        raise HTTPException(status_code=503, detail="bot not initialized")
     try:
         data = await request.json()
     except Exception:
         raise HTTPException(status_code=400, detail="invalid json")
 
-    update = Update.model_validate(data, context={"bot": bot})
-    await dp.feed_update(bot, update)
+    try:
+        update = Update.model_validate(data, context={"bot": bot})
+        await dp.feed_update(bot, update)
+    except Exception as e:
+        log.exception("Ошибка обработки апдейта: %s", e)
+        # Отвечаем 200, чтобы Telegram не ретраил бесконечно
+        return {"ok": True, "note": "error logged"}
+
     return {"ok": True}
+
 
 @app.post("/api/create-invoice-link")
 async def create_invoice_link(request: Request):
-    """
-    Фронтенд стучится сюда, чтобы получить ссылку на оплату.
-    Body: { "package_id": "p50", "user_id": 123456789 }
-    """
+    if bot is None:
+        raise HTTPException(status_code=503, detail="bot not initialized")
+
     try:
         body = await request.json()
     except Exception:
@@ -283,10 +317,8 @@ async def create_invoice_link(request: Request):
             title=f"{coins} монет",
             description=f"Пакет «{pack_id}» для Brainrots Funny",
             payload=payload,
-            currency="XTR",              # XTR = Telegram Stars
+            currency="XTR",
             prices=[LabeledPrice(label=f"{coins} монет", amount=stars)],
-            provider_token=None,         # Для Stars — не нужен
-            # subscription_period не ставим — это разовый платёж
         )
     except Exception as e:
         log.exception("create_invoice_link error")
@@ -295,13 +327,14 @@ async def create_invoice_link(request: Request):
     log.info("Invoice link created: user=%s pack=%s stars=%s", user_id, pack_id, stars)
     return {"invoice_link": link, "stars": stars, "coins": coins}
 
+
 @app.get("/api/balance/{user_id}")
 async def get_balance(user_id: int):
-    """Опционально: посмотреть баланс юзера (в памяти)."""
     return get_user(user_id)
 
+
 # ============================================================
-# ЗАПУСК (для локального теста: python main.py)
+# Локальный запуск
 # ============================================================
 if __name__ == "__main__":
     import uvicorn
