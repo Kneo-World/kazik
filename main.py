@@ -4,14 +4,23 @@
 Brainrots Funny — Telegram Mini App + Stars Payments
 =====================================================
 Один файл: aiogram 3 + FastAPI.
+
 - Отдаёт index.html по корню "/"
-- Обрабатывает Telegram webhook по "/webhook/tg"
+- Принимает Telegram webhook по "/webhook/tg"
 - Создаёт инвойсы для Stars по "/api/create-invoice-link"
-- Диагностика: /debug и /health
+- Диагностика: /health и /debug
 
 Поведение:
 - Даже если BOT_TOKEN не задан или вебхук не установился — сайт работает.
 - Все ошибки бота логируются, но приложение не падает.
+
+Деплой на Render:
+    Build Command:  pip install -r requirements.txt
+    Start Command:  uvicorn main:app --host 0.0.0.0 --port $PORT
+    Env:
+        BOT_TOKEN       = токен от @BotFather (обязательно)
+        WEBHOOK_URL     = https://твой-сервис.onrender.com (желательно)
+        RENDER_EXTERNAL_URL — Render подставит сам
 """
 
 import os
@@ -26,7 +35,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
-from aiogram import Bot, Dispatcher, Router, types
+from aiogram import Bot, Dispatcher, Router, types, F
 from aiogram.types import Update, LabeledPrice, PreCheckoutQuery, Message
 
 
@@ -35,14 +44,14 @@ from aiogram.types import Update, LabeledPrice, PreCheckoutQuery, Message
 # ============================================================
 load_dotenv()
 
-BOT_TOKEN = (os.getenv("BOT_TOKEN") or "").strip()
+BOT_TOKEN   = (os.getenv("BOT_TOKEN") or "").strip()
 WEBHOOK_URL = (os.getenv("WEBHOOK_URL") or "").strip().rstrip("/")
-RENDER_URL = (os.getenv("RENDER_EXTERNAL_URL") or "").strip().rstrip("/")
-PORT = int(os.getenv("PORT", "10000"))
+RENDER_URL  = (os.getenv("RENDER_EXTERNAL_URL") or "").strip().rstrip("/")
+PORT        = int(os.getenv("PORT", "10000"))
 
-BASE_DIR = Path(__file__).parent.resolve()
-INDEX_HTML = BASE_DIR / "index.html"
-ASSETS_DIR = BASE_DIR / "assets"
+BASE_DIR    = Path(__file__).parent.resolve()
+INDEX_HTML  = BASE_DIR / "index.html"
+ASSETS_DIR  = BASE_DIR / "assets"
 
 logging.basicConfig(
     level=logging.INFO,
@@ -52,7 +61,7 @@ log = logging.getLogger("brainrots")
 
 
 # ============================================================
-# БОТ И ДИСПЕТЧЕР (с защитой от краха)
+# БОТ И ДИСПЕТЧЕР
 # ============================================================
 dp = Dispatcher()
 router = Router()
@@ -73,6 +82,7 @@ else:
 # Память (в проде — БД)
 USER_BALANCES: dict[int, dict] = {}
 
+# Должно совпадать с STARS_PACKAGES во фронтенде!
 STARS_PACKAGES = {
     "p10":  {"stars": 10,  "coins": 50,   "bonus": 0},
     "p25":  {"stars": 25,  "coins": 135,  "bonus": 8},
@@ -92,25 +102,31 @@ def get_user(user_id: int) -> dict:
 # ============================================================
 # ХЕНДЛЕРЫ БОТА
 # ============================================================
-@router.message(types.ContentType.TEXT)
+@router.message(F.text)
 async def handle_text(message: Message):
+    """Отвечаем на /start кнопкой Mini App."""
     if message.text and message.text.startswith("/start"):
         base = WEBHOOK_URL or RENDER_URL or "https://example.com"
-        await message.answer(
-            "🎮 <b>Brainrots Funny</b>\n\nОткрывай приложение и крути кейсы!",
-            reply_markup=types.InlineKeyboardMarkup(
-                inline_keyboard=[[
-                    types.InlineKeyboardButton(
-                        text="🎮 Открыть Brainrots Funny",
-                        web_app=types.WebAppInfo(url=base),
-                    )
-                ]]
-            ),
-        )
+        try:
+            await message.answer(
+                "🎮 <b>Brainrots Funny</b>\n\n"
+                "Открывай приложение и крути кейсы!",
+                reply_markup=types.InlineKeyboardMarkup(
+                    inline_keyboard=[[
+                        types.InlineKeyboardButton(
+                            text="🎮 Открыть Brainrots Funny",
+                            web_app=types.WebAppInfo(url=base),
+                        )
+                    ]]
+                ),
+            )
+        except Exception as e:
+            log.exception("Ошибка отправки /start: %s", e)
 
 
 @router.pre_checkout_query()
 async def pre_checkout(query: PreCheckoutQuery):
+    """Telegram требует ответить в течение 10 секунд."""
     try:
         payload = json.loads(query.invoice_payload)
         pack_id = payload.get("package_id")
@@ -118,13 +134,17 @@ async def pre_checkout(query: PreCheckoutQuery):
             await query.answer(ok=False, error_message="Неизвестный пакет")
             return
         await query.answer(ok=True)
-    except Exception:
-        log.exception("pre_checkout error")
-        await query.answer(ok=False, error_message="Ошибка валидации")
+    except Exception as e:
+        log.exception("pre_checkout error: %s", e)
+        try:
+            await query.answer(ok=False, error_message="Ошибка валидации")
+        except Exception:
+            pass
 
 
-@router.message(types.ContentType.SUCCESSFUL_PAYMENT)
+@router.message(F.successful_payment)
 async def successful_payment(message: Message):
+    """Зачисляем монеты после оплаты."""
     sp = message.successful_payment
     try:
         payload = json.loads(sp.invoice_payload)
@@ -143,22 +163,26 @@ async def successful_payment(message: Message):
     u["stars_spent"] += pack["stars"]
     u["purchases"] += 1
 
-    log.info("Payment: user=%s pack=%s stars=%s coins=%s",
-             user_id, pack_id, pack["stars"], pack["coins"])
-
-    await message.answer(
-        f"⭐ <b>Оплата прошла!</b>\n\n"
-        f"Начислено: <b>+{pack['coins']} монет</b>\n"
-        f"Потрачено: {pack['stars']} ⭐\n"
-        f"Баланс: <b>{u['coins']} монет</b>"
+    log.info(
+        "Payment: user=%s pack=%s stars=%s coins=%s",
+        user_id, pack_id, pack["stars"], pack["coins"],
     )
 
+    try:
+        await message.answer(
+            f"⭐ <b>Оплата прошла!</b>\n\n"
+            f"Начислено: <b>+{pack['coins']} монет</b>\n"
+            f"Потрачено: {pack['stars']} ⭐\n"
+            f"Баланс: <b>{u['coins']} монет</b>"
+        )
+    except Exception as e:
+        log.exception("Не удалось отправить подтверждение: %s", e)
+
 
 # ============================================================
-# LIFESPAN
+# SELF-PING (чтобы Render Free не засыпал)
 # ============================================================
 async def self_ping_loop(base_url: str):
-    """Пинг себя, чтобы Render Free не засыпал."""
     url = f"{base_url}/health"
     async with aiohttp.ClientSession() as session:
         while True:
@@ -170,6 +194,9 @@ async def self_ping_loop(base_url: str):
             await asyncio.sleep(600)  # 10 минут
 
 
+# ============================================================
+# LIFESPAN
+# ============================================================
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # === Диагностика на старте ===
@@ -288,6 +315,10 @@ async def telegram_webhook(request: Request):
 
 @app.post("/api/create-invoice-link")
 async def create_invoice_link(request: Request):
+    """
+    Фронтенд стучится сюда, чтобы получить ссылку на оплату.
+    Body: { "package_id": "p50", "user_id": 123456789 }
+    """
     if bot is None:
         raise HTTPException(status_code=503, detail="bot not initialized")
 
@@ -317,7 +348,7 @@ async def create_invoice_link(request: Request):
             title=f"{coins} монет",
             description=f"Пакет «{pack_id}» для Brainrots Funny",
             payload=payload,
-            currency="XTR",
+            currency="XTR",              # XTR = Telegram Stars
             prices=[LabeledPrice(label=f"{coins} монет", amount=stars)],
         )
     except Exception as e:
@@ -330,11 +361,12 @@ async def create_invoice_link(request: Request):
 
 @app.get("/api/balance/{user_id}")
 async def get_balance(user_id: int):
+    """Опционально: посмотреть баланс юзера (в памяти)."""
     return get_user(user_id)
 
 
 # ============================================================
-# Локальный запуск
+# Локальный запуск (python main.py)
 # ============================================================
 if __name__ == "__main__":
     import uvicorn
