@@ -4,13 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Brainrots Funny</title>
+    
     <!-- Подключаем Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <!-- Подключаем шрифт и иконки -->
+    
+    <!-- Подключаем шрифт и иконки FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        /* ================= CSS ПЕРЕМЕННЫЕ И БАЗА ================= */
+        /* ==========================================================================
+           1. ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ И БАЗОВЫЕ СТИЛИ
+           ========================================================================== */
         :root {
+            /* Цвета интерфейса */
             --bg-color: #0b0e14;
             --card-bg: #151921;
             --accent-blue: #2b6bf3;
@@ -47,7 +53,9 @@
             transition: background-color 0.3s;
         }
 
-        /* ================= ШАПКА ================= */
+        /* ==========================================================================
+           2. ШАПКА ПРОФИЛЯ (HEADER)
+           ========================================================================== */
         header {
             background: #11141d; 
             padding: 12px 16px;
@@ -61,228 +69,464 @@
         }
         .user-profile { display: flex; align-items: center; gap: 10px; }
         .user-avatar {
-            width: 38px; height: 38px; border-radius: 50%; background: var(--accent-blue);
-            display: flex; align-items: center; justify-content: center;
-            font-weight: bold; font-size: 16px; overflow: hidden;
+            width: 38px; 
+            height: 38px; 
+            border-radius: 50%; 
+            background: var(--accent-blue);
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            font-weight: bold; 
+            font-size: 16px; 
+            overflow: hidden;
             border: 1px solid rgba(255,255,255,0.1);
         }
         .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .user-info { display: flex; flex-direction: column; }
         .user-name { font-size: 14px; font-weight: 700; }
+        
         .header-right { display: flex; align-items: center; gap: 8px; }
         .balance-badge {
-            background: #1c2230; padding: 6px 14px; border-radius: 20px;
+            background: #1c2230; 
+            padding: 6px 14px; 
+            border-radius: 20px;
             border: 1px solid var(--border-color);
-            display: flex; align-items: center; gap: 6px;
-            font-weight: 800; color: var(--accent-gold); font-size: 15px;
+            display: flex; 
+            align-items: center; 
+            gap: 6px;
+            font-weight: 800; 
+            color: var(--accent-gold); 
+            font-size: 15px;
             box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
             transition: transform 0.2s;
         }
         .balance-badge.bump { animation: bump 0.4s ease; }
-        @keyframes bump { 0%{transform:scale(1);} 40%{transform:scale(1.15);color:#fff;} 100%{transform:scale(1);} }
+        @keyframes bump { 
+            0%{transform:scale(1);} 
+            40%{transform:scale(1.15);color:#fff;} 
+            100%{transform:scale(1);} 
+        }
 
         .icon-btn {
-            width: 36px; height: 36px; border-radius: 10px;
-            background: #1c2230; border: 1px solid var(--border-color);
-            color: var(--text-muted); display: flex; align-items: center; justify-content: center;
-            cursor: pointer; font-size: 15px; transition: all 0.2s;
+            width: 36px; 
+            height: 36px; 
+            border-radius: 10px;
+            background: #1c2230; 
+            border: 1px solid var(--border-color);
+            color: var(--text-muted); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            cursor: pointer; 
+            font-size: 15px; 
+            transition: all 0.2s;
         }
         .icon-btn:hover { color: var(--text-main); border-color: var(--accent-blue); }
 
-        /* ================= ТАБЫ ================= */
+        /* ==========================================================================
+           3. НАВИГАЦИЯ (TABS)
+           ========================================================================== */
         .tabs { 
             display: flex; 
             background: #11141d; 
             border-bottom: 1px solid var(--border-color); 
         }
         .tab-btn {
-            flex: 1; padding: 10px 0; text-align: center;
-            background: none; border: none; color: var(--text-muted);
-            font-size: 10.5px; font-weight: 700; cursor: pointer;
+            flex: 1; 
+            padding: 10px 0; 
+            text-align: center;
+            background: none; 
+            border: none; 
+            color: var(--text-muted);
+            font-size: 10.5px; 
+            font-weight: 700; 
+            cursor: pointer;
             transition: all 0.2s;
-            display: flex; flex-direction: column; align-items: center; gap: 3px;
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            gap: 3px;
         }
         .tab-btn i { font-size: 15px; }
-        .tab-btn.active { color: var(--accent-blue); border-bottom: 3px solid var(--accent-blue); background: rgba(43,107,243,0.05); }
+        .tab-btn.active { 
+            color: var(--accent-blue); 
+            border-bottom: 3px solid var(--accent-blue); 
+            background: rgba(43,107,243,0.05); 
+        }
 
-        /* ================= СЕКЦИИ ================= */
+        /* ==========================================================================
+           4. ОБЩИЕ СЕКЦИИ
+           ========================================================================== */
         .section { display: none; padding: 16px; }
         .section.active { display: block; }
         .section-title {
-            font-size: 17px; font-weight: 800; margin-bottom: 14px;
-            display: flex; align-items: center; gap: 8px;
+            font-size: 17px; 
+            font-weight: 800; 
+            margin-bottom: 14px;
+            display: flex; 
+            align-items: center; 
+            gap: 8px;
         }
 
-        /* ================= ДРОП ФИД ================= */
+        /* ==========================================================================
+           5. ЛЕНТА ДРОПОВ (DROP FEED)
+           ========================================================================== */
         .drop-feed {
-            background: var(--card-bg); border: 1px solid var(--border-color);
-            border-radius: 12px; padding: 10px 12px; margin-bottom: 14px;
+            background: var(--card-bg); 
+            border: 1px solid var(--border-color);
+            border-radius: 12px; 
+            padding: 10px 12px; 
+            margin-bottom: 14px;
         }
-        .drop-feed__title { font-size: 11px; color: var(--text-muted); font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+        .drop-feed__title { 
+            font-size: 11px; 
+            color: var(--text-muted); 
+            font-weight: 700; 
+            margin-bottom: 8px; 
+            display: flex; 
+            align-items: center; 
+            gap: 6px; 
+        }
         .drop-feed__live {
-            display: inline-block; width: 7px; height: 7px;
-            background: var(--accent-red); border-radius: 50%;
+            display: inline-block; 
+            width: 7px; 
+            height: 7px;
+            background: var(--accent-red); 
+            border-radius: 50%;
             box-shadow: 0 0 6px var(--accent-red);
             animation: livePulse 1.5s ease infinite;
         }
         @keyframes livePulse { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+        
         .drop-feed__list { display: flex; flex-direction: column; gap: 6px; max-height: 96px; overflow: hidden; }
-        .drop-row { display: flex; align-items: center; gap: 8px; font-size: 11.5px; animation: dropAppear 0.4s ease; }
-        @keyframes dropAppear { from{opacity:0;transform:translateY(-6px);} to{opacity:1;transform:translateY(0);} }
-        .drop-row__avatar {
-            width: 20px; height: 20px; border-radius: 50%; background: var(--accent-blue);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 10px; font-weight: 800; flex-shrink: 0; color: #fff;
+        .drop-row { 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            font-size: 11.5px; 
+            animation: dropAppear 0.4s ease; 
         }
-        .drop-row__nick { color: var(--text-muted); font-weight: 600; max-width: 72px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        @keyframes dropAppear { 
+            from{opacity:0;transform:translateY(-6px);} 
+            to{opacity:1;transform:translateY(0);} 
+        }
+        .drop-row__avatar {
+            width: 20px; 
+            height: 20px; 
+            border-radius: 50%; 
+            background: var(--accent-blue);
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            font-size: 10px; 
+            font-weight: 800; 
+            flex-shrink: 0; 
+            color: #fff;
+        }
+        .drop-row__nick { 
+            color: var(--text-muted); 
+            font-weight: 600; 
+            max-width: 72px; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+            white-space: nowrap; 
+        }
         .drop-row__arrow { color: var(--text-muted); font-size: 10px; }
         .drop-row__img { width: 20px; height: 20px; object-fit: contain; flex-shrink: 0; }
-        .drop-row__item { font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+        .drop-row__item { 
+            font-weight: 700; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+            white-space: nowrap; 
+            flex: 1; 
+        }
 
-        /* ================= КЕЙСЫ ================= */
+        /* ==========================================================================
+           6. КЕЙСЫ (CASES)
+           ========================================================================== */
         .cases-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
         .case-card {
-            background: var(--card-bg); border-radius: 14px; padding: 16px;
-            border: 1px solid var(--border-color); text-align: center;
-            cursor: pointer; transition: transform 0.15s, border-color 0.2s;
+            background: var(--card-bg); 
+            border-radius: 14px; 
+            padding: 16px;
+            border: 1px solid var(--border-color); 
+            text-align: center;
+            cursor: pointer; 
+            transition: transform 0.15s, border-color 0.2s;
             position: relative;
         }
         .case-card:hover { border-color: rgba(43,107,243,0.5); }
         .case-card:active { transform: scale(0.96); }
         .case-card.locked { opacity: 0.6; cursor: not-allowed; }
-        .case-img { width: 90px; height: 90px; object-fit: contain; margin: 0 auto 10px; filter: drop-shadow(0 6px 12px rgba(0,0,0,0.6)); }
+        
+        .case-img { 
+            width: 90px; 
+            height: 90px; 
+            object-fit: contain; 
+            margin: 0 auto 10px; 
+            filter: drop-shadow(0 6px 12px rgba(0,0,0,0.6)); 
+        }
         .case-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
         .case-price { font-size: 12px; color: var(--accent-gold); font-weight: 700; }
         .case-price.locked-text { color: var(--accent-red); }
 
-        /* ================= МОДАЛКИ ================= */
+        /* ==========================================================================
+           7. МОДАЛЬНЫЕ ОКНА (MODALS)
+           ========================================================================== */
         .modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 200;
-            justify-content: center; align-items: center; padding: 16px;
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%;
+            background: rgba(0,0,0,0.85); 
+            backdrop-filter: blur(5px); 
+            z-index: 200;
+            justify-content: center; 
+            align-items: center; 
+            padding: 16px;
         }
         .modal.active { display: flex; animation: fadeIn 0.2s ease; }
         @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
+        
         .modal-content {
-            background: var(--card-bg); border: 1px solid var(--border-color);
-            border-radius: 20px; width: 100%; max-width: 440px; padding: 20px;
-            text-align: center; position: relative;
-            max-height: 90vh; overflow-y: auto;
+            background: var(--card-bg); 
+            border: 1px solid var(--border-color);
+            border-radius: 20px; 
+            width: 100%; 
+            max-width: 440px; 
+            padding: 20px;
+            text-align: center; 
+            position: relative;
+            max-height: 90vh; 
+            overflow-y: auto;
             box-shadow: 0 10px 30px rgba(0,0,0,0.8);
             animation: modalIn 0.25s cubic-bezier(0.175,0.885,0.32,1.275);
         }
-        @keyframes modalIn { from{transform:scale(0.9);opacity:0;} to{transform:scale(1);opacity:1;} }
+        @keyframes modalIn { 
+            from{transform:scale(0.9);opacity:0;} 
+            to{transform:scale(1);opacity:1;} 
+        }
+        
         .close-modal {
-            position: absolute; top: 14px; right: 16px; font-size: 22px;
-            color: var(--text-muted); cursor: pointer;
-            width: 30px; height: 30px; line-height: 28px; text-align: center; z-index: 2;
+            position: absolute; 
+            top: 14px; 
+            right: 16px; 
+            font-size: 22px;
+            color: var(--text-muted); 
+            cursor: pointer;
+            width: 30px; 
+            height: 30px; 
+            line-height: 28px; 
+            text-align: center; 
+            z-index: 2;
         }
         .close-modal:hover { color: var(--text-main); }
 
-        /* ================= РУЛЕТКА ================= */
+        /* ==========================================================================
+           8. РУЛЕТКА (ROULETTE)
+           ========================================================================== */
         .multiplier-selector { display: flex; justify-content: center; gap: 10px; margin: 16px 0; }
         .mult-btn {
-            background: #1c2230; border: 1px solid var(--border-color);
-            color: var(--text-muted); padding: 8px 18px; border-radius: 10px;
-            font-weight: 800; cursor: pointer;
+            background: #1c2230; 
+            border: 1px solid var(--border-color);
+            color: var(--text-muted); 
+            padding: 8px 18px; 
+            border-radius: 10px;
+            font-weight: 800; 
+            cursor: pointer;
         }
         .mult-btn.active { background: var(--accent-blue); color: #fff; border-color: var(--accent-blue); }
         
         .btn-action {
-            background: var(--accent-blue); color: white; border: none;
-            width: 100%; padding: 14px; border-radius: 12px;
-            font-weight: 800; font-size: 16px; cursor: pointer; margin-top: 10px;
+            background: var(--accent-blue); 
+            color: white; 
+            border: none;
+            width: 100%; 
+            padding: 14px; 
+            border-radius: 12px;
+            font-weight: 800; 
+            font-size: 16px; 
+            cursor: pointer; 
+            margin-top: 10px;
         }
         .btn-action:active { transform: scale(0.98); }
         .btn-action:disabled { background: #2a3245; color: #5d667a; cursor: not-allowed; }
 
         .roulettes-stack { display: none; flex-direction: column; gap: 10px; margin: 15px 0; }
         .roulette-container {
-            width: 100%; height: 110px; background: #0d1017;
-            border: 2px solid var(--border-color); border-radius: 12px;
-            position: relative; overflow: hidden;
+            width: 100%; 
+            height: 110px; 
+            background: #0d1017;
+            border: 2px solid var(--border-color); 
+            border-radius: 12px;
+            position: relative; 
+            overflow: hidden;
         }
         .roulette-pointer {
-            position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-            width: 4px; height: 100%; background: var(--accent-gold);
-            z-index: 10; box-shadow: 0 0 10px var(--accent-gold);
+            position: absolute; 
+            top: 0; 
+            left: 50%; 
+            transform: translateX(-50%);
+            width: 4px; 
+            height: 100%; 
+            background: var(--accent-gold);
+            z-index: 10; 
+            box-shadow: 0 0 10px var(--accent-gold);
         }
         .roulette-pointer::before, .roulette-pointer::after {
-            content: ''; position: absolute; left: 50%; transform: translateX(-50%);
-            width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent;
+            content: ''; 
+            position: absolute; 
+            left: 50%; 
+            transform: translateX(-50%);
+            width: 0; 
+            height: 0; 
+            border-left: 6px solid transparent; 
+            border-right: 6px solid transparent;
         }
         .roulette-pointer::before { top: -2px; border-top: 8px solid var(--accent-gold); }
         .roulette-pointer::after  { bottom: -2px; border-bottom: 8px solid var(--accent-gold); }
+        
         .roulette-track { display: flex; position: absolute; left: 0; top: 10px; height: 90px; }
         .roulette-item {
-            min-width: 90px; width: 90px; height: 90px;
-            background: #151921; border: 1px solid var(--border-color);
-            border-radius: 10px; margin: 0 5px;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            font-size: 11px; text-align: center; padding: 4px; flex-shrink: 0;
+            min-width: 90px; 
+            width: 90px; 
+            height: 90px;
+            background: #151921; 
+            border: 1px solid var(--border-color);
+            border-radius: 10px; 
+            margin: 0 5px;
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center;
+            font-size: 11px; 
+            text-align: center; 
+            padding: 4px; 
+            flex-shrink: 0;
         }
         .roulette-item img { width: 45px; height: 45px; object-fit: contain; }
-        .roulette-item.rar-rare { border-color: var(--rar-rare); }
-        .roulette-item.rar-epic { border-color: var(--rar-epic); }
-        .roulette-item.rar-legendary { border-color: var(--rar-legendary); }
 
+        /* ==========================================================================
+           9. РЕЗУЛЬТАТЫ (WON CARDS)
+           ========================================================================== */
         .won-items-container { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin: 15px 0; }
         .won-card {
-            background: #1c2230; border: 2px solid var(--accent-gold);
-            border-radius: 12px; padding: 10px; width: 95px; text-align: center;
+            background: #1c2230; 
+            border: 2px solid var(--accent-gold);
+            border-radius: 12px; 
+            padding: 10px; 
+            width: 95px; 
+            text-align: center;
             animation: popIn 0.4s ease;
         }
         @keyframes popIn { 0%{transform:scale(0.3);opacity:0;} 100%{transform:scale(1);opacity:1;} }
         .won-card img { width: 50px; height: 50px; object-fit: contain; }
-        .won-card-title { font-size: 11px; font-weight: 700; margin-top: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .won-card-title { 
+            font-size: 11px; 
+            font-weight: 700; 
+            margin-top: 6px; 
+            white-space: nowrap; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+        }
         .won-card-price { font-size: 11px; color: var(--accent-gold); font-weight: 800; }
 
-        /* ================= АПГРЕЙД ================= */
-        .upg-inputs-label { font-size: 11px; color: var(--text-muted); font-weight: 700; text-align: center; margin-bottom: 8px; }
+        /* ==========================================================================
+           10. АПГРЕЙД (UPGRADER)
+           ========================================================================== */
+        .upg-inputs-label { 
+            font-size: 11px; 
+            color: var(--text-muted); 
+            font-weight: 700; 
+            text-align: center; 
+            margin-bottom: 8px; 
+        }
         .upg-inputs { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 10px; }
         .upg-slot {
-            aspect-ratio: 1; background: var(--card-bg);
-            border: 2px dashed var(--border-color); border-radius: 10px;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            cursor: pointer; padding: 3px; position: relative;
+            aspect-ratio: 1; 
+            background: var(--card-bg);
+            border: 2px dashed var(--border-color); 
+            border-radius: 10px;
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center;
+            cursor: pointer; 
+            padding: 3px; 
+            position: relative;
         }
         .upg-slot.filled { border-style: solid; border-color: var(--accent-blue); background: #182030; }
         .upg-slot img { max-width: 42px; max-height: 42px; object-fit: contain; }
         .upg-slot .plus { font-size: 16px; color: var(--text-muted); }
-        .upg-slot .price-tag { position: absolute; bottom: 1px; right: 3px; font-size: 9px; color: var(--accent-gold); font-weight: 800; }
+        .upg-slot .price-tag { 
+            position: absolute; 
+            bottom: 1px; 
+            right: 3px; 
+            font-size: 9px; 
+            color: var(--accent-gold); 
+            font-weight: 800; 
+        }
+        
         .upg-arrow-down { text-align: center; color: var(--accent-gold); font-size: 18px; margin: 6px 0 10px; }
         
         .upg-target-wrap { display: flex; justify-content: center; margin-bottom: 16px; }
         .upg-target {
-            width: 110px; height: 110px; background: var(--card-bg);
-            border: 2px dashed var(--border-color); border-radius: 14px;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            cursor: pointer; padding: 6px;
+            width: 110px; 
+            height: 110px; 
+            background: var(--card-bg);
+            border: 2px dashed var(--border-color); 
+            border-radius: 14px;
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center;
+            cursor: pointer; 
+            padding: 6px;
         }
         .upg-target.filled { border-style: solid; border-color: var(--accent-gold); background: #1e1a10; }
         .upg-target img { max-width: 60px; max-height: 60px; object-fit: contain; }
-        .upg-target .label { font-size: 10px; font-weight: 700; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+        .upg-target .label { 
+            font-size: 10px; 
+            font-weight: 700; 
+            margin-top: 3px; 
+            white-space: nowrap; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+            max-width: 100%; 
+        }
         .upg-target .price { font-size: 10px; color: var(--accent-gold); font-weight: 800; }
         .upg-target .plus { font-size: 22px; color: var(--text-muted); }
 
         .upgrader-circle-box { position: relative; width: 200px; height: 200px; margin: 20px auto; }
         .circle-svg { transform: rotate(-90deg); }
         .upgrader-arrow {
-            position: absolute; top: 50%; left: 50%;
-            width: 4px; height: 70px;
+            position: absolute; 
+            top: 50%; 
+            left: 50%;
+            width: 4px; 
+            height: 70px;
             background: linear-gradient(to top, transparent, var(--accent-gold));
             transform-origin: top center;
             transform: translate(-50%, 0) rotate(0deg);
-            z-index: 10; border-radius: 2px;
+            z-index: 10; 
+            border-radius: 2px;
         }
         .upgrader-info { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); text-align: center; z-index: 5; }
 
-        /* ================= ИНВЕНТАРЬ ================= */
+        /* ==========================================================================
+           11. ИНВЕНТАРЬ (INVENTORY)
+           ========================================================================== */
         .inventory-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
         .item-card {
-            background: var(--card-bg); border-radius: 12px; padding: 10px;
-            border: 1px solid var(--border-color); text-align: center;
-            cursor: pointer; position: relative;
+            background: var(--card-bg); 
+            border-radius: 12px; 
+            padding: 10px;
+            border: 1px solid var(--border-color); 
+            text-align: center;
+            cursor: pointer; 
+            position: relative;
         }
         .item-card.in-upgrader { border-color: var(--accent-blue) !important; background: #182030; }
         .item-card img { width: 55px; height: 55px; object-fit: contain; margin-bottom: 6px; }
@@ -291,54 +535,125 @@
         .item-card.rar-rare      { border-color: rgba(59,130,246,0.7); }
         .item-card.rar-epic      { border-color: rgba(168,85,247,0.75); }
         .item-card.rar-legendary { border-color: rgba(245,158,11,0.85); }
-        .item-name { font-size: 11px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        
+        .item-name { 
+            font-size: 11px; 
+            font-weight: 700; 
+            white-space: nowrap; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+        }
         .item-price { font-size: 12px; color: var(--accent-gold); font-weight: 800; margin-top: 2px; }
         .sell-btn {
-            background: rgba(231,76,60,0.15); color: var(--accent-red);
-            border: 1px solid rgba(231,76,60,0.3); border-radius: 6px;
-            padding: 5px 8px; font-size: 10px; font-weight: 700;
-            margin-top: 6px; cursor: pointer; width: 100%;
+            background: rgba(231,76,60,0.15); 
+            color: var(--accent-red);
+            border: 1px solid rgba(231,76,60,0.3); 
+            border-radius: 6px;
+            padding: 5px 8px; 
+            font-size: 10px; 
+            font-weight: 700;
+            margin-top: 6px; 
+            cursor: pointer; 
+            width: 100%;
         }
         .empty-inv { grid-column: span 3; text-align: center; color: var(--text-muted); padding: 40px 0; font-size: 14px; }
 
-        /* ================= ДОНАТ ================= */
+        /* ==========================================================================
+           12. ДОНАТ (DONATE)
+           ========================================================================== */
         .donate-intro {
             background: linear-gradient(135deg, rgba(245,166,35,0.12), rgba(43,107,243,0.12));
             border: 1px solid rgba(245,166,35,0.3);
-            border-radius: 14px; padding: 14px; margin-bottom: 16px; text-align: left;
+            border-radius: 14px; 
+            padding: 14px; 
+            margin-bottom: 16px; 
+            text-align: left;
         }
-        .donate-intro__title { font-size: 15px; font-weight: 800; color: var(--accent-gold); margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+        .donate-intro__title { 
+            font-size: 15px; 
+            font-weight: 800; 
+            color: var(--accent-gold); 
+            margin-bottom: 6px; 
+            display: flex; 
+            align-items: center; 
+            gap: 6px; 
+        }
         .donate-intro__text { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+        
         .donate-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
         .donate-pack {
-            background: var(--card-bg); border: 2px solid var(--border-color);
-            border-radius: 14px; padding: 14px 10px; text-align: center;
-            cursor: pointer; position: relative;
+            background: var(--card-bg); 
+            border: 2px solid var(--border-color);
+            border-radius: 14px; 
+            padding: 14px 10px; 
+            text-align: center;
+            cursor: pointer; 
+            position: relative;
         }
         .donate-pack:hover { border-color: var(--accent-gold); transform: translateY(-2px); }
-        .donate-pack.best { border-color: var(--accent-gold); background: linear-gradient(180deg, rgba(245,166,35,0.08), var(--card-bg) 60%); }
+        .donate-pack.best { 
+            border-color: var(--accent-gold); 
+            background: linear-gradient(180deg, rgba(245,166,35,0.08), var(--card-bg) 60%); 
+        }
         .donate-pack.best::after {
-            content: 'BEST'; position: absolute; top: -8px; right: 10px;
-            background: var(--accent-gold); color: #000;
-            font-size: 9px; font-weight: 900; padding: 2px 8px; border-radius: 8px;
+            content: 'BEST'; 
+            position: absolute; 
+            top: -8px; 
+            right: 10px;
+            background: var(--accent-gold); 
+            color: #000;
+            font-size: 9px; 
+            font-weight: 900; 
+            padding: 2px 8px; 
+            border-radius: 8px;
         }
         .donate-pack__icon { font-size: 32px; color: var(--accent-gold); margin-bottom: 6px; }
         .donate-pack__stars { font-size: 14px; font-weight: 800; margin-bottom: 4px; }
         .donate-pack__coins { font-size: 18px; font-weight: 900; color: var(--accent-gold); margin-bottom: 6px; }
-        .donate-pack__bonus { display: inline-block; font-size: 10px; font-weight: 800; background: rgba(46,204,113,0.15); color: var(--accent-green); padding: 2px 8px; border-radius: 6px; }
-        .donate-pack__price { font-size: 10px; color: var(--text-muted); margin-top: 6px; }
+        .donate-pack__bonus { 
+            display: inline-block; 
+            font-size: 10px; 
+            font-weight: 800; 
+            background: rgba(46,204,113,0.15); 
+            color: var(--accent-green); 
+            padding: 2px 8px; 
+            border-radius: 6px; 
+        }
 
-        /* ================= НАСТРОЙКИ ================= */
+        /* ==========================================================================
+           13. НАСТРОЙКИ (SETTINGS)
+           ========================================================================== */
         .settings-tabs { display: flex; gap: 6px; margin: 12px 0; }
         .settings-tab {
-            flex: 1; padding: 8px 4px; background: #1c2230; border: 1px solid var(--border-color);
-            border-radius: 10px; color: var(--text-muted); font-size: 11.5px; font-weight: 700; cursor: pointer;
-            display: flex; flex-direction: column; align-items: center; gap: 3px;
+            flex: 1; 
+            padding: 8px 4px; 
+            background: #1c2230; 
+            border: 1px solid var(--border-color);
+            border-radius: 10px; 
+            color: var(--text-muted); 
+            font-size: 11.5px; 
+            font-weight: 700; 
+            cursor: pointer;
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            gap: 3px;
         }
         .settings-tab.active { background: var(--accent-blue); border-color: var(--accent-blue); color: #fff; }
         .settings-panel { display: none; padding: 4px 0; text-align: left; }
         .settings-panel.active { display: block; }
-        .theme-card { display: flex; align-items: center; gap: 12px; padding: 12px; background: #1c2230; border: 1px solid var(--border-color); border-radius: 12px; margin-bottom: 8px; cursor: pointer; }
+        
+        .theme-card { 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            padding: 12px; 
+            background: #1c2230; 
+            border: 1px solid var(--border-color); 
+            border-radius: 12px; 
+            margin-bottom: 8px; 
+            cursor: pointer; 
+        }
         .theme-card.active { border-color: var(--accent-blue); }
         .theme-card__preview { width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; }
         .theme-card__name { font-size: 13px; font-weight: 700; }
@@ -346,25 +661,93 @@
         .theme-card__status.owned { color: var(--accent-green); }
         .theme-card__status.equipped { color: var(--accent-blue); }
         .theme-card__price { color: var(--accent-gold); font-weight: 800; font-size: 12px; }
-        .stat-row { display: flex; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid var(--border-color); font-size: 13px; }
+        
+        .stat-row { 
+            display: flex; 
+            justify-content: space-between; 
+            padding: 9px 0; 
+            border-bottom: 1px solid var(--border-color); 
+            font-size: 13px; 
+        }
         .stat-row:last-child { border-bottom: none; }
         .stat-row__label { color: var(--text-muted); }
         .stat-row__value { font-weight: 700; }
-        .ref-box { background: #1c2230; border: 1px dashed var(--border-color); border-radius: 12px; padding: 12px; margin: 8px 0; word-break: break-all; font-family: monospace; font-size: 11px; color: var(--text-muted); }
-        .ref-btn { background: var(--accent-blue); color: #fff; border: none; width: 100%; padding: 11px; border-radius: 10px; font-weight: 800; font-size: 13px; cursor: pointer; margin-top: 6px; }
-        .ref-btn.secondary { background: #1c2230; color: var(--text-main); border: 1px solid var(--border-color); }
+        
+        .ref-box { 
+            background: #1c2230; 
+            border: 1px dashed var(--border-color); 
+            border-radius: 12px; 
+            padding: 12px; 
+            margin: 8px 0; 
+            word-break: break-all; 
+            font-family: monospace; 
+            font-size: 11px; 
+            color: var(--text-muted); 
+        }
+        .ref-btn { 
+            background: var(--accent-blue); 
+            color: #fff; 
+            border: none; 
+            width: 100%; 
+            padding: 11px; 
+            border-radius: 10px; 
+            font-weight: 800; 
+            font-size: 13px; 
+            cursor: pointer; 
+            margin-top: 6px; 
+        }
+        .ref-btn.secondary { 
+            background: #1c2230; 
+            color: var(--text-main); 
+            border: 1px solid var(--border-color); 
+        }
         .settings-hint { font-size: 12px; color: var(--text-muted); line-height: 1.5; margin: 8px 0; }
 
-        /* ================= ТОСТЫ И КОНФЕТТИ ================= */
-        .bf-toast-container { position: fixed; top: 78px; left: 50%; transform: translateX(-50%); z-index: 9999; width: calc(100% - 24px); max-width: 420px; display: flex; flex-direction: column; gap: 10px; pointer-events: none; padding: 0 4px; }
-        .bf-toast { position: relative; display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 14px; background: #1c2230; border: 1px solid var(--border-color); font-size: 14px; font-weight: 600; box-shadow: 0 8px 24px rgba(0,0,0,0.6); pointer-events: auto; cursor: pointer; overflow: hidden; transform: translateY(-120%); opacity: 0; animation: toastIn 0.35s ease forwards; }
+        /* ==========================================================================
+           14. ТОСТЫ И КОНФЕТТИ
+           ========================================================================== */
+        .bf-toast-container { 
+            position: fixed; 
+            top: 78px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            z-index: 9999; 
+            width: calc(100% - 24px); 
+            max-width: 420px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 10px; 
+            pointer-events: none; 
+            padding: 0 4px; 
+        }
+        .bf-toast { 
+            position: relative; 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            padding: 14px 16px; 
+            border-radius: 14px; 
+            background: #1c2230; 
+            border: 1px solid var(--border-color); 
+            font-size: 14px; 
+            font-weight: 600; 
+            box-shadow: 0 8px 24px rgba(0,0,0,0.6); 
+            pointer-events: auto; 
+            cursor: pointer; 
+            overflow: hidden; 
+            transform: translateY(-120%); 
+            opacity: 0; 
+            animation: toastIn 0.35s ease forwards; 
+        }
         @keyframes toastIn { to{transform:translateY(0);opacity:1;} }
         .bf-toast.closing { animation: toastOut 0.3s ease forwards; }
         @keyframes toastOut { to{transform:translateY(-120%);opacity:0;} }
+        
         .bf-toast__icon { flex-shrink: 0; width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
         .bf-toast__body { flex: 1; min-width: 0; }
         .bf-toast__title { font-size: 13px; font-weight: 800; margin-bottom: 2px; }
         .bf-toast__msg { font-size: 12.5px; font-weight: 500; color: var(--text-muted); }
+        
         .bf-toast--success { border-color: rgba(46,204,113,0.5); background: linear-gradient(90deg, rgba(46,204,113,0.12), #1c2230 40%); }
         .bf-toast--success .bf-toast__icon { background: rgba(46,204,113,0.2); color: var(--accent-green); }
         .bf-toast--error { border-color: rgba(231,76,60,0.5); background: linear-gradient(90deg, rgba(231,76,60,0.12), #1c2230 40%); }
@@ -374,10 +757,19 @@
 
         .confetti-layer { position: fixed; inset: 0; pointer-events: none; z-index: 9998; overflow: hidden; }
         .confetti-piece { position: absolute; width: 10px; height: 14px; top: -20px; animation: confettiFall linear forwards; }
-        @keyframes confettiFall { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(110vh) rotate(720deg); opacity: 0.3; } }
+        @keyframes confettiFall { 
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; } 
+            100% { transform: translateY(110vh) rotate(720deg); opacity: 0.3; } 
+        }
 
-        .bf-confirm-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(6px); z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 20px; }
-        .bf-confirm { width: 100%; max-width: 380px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 24px 20px 20px; text-align: center; }
+        .bf-confirm-overlay { 
+            position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(6px); 
+            z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 20px; 
+        }
+        .bf-confirm { 
+            width: 100%; max-width: 380px; background: var(--card-bg); border: 1px solid var(--border-color); 
+            border-radius: 20px; padding: 24px 20px 20px; text-align: center; 
+        }
         .bf-confirm__actions { display: flex; gap: 10px; margin-top: 20px; }
         .bf-confirm__btn { flex: 1; padding: 12px 14px; border-radius: 12px; font-size: 14px; font-weight: 800; border: none; cursor: pointer; }
         .bf-confirm__btn--cancel { background: #1c2230; color: var(--text-muted); border: 1px solid var(--border-color); }
@@ -386,7 +778,9 @@
 </head>
 <body>
 
-    <!-- ШАПКА -->
+    <!-- ========================================== -->
+    <!-- ШАПКА С ПРОФИЛЕМ -->
+    <!-- ========================================== -->
     <header>
         <div class="user-profile">
             <div class="user-avatar" id="user-avatar">?</div>
@@ -406,7 +800,9 @@
         </div>
     </header>
 
-    <!-- ТАБЫ -->
+    <!-- ========================================== -->
+    <!-- НАВИГАЦИЯ -->
+    <!-- ========================================== -->
     <div class="tabs">
         <button class="tab-btn active" data-tab="cases" onclick="switchTab('cases')">
             <i class="fa-solid fa-box-open"></i> Кейсы
@@ -422,8 +818,11 @@
         </button>
     </div>
 
-    <!-- СЕКЦИЯ КЕЙСОВ -->
+    <!-- ========================================== -->
+    <!-- СЕКЦИЯ: КЕЙСЫ -->
+    <!-- ========================================== -->
     <div id="section-cases" class="section active">
+        <!-- Лента дропов -->
         <div class="drop-feed">
             <div class="drop-feed__title">
                 <span class="drop-feed__live"></span>
@@ -432,25 +831,31 @@
             <div class="drop-feed__list" id="drop-feed-list"></div>
         </div>
 
+        <!-- Сетка кейсов -->
         <div class="section-title"><i class="fa-solid fa-cubes"></i> Доступные Кейсы</div>
         <div class="cases-grid">
+            <!-- Бесплатный кейс -->
             <div class="case-card" onclick="openCaseModal('free')">
                 <img src="assets/cases/free.png" class="case-img" onerror="this.src='https://via.placeholder.com/90?text=FREE'">
                 <div class="case-title">Бесплатный</div>
                 <div class="case-price" id="free-timer-text">БЕСПЛАТНО</div>
             </div>
             
+            <!-- Кейс за юз -->
             <div class="case-card" id="user-case-card" onclick="openCaseModal('user')">
                 <img src="assets/cases/user.png" class="case-img" onerror="this.src='https://via.placeholder.com/90?text=USER'">
                 <div class="case-title">Кейс за Юз</div>
                 <div class="case-price" id="user-timer-text">ЗА ЮЗ</div>
             </div>
 
+            <!-- Начальный кейс -->
             <div class="case-card" onclick="openCaseModal('base')">
                 <img src="assets/cases/base.png" class="case-img" onerror="this.src='https://via.placeholder.com/90?text=BASE'">
                 <div class="case-title">Начальный</div>
                 <div class="case-price"><i class="fa-solid fa-coins"></i> 9 монет</div>
             </div>
+            
+            <!-- Про Бро кейс -->
             <div class="case-card" onclick="openCaseModal('bro')">
                 <img src="assets/cases/bro.png" class="case-img" onerror="this.src='https://via.placeholder.com/90?text=BRO'">
                 <div class="case-title">Про Бро</div>
@@ -459,7 +864,9 @@
         </div>
     </div>
 
-    <!-- СЕКЦИЯ АПГРЕЙДА -->
+    <!-- ========================================== -->
+    <!-- СЕКЦИЯ: АПГРЕЙД -->
+    <!-- ========================================== -->
     <div id="section-upgrader" class="section">
         <div class="section-title"><i class="fa-solid fa-bolt"></i> Прокачка</div>
 
@@ -496,7 +903,9 @@
         <button class="btn-action" id="btn-upgrade" onclick="runUpgradeAnimation()" disabled>ПРОКАЧАТЬ</button>
     </div>
 
-    <!-- СЕКЦИЯ ДОНАТА -->
+    <!-- ========================================== -->
+    <!-- СЕКЦИЯ: ДОНАТ -->
+    <!-- ========================================== -->
     <div id="section-donate" class="section">
         <div class="section-title"><i class="fa-solid fa-star"></i> Магазин монет</div>
         <div class="donate-intro">
@@ -508,7 +917,9 @@
         <div class="donate-grid" id="donate-grid"></div>
     </div>
 
-    <!-- СЕКЦИЯ ИНВЕНТАРЯ -->
+    <!-- ========================================== -->
+    <!-- СЕКЦИЯ: ИНВЕНТАРЬ -->
+    <!-- ========================================== -->
     <div id="section-inventory" class="section">
         <div class="section-title" style="justify-content: space-between;">
             <span><i class="fa-solid fa-sack-dollar"></i> Инвентарь</span>
@@ -519,7 +930,9 @@
         </div>
     </div>
 
-    <!-- МОДАЛКА КЕЙСА -->
+    <!-- ========================================== -->
+    <!-- МОДАЛКА: КЕЙС -->
+    <!-- ========================================== -->
     <div class="modal" id="case-modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeModal()">&times;</span>
@@ -544,7 +957,9 @@
         </div>
     </div>
 
-    <!-- МОДАЛКА ВЫБОРА ЦЕЛИ АПГРЕЙДА -->
+    <!-- ========================================== -->
+    <!-- МОДАЛКА: ВЫБОР ЦЕЛИ АПГРЕЙДА -->
+    <!-- ========================================== -->
     <div class="modal" id="target-modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeTargetModal()">&times;</span>
@@ -554,7 +969,9 @@
         </div>
     </div>
 
-    <!-- МОДАЛКА НАСТРОЕК -->
+    <!-- ========================================== -->
+    <!-- МОДАЛКА: НАСТРОЙКИ -->
+    <!-- ========================================== -->
     <div class="modal" id="settings-modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeSettings()">&times;</span>
@@ -570,7 +987,9 @@
         </div>
     </div>
 
-    <!-- FIREBASE ДЛЯ ДРОП-ФИДА (Читает глобальную ленту) -->
+    <!-- ========================================== -->
+    <!-- FIREBASE (Только для чтения глобального дроп-фида) -->
+    <!-- ========================================== -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
@@ -595,19 +1014,22 @@
         });
     </script>
 
+    <!-- ========================================== -->
     <!-- ОСНОВНОЙ СКРИПТ ИГРЫ -->
+    <!-- ========================================== -->
     <script>
     (function () {
         'use strict';
 
         // ================= КОНФИГ =================
-        const API_BASE = 'https://kazik-2.onrender.com';
+        const API_BASE = 'https://kazik-2.onrender.com'; // Твой URL из логов
         const BOT_URL = 'https://t.me/Brain_Funbot'; // Твой бот
-        const FREE_COOLDOWN = 24 * 3600 * 1000;
-        const USER_COOLDOWN = 12 * 3600 * 1000;
+        const FREE_COOLDOWN = 24 * 3600 * 1000; // 24 часа
+        const USER_COOLDOWN = 12 * 3600 * 1000; // 12 часов
         const MAX_UPGRADE_CHANCE = 95;
         const CIRCUMFERENCE = 2 * Math.PI * 80;
 
+        // Редкости
         const RARITIES = {
             common:    { id: 'common',    name: 'Common',    color: '#6b7280' },
             uncommon:  { id: 'uncommon',  name: 'Uncommon',  color: '#22c55e' },
@@ -616,6 +1038,7 @@
             legendary: { id: 'legendary', name: 'Legendary', color: '#f59e0b' }
         };
 
+        // Пакеты доната
         const STARS_PACKAGES = [
             { id: 'p10',  stars: 10,  coins: 50,   bonus: 0,    best: false },
             { id: 'p25',  stars: 25,  coins: 135,  bonus: 8,    best: false },
@@ -625,15 +1048,18 @@
             { id: 'p500', stars: 500, coins: 4000, bonus: 60,   best: false }
         ];
 
+        // Цены и названия кейсов
         const CASE_PRICES = { free: 0, user: 0, base: 9, bro: 25 };
         const CASE_TITLES = { free: 'Бесплатный Кейс', user: 'Кейс за Юз', base: 'Начальный Кейс', bro: 'Про Бро Кейс' };
         
+        // Темы
         const THEMES = {
             dark: { name: 'Тёмная', price: 0, vars: { '--bg-color':'#0b0e14','--card-bg':'#151921','--accent-blue':'#2b6bf3','--accent-gold':'#f5a623','--accent-green':'#2ecc71','--accent-red':'#e74c3c','--text-main':'#ffffff','--text-muted':'#8c93a4','--border-color':'#222834' }, preview: ['#0b0e14', '#2b6bf3', '#f5a623'] },
             neon: { name: 'Неоновая', price: 100, vars: { '--bg-color':'#08001a','--card-bg':'#170a33','--accent-blue':'#a855f7','--accent-gold':'#f472b6','--accent-green':'#22d3ee','--accent-red':'#f43f5e','--text-main':'#f5f3ff','--text-muted':'#a78bfa','--border-color':'#3b1a72' }, preview: ['#08001a', '#a855f7', '#f472b6'] },
             gold: { name: 'Золотая', price: 500, vars: { '--bg-color':'#140d04','--card-bg':'#241808','--accent-blue':'#fbbf24','--accent-gold':'#f59e0b','--accent-green':'#84cc16','--accent-red':'#dc2626','--text-main':'#fef9c3','--text-muted':'#a16207','--border-color':'#4a3410' }, preview: ['#140d04', '#fbbf24', '#f59e0b'] }
         };
 
+        // ВСЕ ПРЕДМЕТЫ (для превью и апгрейда)
         const ALL_ITEMS = [
             { id: 'trios',     name: 'Los Trios',           price: 4,     rarity: 'common',    img: 'assets/brainrots/los_trios.png' },
             { id: 'rot67',     name: '67',                  price: 5,     rarity: 'common',    img: 'assets/brainrots/67.png' },
@@ -649,9 +1075,52 @@
             { id: 'skibidi',   name: 'Skibidi Toilet',      price: 13154, rarity: 'legendary', img: 'assets/brainrots/skibidi_toilet.png' }
         ];
 
+        // КОНФИГ ЛУТА (Должен совпадать с бэкендом!)
+        const CASE_LOOT_DATA = {
+            free: {
+                coinChance: 10,
+                coins: [{ amount: 1, weight: 100 }],
+                items: [{ id: "trios", weight: 70 }, { id: "rot67", weight: 30 }]
+            },
+            user: {
+                coinChance: 30,
+                coins: [{ amount: 3, weight: 100 }],
+                items: [
+                    { id: "trios", weight: 40 },
+                    { id: "rot67", weight: 30 },
+                    { id: "hammy", weight: 20 },
+                    { id: "candyslap", weight: 10 }
+                ]
+            },
+            base: {
+                coinChance: 0,
+                coins: [],
+                items: [
+                    { id: "trios", weight: 30 },
+                    { id: "rot67", weight: 30 },
+                    { id: "candyslap", weight: 25 },
+                    { id: "lagrande", weight: 15 }
+                ]
+            },
+            bro: {
+                coinChance: 0,
+                coins: [],
+                items: [
+                    { id: "hammy", weight: 25 },
+                    { id: "noobinis", weight: 20 },
+                    { id: "tangtang", weight: 18 },
+                    { id: "tictac", weight: 15 },
+                    { id: "bacuru", weight: 10 },
+                    { id: "los67", weight: 8 },
+                    { id: "yinyang", weight: 4 }
+                ]
+            }
+        };
+
         // ================= TELEGRAM INIT =================
         const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
         let tgUser = null;
+        
         if (tg) {
             tg.ready(); 
             tg.expand();
@@ -659,13 +1128,16 @@
             if (tgUser) {
                 document.getElementById('user-name').innerText = tgUser.first_name || 'Игрок';
                 const avatar = document.getElementById('user-avatar');
-                if (tgUser.photo_url) avatar.innerHTML = '<img src="' + tgUser.photo_url + '" alt="">';
-                else avatar.innerText = (tgUser.first_name || 'U').charAt(0);
+                if (tgUser.photo_url) {
+                    avatar.innerHTML = '<img src="' + tgUser.photo_url + '" alt="">';
+                } else {
+                    avatar.innerText = (tgUser.first_name || 'U').charAt(0);
+                }
             }
         }
         const MY_ID = (tgUser && tgUser.id) ? tgUser.id : null;
 
-        // ================= API =================
+        // ================= API HELPER =================
         async function apiCall(endpoint, method = 'GET', body = null) {
             const headers = {
                 'Content-Type': 'application/json',
@@ -682,7 +1154,7 @@
             return res.json();
         }
 
-        // ================= УВЕДОМЛЕНИЯ =================
+        // ================= УВЕДОМЛЕНИЯ (TOASTS) =================
         function notify(opts) {
             if (typeof opts === 'string') opts = { message: opts };
             const type = opts.type || 'info';
@@ -718,14 +1190,15 @@
             el.addEventListener('click', () => { clearTimeout(timer); close(); });
         }
 
+        // ================= ДИАЛОГ ПОДТВЕРЖДЕНИЯ =================
         function confirmDialog(opts) {
             return new Promise(resolve => {
                 const overlay = document.createElement('div');
                 overlay.className = 'bf-confirm-overlay';
                 overlay.innerHTML = `
                     <div class="bf-confirm">
-                        <div class="bf-confirm__title">${escapeHtml(opts.title || 'Подтверждение')}</div>
-                        <div class="bf-confirm__msg" style="color:var(--text-muted); margin-top:10px;">${escapeHtml(opts.message || '')}</div>
+                        <div class="bf-confirm__title" style="font-size:18px; font-weight:800;">${escapeHtml(opts.title || 'Подтверждение')}</div>
+                        <div class="bf-confirm__msg" style="color:var(--text-muted); margin-top:10px; font-size:14px; line-height:1.5;">${escapeHtml(opts.message || '')}</div>
                         <div class="bf-confirm__actions">
                             <button class="bf-confirm__btn bf-confirm__btn--cancel" data-act="cancel">Отмена</button>
                             <button class="bf-confirm__btn bf-confirm__btn--confirm" data-act="ok">ОК</button>
@@ -738,11 +1211,12 @@
             });
         }
 
+        // ================= УТИЛИТА =================
         function escapeHtml(str) {
             return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
         }
 
-        // ================= СТЕЙТ =================
+        // ================= СТЕЙТ ИГРЫ =================
         let state = {
             balance: 0,
             inventory: {},
@@ -754,22 +1228,28 @@
             theme: 'dark'
         };
 
+        // Переменные для кейсов
         let activeCaseType = null;
         let activeMultiplier = 1;
         let isOpening = false;
+        
+        // Переменные для апгрейда
         const UPG_MAX = 5;
         let upgInputUids = [];
         let upgTargetItem = null;
         let isUpgrading = false;
+        
         let isPurchasing = false;
 
         const $ = id => document.getElementById(id);
 
-        // ================= UI РЕНДЕР =================
+        // ================= UI ФУНКЦИИ =================
         function bumpBalance() {
             const el = $('balance-badge');
             if (!el) return;
-            el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump');
+            el.classList.remove('bump'); 
+            void el.offsetWidth; 
+            el.classList.add('bump');
         }
 
         function applyTheme(name) {
@@ -814,8 +1294,10 @@
             // Бесплатный
             const diffFree = Date.now() - state.lastFree;
             const elFree = $('free-timer-text');
-            if (diffFree >= FREE_COOLDOWN) { elFree.innerText = 'БЕСПЛАТНО'; elFree.style.color = 'var(--accent-gold)'; }
-            else {
+            if (diffFree >= FREE_COOLDOWN) { 
+                elFree.innerText = 'БЕСПЛАТНО'; 
+                elFree.style.color = 'var(--accent-gold)'; 
+            } else {
                 const rem = FREE_COOLDOWN - diffFree;
                 elFree.innerText = 'через ' + Math.floor(rem/3600000) + 'ч ' + Math.floor((rem%3600000)/60000) + 'м';
                 elFree.style.color = 'var(--text-muted)';
@@ -832,8 +1314,10 @@
                 cardUser.classList.remove('locked');
                 elUser.classList.remove('locked-text');
                 const diffUser = Date.now() - state.lastUser;
-                if (diffUser >= USER_COOLDOWN) { elUser.innerText = 'ДОСТУПЕН'; elUser.style.color = 'var(--accent-green)'; }
-                else {
+                if (diffUser >= USER_COOLDOWN) { 
+                    elUser.innerText = 'ДОСТУПЕН'; 
+                    elUser.style.color = 'var(--accent-green)'; 
+                } else {
                     const rem = USER_COOLDOWN - diffUser;
                     elUser.innerText = 'через ' + Math.floor(rem/3600000) + 'ч ' + Math.floor((rem%3600000)/60000) + 'м';
                     elUser.style.color = 'var(--text-muted)';
@@ -844,6 +1328,7 @@
         }
         setInterval(checkTimers, 10000);
 
+        // ================= ДРОП-ФИД =================
         window.updateDropFeed = function(arr) {
             const list = $('drop-feed-list');
             if (!list) return;
@@ -864,6 +1349,32 @@
         };
 
         // ================= ЛОГИКА КЕЙСОВ =================
+        function getCasePreview(caseType) {
+            const cfg = CASE_LOOT_DATA[caseType];
+            const items = [];
+            
+            // Добавляем монеты в превью
+            if (cfg.coins.length > 0 && cfg.coinChance > 0) {
+                items.push(`<div class="loot-item-mini" style="border-color:var(--accent-gold); padding:10px; border-radius:10px; text-align:center;">
+                    <div><i class="fa-solid fa-coins" style="font-size:24px; color:var(--accent-gold);"></i></div>
+                    <div style="font-size:10px; margin-top:5px;">Монеты</div>
+                </div>`);
+            }
+            
+            // Добавляем предметы в превью
+            cfg.items.forEach(it => {
+                const item = ALL_ITEMS.find(i => i.id === it.id);
+                if (!item) return;
+                const r = RARITIES[item.rarity] || RARITIES.common;
+                items.push(`<div class="loot-item-mini" style="border-color:${r.color}; padding:10px; border-radius:10px; text-align:center;">
+                    <img src="${item.img}" style="width:30px; height:30px; object-fit:contain;">
+                    <div style="font-size:10px; margin-top:5px; color:${r.color}; font-weight:bold;">${escapeHtml(item.name)}</div>
+                </div>`);
+            });
+            
+            return items.join('');
+        }
+
         function openCaseModal(type) {
             if (isOpening) return;
             if (type === 'user' && !state.hasUserCase) {
@@ -885,20 +1396,8 @@
             $('mult-selector-box').style.display = (type === 'free' || type === 'user') ? 'none' : 'flex';
             $('modal-case-title').innerText = CASE_TITLES[type];
             
-            $('modal-loot-grid').innerHTML = `
-                <div class="loot-item-mini" style="border-color:var(--accent-gold); padding:10px; border-radius:10px; text-align:center;">
-                    <div><i class="fa-solid fa-coins" style="font-size:24px; color:var(--accent-gold);"></i></div>
-                    <div style="font-size:10px; margin-top:5px;">Монеты</div>
-                </div>
-                <div class="loot-item-mini rar-common" style="border-color:var(--accent-gold); padding:10px; border-radius:10px; text-align:center;">
-                    <img src="assets/brainrots/los_trios.png" style="width:30px; height:30px; object-fit:contain;">
-                    <div style="font-size:10px; margin-top:5px;">Los Trios</div>
-                </div>
-                <div class="loot-item-mini rar-epic" style="border-color:var(--accent-gold); padding:10px; border-radius:10px; text-align:center;">
-                    <img src="assets/brainrots/La_Grande_Combinasion.png" style="width:30px; height:30px; object-fit:contain;">
-                    <div style="font-size:10px; margin-top:5px;">La Grande</div>
-                </div>
-            `;
+            // Генерируем превью
+            $('modal-loot-grid').innerHTML = getCasePreview(type);
             
             $('case-modal').classList.add('active');
             updateModalBtn();
@@ -959,7 +1458,7 @@
                 const instances = [];
                 
                 for (let i = 0; i < activeMultiplier; i++) {
-                    const inst = createRoulette(res.results[i]);
+                    const inst = createRoulette(res.results[i], activeCaseType);
                     stack.appendChild(inst.wrapper); 
                     instances.push(inst);
                 }
@@ -1005,29 +1504,41 @@
             }
         }
 
-        function createRoulette(win) {
-            const wrapper = document.createElement('div'); wrapper.className = 'roulette-container';
+        // ОБНОВЛЕННАЯ РУЛЕТКА (Берет предметы ТОЛЬКО из конфига этого кейса)
+        function createRoulette(win, caseType) {
+            const wrapper = document.createElement('div'); 
+            wrapper.className = 'roulette-container';
             wrapper.innerHTML = '<div class="roulette-pointer"></div><div class="roulette-track"></div>';
             const track = wrapper.querySelector('.roulette-track');
             
-            const dummy = [
-                { type:'coin', amount:1 },
-                { type:'item', item: ALL_ITEMS[0] },
-                { type:'item', item: ALL_ITEMS[2] },
-                { type:'item', item: ALL_ITEMS[6] }
-            ];
-            
+            const cfg = CASE_LOOT_DATA[caseType];
             const entries = [];
+            
             for (let i = 0; i < 26; i++) {
-                if (i === 20) entries.push(win);
-                else entries.push(dummy[Math.floor(Math.random() * dummy.length)]);
+                if (i === 20) {
+                    entries.push(win); // Победный предмет
+                } else {
+                    // Генерируем рандомный дроп из возможных для этого кейса
+                    const r = Math.random() * 100;
+                    if (cfg.coins.length > 0 && r < cfg.coinChance) {
+                        const coin = cfg.coins[Math.floor(Math.random() * cfg.coins.length)];
+                        entries.push({ type: 'coin', amount: coin.amount });
+                    } else {
+                        const itemDef = cfg.items[Math.floor(Math.random() * cfg.items.length)];
+                        const itemObj = ALL_ITEMS.find(it => it.id === itemDef.id);
+                        entries.push({ type: 'item', item: itemObj });
+                    }
+                }
             }
 
             track.innerHTML = entries.map(e => {
-                if (e.type === 'coin') return `<div class="roulette-item"><i class="fa-solid fa-coins" style="font-size:30px; color:var(--accent-gold);"></i><div>${e.amount} Монет</div></div>`;
+                if (e.type === 'coin') {
+                    return `<div class="roulette-item"><i class="fa-solid fa-coins" style="font-size:30px; color:var(--accent-gold);"></i><div>${e.amount} Монет</div></div>`;
+                }
                 const r = RARITIES[e.item.rarity] || RARITIES.common;
                 return `<div class="roulette-item" style="border-color:${r.color}"><img src="${e.item.img}"><div>${escapeHtml(e.item.name)}</div></div>`;
             }).join('');
+            
             return { wrapper, track };
         }
 
@@ -1133,8 +1644,8 @@
         function openTargetSelector() {
             const list = $('target-selector-list');
             list.innerHTML = ALL_ITEMS.map(item => `
-                <div class="selector-item" onclick="BF.chooseTarget('${item.id}')">
-                    <img src="${item.img}">
+                <div class="selector-item" style="background:#1c2230; border:1px solid var(--border-color); border-radius:10px; padding:10px; display:flex; align-items:center; gap:10px; cursor:pointer;" onclick="BF.chooseTarget('${item.id}')">
+                    <img src="${item.img}" style="width:40px; height:40px; object-fit:contain;">
                     <div>
                         <div style="font-size:12px; font-weight:700;">${escapeHtml(item.name)}</div>
                         <div style="font-size:11px; color:var(--accent-gold);">${item.price} монет</div>
@@ -1275,7 +1786,6 @@
         }
 
         function renderRef() {
-            // ССЫЛКА ТЕПЕРЬ ВЕДЕТ ПРЯМО В БОТА
             const link = `${BOT_URL}?start=ref_${MY_ID}`;
             $('panel-referral').innerHTML = `
                 <div class="settings-hint">Приглашай друзей! Тебе <b>+4 монеты</b>, другу <b>+2 монеты</b>.</div>
