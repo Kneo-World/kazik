@@ -4,9 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Brainrots Funny</title>
+    <!-- Подключаем Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- Подключаем шрифт и иконки -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* ================= CSS ПЕРЕМЕННЫЕ И БАЗА ================= */
         :root {
             --bg-color: #0b0e14;
             --card-bg: #151921;
@@ -19,6 +22,7 @@
             --text-muted: #8c93a4;
             --border-color: #222834;
 
+            /* Цвета редкостей */
             --rar-common: #6b7280;
             --rar-uncommon: #22c55e;
             --rar-rare: #3b82f6;
@@ -26,131 +30,260 @@
             --rar-legendary: #f59e0b;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; }
-        body { background-color: var(--bg-color); color: var(--text-main); font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif; padding-bottom: 30px; overflow-x: hidden; transition: background-color 0.3s; }
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            user-select: none; 
+            -webkit-user-select: none; 
+        }
 
-        header { background: #11141d; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 100; }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            padding-bottom: 30px;
+            overflow-x: hidden;
+            transition: background-color 0.3s;
+        }
+
+        /* ================= ШАПКА ================= */
+        header {
+            background: #11141d; 
+            padding: 12px 16px;
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky; 
+            top: 0; 
+            z-index: 100;
+        }
         .user-profile { display: flex; align-items: center; gap: 10px; }
-        .user-avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--accent-blue); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
+        .user-avatar {
+            width: 38px; height: 38px; border-radius: 50%; background: var(--accent-blue);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: bold; font-size: 16px; overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
         .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .user-info { display: flex; flex-direction: column; }
         .user-name { font-size: 14px; font-weight: 700; }
         .header-right { display: flex; align-items: center; gap: 8px; }
-        .balance-badge { background: #1c2230; padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border-color); display: flex; align-items: center; gap: 6px; font-weight: 800; color: var(--accent-gold); font-size: 15px; box-shadow: inset 0 0 10px rgba(0,0,0,0.3); transition: transform 0.2s; }
+        .balance-badge {
+            background: #1c2230; padding: 6px 14px; border-radius: 20px;
+            border: 1px solid var(--border-color);
+            display: flex; align-items: center; gap: 6px;
+            font-weight: 800; color: var(--accent-gold); font-size: 15px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
+            transition: transform 0.2s;
+        }
         .balance-badge.bump { animation: bump 0.4s ease; }
         @keyframes bump { 0%{transform:scale(1);} 40%{transform:scale(1.15);color:#fff;} 100%{transform:scale(1);} }
 
-        .icon-btn { width: 36px; height: 36px; border-radius: 10px; background: #1c2230; border: 1px solid var(--border-color); color: var(--text-muted); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 15px; }
+        .icon-btn {
+            width: 36px; height: 36px; border-radius: 10px;
+            background: #1c2230; border: 1px solid var(--border-color);
+            color: var(--text-muted); display: flex; align-items: center; justify-content: center;
+            cursor: pointer; font-size: 15px; transition: all 0.2s;
+        }
         .icon-btn:hover { color: var(--text-main); border-color: var(--accent-blue); }
 
-        .tabs { display: flex; background: #11141d; border-bottom: 1px solid var(--border-color); }
-        .tab-btn { flex: 1; padding: 10px 0; text-align: center; background: none; border: none; color: var(--text-muted); font-size: 10.5px; font-weight: 700; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+        /* ================= ТАБЫ ================= */
+        .tabs { 
+            display: flex; 
+            background: #11141d; 
+            border-bottom: 1px solid var(--border-color); 
+        }
+        .tab-btn {
+            flex: 1; padding: 10px 0; text-align: center;
+            background: none; border: none; color: var(--text-muted);
+            font-size: 10.5px; font-weight: 700; cursor: pointer;
+            transition: all 0.2s;
+            display: flex; flex-direction: column; align-items: center; gap: 3px;
+        }
         .tab-btn i { font-size: 15px; }
         .tab-btn.active { color: var(--accent-blue); border-bottom: 3px solid var(--accent-blue); background: rgba(43,107,243,0.05); }
 
+        /* ================= СЕКЦИИ ================= */
         .section { display: none; padding: 16px; }
         .section.active { display: block; }
-        .section-title { font-size: 17px; font-weight: 800; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+        .section-title {
+            font-size: 17px; font-weight: 800; margin-bottom: 14px;
+            display: flex; align-items: center; gap: 8px;
+        }
 
-        .drop-feed { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 10px 12px; margin-bottom: 14px; }
+        /* ================= ДРОП ФИД ================= */
+        .drop-feed {
+            background: var(--card-bg); border: 1px solid var(--border-color);
+            border-radius: 12px; padding: 10px 12px; margin-bottom: 14px;
+        }
         .drop-feed__title { font-size: 11px; color: var(--text-muted); font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
-        .drop-feed__live { display: inline-block; width: 7px; height: 7px; background: var(--accent-red); border-radius: 50%; box-shadow: 0 0 6px var(--accent-red); animation: livePulse 1.5s ease infinite; }
+        .drop-feed__live {
+            display: inline-block; width: 7px; height: 7px;
+            background: var(--accent-red); border-radius: 50%;
+            box-shadow: 0 0 6px var(--accent-red);
+            animation: livePulse 1.5s ease infinite;
+        }
         @keyframes livePulse { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
         .drop-feed__list { display: flex; flex-direction: column; gap: 6px; max-height: 96px; overflow: hidden; }
         .drop-row { display: flex; align-items: center; gap: 8px; font-size: 11.5px; animation: dropAppear 0.4s ease; }
         @keyframes dropAppear { from{opacity:0;transform:translateY(-6px);} to{opacity:1;transform:translateY(0);} }
-        .drop-row__avatar { width: 20px; height: 20px; border-radius: 50%; background: var(--accent-blue); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; flex-shrink: 0; color: #fff; }
+        .drop-row__avatar {
+            width: 20px; height: 20px; border-radius: 50%; background: var(--accent-blue);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 10px; font-weight: 800; flex-shrink: 0; color: #fff;
+        }
         .drop-row__nick { color: var(--text-muted); font-weight: 600; max-width: 72px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .drop-row__arrow { color: var(--text-muted); font-size: 10px; }
         .drop-row__img { width: 20px; height: 20px; object-fit: contain; flex-shrink: 0; }
         .drop-row__item { font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
 
+        /* ================= КЕЙСЫ ================= */
         .cases-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-        .case-card { background: var(--card-bg); border-radius: 14px; padding: 16px; border: 1px solid var(--border-color); text-align: center; cursor: pointer; transition: transform 0.15s, border-color 0.2s; }
+        .case-card {
+            background: var(--card-bg); border-radius: 14px; padding: 16px;
+            border: 1px solid var(--border-color); text-align: center;
+            cursor: pointer; transition: transform 0.15s, border-color 0.2s;
+            position: relative;
+        }
         .case-card:hover { border-color: rgba(43,107,243,0.5); }
         .case-card:active { transform: scale(0.96); }
-        .case-img { width: 110px; height: 110px; object-fit: contain; margin: 0 auto 10px; filter: drop-shadow(0 6px 12px rgba(0,0,0,0.6)); }
-        .case-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
-        .case-price { font-size: 13px; color: var(--accent-gold); font-weight: 700; }
+        .case-card.locked { opacity: 0.6; cursor: not-allowed; }
+        .case-img { width: 90px; height: 90px; object-fit: contain; margin: 0 auto 10px; filter: drop-shadow(0 6px 12px rgba(0,0,0,0.6)); }
+        .case-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+        .case-price { font-size: 12px; color: var(--accent-gold); font-weight: 700; }
+        .case-price.locked-text { color: var(--accent-red); }
 
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 200; justify-content: center; align-items: center; padding: 16px; animation: fadeIn 0.2s ease; }
-        .modal.active { display: flex; }
+        /* ================= МОДАЛКИ ================= */
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 200;
+            justify-content: center; align-items: center; padding: 16px;
+        }
+        .modal.active { display: flex; animation: fadeIn 0.2s ease; }
         @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
-        .modal-content { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; width: 100%; max-width: 440px; padding: 20px; text-align: center; position: relative; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.8); animation: modalIn 0.25s cubic-bezier(0.175,0.885,0.32,1.275); }
+        .modal-content {
+            background: var(--card-bg); border: 1px solid var(--border-color);
+            border-radius: 20px; width: 100%; max-width: 440px; padding: 20px;
+            text-align: center; position: relative;
+            max-height: 90vh; overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            animation: modalIn 0.25s cubic-bezier(0.175,0.885,0.32,1.275);
+        }
         @keyframes modalIn { from{transform:scale(0.9);opacity:0;} to{transform:scale(1);opacity:1;} }
-        .close-modal { position: absolute; top: 14px; right: 16px; font-size: 22px; color: var(--text-muted); cursor: pointer; width: 30px; height: 30px; line-height: 28px; text-align: center; border-radius: 50%; z-index: 2; }
-        .close-modal:hover { color: var(--text-main); background: rgba(255,255,255,0.05); }
+        .close-modal {
+            position: absolute; top: 14px; right: 16px; font-size: 22px;
+            color: var(--text-muted); cursor: pointer;
+            width: 30px; height: 30px; line-height: 28px; text-align: center; z-index: 2;
+        }
+        .close-modal:hover { color: var(--text-main); }
 
+        /* ================= РУЛЕТКА ================= */
         .multiplier-selector { display: flex; justify-content: center; gap: 10px; margin: 16px 0; }
-        .mult-btn { background: #1c2230; border: 1px solid var(--border-color); color: var(--text-muted); padding: 8px 18px; border-radius: 10px; font-weight: 800; cursor: pointer; }
-        .mult-btn.active { background: var(--accent-blue); color: #fff; border-color: var(--accent-blue); box-shadow: 0 0 12px rgba(43,107,243,0.4); }
-        .btn-action { background: var(--accent-blue); color: white; border: none; width: 100%; padding: 14px; border-radius: 12px; font-weight: 800; font-size: 16px; cursor: pointer; margin-top: 10px; }
+        .mult-btn {
+            background: #1c2230; border: 1px solid var(--border-color);
+            color: var(--text-muted); padding: 8px 18px; border-radius: 10px;
+            font-weight: 800; cursor: pointer;
+        }
+        .mult-btn.active { background: var(--accent-blue); color: #fff; border-color: var(--accent-blue); }
+        
+        .btn-action {
+            background: var(--accent-blue); color: white; border: none;
+            width: 100%; padding: 14px; border-radius: 12px;
+            font-weight: 800; font-size: 16px; cursor: pointer; margin-top: 10px;
+        }
         .btn-action:active { transform: scale(0.98); }
         .btn-action:disabled { background: #2a3245; color: #5d667a; cursor: not-allowed; }
 
         .roulettes-stack { display: none; flex-direction: column; gap: 10px; margin: 15px 0; }
-        .roulette-container { width: 100%; height: 110px; background: #0d1017; border: 2px solid var(--border-color); border-radius: 12px; position: relative; overflow: hidden; }
-        .roulette-pointer { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 4px; height: 100%; background: var(--accent-gold); z-index: 10; box-shadow: 0 0 10px var(--accent-gold); }
-        .roulette-pointer::before, .roulette-pointer::after { content: ''; position: absolute; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; }
+        .roulette-container {
+            width: 100%; height: 110px; background: #0d1017;
+            border: 2px solid var(--border-color); border-radius: 12px;
+            position: relative; overflow: hidden;
+        }
+        .roulette-pointer {
+            position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+            width: 4px; height: 100%; background: var(--accent-gold);
+            z-index: 10; box-shadow: 0 0 10px var(--accent-gold);
+        }
+        .roulette-pointer::before, .roulette-pointer::after {
+            content: ''; position: absolute; left: 50%; transform: translateX(-50%);
+            width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent;
+        }
         .roulette-pointer::before { top: -2px; border-top: 8px solid var(--accent-gold); }
         .roulette-pointer::after  { bottom: -2px; border-bottom: 8px solid var(--accent-gold); }
         .roulette-track { display: flex; position: absolute; left: 0; top: 10px; height: 90px; }
-        .roulette-item { min-width: 90px; width: 90px; height: 90px; background: #151921; border: 1px solid var(--border-color); border-radius: 10px; margin: 0 5px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 11px; text-align: center; padding: 4px; flex-shrink: 0; position: relative; }
+        .roulette-item {
+            min-width: 90px; width: 90px; height: 90px;
+            background: #151921; border: 1px solid var(--border-color);
+            border-radius: 10px; margin: 0 5px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            font-size: 11px; text-align: center; padding: 4px; flex-shrink: 0;
+        }
         .roulette-item img { width: 45px; height: 45px; object-fit: contain; }
-        .roulette-item.rar-rare { border-color: var(--rar-rare); box-shadow: 0 0 8px rgba(59,130,246,0.4); }
-        .roulette-item.rar-epic { border-color: var(--rar-epic); box-shadow: 0 0 10px rgba(168,85,247,0.5); }
-        .roulette-item.rar-legendary { border-color: var(--rar-legendary); box-shadow: 0 0 14px rgba(245,158,11,0.7); animation: legendPulse 1s ease infinite; }
-        @keyframes legendPulse { 0%,100%{box-shadow:0 0 14px rgba(245,158,11,0.7);} 50%{box-shadow:0 0 22px rgba(245,158,11,1);} }
-        .roulette-item__star { position: absolute; top: 2px; right: 4px; font-size: 10px; line-height: 1; }
-
-        .case-preview-loot { margin-top: 18px; border-top: 1px solid var(--border-color); padding-top: 14px; }
-        .loot-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; max-height: 180px; overflow-y: auto; }
-        .loot-item-mini { background: #1c2230; border-radius: 10px; padding: 8px 4px; font-size: 11px; border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; align-items: center; gap: 4px; position: relative; }
-        .loot-item-mini img, .loot-item-mini .coin-icon { width: 38px; height: 38px; object-fit: contain; display: flex; align-items: center; justify-content: center; }
-        .loot-item-mini.rar-common { border-color: rgba(107,114,128,0.4); }
-        .loot-item-mini.rar-uncommon { border-color: rgba(34,197,94,0.4); }
-        .loot-item-mini.rar-rare { border-color: rgba(59,130,246,0.5); box-shadow: 0 0 6px rgba(59,130,246,0.25); }
-        .loot-item-mini.rar-epic { border-color: rgba(168,85,247,0.6); box-shadow: 0 0 8px rgba(168,85,247,0.35); }
-        .loot-item-mini.rar-legendary { border-color: rgba(245,158,11,0.7); box-shadow: 0 0 10px rgba(245,158,11,0.5); }
-        .rar-badge { position: absolute; top: 2px; right: 2px; font-size: 8px; font-weight: 800; padding: 1px 4px; border-radius: 4px; text-transform: uppercase; }
+        .roulette-item.rar-rare { border-color: var(--rar-rare); }
+        .roulette-item.rar-epic { border-color: var(--rar-epic); }
+        .roulette-item.rar-legendary { border-color: var(--rar-legendary); }
 
         .won-items-container { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin: 15px 0; }
-        .won-card { background: #1c2230; border: 2px solid var(--accent-gold); border-radius: 12px; padding: 10px; width: 95px; text-align: center; animation: popIn 0.4s cubic-bezier(0.175,0.885,0.32,1.275); }
+        .won-card {
+            background: #1c2230; border: 2px solid var(--accent-gold);
+            border-radius: 12px; padding: 10px; width: 95px; text-align: center;
+            animation: popIn 0.4s ease;
+        }
         @keyframes popIn { 0%{transform:scale(0.3);opacity:0;} 100%{transform:scale(1);opacity:1;} }
         .won-card img { width: 50px; height: 50px; object-fit: contain; }
         .won-card-title { font-size: 11px; font-weight: 700; margin-top: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .won-card-price { font-size: 11px; color: var(--accent-gold); font-weight: 800; }
-        .won-card.rar-common { border-color: var(--rar-common); }
-        .won-card.rar-uncommon { border-color: var(--rar-uncommon); }
-        .won-card.rar-rare { border-color: var(--rar-rare); }
-        .won-card.rar-epic { border-color: var(--rar-epic); }
-        .won-card.rar-legendary { border-color: var(--rar-legendary); }
 
+        /* ================= АПГРЕЙД ================= */
         .upg-inputs-label { font-size: 11px; color: var(--text-muted); font-weight: 700; text-align: center; margin-bottom: 8px; }
         .upg-inputs { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 10px; }
-        .upg-slot { aspect-ratio: 1; background: var(--card-bg); border: 2px dashed var(--border-color); border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; padding: 3px; position: relative; }
+        .upg-slot {
+            aspect-ratio: 1; background: var(--card-bg);
+            border: 2px dashed var(--border-color); border-radius: 10px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            cursor: pointer; padding: 3px; position: relative;
+        }
         .upg-slot.filled { border-style: solid; border-color: var(--accent-blue); background: #182030; }
         .upg-slot img { max-width: 42px; max-height: 42px; object-fit: contain; }
         .upg-slot .plus { font-size: 16px; color: var(--text-muted); }
         .upg-slot .price-tag { position: absolute; bottom: 1px; right: 3px; font-size: 9px; color: var(--accent-gold); font-weight: 800; }
         .upg-arrow-down { text-align: center; color: var(--accent-gold); font-size: 18px; margin: 6px 0 10px; }
+        
         .upg-target-wrap { display: flex; justify-content: center; margin-bottom: 16px; }
-        .upg-target { width: 110px; height: 110px; background: var(--card-bg); border: 2px dashed var(--border-color); border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; padding: 6px; }
+        .upg-target {
+            width: 110px; height: 110px; background: var(--card-bg);
+            border: 2px dashed var(--border-color); border-radius: 14px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            cursor: pointer; padding: 6px;
+        }
         .upg-target.filled { border-style: solid; border-color: var(--accent-gold); background: #1e1a10; }
         .upg-target img { max-width: 60px; max-height: 60px; object-fit: contain; }
         .upg-target .label { font-size: 10px; font-weight: 700; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
         .upg-target .price { font-size: 10px; color: var(--accent-gold); font-weight: 800; }
         .upg-target .plus { font-size: 22px; color: var(--text-muted); }
-        .upg-target .hint { font-size: 10px; color: var(--text-muted); margin-top: 3px; }
 
         .upgrader-circle-box { position: relative; width: 200px; height: 200px; margin: 20px auto; }
         .circle-svg { transform: rotate(-90deg); }
-        .upgrader-arrow { position: absolute; top: 50%; left: 50%; width: 4px; height: 70px; background: linear-gradient(to top, transparent, var(--accent-gold)); transform-origin: top center; transform: translate(-50%, 0) rotate(0deg); z-index: 10; border-radius: 2px; box-shadow: 0 0 8px var(--accent-gold); }
+        .upgrader-arrow {
+            position: absolute; top: 50%; left: 50%;
+            width: 4px; height: 70px;
+            background: linear-gradient(to top, transparent, var(--accent-gold));
+            transform-origin: top center;
+            transform: translate(-50%, 0) rotate(0deg);
+            z-index: 10; border-radius: 2px;
+        }
         .upgrader-info { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); text-align: center; z-index: 5; }
 
+        /* ================= ИНВЕНТАРЬ ================= */
         .inventory-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .item-card { background: var(--card-bg); border-radius: 12px; padding: 10px; border: 1px solid var(--border-color); text-align: center; cursor: pointer; position: relative; animation: itemAppear 0.35s; }
-        @keyframes itemAppear { from{transform:scale(0.7);opacity:0;} to{transform:scale(1);opacity:1;} }
+        .item-card {
+            background: var(--card-bg); border-radius: 12px; padding: 10px;
+            border: 1px solid var(--border-color); text-align: center;
+            cursor: pointer; position: relative;
+        }
         .item-card.in-upgrader { border-color: var(--accent-blue) !important; background: #182030; }
         .item-card img { width: 55px; height: 55px; object-fit: contain; margin-bottom: 6px; }
         .item-card.rar-common    { border-color: rgba(107,114,128,0.5); }
@@ -160,23 +293,54 @@
         .item-card.rar-legendary { border-color: rgba(245,158,11,0.85); }
         .item-name { font-size: 11px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .item-price { font-size: 12px; color: var(--accent-gold); font-weight: 800; margin-top: 2px; }
-        .sell-btn { background: rgba(231,76,60,0.15); color: var(--accent-red); border: 1px solid rgba(231,76,60,0.3); border-radius: 6px; padding: 5px 8px; font-size: 10px; font-weight: 700; margin-top: 6px; cursor: pointer; width: 100%; }
+        .sell-btn {
+            background: rgba(231,76,60,0.15); color: var(--accent-red);
+            border: 1px solid rgba(231,76,60,0.3); border-radius: 6px;
+            padding: 5px 8px; font-size: 10px; font-weight: 700;
+            margin-top: 6px; cursor: pointer; width: 100%;
+        }
         .empty-inv { grid-column: span 3; text-align: center; color: var(--text-muted); padding: 40px 0; font-size: 14px; }
 
-        .selector-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px; max-height: 320px; overflow-y: auto; }
-        .selector-item { background: #1c2230; border: 1px solid var(--border-color); border-radius: 10px; padding: 10px; display: flex; align-items: center; gap: 10px; cursor: pointer; text-align: left; }
-        .selector-item:hover { border-color: var(--accent-blue); }
-        .selector-item img { width: 40px; height: 40px; object-fit: contain; }
+        /* ================= ДОНАТ ================= */
+        .donate-intro {
+            background: linear-gradient(135deg, rgba(245,166,35,0.12), rgba(43,107,243,0.12));
+            border: 1px solid rgba(245,166,35,0.3);
+            border-radius: 14px; padding: 14px; margin-bottom: 16px; text-align: left;
+        }
+        .donate-intro__title { font-size: 15px; font-weight: 800; color: var(--accent-gold); margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+        .donate-intro__text { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+        .donate-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .donate-pack {
+            background: var(--card-bg); border: 2px solid var(--border-color);
+            border-radius: 14px; padding: 14px 10px; text-align: center;
+            cursor: pointer; position: relative;
+        }
+        .donate-pack:hover { border-color: var(--accent-gold); transform: translateY(-2px); }
+        .donate-pack.best { border-color: var(--accent-gold); background: linear-gradient(180deg, rgba(245,166,35,0.08), var(--card-bg) 60%); }
+        .donate-pack.best::after {
+            content: 'BEST'; position: absolute; top: -8px; right: 10px;
+            background: var(--accent-gold); color: #000;
+            font-size: 9px; font-weight: 900; padding: 2px 8px; border-radius: 8px;
+        }
+        .donate-pack__icon { font-size: 32px; color: var(--accent-gold); margin-bottom: 6px; }
+        .donate-pack__stars { font-size: 14px; font-weight: 800; margin-bottom: 4px; }
+        .donate-pack__coins { font-size: 18px; font-weight: 900; color: var(--accent-gold); margin-bottom: 6px; }
+        .donate-pack__bonus { display: inline-block; font-size: 10px; font-weight: 800; background: rgba(46,204,113,0.15); color: var(--accent-green); padding: 2px 8px; border-radius: 6px; }
+        .donate-pack__price { font-size: 10px; color: var(--text-muted); margin-top: 6px; }
 
+        /* ================= НАСТРОЙКИ ================= */
         .settings-tabs { display: flex; gap: 6px; margin: 12px 0; }
-        .settings-tab { flex: 1; padding: 8px 4px; background: #1c2230; border: 1px solid var(--border-color); border-radius: 10px; color: var(--text-muted); font-size: 11.5px; font-weight: 700; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; }
-        .settings-tab i { font-size: 14px; }
+        .settings-tab {
+            flex: 1; padding: 8px 4px; background: #1c2230; border: 1px solid var(--border-color);
+            border-radius: 10px; color: var(--text-muted); font-size: 11.5px; font-weight: 700; cursor: pointer;
+            display: flex; flex-direction: column; align-items: center; gap: 3px;
+        }
         .settings-tab.active { background: var(--accent-blue); border-color: var(--accent-blue); color: #fff; }
         .settings-panel { display: none; padding: 4px 0; text-align: left; }
         .settings-panel.active { display: block; }
         .theme-card { display: flex; align-items: center; gap: 12px; padding: 12px; background: #1c2230; border: 1px solid var(--border-color); border-radius: 12px; margin-bottom: 8px; cursor: pointer; }
         .theme-card.active { border-color: var(--accent-blue); }
-        .theme-card__preview { width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.1); }
+        .theme-card__preview { width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; }
         .theme-card__name { font-size: 13px; font-weight: 700; }
         .theme-card__status { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
         .theme-card__status.owned { color: var(--accent-green); }
@@ -186,68 +350,43 @@
         .stat-row:last-child { border-bottom: none; }
         .stat-row__label { color: var(--text-muted); }
         .stat-row__value { font-weight: 700; }
-        .ref-box { background: #1c2230; border: 1px dashed var(--border-color); border-radius: 12px; padding: 12px; margin: 8px 0; word-break: break-all; font-family: 'Courier New', monospace; font-size: 11px; color: var(--text-muted); }
+        .ref-box { background: #1c2230; border: 1px dashed var(--border-color); border-radius: 12px; padding: 12px; margin: 8px 0; word-break: break-all; font-family: monospace; font-size: 11px; color: var(--text-muted); }
         .ref-btn { background: var(--accent-blue); color: #fff; border: none; width: 100%; padding: 11px; border-radius: 10px; font-weight: 800; font-size: 13px; cursor: pointer; margin-top: 6px; }
         .ref-btn.secondary { background: #1c2230; color: var(--text-main); border: 1px solid var(--border-color); }
         .settings-hint { font-size: 12px; color: var(--text-muted); line-height: 1.5; margin: 8px 0; }
 
-        .donate-intro { background: linear-gradient(135deg, rgba(245,166,35,0.12), rgba(43,107,243,0.12)); border: 1px solid rgba(245,166,35,0.3); border-radius: 14px; padding: 14px; margin-bottom: 16px; }
-        .donate-intro__title { font-size: 15px; font-weight: 800; color: var(--accent-gold); margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
-        .donate-intro__text { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
-        .donate-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-        .donate-pack { background: var(--card-bg); border: 2px solid var(--border-color); border-radius: 14px; padding: 14px 10px; text-align: center; cursor: pointer; position: relative; }
-        .donate-pack:hover { border-color: var(--accent-gold); transform: translateY(-2px); }
-        .donate-pack.best { border-color: var(--accent-gold); background: linear-gradient(180deg, rgba(245,166,35,0.08), var(--card-bg) 60%); }
-        .donate-pack.best::after { content: 'BEST'; position: absolute; top: -8px; right: 10px; background: var(--accent-gold); color: #000; font-size: 9px; font-weight: 900; padding: 2px 8px; border-radius: 8px; }
-        .donate-pack__icon { font-size: 32px; color: var(--accent-gold); margin-bottom: 6px; }
-        .donate-pack__stars { font-size: 14px; font-weight: 800; margin-bottom: 4px; }
-        .donate-pack__coins { font-size: 18px; font-weight: 900; color: var(--accent-gold); margin-bottom: 6px; }
-        .donate-pack__bonus { display: inline-block; font-size: 10px; font-weight: 800; background: rgba(46,204,113,0.15); color: var(--accent-green); padding: 2px 8px; border-radius: 6px; }
-        .donate-pack__price { font-size: 10px; color: var(--text-muted); margin-top: 6px; }
-
-        .confetti-layer { position: fixed; inset: 0; pointer-events: none; z-index: 9998; overflow: hidden; }
-        .confetti-piece { position: absolute; width: 10px; height: 14px; top: -20px; animation: confettiFall linear forwards; }
-        @keyframes confettiFall { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(110vh) rotate(720deg); opacity: 0.3; } }
-
+        /* ================= ТОСТЫ И КОНФЕТТИ ================= */
         .bf-toast-container { position: fixed; top: 78px; left: 50%; transform: translateX(-50%); z-index: 9999; width: calc(100% - 24px); max-width: 420px; display: flex; flex-direction: column; gap: 10px; pointer-events: none; padding: 0 4px; }
-        .bf-toast { position: relative; display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 14px; background: #1c2230; border: 1px solid var(--border-color); font-size: 14px; font-weight: 600; box-shadow: 0 8px 24px rgba(0,0,0,0.6); pointer-events: auto; cursor: pointer; overflow: hidden; transform: translateY(-120%); opacity: 0; animation: toastIn 0.35s cubic-bezier(0.175,0.885,0.32,1.275) forwards; }
-        .bf-toast.closing { animation: toastOut 0.3s ease forwards; }
+        .bf-toast { position: relative; display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 14px; background: #1c2230; border: 1px solid var(--border-color); font-size: 14px; font-weight: 600; box-shadow: 0 8px 24px rgba(0,0,0,0.6); pointer-events: auto; cursor: pointer; overflow: hidden; transform: translateY(-120%); opacity: 0; animation: toastIn 0.35s ease forwards; }
         @keyframes toastIn { to{transform:translateY(0);opacity:1;} }
+        .bf-toast.closing { animation: toastOut 0.3s ease forwards; }
         @keyframes toastOut { to{transform:translateY(-120%);opacity:0;} }
         .bf-toast__icon { flex-shrink: 0; width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
         .bf-toast__body { flex: 1; min-width: 0; }
         .bf-toast__title { font-size: 13px; font-weight: 800; margin-bottom: 2px; }
         .bf-toast__msg { font-size: 12.5px; font-weight: 500; color: var(--text-muted); }
-        .bf-toast__progress { position: absolute; bottom: 0; left: 0; height: 3px; width: 100%; transform-origin: left center; animation: toastProgress linear forwards; }
-        @keyframes toastProgress { from{transform:scaleX(1);} to{transform:scaleX(0);} }
         .bf-toast--success { border-color: rgba(46,204,113,0.5); background: linear-gradient(90deg, rgba(46,204,113,0.12), #1c2230 40%); }
         .bf-toast--success .bf-toast__icon { background: rgba(46,204,113,0.2); color: var(--accent-green); }
-        .bf-toast--success .bf-toast__progress { background: var(--accent-green); }
         .bf-toast--error { border-color: rgba(231,76,60,0.5); background: linear-gradient(90deg, rgba(231,76,60,0.12), #1c2230 40%); }
         .bf-toast--error .bf-toast__icon { background: rgba(231,76,60,0.2); color: var(--accent-red); }
-        .bf-toast--error .bf-toast__progress { background: var(--accent-red); }
         .bf-toast--info { border-color: rgba(43,107,243,0.5); background: linear-gradient(90deg, rgba(43,107,243,0.12), #1c2230 40%); }
         .bf-toast--info .bf-toast__icon { background: rgba(43,107,243,0.2); color: var(--accent-blue); }
-        .bf-toast--info .bf-toast__progress { background: var(--accent-blue); }
-        .bf-toast--legendary { border-color: rgba(245,158,11,0.7); background: linear-gradient(90deg, rgba(245,158,11,0.18), rgba(168,85,247,0.12), #1c2230 50%); }
-        .bf-toast--legendary .bf-toast__icon { background: rgba(245,158,11,0.25); color: var(--accent-gold); }
-        .bf-toast--legendary .bf-toast__progress { background: linear-gradient(90deg, var(--accent-gold), var(--accent-purple)); }
+
+        .confetti-layer { position: fixed; inset: 0; pointer-events: none; z-index: 9998; overflow: hidden; }
+        .confetti-piece { position: absolute; width: 10px; height: 14px; top: -20px; animation: confettiFall linear forwards; }
+        @keyframes confettiFall { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(110vh) rotate(720deg); opacity: 0.3; } }
 
         .bf-confirm-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(6px); z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 20px; }
         .bf-confirm { width: 100%; max-width: 380px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 24px 20px 20px; text-align: center; }
-        .bf-confirm__icon { width: 60px; height: 60px; border-radius: 50%; margin: 0 auto 14px; display: flex; align-items: center; justify-content: center; font-size: 26px; background: rgba(43,107,243,0.15); color: var(--accent-blue); }
-        .bf-confirm__icon--danger { background: rgba(231,76,60,0.15); color: var(--accent-red); }
-        .bf-confirm__title { font-size: 18px; font-weight: 800; margin-bottom: 8px; }
-        .bf-confirm__msg { font-size: 13.5px; color: var(--text-muted); margin-bottom: 20px; }
-        .bf-confirm__actions { display: flex; gap: 10px; }
+        .bf-confirm__actions { display: flex; gap: 10px; margin-top: 20px; }
         .bf-confirm__btn { flex: 1; padding: 12px 14px; border-radius: 12px; font-size: 14px; font-weight: 800; border: none; cursor: pointer; }
         .bf-confirm__btn--cancel { background: #1c2230; color: var(--text-muted); border: 1px solid var(--border-color); }
         .bf-confirm__btn--confirm { background: var(--accent-blue); color: #fff; }
-        .bf-confirm__btn--danger { background: var(--accent-red); color: #fff; }
     </style>
 </head>
 <body>
 
+    <!-- ШАПКА -->
     <header>
         <div class="user-profile">
             <div class="user-avatar" id="user-avatar">?</div>
@@ -267,6 +406,7 @@
         </div>
     </header>
 
+    <!-- ТАБЫ -->
     <div class="tabs">
         <button class="tab-btn active" data-tab="cases" onclick="switchTab('cases')">
             <i class="fa-solid fa-box-open"></i> Кейсы
@@ -282,6 +422,7 @@
         </button>
     </div>
 
+    <!-- СЕКЦИЯ КЕЙСОВ -->
     <div id="section-cases" class="section active">
         <div class="drop-feed">
             <div class="drop-feed__title">
@@ -294,30 +435,35 @@
         <div class="section-title"><i class="fa-solid fa-cubes"></i> Доступные Кейсы</div>
         <div class="cases-grid">
             <div class="case-card" onclick="openCaseModal('free')">
-                <img src="assets/cases/free.png" class="case-img" alt="Free Case"
-                     onerror="this.onerror=null;this.src='https://via.placeholder.com/110?text=FREE+CASE'">
+                <img src="assets/cases/free.png" class="case-img" onerror="this.src='https://via.placeholder.com/90?text=FREE'">
                 <div class="case-title">Бесплатный</div>
                 <div class="case-price" id="free-timer-text">БЕСПЛАТНО</div>
             </div>
+            
+            <div class="case-card" id="user-case-card" onclick="openCaseModal('user')">
+                <img src="assets/cases/user.png" class="case-img" onerror="this.src='https://via.placeholder.com/90?text=USER'">
+                <div class="case-title">Кейс за Юз</div>
+                <div class="case-price" id="user-timer-text">ЗА ЮЗ</div>
+            </div>
+
             <div class="case-card" onclick="openCaseModal('base')">
-                <img src="assets/cases/base.png" class="case-img" alt="Base Case"
-                     onerror="this.onerror=null;this.src='https://via.placeholder.com/110?text=BASE+CASE'">
+                <img src="assets/cases/base.png" class="case-img" onerror="this.src='https://via.placeholder.com/90?text=BASE'">
                 <div class="case-title">Начальный</div>
                 <div class="case-price"><i class="fa-solid fa-coins"></i> 9 монет</div>
             </div>
             <div class="case-card" onclick="openCaseModal('bro')">
-                <img src="assets/cases/bro.png" class="case-img" alt="Bro Case"
-                     onerror="this.onerror=null;this.src='https://via.placeholder.com/110?text=BRO+CASE'">
+                <img src="assets/cases/bro.png" class="case-img" onerror="this.src='https://via.placeholder.com/90?text=BRO'">
                 <div class="case-title">Про Бро</div>
                 <div class="case-price"><i class="fa-solid fa-coins"></i> 25 монет</div>
             </div>
         </div>
     </div>
 
+    <!-- СЕКЦИЯ АПГРЕЙДА -->
     <div id="section-upgrader" class="section">
-        <div class="section-title"><i class="fa-solid fa-bolt"></i> Прокачка Брейнротов</div>
+        <div class="section-title"><i class="fa-solid fa-bolt"></i> Прокачка</div>
 
-        <div class="upg-inputs-label">ВХОД (до 5 предметов) — <span id="upg-inputs-count">0/5</span></div>
+        <div class="upg-inputs-label">ВХОД (до 5) — <span id="upg-inputs-count">0/5</span></div>
         <div class="upg-inputs">
             <div class="upg-slot" data-idx="0" onclick="onUpgSlotClick(0)"></div>
             <div class="upg-slot" data-idx="1" onclick="onUpgSlotClick(1)"></div>
@@ -338,36 +484,34 @@
         <div class="upgrader-circle-box">
             <svg class="circle-svg" width="200" height="200">
                 <circle cx="100" cy="100" r="80" stroke="#1c2230" stroke-width="14" fill="none" />
-                <circle id="upgrade-progress" cx="100" cy="100" r="80" stroke="var(--accent-blue)" stroke-width="14" fill="none"
-                        stroke-dasharray="502.65" stroke-dashoffset="502.65" style="transition: stroke-dashoffset 0.4s ease;" />
+                <circle id="upgrade-progress" cx="100" cy="100" r="80" stroke="var(--accent-blue)" stroke-width="14" fill="none" stroke-dasharray="502.65" stroke-dashoffset="502.65" style="transition: stroke-dashoffset 0.4s ease;" />
             </svg>
             <div class="upgrader-arrow" id="upgrader-arrow"></div>
             <div class="upgrader-info">
                 <div style="font-size: 11px; color: var(--text-muted); font-weight:700;">ШАНС</div>
-                <div id="upgrade-chance" style="font-size: 26px; font-weight: 900; color: var(--text-main);">0%</div>
+                <div id="upgrade-chance" style="font-size: 26px; font-weight: 900;">0%</div>
             </div>
         </div>
 
         <button class="btn-action" id="btn-upgrade" onclick="runUpgradeAnimation()" disabled>ПРОКАЧАТЬ</button>
     </div>
 
+    <!-- СЕКЦИЯ ДОНАТА -->
     <div id="section-donate" class="section">
         <div class="section-title"><i class="fa-solid fa-star"></i> Магазин монет</div>
-
         <div class="donate-intro">
-            <div class="donate-intro__title"><i class="fa-brands fa-telegram"></i> Оплата через Telegram Stars</div>
+            <div class="donate-intro__title"><i class="fa-brands fa-telegram"></i> Оплата через Stars</div>
             <div class="donate-intro__text">
-                Покупай монеты за звёзды Telegram ⭐. Базовый курс: <b style="color:var(--accent-gold);">1 звезда = 5 монет</b>.
-                В крупных пакетах — до <b style="color:var(--accent-green);">+60% бонусных монет</b> сверху!
+                Покупай монеты за звёзды Telegram. Курс: <b style="color:var(--accent-gold);">1 ⭐ = 5 монет</b>.
             </div>
         </div>
-
         <div class="donate-grid" id="donate-grid"></div>
     </div>
 
+    <!-- СЕКЦИЯ ИНВЕНТАРЯ -->
     <div id="section-inventory" class="section">
         <div class="section-title" style="justify-content: space-between;">
-            <span><i class="fa-solid fa-sack-dollar"></i> Мой Инвентарь</span>
+            <span><i class="fa-solid fa-sack-dollar"></i> Инвентарь</span>
             <button onclick="sellAll()" style="background: #1c2230; color: var(--accent-gold); border: 1px solid var(--border-color); padding: 5px 12px; border-radius: 8px; font-size: 12px; font-weight:700; cursor:pointer;">Продать всё</button>
         </div>
         <div class="inventory-grid" id="inventory-list">
@@ -375,51 +519,50 @@
         </div>
     </div>
 
+    <!-- МОДАЛКА КЕЙСА -->
     <div class="modal" id="case-modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeModal()">&times;</span>
             <h3 id="modal-case-title" style="font-size: 20px;">Кейс</h3>
+            
             <div class="roulettes-stack" id="roulettes-stack"></div>
-            <img id="modal-case-img" src="" alt=""
-                 style="width: 100px; height: 100px; object-fit: contain; margin: 10px 0;"
-                 onerror="this.onerror=null;this.src='https://via.placeholder.com/100?text=CASE'">
+            <img id="modal-case-img" src="" alt="" style="width: 100px; height: 100px; object-fit: contain; margin: 10px 0;">
+            
             <div class="multiplier-selector" id="mult-selector-box">
                 <button class="mult-btn active" data-mult="1" onclick="setMultiplier(1)">x1</button>
                 <button class="mult-btn" data-mult="2" onclick="setMultiplier(2)">x2</button>
                 <button class="mult-btn" data-mult="5" onclick="setMultiplier(5)">x5</button>
             </div>
+            
             <div id="modal-win-area"></div>
             <button class="btn-action" id="modal-open-btn" onclick="startCaseOpening()">Открыть</button>
-            <div class="case-preview-loot">
+            
+            <div class="case-preview-loot" style="margin-top: 18px; border-top: 1px solid var(--border-color); padding-top: 14px;">
                 <div style="font-size: 12px; color: var(--text-muted); font-weight:700;">Возможно выпадет:</div>
-                <div class="loot-grid" id="modal-loot-grid"></div>
+                <div class="loot-grid" id="modal-loot-grid" style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:10px;"></div>
             </div>
         </div>
     </div>
 
+    <!-- МОДАЛКА ВЫБОРА ЦЕЛИ АПГРЕЙДА -->
     <div class="modal" id="target-modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeTargetModal()">&times;</span>
-            <h3>Выберите целевой Брейнрот</h3>
+            <h3>Цель для Апгрейда</h3>
             <div style="font-size: 12px; color: var(--text-muted); margin-top:4px;">Чем дороже цель, тем ниже шанс</div>
-            <div class="selector-grid" id="target-selector-list"></div>
+            <div class="selector-grid" id="target-selector-list" style="display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-top:15px; max-height:320px; overflow-y:auto;"></div>
         </div>
     </div>
 
+    <!-- МОДАЛКА НАСТРОЕК -->
     <div class="modal" id="settings-modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeSettings()">&times;</span>
             <h3 style="font-size: 19px;">Настройки</h3>
             <div class="settings-tabs">
-                <button class="settings-tab active" data-panel="themes" onclick="showSettingsPanel('themes')">
-                    <i class="fa-solid fa-palette"></i> Темы
-                </button>
-                <button class="settings-tab" data-panel="referral" onclick="showSettingsPanel('referral')">
-                    <i class="fa-solid fa-user-group"></i> Реферал
-                </button>
-                <button class="settings-tab" data-panel="stats" onclick="showSettingsPanel('stats')">
-                    <i class="fa-solid fa-chart-simple"></i> Стата
-                </button>
+                <button class="settings-tab active" data-panel="themes" onclick="showSettingsPanel('themes')"><i class="fa-solid fa-palette"></i> Темы</button>
+                <button class="settings-tab" data-panel="referral" onclick="showSettingsPanel('referral')"><i class="fa-solid fa-user-group"></i> Реферал</button>
+                <button class="settings-tab" data-panel="stats" onclick="showSettingsPanel('stats')"><i class="fa-solid fa-chart-simple"></i> Стата</button>
             </div>
             <div class="settings-panel active" id="panel-themes"></div>
             <div class="settings-panel" id="panel-referral"></div>
@@ -427,52 +570,51 @@
         </div>
     </div>
 
-    <!-- FIREBASE ДЛЯ DROP FEED -->
+    <!-- FIREBASE ДЛЯ ДРОП-ФИДА (Читает глобальную ленту) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+        
         const firebaseConfig = {
-          apiKey: "AIzaSyDnmAysvjn6Zu-pbddOhXDt1ohnZaY1Fcw",
-          authDomain: "casemine-online.firebaseapp.com",
-          databaseURL: "https://casemine-online-default-rtdb.europe-west1.firebasedatabase.app",
-          projectId: "casemine-online",
-          storageBucket: "casemine-online.firebasestorage.app",
-          messagingSenderId: "750443799326",
-          appId: "1:750443799326:web:edec309f732337e39a1f0f"
+            apiKey: "AIzaSyDnmAysvjn6Zu-pbddOhXDt1ohnZaY1Fcw",
+            authDomain: "casemine-online.firebaseapp.com",
+            databaseURL: "https://casemine-online-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "casemine-online",
+            storageBucket: "casemine-online.firebasestorage.app",
+            messagingSenderId: "750443799326",
+            appId: "1:750443799326:web:edec309f732337e39a1f0f"
         };
         const fbApp = initializeApp(firebaseConfig);
         const fbDb = getDatabase(fbApp);
         const feedRef = ref(fbDb, 'drop_feed');
+        
         onValue(feedRef, (snap) => {
-          const val = snap.val() || {};
-          const arr = Object.values(val).sort((a, b) => (b.ts||0) - (a.ts||0)).slice(0, 4);
-          if (window.updateDropFeed) window.updateDropFeed(arr);
+            const val = snap.val() || {};
+            const arr = Object.values(val).sort((a, b) => (b.ts||0) - (a.ts||0)).slice(0, 5);
+            if (window.updateDropFeed) window.updateDropFeed(arr);
         });
     </script>
 
+    <!-- ОСНОВНОЙ СКРИПТ ИГРЫ -->
     <script>
     (function () {
         'use strict';
 
-        /* ======================== CONFIG =============================== */
-        const API_BASE = 'https://kazik-2.onrender.com'; // Твой URL из логов
-        const FREE_COOLDOWN = 24 * 3600 * 1000; // 24 часа
+        // ================= КОНФИГ =================
+        const API_BASE = 'https://kazik-2.onrender.com';
+        const BOT_URL = 'https://t.me/Brain_Funbot'; // Твой бот
+        const FREE_COOLDOWN = 24 * 3600 * 1000;
+        const USER_COOLDOWN = 12 * 3600 * 1000;
         const MAX_UPGRADE_CHANCE = 95;
-        const ROULETTE_WIN_INDEX = 20;
-        const ROULETTE_ITEMS_TOTAL = 26;
         const CIRCUMFERENCE = 2 * Math.PI * 80;
 
         const RARITIES = {
-            common:    { id: 'common',    name: 'Common',    color: '#6b7280', star: '⭐' },
-            uncommon:  { id: 'uncommon',  name: 'Uncommon',  color: '#22c55e', star: '⭐⭐' },
-            rare:      { id: 'rare',      name: 'Rare',      color: '#3b82f6', star: '⭐⭐⭐' },
-            epic:      { id: 'epic',      name: 'Epic',      color: '#a855f7', star: '⭐⭐⭐⭐' },
-            legendary: { id: 'legendary', name: 'Legendary', color: '#f59e0b', star: '⭐⭐⭐⭐⭐' }
+            common:    { id: 'common',    name: 'Common',    color: '#6b7280' },
+            uncommon:  { id: 'uncommon',  name: 'Uncommon',  color: '#22c55e' },
+            rare:      { id: 'rare',      name: 'Rare',      color: '#3b82f6' },
+            epic:      { id: 'epic',      name: 'Epic',      color: '#a855f7' },
+            legendary: { id: 'legendary', name: 'Legendary', color: '#f59e0b' }
         };
-
-        function getRarity(item) {
-            return RARITIES[item && item.rarity] || RARITIES.common;
-        }
 
         const STARS_PACKAGES = [
             { id: 'p10',  stars: 10,  coins: 50,   bonus: 0,    best: false },
@@ -483,24 +625,36 @@
             { id: 'p500', stars: 500, coins: 4000, bonus: 60,   best: false }
         ];
 
-        const CASE_PRICES = { free: 0, base: 9, bro: 25 };
-        const CASE_TITLES = { free: 'Бесплатный Кейс', base: 'Начальный Кейс', bro: 'Про Бро Кейс' };
-        const CASE_IMAGES = {
-            free: 'assets/cases/free.png',
-            base: 'assets/cases/base.png',
-            bro:  'assets/cases/bro.png'
-        };
-
+        const CASE_PRICES = { free: 0, user: 0, base: 9, bro: 25 };
+        const CASE_TITLES = { free: 'Бесплатный Кейс', user: 'Кейс за Юз', base: 'Начальный Кейс', bro: 'Про Бро Кейс' };
+        
         const THEMES = {
             dark: { name: 'Тёмная', price: 0, vars: { '--bg-color':'#0b0e14','--card-bg':'#151921','--accent-blue':'#2b6bf3','--accent-gold':'#f5a623','--accent-green':'#2ecc71','--accent-red':'#e74c3c','--text-main':'#ffffff','--text-muted':'#8c93a4','--border-color':'#222834' }, preview: ['#0b0e14', '#2b6bf3', '#f5a623'] },
             neon: { name: 'Неоновая', price: 100, vars: { '--bg-color':'#08001a','--card-bg':'#170a33','--accent-blue':'#a855f7','--accent-gold':'#f472b6','--accent-green':'#22d3ee','--accent-red':'#f43f5e','--text-main':'#f5f3ff','--text-muted':'#a78bfa','--border-color':'#3b1a72' }, preview: ['#08001a', '#a855f7', '#f472b6'] },
             gold: { name: 'Золотая', price: 500, vars: { '--bg-color':'#140d04','--card-bg':'#241808','--accent-blue':'#fbbf24','--accent-gold':'#f59e0b','--accent-green':'#84cc16','--accent-red':'#dc2626','--text-main':'#fef9c3','--text-muted':'#a16207','--border-color':'#4a3410' }, preview: ['#140d04', '#fbbf24', '#f59e0b'] }
         };
 
+        const ALL_ITEMS = [
+            { id: 'trios',     name: 'Los Trios',           price: 4,     rarity: 'common',    img: 'assets/brainrots/los_trios.png' },
+            { id: 'rot67',     name: '67',                  price: 5,     rarity: 'common',    img: 'assets/brainrots/67.png' },
+            { id: 'hammy',     name: 'Spinny Hammy',        price: 5,     rarity: 'uncommon',  img: 'assets/brainrots/spinny_hammy.png' },
+            { id: 'candyslap', name: 'Candy Slap',          price: 7,     rarity: 'uncommon',  img: 'assets/brainrots/CandySlap.png' },
+            { id: 'noobinis',  name: 'Los Noobinis',        price: 7,     rarity: 'rare',      img: 'assets/brainrots/Los_Noobinis.png' },
+            { id: 'tangtang',  name: 'Tang Tang Keletang',  price: 8,     rarity: 'rare',      img: 'assets/brainrots/TangTangKeletang.png' },
+            { id: 'lagrande',  name: 'La Grande',           price: 9,     rarity: 'epic',      img: 'assets/brainrots/La_Grande_Combinasion.png' },
+            { id: 'tictac',    name: 'Tictac Sahur',        price: 12,    rarity: 'epic',      img: 'assets/brainrots/Tictac-Sahur.png' },
+            { id: 'bacuru',    name: 'Bacuru and Egguru',   price: 12,    rarity: 'epic',      img: 'assets/brainrots/Bacuru_and_Egguru.png' },
+            { id: 'los67',     name: 'Los 67',              price: 12,    rarity: 'epic',      img: 'assets/brainrots/Los_67.png' },
+            { id: 'yinyang',   name: 'Yin Yang Slap',       price: 20,    rarity: 'legendary', img: 'assets/brainrots/YinYangSlap.png' },
+            { id: 'skibidi',   name: 'Skibidi Toilet',      price: 13154, rarity: 'legendary', img: 'assets/brainrots/skibidi_toilet.png' }
+        ];
+
+        // ================= TELEGRAM INIT =================
         const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
         let tgUser = null;
         if (tg) {
-            tg.ready(); tg.expand();
+            tg.ready(); 
+            tg.expand();
             tgUser = tg.initDataUnsafe && tg.initDataUnsafe.user;
             if (tgUser) {
                 document.getElementById('user-name').innerText = tgUser.first_name || 'Игрок';
@@ -511,6 +665,7 @@
         }
         const MY_ID = (tgUser && tgUser.id) ? tgUser.id : null;
 
+        // ================= API =================
         async function apiCall(endpoint, method = 'GET', body = null) {
             const headers = {
                 'Content-Type': 'application/json',
@@ -527,64 +682,59 @@
             return res.json();
         }
 
-        const TOAST_ICONS = { success:'fa-circle-check', error:'fa-circle-xmark', warning:'fa-triangle-exclamation', info:'fa-circle-info', legendary:'fa-crown' };
-        const TOAST_TITLES = { success:'Успех', error:'Ошибка', warning:'Внимание', info:'Инфо', legendary:'ЛЕГЕНДАРКА!' };
-
-        let toastContainer = null;
-        function getToastContainer() {
-            if (toastContainer && document.body.contains(toastContainer)) return toastContainer;
-            toastContainer = document.createElement('div');
-            toastContainer.className = 'bf-toast-container';
-            document.body.appendChild(toastContainer);
-            return toastContainer;
-        }
-
+        // ================= УВЕДОМЛЕНИЯ =================
         function notify(opts) {
             if (typeof opts === 'string') opts = { message: opts };
             const type = opts.type || 'info';
             const duration = Math.max(1000, opts.duration || 3500);
-            const title = opts.title || TOAST_TITLES[type] || 'Инфо';
+            const title = opts.title || (type === 'success' ? 'Успех' : type === 'error' ? 'Ошибка' : 'Инфо');
             const message = opts.message || '';
-            const container = getToastContainer();
+
+            let container = document.querySelector('.bf-toast-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.className = 'bf-toast-container';
+                document.body.appendChild(container);
+            }
+
             const el = document.createElement('div');
             el.className = 'bf-toast bf-toast--' + type;
-            el.innerHTML =
-                '<div class="bf-toast__icon"><i class="fa-solid ' + (TOAST_ICONS[type] || TOAST_ICONS.info) + '"></i></div>' +
-                '<div class="bf-toast__body">' +
-                    '<div class="bf-toast__title">' + escapeHtml(title) + '</div>' +
-                    '<div class="bf-toast__msg">' + escapeHtml(message) + '</div>' +
-                '</div>' +
-                '<div class="bf-toast__progress" style="animation-duration: ' + duration + 'ms;"></div>';
+            el.innerHTML = `
+                <div class="bf-toast__icon"><i class="fa-solid ${type === 'error' ? 'fa-circle-xmark' : type === 'success' ? 'fa-circle-check' : 'fa-circle-info'}"></i></div>
+                <div class="bf-toast__body">
+                    <div class="bf-toast__title">${escapeHtml(title)}</div>
+                    <div class="bf-toast__msg">${escapeHtml(message)}</div>
+                </div>
+            `;
             container.appendChild(el);
+
             let closed = false;
-            const close = () => { if (closed) return; closed = true; el.classList.add('closing'); el.addEventListener('animationend', () => el.remove(), { once: true }); setTimeout(() => el.remove(), 400); };
+            const close = () => {
+                if (closed) return; closed = true;
+                el.classList.add('closing');
+                setTimeout(() => el.remove(), 400);
+            };
             const timer = setTimeout(close, duration);
             el.addEventListener('click', () => { clearTimeout(timer); close(); });
-            return { close };
         }
 
         function confirmDialog(opts) {
-            opts = opts || {};
             return new Promise(resolve => {
-                const variant = opts.variant || 'default';
-                const iconClass = opts.icon || (variant === 'danger' ? 'fa-trash-can' : 'fa-circle-question');
                 const overlay = document.createElement('div');
                 overlay.className = 'bf-confirm-overlay';
-                overlay.innerHTML =
-                    '<div class="bf-confirm">' +
-                        '<div class="bf-confirm__icon' + (variant === 'danger' ? ' bf-confirm__icon--danger' : '') + '"><i class="fa-solid ' + iconClass + '"></i></div>' +
-                        '<div class="bf-confirm__title">' + escapeHtml(opts.title || 'Подтверждение') + '</div>' +
-                        '<div class="bf-confirm__msg">' + escapeHtml(opts.message || '') + '</div>' +
-                        '<div class="bf-confirm__actions">' +
-                            '<button class="bf-confirm__btn bf-confirm__btn--cancel" data-act="cancel">' + escapeHtml(opts.cancelText || 'Отмена') + '</button>' +
-                            '<button class="bf-confirm__btn ' + (variant === 'danger' ? 'bf-confirm__btn--danger' : 'bf-confirm__btn--confirm') + '" data-act="ok">' + escapeHtml(opts.confirmText || 'OK') + '</button>' +
-                        '</div>' +
-                    '</div>';
+                overlay.innerHTML = `
+                    <div class="bf-confirm">
+                        <div class="bf-confirm__title">${escapeHtml(opts.title || 'Подтверждение')}</div>
+                        <div class="bf-confirm__msg" style="color:var(--text-muted); margin-top:10px;">${escapeHtml(opts.message || '')}</div>
+                        <div class="bf-confirm__actions">
+                            <button class="bf-confirm__btn bf-confirm__btn--cancel" data-act="cancel">Отмена</button>
+                            <button class="bf-confirm__btn bf-confirm__btn--confirm" data-act="ok">ОК</button>
+                        </div>
+                    </div>
+                `;
                 document.body.appendChild(overlay);
-                const finish = (r) => { overlay.remove(); resolve(r); };
-                overlay.querySelector('[data-act="ok"]').addEventListener('click', () => finish(true));
-                overlay.querySelector('[data-act="cancel"]').addEventListener('click', () => finish(false));
-                overlay.addEventListener('click', e => { if (e.target === overlay) finish(false); });
+                overlay.querySelector('[data-act="cancel"]').onclick = () => { overlay.remove(); resolve(false); };
+                overlay.querySelector('[data-act="ok"]').onclick = () => { overlay.remove(); resolve(true); };
             });
         }
 
@@ -592,12 +742,14 @@
             return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
         }
 
+        // ================= СТЕЙТ =================
         let state = {
             balance: 0,
             inventory: {},
             lastFree: 0,
+            lastUser: 0,
+            hasUserCase: false,
             stats: { casesOpened: 0, itemsSold: 0, upgradeSuccess: 0, upgradeFail: 0, totalEarned: 0, uniqueCollected: [] },
-            achievements: {},
             themes: { dark: true },
             theme: 'dark'
         };
@@ -613,6 +765,7 @@
 
         const $ = id => document.getElementById(id);
 
+        // ================= UI РЕНДЕР =================
         function bumpBalance() {
             const el = $('balance-badge');
             if (!el) return;
@@ -622,26 +775,22 @@
         function applyTheme(name) {
             const theme = THEMES[name];
             if (!theme) return;
-            const root = document.documentElement;
-            Object.entries(theme.vars).forEach(([k, v]) => root.style.setProperty(k, v));
+            Object.entries(theme.vars).forEach(([k, v]) => document.documentElement.style.setProperty(k, v));
             state.theme = name;
         }
 
         function fireConfetti() {
             const colors = ['#f59e0b','#a855f7','#3b82f6','#22c55e','#f472b6','#fff'];
-            const layer = document.createElement('div');
-            layer.className = 'confetti-layer';
+            const layer = document.createElement('div'); layer.className = 'confetti-layer';
             document.body.appendChild(layer);
-            for (let i = 0; i < 60; i++) {
-                const p = document.createElement('div');
-                p.className = 'confetti-piece';
+            for (let i = 0; i < 50; i++) {
+                const p = document.createElement('div'); p.className = 'confetti-piece';
                 p.style.left = Math.random() * 100 + '%';
                 p.style.background = colors[Math.floor(Math.random() * colors.length)];
                 p.style.animationDuration = (2 + Math.random() * 2) + 's';
-                p.style.animationDelay = (Math.random() * 0.6) + 's';
                 layer.appendChild(p);
             }
-            setTimeout(() => layer.remove(), 5000);
+            setTimeout(() => layer.remove(), 4000);
         }
 
         let prevBalance = state.balance;
@@ -650,7 +799,7 @@
             if (state.balance !== prevBalance) bumpBalance();
             prevBalance = state.balance;
             renderInventory();
-            checkFreeTimer();
+            checkTimers();
             renderSettingsStats();
         }
 
@@ -661,74 +810,105 @@
             if (sec) sec.classList.add('active');
         }
 
-        function checkFreeTimer() {
-            const diff = Date.now() - state.lastFree;
-            const el = $('free-timer-text');
-            if (!el) return;
-            if (diff >= FREE_COOLDOWN) {
-                el.innerText = 'БЕСПЛАТНО';
-                el.style.color = 'var(--accent-gold)';
-            } else {
-                const rem = FREE_COOLDOWN - diff;
-                const h = Math.floor(rem / 3600000);
-                const m = Math.floor((rem % 3600000) / 60000);
-                el.innerText = 'через ' + h + 'ч ' + m + 'м';
-                el.style.color = 'var(--text-muted)';
+        function checkTimers() {
+            // Бесплатный
+            const diffFree = Date.now() - state.lastFree;
+            const elFree = $('free-timer-text');
+            if (diffFree >= FREE_COOLDOWN) { elFree.innerText = 'БЕСПЛАТНО'; elFree.style.color = 'var(--accent-gold)'; }
+            else {
+                const rem = FREE_COOLDOWN - diffFree;
+                elFree.innerText = 'через ' + Math.floor(rem/3600000) + 'ч ' + Math.floor((rem%3600000)/60000) + 'м';
+                elFree.style.color = 'var(--text-muted)';
             }
+            
+            // Кейс за юз
+            const elUser = $('user-timer-text');
+            const cardUser = $('user-case-card');
+            if (!state.hasUserCase) {
+                elUser.innerText = 'Нету @Brain_Funbot';
+                elUser.classList.add('locked-text');
+                cardUser.classList.add('locked');
+            } else {
+                cardUser.classList.remove('locked');
+                elUser.classList.remove('locked-text');
+                const diffUser = Date.now() - state.lastUser;
+                if (diffUser >= USER_COOLDOWN) { elUser.innerText = 'ДОСТУПЕН'; elUser.style.color = 'var(--accent-green)'; }
+                else {
+                    const rem = USER_COOLDOWN - diffUser;
+                    elUser.innerText = 'через ' + Math.floor(rem/3600000) + 'ч ' + Math.floor((rem%3600000)/60000) + 'м';
+                    elUser.style.color = 'var(--text-muted)';
+                }
+            }
+            
             if ($('case-modal').classList.contains('active') && !isOpening) updateModalBtn();
         }
-        setInterval(checkFreeTimer, 10000);
+        setInterval(checkTimers, 10000);
 
         window.updateDropFeed = function(arr) {
             const list = $('drop-feed-list');
             if (!list) return;
             if (!arr || !arr.length) {
-                list.innerHTML = '<div class="drop-row"><div class="drop-row__nick" style="max-width:none;">Пока нет дропов. Откройте кейс!</div></div>';
+                list.innerHTML = '<div class="drop-row"><div class="drop-row__nick" style="max-width:none;">Пока нет дропов.</div></div>';
                 return;
             }
             list.innerHTML = arr.map(d => {
                 const avatarLetter = (d.nick || '?').charAt(0).toUpperCase();
-                const itemHtml = d.itemImg
-                    ? '<img class="drop-row__img" src="' + d.itemImg + '" onerror="this.onerror=null;this.src=\'https://via.placeholder.com/20\'">'
-                    : '<i class="fa-solid fa-coins" style="color:var(--accent-gold); font-size:14px; width:20px; text-align:center;"></i>';
-                return '<div class="drop-row">' +
-                    '<div class="drop-row__avatar">' + escapeHtml(avatarLetter) + '</div>' +
-                    '<div class="drop-row__nick">' + escapeHtml(d.nick || 'Вы') + '</div>' +
-                    '<div class="drop-row__arrow">выбил</div>' + itemHtml +
-                    '<div class="drop-row__item">' + escapeHtml(d.itemName) + '</div>' +
-                '</div>';
+                const itemHtml = d.itemImg ? `<img class="drop-row__img" src="${d.itemImg}">` : `<i class="fa-solid fa-coins" style="color:var(--accent-gold);"></i>`;
+                return `<div class="drop-row">
+                    <div class="drop-row__avatar">${escapeHtml(avatarLetter)}</div>
+                    <div class="drop-row__nick">${escapeHtml(d.nick || 'Вы')}</div>
+                    <div class="drop-row__arrow">выбил</div> ${itemHtml}
+                    <div class="drop-row__item">${escapeHtml(d.itemName)}</div>
+                </div>`;
             }).join('');
         };
 
+        // ================= ЛОГИКА КЕЙСОВ =================
         function openCaseModal(type) {
             if (isOpening) return;
+            if (type === 'user' && !state.hasUserCase) {
+                notify({ type: 'error', message: 'Поставьте @Brain_Funbot в ник, чтобы открыть!' });
+                return;
+            }
+            if (type === 'user' && Date.now() - state.lastUser < USER_COOLDOWN) {
+                notify({ type: 'warning', message: 'Кейс за юз еще на кулдауне.' });
+                return;
+            }
+            
             activeCaseType = type;
             activeMultiplier = 1;
             setMultiplier(1);
+            
             $('modal-win-area').innerHTML = '';
-            const stack = $('roulettes-stack');
-            stack.innerHTML = ''; stack.style.display = 'none';
+            $('roulettes-stack').style.display = 'none';
             $('modal-case-img').style.display = 'block';
-            $('mult-selector-box').style.display = (type === 'free') ? 'none' : 'flex';
+            $('mult-selector-box').style.display = (type === 'free' || type === 'user') ? 'none' : 'flex';
             $('modal-case-title').innerText = CASE_TITLES[type];
-            $('modal-case-img').src = CASE_IMAGES[type];
             
             $('modal-loot-grid').innerHTML = `
-                <div class="loot-item-mini">
-                    <div class="coin-icon"><i class="fa-solid fa-coins" style="font-size:26px; color:var(--accent-gold);"></i></div>
-                    <div>Монеты (10%)</div>
+                <div class="loot-item-mini" style="border-color:var(--accent-gold); padding:10px; border-radius:10px; text-align:center;">
+                    <div><i class="fa-solid fa-coins" style="font-size:24px; color:var(--accent-gold);"></i></div>
+                    <div style="font-size:10px; margin-top:5px;">Монеты</div>
                 </div>
-                <div class="loot-item-mini rar-common"><img src="assets/brainrots/los_trios.png" onerror="this.src='https://via.placeholder.com/38'"><div>Los Trios</div></div>
-                <div class="loot-item-mini rar-epic"><img src="assets/brainrots/La_Grande_Combinasion.png" onerror="this.src='https://via.placeholder.com/38'"><div>La Grande</div></div>
+                <div class="loot-item-mini rar-common" style="border-color:var(--accent-gold); padding:10px; border-radius:10px; text-align:center;">
+                    <img src="assets/brainrots/los_trios.png" style="width:30px; height:30px; object-fit:contain;">
+                    <div style="font-size:10px; margin-top:5px;">Los Trios</div>
+                </div>
+                <div class="loot-item-mini rar-epic" style="border-color:var(--accent-gold); padding:10px; border-radius:10px; text-align:center;">
+                    <img src="assets/brainrots/La_Grande_Combinasion.png" style="width:30px; height:30px; object-fit:contain;">
+                    <div style="font-size:10px; margin-top:5px;">La Grande</div>
+                </div>
             `;
+            
             $('case-modal').classList.add('active');
             updateModalBtn();
         }
 
         function closeModal() { if (!isOpening) $('case-modal').classList.remove('active'); }
+        
         function setMultiplier(mult) {
             if (isOpening) return;
-            if (activeCaseType === 'free') mult = 1;
+            if (activeCaseType === 'free' || activeCaseType === 'user') mult = 1;
             activeMultiplier = mult;
             document.querySelectorAll('.mult-btn').forEach(b => b.classList.toggle('active', Number(b.dataset.mult) === mult));
             updateModalBtn();
@@ -738,54 +918,60 @@
             const btn = $('modal-open-btn');
             if (!btn) return;
             if (activeCaseType === 'free') {
-                if (Date.now() - state.lastFree < FREE_COOLDOWN) { btn.disabled = true; btn.innerText = 'Еще не доступен'; }
+                if (Date.now() - state.lastFree < FREE_COOLDOWN) { btn.disabled = true; btn.innerText = 'Кулдаун'; }
                 else { btn.disabled = false; btn.innerText = 'Открыть (Бесплатно)'; }
+            } else if (activeCaseType === 'user') {
+                if (Date.now() - state.lastUser < USER_COOLDOWN) { btn.disabled = true; btn.innerText = 'Кулдаун'; }
+                else { btn.disabled = false; btn.innerText = 'Открыть (За юз)'; }
             } else {
                 const price = CASE_PRICES[activeCaseType] * activeMultiplier;
                 btn.disabled = state.balance < price;
-                btn.innerText = 'Открыть x' + activeMultiplier + ' за ' + price + ' монет';
+                btn.innerText = `Открыть x${activeMultiplier} за ${price} монет`;
             }
         }
 
         async function startCaseOpening() {
             if (isOpening) return;
             const price = CASE_PRICES[activeCaseType] * activeMultiplier;
-            if (activeCaseType !== 'free' && state.balance < price) return;
+            if (activeCaseType !== 'free' && activeCaseType !== 'user' && state.balance < price) return;
+            
             isOpening = true;
             $('modal-open-btn').disabled = true;
             $('modal-case-img').style.display = 'none';
             $('mult-selector-box').style.display = 'none';
             $('modal-win-area').innerHTML = '';
+
             try {
-                const res = await apiCall('/api/open_case', 'POST', { case_type: activeCaseType, multiplier: activeMultiplier });
+                const res = await apiCall('/api/open_case', 'POST', { 
+                    case_type: activeCaseType, 
+                    multiplier: activeMultiplier 
+                });
+                
                 state.balance = res.balance;
                 state.inventory = res.inventory;
                 state.lastFree = res.lastFree;
-                state.stats = res.stats;
-                state.achievements = res.achievements;
+                state.lastUser = res.lastUser;
                 $('balance').innerText = state.balance;
                 renderInventory(); 
 
-                const wonResults = res.results;
                 const stack = $('roulettes-stack');
                 stack.innerHTML = ''; stack.style.display = 'flex';
                 const instances = [];
+                
                 for (let i = 0; i < activeMultiplier; i++) {
-                    const inst = createRoulette(wonResults[i], activeCaseType);
-                    stack.appendChild(inst.wrapper); instances.push(inst);
+                    const inst = createRoulette(res.results[i]);
+                    stack.appendChild(inst.wrapper); 
+                    instances.push(inst);
                 }
+
                 requestAnimationFrame(() => {
                     requestAnimationFrame(() => {
                         instances.forEach(inst => {
-                            const winEl = inst.track.children[ROULETTE_WIN_INDEX];
+                            const winEl = inst.track.children[20];
                             const containerW = inst.wrapper.clientWidth;
-                            let tx;
-                            if (winEl && containerW > 0) {
-                                const winCenter = winEl.offsetLeft + winEl.offsetWidth / 2;
-                                tx = winCenter - containerW / 2 + (Math.random() - 0.5) * 40;
-                            } else { tx = ROULETTE_WIN_INDEX * 100 + 50 - 190; }
+                            let tx = winEl.offsetLeft + winEl.offsetWidth / 2 - containerW / 2;
                             inst.track.style.transition = 'transform 3s cubic-bezier(0.1, 1, 0.1, 1)';
-                            inst.track.style.transform = 'translateX(-' + tx + 'px)';
+                            inst.track.style.transform = `translateX(-${tx}px)`;
                         });
                     });
                 });
@@ -793,443 +979,380 @@
                 setTimeout(() => {
                     isOpening = false;
                     let html = '<div class="won-items-container">';
-                    let hasLegendary = false;
-                    wonResults.forEach(win => {
+                    let hasLegend = false;
+                    
+                    res.results.forEach(win => {
                         if (win.type === 'coin') {
-                            html += '<div class="won-card"><i class="fa-solid fa-coins" style="font-size:36px; color:var(--accent-gold); margin:6px 0;"></i><div class="won-card-title">+' + win.amount + ' МОНЕТ</div></div>';
+                            html += `<div class="won-card"><i class="fa-solid fa-coins" style="font-size:36px; color:var(--accent-gold);"></i><div class="won-card-title">+${win.amount} МОНЕТ</div></div>`;
                         } else {
-                            const r = getRarity(win.item);
-                            if (r.id === 'legendary') hasLegendary = true;
-                            html += '<div class="won-card rar-' + r.id + '">' +
-                                '<img src="' + win.item.img + '" onerror="this.onerror=null;this.src=\'https://via.placeholder.com/50\'">' +
-                                '<div class="won-card-title">' + escapeHtml(win.item.name) + '</div>' +
-                                '<div class="won-card-price">' + win.item.price + ' монет</div></div>';
+                            const r = RARITIES[win.item.rarity] || RARITIES.common;
+                            if (r.id === 'legendary') hasLegend = true;
+                            html += `<div class="won-card" style="border-color:${r.color}">
+                                <img src="${win.item.img}">
+                                <div class="won-card-title">${escapeHtml(win.item.name)}</div>
+                                <div class="won-card-price">${win.item.price}</div>
+                            </div>`;
                         }
                     });
                     html += '</div>';
                     $('modal-win-area').innerHTML = html;
                     updateModalBtn();
-                    if (hasLegendary) fireConfetti();
+                    if (hasLegend) fireConfetti();
                 }, 3200);
+
             } catch (err) {
                 isOpening = false; updateModalBtn(); notify({ type: 'error', message: err.message });
             }
         }
 
-        function createRoulette(win, caseType) {
+        function createRoulette(win) {
             const wrapper = document.createElement('div'); wrapper.className = 'roulette-container';
             wrapper.innerHTML = '<div class="roulette-pointer"></div><div class="roulette-track"></div>';
             const track = wrapper.querySelector('.roulette-track');
-            const dummyItems = [
-                { type: 'coin', amount: 1 },
-                { type: 'item', item: { id:'trios', name:'Los Trios', price:4, rarity:'common', img:'assets/brainrots/los_trios.png' } },
-                { type: 'item', item: { id:'hammy', name:'Spinny Hammy', price:5, rarity:'uncommon', img:'assets/brainrots/spinny_hammy.png' } },
-                { type: 'item', item: { id:'lagrande', name:'La Grande', price:9, rarity:'epic', img:'assets/brainrots/La_Grande_Combinasion.png' } }
+            
+            const dummy = [
+                { type:'coin', amount:1 },
+                { type:'item', item: ALL_ITEMS[0] },
+                { type:'item', item: ALL_ITEMS[2] },
+                { type:'item', item: ALL_ITEMS[6] }
             ];
+            
             const entries = [];
-            for (let i = 0; i < ROULETTE_ITEMS_TOTAL; i++) entries.push(dummyItems[Math.floor(Math.random() * dummyItems.length)]);
-            entries[ROULETTE_WIN_INDEX] = win;
-            track.style.transition = 'none'; track.style.transform = 'translateX(0px)';
+            for (let i = 0; i < 26; i++) {
+                if (i === 20) entries.push(win);
+                else entries.push(dummy[Math.floor(Math.random() * dummy.length)]);
+            }
+
             track.innerHTML = entries.map(e => {
-                if (e.type === 'coin') return '<div class="roulette-item"><i class="fa-solid fa-coins" style="font-size:30px; color:var(--accent-gold); margin-bottom:4px;"></i><div style="font-weight:700;">' + e.amount + ' Монет</div></div>';
-                const r = getRarity(e.item);
-                return '<div class="roulette-item rar-' + r.id + '"><img src="' + e.item.img + '" onerror="this.onerror=null;this.src=\'https://via.placeholder.com/45\'"><div style="font-weight:700;">' + escapeHtml(e.item.name) + '</div></div>';
+                if (e.type === 'coin') return `<div class="roulette-item"><i class="fa-solid fa-coins" style="font-size:30px; color:var(--accent-gold);"></i><div>${e.amount} Монет</div></div>`;
+                const r = RARITIES[e.item.rarity] || RARITIES.common;
+                return `<div class="roulette-item" style="border-color:${r.color}"><img src="${e.item.img}"><div>${escapeHtml(e.item.name)}</div></div>`;
             }).join('');
             return { wrapper, track };
         }
 
+        // ================= ДОНАТ =================
         function renderDonateShop() {
             const grid = $('donate-grid');
             if (!grid) return;
-            grid.innerHTML = STARS_PACKAGES.map(p => {
-                const bonusHTML = p.bonus > 0 ? '<div class="donate-pack__bonus">+' + p.bonus + '% бонус</div>' : '<div style="height:18px;"></div>';
-                return '<div class="donate-pack' + (p.best ? ' best' : '') + '" onclick="BF.buyPackage(\'' + p.id + '\')">' +
-                    '<div class="donate-pack__icon"><i class="fa-solid fa-star"></i></div>' +
-                    '<div class="donate-pack__stars">' + p.stars + ' ⭐</div>' +
-                    '<div class="donate-pack__coins"><i class="fa-solid fa-coins"></i>' + p.coins + '</div>' + bonusHTML +
-                    '<div class="donate-pack__price">≈ $' + (p.stars * 0.015).toFixed(2) + '</div></div>';
-            }).join('');
+            grid.innerHTML = STARS_PACKAGES.map(p => `
+                <div class="donate-pack ${p.best ? 'best' : ''}" onclick="BF.buyPackage('${p.id}')">
+                    <div class="donate-pack__icon"><i class="fa-solid fa-star"></i></div>
+                    <div class="donate-pack__stars">${p.stars} ⭐</div>
+                    <div class="donate-pack__coins"><i class="fa-solid fa-coins"></i>${p.coins}</div>
+                    ${p.bonus ? `<div class="donate-pack__bonus">+${p.bonus}% бонус</div>` : '<div style="height:18px;"></div>'}
+                </div>
+            `).join('');
         }
 
         async function buyPackage(packId) {
             if (isPurchasing) return;
             const pack = STARS_PACKAGES.find(p => p.id === packId);
-            if (!pack) return;
-            const ok = await confirmDialog({ title: 'Подтвердите покупку', message: pack.stars + ' ⭐ → ' + pack.coins + ' монет.', confirmText: 'Оплатить', icon: 'fa-star' });
+            const ok = await confirmDialog({ title: 'Подтвердите покупку', message: `${pack.stars} ⭐ → ${pack.coins} монет.` });
             if (!ok) return;
+            
             isPurchasing = true;
             try {
                 const data = await apiCall('/api/create-invoice-link', 'POST', { package_id: pack.id });
                 if (!tg || !tg.openInvoice) throw new Error('Telegram openInvoice not available');
+                
                 tg.openInvoice(data.invoice_link, (status) => {
                     isPurchasing = false;
                     if (status === 'paid') {
                         notify({ type: 'success', title: '⭐ Оплата прошла!', message: 'Монеты зачислены.' });
-                        setTimeout(loadInitialData, 2000);
+                        setTimeout(loadData, 2000);
                     } else if (status === 'cancelled') notify({ type: 'info', message: 'Оплата отменена.' });
                     else if (status === 'failed') notify({ type: 'error', message: 'Оплата не прошла.' });
                 });
             } catch (err) {
                 isPurchasing = false;
-                notify({ type: 'error', title: 'Ошибка оплаты', message: err.message });
+                notify({ type: 'error', title: 'Ошибка', message: err.message });
             }
         }
 
-        function getUpgInputItems() { return upgInputUids.map(uid => state.inventory[uid]).filter(Boolean); }
-        function getUpgInputSum() { return getUpgInputItems().reduce((s, i) => s + i.price, 0); }
-        function getUpgradeChance() {
+        // ================= АПГРЕЙД =================
+        function getUpgItems() { return upgInputUids.map(uid => state.inventory[uid]).filter(Boolean); }
+        function getUpgSum() { return getUpgItems().reduce((s, i) => s + i.price, 0); }
+        function getChance() {
             if (!upgTargetItem || upgInputUids.length === 0) return 0;
-            const raw = (getUpgInputSum() / upgTargetItem.price) * 100;
-            return Math.max(0, Math.min(MAX_UPGRADE_CHANCE, raw));
+            return Math.min(MAX_UPGRADE_CHANCE, (getUpgSum() / upgTargetItem.price) * 100);
         }
 
         function renderUpgSlots() {
-            const items = getUpgInputItems();
+            const items = getUpgItems();
             document.querySelectorAll('.upg-slot').forEach((slot, idx) => {
                 const item = items[idx];
                 if (item) {
                     slot.classList.add('filled');
-                    slot.innerHTML = '<img src="' + item.img + '" onerror="this.onerror=null;this.src=\'https://via.placeholder.com/40\'"><div class="price-tag">' + item.price + '</div>';
+                    slot.innerHTML = `<img src="${item.img}"><div class="price-tag">${item.price}</div>`;
                 } else {
                     slot.classList.remove('filled');
                     slot.innerHTML = '<i class="fa-solid fa-plus plus"></i>';
                 }
             });
-            const countEl = $('upg-inputs-count');
-            if (countEl) countEl.innerText = items.length + '/' + UPG_MAX;
+            $('upg-inputs-count').innerText = items.length + '/' + UPG_MAX;
         }
 
         function renderUpgTarget() {
             const el = $('upg-target');
-            if (!el) return;
             if (upgTargetItem) {
                 el.classList.add('filled');
-                el.innerHTML = '<img src="' + upgTargetItem.img + '" onerror="this.onerror=null;this.src=\'https://via.placeholder.com/55\'"><div class="label">' + escapeHtml(upgTargetItem.name) + '</div><div class="price">' + upgTargetItem.price + ' монет</div>';
+                el.innerHTML = `<img src="${upgTargetItem.img}"><div class="label">${escapeHtml(upgTargetItem.name)}</div><div class="price">${upgTargetItem.price}</div>`;
             } else {
                 el.classList.remove('filled');
                 el.innerHTML = '<i class="fa-solid fa-bullseye plus"></i><div class="hint">Цель</div>';
             }
         }
 
-        function calculateUpgradeChance() {
-            const chance = getUpgradeChance();
-            const chanceEl = $('upgrade-chance');
-            if (chanceEl) chanceEl.innerText = chance.toFixed(1) + '%';
-            const circle = $('upgrade-progress');
-            if (circle) circle.style.strokeDashoffset = CIRCUMFERENCE - (CIRCUMFERENCE * (chance / 100));
-            const btn = $('btn-upgrade');
-            if (btn) btn.disabled = !(upgInputUids.length > 0 && upgTargetItem);
+        function calcChance() {
+            const chance = getChance();
+            $('upgrade-chance').innerText = chance.toFixed(1) + '%';
+            $('upgrade-progress').style.strokeDashoffset = CIRCUMFERENCE - (CIRCUMFERENCE * (chance / 100));
+            $('btn-upgrade').disabled = !(upgInputUids.length > 0 && upgTargetItem);
         }
 
         function onUpgSlotClick(idx) {
             if (isUpgrading) return;
-            const items = getUpgInputItems();
+            const items = getUpgItems();
             const item = items[idx];
             if (item) {
                 upgInputUids = upgInputUids.filter(u => u !== item.uid);
-                renderUpgSlots(); renderInventory(); calculateUpgradeChance();
+                renderUpgSlots(); renderInventory(); calcChance();
             } else {
-                notify({ type: 'info', message: 'Выберите предмет в инвентаре.' });
                 switchTab('inventory');
+                notify({ type: 'info', message: 'Выберите предмет в инвентаре.' });
             }
         }
 
         function onUpgTargetClick() {
             if (isUpgrading) return;
-            if (upgTargetItem) { upgTargetItem = null; renderUpgTarget(); calculateUpgradeChance(); }
+            if (upgTargetItem) { upgTargetItem = null; renderUpgTarget(); calcChance(); }
             else openTargetSelector();
         }
 
         function openTargetSelector() {
             const list = $('target-selector-list');
-            const allItems = [
-                { id: 'trios',     name: 'Los Trios',           price: 4,     rarity: 'common',    img: 'assets/brainrots/los_trios.png' },
-                { id: 'rot67',     name: '67',                  price: 5,     rarity: 'common',    img: 'assets/brainrots/67.png' },
-                { id: 'hammy',     name: 'Spinny Hammy',        price: 5,     rarity: 'uncommon',  img: 'assets/brainrots/spinny_hammy.png' },
-                { id: 'candyslap', name: 'Candy Slap',          price: 7,     rarity: 'uncommon',  img: 'assets/brainrots/CandySlap.png' },
-                { id: 'noobinis',  name: 'Los Noobinis',        price: 7,     rarity: 'rare',      img: 'assets/brainrots/Los_Noobinis.png' },
-                { id: 'tangtang',  name: 'Tang Tang Keletang',  price: 8,     rarity: 'rare',      img: 'assets/brainrots/TangTangKeletang.png' },
-                { id: 'lagrande',  name: 'La Grande',           price: 9,     rarity: 'epic',      img: 'assets/brainrots/La_Grande_Combinasion.png' },
-                { id: 'tictac',    name: 'Tictac Sahur',        price: 12,    rarity: 'epic',      img: 'assets/brainrots/Tictac-Sahur.png' },
-                { id: 'bacuru',    name: 'Bacuru and Egguru',   price: 12,    rarity: 'epic',      img: 'assets/brainrots/Bacuru_and_Egguru.png' },
-                { id: 'los67',     name: 'Los 67',              price: 12,    rarity: 'epic',      img: 'assets/brainrots/Los_67.png' },
-                { id: 'yinyang',   name: 'Yin Yang Slap',       price: 20,    rarity: 'legendary', img: 'assets/brainrots/YinYangSlap.png' },
-                { id: 'skibidi',   name: 'Skibidi Toilet',      price: 13154, rarity: 'legendary', img: 'assets/brainrots/skibidi_toilet.png' }
-            ];
-            list.innerHTML = allItems.map(item => {
-                const r = getRarity(item);
-                return '<div class="selector-item" onclick="BF.chooseTargetItem(\'' + item.id + '\')">' +
-                    '<img src="' + item.img + '" onerror="this.onerror=null;this.src=\'https://via.placeholder.com/40\'">' +
-                    '<div style="flex:1; min-width:0;">' +
-                        '<div style="font-size:12px; font-weight:700;">' + escapeHtml(item.name) + '</div>' +
-                        '<div style="font-size:10px; color:' + r.color + '; font-weight:800;">' + r.name + '</div>' +
-                        '<div style="font-size:11px; color:var(--accent-gold); font-weight:800;">' + item.price + ' монет</div>' +
-                    '</div></div>';
-            }).join('');
+            list.innerHTML = ALL_ITEMS.map(item => `
+                <div class="selector-item" onclick="BF.chooseTarget('${item.id}')">
+                    <img src="${item.img}">
+                    <div>
+                        <div style="font-size:12px; font-weight:700;">${escapeHtml(item.name)}</div>
+                        <div style="font-size:11px; color:var(--accent-gold);">${item.price} монет</div>
+                    </div>
+                </div>
+            `).join('');
             $('target-modal').classList.add('active');
         }
 
         function closeTargetModal() { $('target-modal').classList.remove('active'); }
-        function chooseTargetItem(id) {
-            const allItems = [
-                { id: 'trios',     name: 'Los Trios',           price: 4,     rarity: 'common',    img: 'assets/brainrots/los_trios.png' },
-                { id: 'rot67',     name: '67',                  price: 5,     rarity: 'common',    img: 'assets/brainrots/67.png' },
-                { id: 'hammy',     name: 'Spinny Hammy',        price: 5,     rarity: 'uncommon',  img: 'assets/brainrots/spinny_hammy.png' },
-                { id: 'candyslap', name: 'Candy Slap',          price: 7,     rarity: 'uncommon',  img: 'assets/brainrots/CandySlap.png' },
-                { id: 'noobinis',  name: 'Los Noobinis',        price: 7,     rarity: 'rare',      img: 'assets/brainrots/Los_Noobinis.png' },
-                { id: 'tangtang',  name: 'Tang Tang Keletang',  price: 8,     rarity: 'rare',      img: 'assets/brainrots/TangTangKeletang.png' },
-                { id: 'lagrande',  name: 'La Grande',           price: 9,     rarity: 'epic',      img: 'assets/brainrots/La_Grande_Combinasion.png' },
-                { id: 'tictac',    name: 'Tictac Sahur',        price: 12,    rarity: 'epic',      img: 'assets/brainrots/Tictac-Sahur.png' },
-                { id: 'bacuru',    name: 'Bacuru and Egguru',   price: 12,    rarity: 'epic',      img: 'assets/brainrots/Bacuru_and_Egguru.png' },
-                { id: 'los67',     name: 'Los 67',              price: 12,    rarity: 'epic',      img: 'assets/brainrots/Los_67.png' },
-                { id: 'yinyang',   name: 'Yin Yang Slap',       price: 20,    rarity: 'legendary', img: 'assets/brainrots/YinYangSlap.png' },
-                { id: 'skibidi',   name: 'Skibidi Toilet',      price: 13154, rarity: 'legendary', img: 'assets/brainrots/skibidi_toilet.png' }
-            ];
-            const item = allItems.find(i => i.id === id);
-            if (!item) return;
-            upgTargetItem = item; renderUpgTarget(); calculateUpgradeChance(); closeTargetModal();
+        function chooseTarget(id) {
+            upgTargetItem = ALL_ITEMS.find(i => i.id === id);
+            renderUpgTarget(); calcChance(); closeTargetModal();
         }
 
         async function runUpgradeAnimation() {
             if (isUpgrading) return;
-            const inputs = getUpgInputItems();
-            if (inputs.length === 0 || !upgTargetItem) return;
             isUpgrading = true; $('btn-upgrade').disabled = true;
             try {
                 const res = await apiCall('/api/upgrade', 'POST', { input_uids: upgInputUids, target_id: upgTargetItem.id });
-                const isSuccess = res.success;
-                const chance = res.chance;
-                state.balance = res.balance;
-                state.inventory = res.inventory;
-                state.stats = res.stats;
+                state.balance = res.balance; state.inventory = res.inventory;
                 $('balance').innerText = state.balance;
-                const chanceAngle = chance * 3.6;
-                const screenAngle = isSuccess ? Math.random() * chanceAngle : chanceAngle + Math.random() * (360 - chanceAngle);
-                const targetAngle = ((screenAngle - 180) % 360 + 360) % 360;
-                const totalRotation = 360 * 6 + targetAngle;
+                
+                const chanceAngle = res.chance * 3.6;
+                const screenAngle = res.success ? Math.random() * chanceAngle : chanceAngle + Math.random() * (360 - chanceAngle);
+                const totalRotation = 360 * 6 + ((screenAngle - 180) % 360 + 360) % 360;
+                
                 const arrow = $('upgrader-arrow');
-                void arrow.offsetWidth;
                 arrow.style.transition = 'transform 3.5s cubic-bezier(0.15, 0.9, 0.2, 1)';
-                arrow.style.transform = 'translate(-50%, 0) rotate(' + totalRotation + 'deg)';
+                arrow.style.transform = `translate(-50%, 0) rotate(${totalRotation}deg)`;
+
                 setTimeout(() => {
-                    isUpgrading = false;
-                    upgInputUids = []; upgTargetItem = null;
+                    isUpgrading = false; upgInputUids = []; upgTargetItem = null;
                     arrow.style.transition = 'none'; arrow.style.transform = 'translate(-50%, 0) rotate(0deg)';
-                    void arrow.offsetWidth;
-                    renderUpgSlots(); renderUpgTarget(); calculateUpgradeChance(); updateUI();
-                    if (isSuccess) {
-                        const r = getRarity(res.target);
-                        if (r.id === 'legendary') fireConfetti();
-                        notify({ type: 'success', title: '🎉 Апгрейд удался!', message: 'Вы получили «' + res.target.name + '»!', duration: 4500 });
+                    renderUpgSlots(); renderUpgTarget(); calcChance(); updateUI();
+                    if (res.success) {
+                        if (res.target.rarity === 'legendary') fireConfetti();
+                        notify({ type: 'success', title: 'Успех!', message: `Вы получили ${res.target.name}` });
                     } else {
-                        notify({ type: 'error', title: '💥 Апгрейд провален', message: 'Предметы потеряны.', duration: 4500 });
+                        notify({ type: 'error', title: 'Провал', message: 'Предметы сгорели.' });
                     }
                 }, 3600);
             } catch (err) {
-                isUpgrading = false; calculateUpgradeChance();
-                notify({ type: 'error', message: err.message });
+                isUpgrading = false; calcChance(); notify({ type: 'error', message: err.message });
             }
         }
 
-        function renderSettingsThemes() {
-            const el = $('panel-themes');
-            el.innerHTML = Object.entries(THEMES).map(([key, t]) => {
+        // ================= ИНВЕНТАРЬ =================
+        function renderInventory() {
+            const container = $('inventory-list');
+            const inv = Object.values(state.inventory || {});
+            if (!inv.length) { container.innerHTML = '<div class="empty-inv">Инвентарь пуст</div>'; return; }
+            
+            container.innerHTML = inv.map(item => {
+                const inUpg = upgInputUids.includes(item.uid);
+                const r = RARITIES[item.rarity] || RARITIES.common;
+                return `<div class="item-card rar-${r.id} ${inUpg ? 'in-upgrader' : ''}" onclick="BF.addToUpg('${item.uid}')">
+                    <img src="${item.img}">
+                    <div class="item-name">${escapeHtml(item.name)}</div>
+                    <div class="item-price">${item.price}</div>
+                    <button class="sell-btn" onclick="event.stopPropagation(); BF.sellItem('${item.uid}')">Продать</button>
+                </div>`;
+            }).join('');
+        }
+
+        function addToUpg(uid) {
+            if (upgInputUids.includes(uid)) {
+                upgInputUids = upgInputUids.filter(u => u !== uid);
+                renderUpgSlots(); renderInventory(); calcChance();
+                return;
+            }
+            if (upgInputUids.length >= UPG_MAX) return notify({ type: 'warning', message: 'Максимум 5 предметов.' });
+            upgInputUids.push(uid);
+            renderUpgSlots(); renderInventory(); calcChance();
+            switchTab('upgrader');
+        }
+
+        async function sellItem(uid) {
+            try {
+                const res = await apiCall('/api/sell_item', 'POST', { uid });
+                state.balance = res.balance; state.inventory = res.inventory;
+                if (upgInputUids.includes(uid)) upgInputUids = upgInputUids.filter(u => u !== uid);
+                updateUI(); renderUpgSlots(); calcChance();
+                notify({ type: 'success', message: 'Предмет продан.' });
+            } catch (err) { notify({ type: 'error', message: err.message }); }
+        }
+
+        async function sellAll() {
+            if (!Object.keys(state.inventory).length) return;
+            try {
+                const res = await apiCall('/api/sell_all', 'POST');
+                state.balance = res.balance; state.inventory = res.inventory;
+                upgInputUids = []; updateUI(); renderUpgSlots(); calcChance();
+                notify({ type: 'success', message: 'Всё продано!' });
+            } catch (err) { notify({ type: 'error', message: err.message }); }
+        }
+
+        // ================= НАСТРОЙКИ =================
+        function openSettings() { renderThemes(); renderRef(); renderSettingsStats(); $('settings-modal').classList.add('active'); }
+        function closeSettings() { $('settings-modal').classList.remove('active'); }
+        function showSettingsPanel(name) {
+            document.querySelectorAll('.settings-tab').forEach(t => t.classList.toggle('active', t.dataset.panel === name));
+            document.querySelectorAll('.settings-panel').forEach(p => p.classList.remove('active'));
+            $('panel-' + name).classList.add('active');
+        }
+
+        function renderThemes() {
+            $('panel-themes').innerHTML = Object.entries(THEMES).map(([key, t]) => {
                 const owned = !!state.themes[key];
-                const equipped = state.theme === key;
-                const previewDots = t.preview.map(c => '<div style="flex:1; height:100%; background:' + c + ';"></div>').join('');
-                let status = '';
-                if (equipped) status = '<div class="theme-card__status equipped">✓ Активна</div>';
-                else if (owned) status = '<div class="theme-card__status owned">Куплена</div>';
-                else status = '<div class="theme-card__status">Купить за <span class="theme-card__price">' + t.price + ' монет</span></div>';
-                return '<div class="theme-card' + (equipped ? ' active' : '') + '" onclick="BF.selectTheme(\'' + key + '\')">' +
-                    '<div class="theme-card__preview" style="display:flex;">' + previewDots + '</div>' +
-                    '<div class="theme-card__body"><div class="theme-card__name">' + escapeHtml(t.name) + '</div>' + status + '</div></div>';
+                const eq = state.theme === key;
+                return `<div class="theme-card ${eq ? 'active' : ''}" onclick="BF.selectTheme('${key}')">
+                    <div class="theme-card__preview" style="display:flex;">
+                        ${t.preview.map(c => `<div style="flex:1; background:${c};"></div>`).join('')}
+                    </div>
+                    <div class="theme-card__body">
+                        <div class="theme-card__name">${t.name}</div>
+                        <div class="theme-card__status ${eq?'equipped':owned?'owned':''}">
+                            ${eq ? '✓ Активна' : owned ? 'Куплена' : `Купить за <span class="theme-card__price">${t.price}</span>`}
+                        </div>
+                    </div>
+                </div>`;
             }).join('');
         }
 
         async function selectTheme(key) {
             const theme = THEMES[key];
-            if (!theme) return;
             if (!state.themes[key]) {
-                if (state.balance < theme.price) { notify({ type: 'error', message: 'Недостаточно монет.' }); return; }
-                const ok = await confirmDialog({ title: 'Купить тему?', message: '«' + theme.name + '» за ' + theme.price + ' монет.', confirmText: 'Купить' });
+                if (state.balance < theme.price) return notify({ type: 'error', message: 'Мало монет.' });
+                const ok = await confirmDialog({ title: 'Купить?', message: `${theme.price} монет.` });
                 if (!ok) return;
             }
             try {
                 const res = await apiCall('/api/choose_theme', 'POST', { theme_id: key });
                 state.balance = res.balance; state.theme = res.theme; state.themes = res.themes;
-                $('balance').innerText = state.balance;
-                applyTheme(key); renderSettingsThemes(); updateUI();
-                notify({ type: 'info', title: 'Тема', message: 'Установлена «' + theme.name + '».' });
+                applyTheme(key); updateUI(); renderThemes();
+                notify({ type: 'success', message: 'Тема изменена.' });
             } catch (err) { notify({ type: 'error', message: err.message }); }
         }
 
-        function renderSettingsReferral() {
-            const el = $('panel-referral');
-            const code = MY_ID ? ('ref_' + MY_ID) : 'ref_demo';
-            const baseUrl = window.location.href.split('?')[0].split('#')[0];
-            const link = baseUrl + '?start=' + code;
-            el.innerHTML =
-                '<div class="settings-hint">Приглашай друзей — ты получаешь <b style="color:var(--accent-gold);">+100 монет</b>, а друг <b style="color:var(--accent-gold);">+50 монет</b>.</div>' +
-                '<div style="font-size:12px; color:var(--text-muted); margin: 10px 0 4px; font-weight:700;">Ваша ссылка:</div>' +
-                '<div class="ref-box">' + escapeHtml(link) + '</div>' +
-                '<button class="ref-btn" onclick="BF.copyRefLink()">📋 Скопировать ссылку</button>' +
-                '<button class="ref-btn secondary" onclick="BF.shareRefLink()" style="margin-top:8px;">📤 Поделиться</button>';
+        function renderRef() {
+            // ССЫЛКА ТЕПЕРЬ ВЕДЕТ ПРЯМО В БОТА
+            const link = `${BOT_URL}?start=ref_${MY_ID}`;
+            $('panel-referral').innerHTML = `
+                <div class="settings-hint">Приглашай друзей! Тебе <b>+4 монеты</b>, другу <b>+2 монеты</b>.</div>
+                <div style="font-size:12px; color:var(--text-muted); margin: 10px 0 4px; font-weight:700;">Ваша ссылка:</div>
+                <div class="ref-box">${escapeHtml(link)}</div>
+                <button class="ref-btn" onclick="BF.copyRef()">📋 Скопировать</button>
+                <button class="ref-btn secondary" onclick="BF.shareRef()" style="margin-top:8px;">📤 Поделиться</button>
+            `;
         }
 
-        function copyRefLink() {
-            const code = MY_ID ? ('ref_' + MY_ID) : 'ref_demo';
-            const baseUrl = window.location.href.split('?')[0].split('#')[0];
-            navigator.clipboard.writeText(baseUrl + '?start=' + code).then(() => notify({ type: 'success', message: 'Ссылка скопирована.' }));
+        function copyRef() {
+            const link = `${BOT_URL}?start=ref_${MY_ID}`;
+            navigator.clipboard.writeText(link).then(() => notify({ type: 'success', message: 'Ссылка скопирована.' }));
         }
 
-        function shareRefLink() {
-            const code = MY_ID ? ('ref_' + MY_ID) : 'ref_demo';
-            const baseUrl = window.location.href.split('?')[0].split('#')[0];
-            const link = baseUrl + '?start=' + code;
-            const text = 'Попробуй Brainrots Funny! Мой код: ' + code;
-            if (navigator.share) { navigator.share({ title:'Brainrots Funny', text, url: link }).catch(()=>{}); }
-            else if (tg && tg.openTelegramLink) { tg.openTelegramLink('https://t.me/share/url?url=' + encodeURIComponent(link) + '&text=' + encodeURIComponent(text)); }
-            else { navigator.clipboard.writeText(link); notify({ type: 'info', message: 'Ссылка скопирована.' }); }
+        function shareRef() {
+            const link = `${BOT_URL}?start=ref_${MY_ID}`;
+            const text = 'Залетай в Brainrots Funny!';
+            if (tg && tg.openTelegramLink) {
+                const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(text)}`;
+                tg.openTelegramLink(shareUrl);
+            } else {
+                copyRef();
+            }
         }
 
         function renderSettingsStats() {
-            const el = $('panel-stats');
-            if (!el) return;
             const s = state.stats;
-            el.innerHTML =
-                '<div class="stat-row"><span class="stat-row__label">Баланс</span><span class="stat-row__value" style="color:var(--accent-gold);">' + state.balance + '</span></div>' +
-                '<div class="stat-row"><span class="stat-row__label">Всего заработано</span><span class="stat-row__value">' + (s.totalEarned||0) + '</span></div>' +
-                '<div class="stat-row"><span class="stat-row__label">Открыто кейсов</span><span class="stat-row__value">' + (s.casesOpened||0) + '</span></div>' +
-                '<div class="stat-row"><span class="stat-row__label">Продано предметов</span><span class="stat-row__value">' + (s.itemsSold||0) + '</span></div>' +
-                '<div class="stat-row"><span class="stat-row__label">Успешных апгрейдов</span><span class="stat-row__value" style="color:var(--accent-green);">' + (s.upgradeSuccess||0) + '</span></div>' +
-                '<div class="stat-row"><span class="stat-row__label">Проваленных апгрейдов</span><span class="stat-row__value" style="color:var(--accent-red);">' + (s.upgradeFail||0) + '</span></div>' +
-                '<div class="stat-row"><span class="stat-row__label">Уникальных брейнротов</span><span class="stat-row__value">' + (s.uniqueCollected||[]).length + ' / 12</span></div>';
+            $('panel-stats').innerHTML = `
+                <div class="stat-row"><span class="stat-row__label">Баланс</span><span class="stat-row__value" style="color:var(--accent-gold);">${state.balance}</span></div>
+                <div class="stat-row"><span class="stat-row__label">Заработано</span><span class="stat-row__value">${s.totalEarned||0}</span></div>
+                <div class="stat-row"><span class="stat-row__label">Кейсов</span><span class="stat-row__value">${s.casesOpened||0}</span></div>
+                <div class="stat-row"><span class="stat-row__label">Апгрейдов (Успех)</span><span class="stat-row__value" style="color:var(--accent-green);">${s.upgradeSuccess||0}</span></div>
+                <div class="stat-row"><span class="stat-row__label">Апгрейдов (Провал)</span><span class="stat-row__value" style="color:var(--accent-red);">${s.upgradeFail||0}</span></div>
+            `;
         }
 
-        function openSettings() { renderSettingsThemes(); renderSettingsReferral(); renderSettingsStats(); showSettingsPanel('themes'); $('settings-modal').classList.add('active'); }
-        function closeSettings() { $('settings-modal').classList.remove('active'); }
-        function showSettingsPanel(name) {
-            document.querySelectorAll('.settings-tab').forEach(t => t.classList.toggle('active', t.dataset.panel === name));
-            document.querySelectorAll('.settings-panel').forEach(p => p.classList.remove('active'));
-            const panel = $('panel-' + name);
-            if (panel) panel.classList.add('active');
-        }
-
-        function renderInventory() {
-            const container = $('inventory-list');
-            const invArray = Object.values(state.inventory || {});
-            if (!invArray.length) { container.innerHTML = '<div class="empty-inv">Инвентарь пуст</div>'; return; }
-            container.innerHTML = invArray.map((item) => {
-                const inUpg = upgInputUids.includes(item.uid);
-                const r = getRarity(item);
-                return '<div class="item-card rar-' + r.id + (inUpg ? ' in-upgrader' : '') + '" onclick="BF.addToUpgrader(\'' + item.uid + '\')">' +
-                    '<img src="' + item.img + '" onerror="this.onerror=null;this.src=\'https://via.placeholder.com/55\'">' +
-                    '<div class="item-name">' + escapeHtml(item.name) + '</div>' +
-                    '<div class="item-price">' + item.price + ' монет</div>' +
-                    '<button class="sell-btn" onclick="event.stopPropagation();BF.sellItem(\'' + item.uid + '\')">Продать</button></div>';
-            }).join('');
-        }
-
-        function addToUpgrader(uid) {
-            const item = state.inventory[uid];
-            if (!item) return;
-            if (upgInputUids.includes(uid)) {
-                upgInputUids = upgInputUids.filter(u => u !== uid);
-                renderUpgSlots(); renderInventory(); calculateUpgradeChance();
-                return;
-            }
-                        if (upgInputUids.length >= UPG_MAX) {
-                notify({ type: 'warning', message: 'Уже выбрано максимум ' + UPG_MAX + ' предметов.' });
-                return;
-            }
-            upgInputUids.push(uid);
-            renderUpgSlots(); renderInventory(); calculateUpgradeChance();
-            switchTab('upgrader');
-        }
-
-        async function sellItem(uid) {
-            const item = state.inventory[uid];
-            if (!item) return;
-            
+        // ================= ИНИЦИАЛИЗАЦИЯ =================
+        async function loadData() {
             try {
-                const res = await apiCall('/api/sell_item', 'POST', { uid });
-                state.balance = res.balance;
-                state.inventory = res.inventory;
-                state.stats = res.stats;
+                const data = await apiCall('/api/me');
+                state.balance = data.balance;
+                state.inventory = data.inventory || {};
+                state.lastFree = data.lastFree || 0;
+                state.lastUser = data.lastUser || 0;
+                state.hasUserCase = data.hasUserCase || false;
+                state.stats = data.stats || {};
+                state.themes = data.themes || { dark: true };
+                state.theme = data.theme || 'dark';
                 
-                if (upgInputUids.includes(uid)) upgInputUids = upgInputUids.filter(u => u !== uid);
-                
-                renderUpgSlots(); renderUpgTarget(); calculateUpgradeChance();
+                applyTheme(state.theme);
                 updateUI();
-                notify({ type: 'info', title: 'Продано', message: '«' + item.name + '» продан за ' + item.price + ' монет.' });
+                renderDonateShop(); 
             } catch (err) {
-                notify({ type: 'error', message: err.message });
+                notify({ type: 'error', message: 'Ошибка загрузки профиля.' });
             }
         }
 
-        async function sellAll() {
-            const invArray = Object.values(state.inventory || {});
-            if (!invArray.length) { notify({ type: 'warning', message: 'Инвентарь уже пуст.' }); return; }
-            const total = invArray.reduce((s, i) => s + i.price, 0);
-            const count = invArray.length;
-            const ok = await confirmDialog({
-                title: 'Продать всё?',
-                message: 'Будет продано ' + count + ' предмет(ов) за ' + total + ' монет.',
-                confirmText: 'Продать', cancelText: 'Отмена', variant: 'danger', icon: 'fa-sack-dollar'
-            });
-            if (!ok) return;
-            
-            try {
-                const res = await apiCall('/api/sell_all', 'POST');
-                state.balance = res.balance;
-                state.inventory = res.inventory;
-                state.stats = res.stats;
-                
-                upgInputUids = [];
-                renderUpgSlots(); renderUpgTarget(); calculateUpgradeChance();
-                updateUI();
-                notify({ type: 'success', title: 'Всё продано', message: 'Получено ' + total + ' монет.' });
-            } catch (err) {
-                notify({ type: 'error', message: err.message });
-            }
-        }
-
-        /* ==================== BACKDROP CLOSE ========================== */
-        document.querySelectorAll('.modal').forEach(modal => {
-            modal.addEventListener('click', e => {
-                if (e.target !== modal) return;
-                if (modal.id === 'case-modal') closeModal();
-                if (modal.id === 'target-modal') closeTargetModal();
-                if (modal.id === 'settings-modal') closeSettings();
-            });
-        });
-
-        /* ==================== REFERRAL CHECK ========================= */
-        async function checkReferral() {
-            const params = new URLSearchParams(window.location.search);
-            const start = params.get('start');
+        async function checkRef() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const start = urlParams.get('start') || (tg && tg.initDataUnsafe && tg.initDataUnsafe.start_param);
             if (!start || !start.startsWith('ref_')) return;
-            const refId = start.slice(4);
-            if (MY_ID && String(MY_ID) === refId) return;
+            
+            const refId = start.replace('ref_', '');
+            if (!refId || refId === String(MY_ID)) return;
             
             try {
                 const res = await apiCall('/api/claim_referral', 'POST', { ref_id: refId });
                 if (res.ok) {
-                    notify({ type: 'success', title: '🎁 Бонус за вход', message: 'Вы пришли по приглашению! Получено +50 монет.', duration: 5000 });
-                    state.balance += 50;
-                    $('balance').innerText = state.balance;
+                    notify({ type: 'success', title: 'Бонус!', message: 'Вы получили 2 монеты за вход по ссылке!' });
+                    loadData();
                 }
-            } catch(e) { /* Игнорируем, если уже использован */ }
+            } catch(e) { /* Игнорим если уже зареган */ }
         }
 
-        /* ==================== PUBLIC API ============================= */
         window.BF = {
-            notify, confirm: confirmDialog,
-            addToUpgrader, sellItem, chooseTargetItem,
-            selectTheme,
-            copyRefLink, shareRefLink,
-            buyPackage
+            buyPackage, chooseTarget, addToUpg, sellItem, selectTheme, copyRef, shareRef
         };
         window.switchTab = switchTab;
         window.openCaseModal = openCaseModal;
@@ -1246,37 +1369,8 @@
         window.closeSettings = closeSettings;
         window.showSettingsPanel = showSettingsPanel;
 
-        /* =========================== INIT ============================ */
-        async function loadInitialData() {
-            try {
-                const data = await apiCall('/api/me');
-                state.balance = data.balance;
-                state.inventory = data.inventory || {};
-                state.lastFree = data.lastFree || 0;
-                state.stats = data.stats || {};
-                state.achievements = data.achievements || {};
-                state.themes = data.themes || { dark: true };
-                state.theme = data.theme || 'dark';
-                
-                applyTheme(state.theme);
-                updateUI();
-                renderDonateShop(); 
-            } catch (err) {
-                console.error('Init error:', err);
-                notify({ type: 'error', title: 'Ошибка соединения', message: 'Не удалось загрузить профиль. Проверьте интернет.' });
-                updateUI();
-                renderDonateShop();
-            }
-        }
-
-        // Запуск после инициализации Telegram
-        if (tg) {
-            tg.ready();
-            tg.expand();
-            loadInitialData().then(() => checkReferral());
-        } else {
-            loadInitialData().then(() => checkReferral());
-        }
+        if (tg) { tg.ready(); tg.expand(); }
+        loadData().then(() => checkRef());
 
     })();
     </script>
