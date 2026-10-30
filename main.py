@@ -1,4 +1,5 @@
-# main.py — Brainrots Funny backend
+# main.py
+# -*- coding: utf-8 -*-
 import os, json, hmac, hashlib, logging, random, time
 from contextlib import asynccontextmanager
 from urllib.parse import parse_qsl
@@ -14,25 +15,21 @@ from aiogram import Bot, Dispatcher, types
 from aiogram.types import LabeledPrice
 
 # ============================================================
-# LOGGING
+# НАСТРОЙКИ И ЛОГИРОВАНИЕ
 # ============================================================
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 log = logging.getLogger("brainrots")
 
-# ============================================================
-# ENV
-# ============================================================
 BOT_TOKEN = (os.getenv("BOT_TOKEN") or "").strip()
 WEBHOOK_URL = (os.getenv("WEBHOOK_URL") or "").strip().rstrip("/")
 RENDER_URL = (os.getenv("RENDER_EXTERNAL_URL") or "").strip().rstrip("/")
-FIREBASE_DB_URL = os.getenv(
-    "FIREBASE_DB_URL",
-    "https://casemine-online-default-rtdb.europe-west1.firebasedatabase.app"
-)
+FIREBASE_DB_URL = os.getenv("FIREBASE_DB_URL", "https://casemine-online-default-rtdb.europe-west1.firebasedatabase.app")
 ALLOWED_ORIGINS = [o.strip() for o in (os.getenv("ALLOWED_ORIGINS") or "*").split(",") if o.strip()]
 
+BOT_USERNAME = "Brain_Funbot" # Для проверки кейса за юз
+
 # ============================================================
-# GAME CONSTANTS (синхронизированы с фронтом)
+# ИГРОВЫЕ КОНСТАНТЫ
 # ============================================================
 RARITIES = {
     "common":    {"id":"common","name":"Common","color":"#6b7280","star":"⭐"},
@@ -58,20 +55,29 @@ ITEMS = [
 ]
 ITEMS_BY_ID = {i["id"]: i for i in ITEMS}
 
-CASE_PRICES = {"free": 0, "base": 9, "bro": 25}
-CASE_TITLES = {"free": "Бесплатный Кейс", "base": "Начальный Кейс", "bro": "Про Бро Кейс"}
+CASE_PRICES = {"free": 0, "user": 0, "base": 9, "bro": 25}
+CASE_TITLES = {"free": "Бесплатный", "user": "Кейс за Юз", "base": "Начальный", "bro": "Про Бро"}
 CASE_IMAGES = {
     "free": "assets/cases/free.png",
+    "user": "assets/cases/user.png", # Можешь пока поставить base.png, если нет картинки
     "base": "assets/cases/base.png",
     "bro":  "assets/cases/bro.png",
 }
 
-# ПОНЕРФЕННЫЙ ДРОП
+# НЕРФ ЭКОНОМИКИ
 CASE_LOOT = {
     "free": {
-        "coinChance": 10,  # Было 90, стало 10
-        "coins": [{"amount":1,"weight":100}], # Только 1 монета
+        "coinChance": 10,
+        "coins": [{"amount":1,"weight":100}],
         "items": [{"id":"trios","weight":70},{"id":"rot67","weight":30}],
+    },
+    "user": {
+        "coinChance": 30,
+        "coins": [{"amount":3,"weight":100}],
+        "items": [
+            {"id":"trios","weight":40},{"id":"rot67","weight":30},
+            {"id":"hammy","weight":20},{"id":"candyslap","weight":10}
+        ],
     },
     "base": {
         "coinChance": 0, "coins": [],
@@ -92,27 +98,6 @@ CASE_LOOT = {
 }
 
 THEMES = {"dark": {"name": "Тёмная", "price": 0}, "neon": {"name": "Неоновая", "price": 100}, "gold": {"name": "Золотая", "price": 500}}
-
-ACHIEVEMENTS = [
-    {"id":"case1","title":"Первый кейс","desc":"Открой 1 кейс","stat":"casesOpened","goal":1,"reward":5},
-    {"id":"case10","title":"Крутила","desc":"Открой 10 кейсов","stat":"casesOpened","goal":10,"reward":15},
-    {"id":"case50","title":"Кейсоголик","desc":"Открой 50 кейсов","stat":"casesOpened","goal":50,"reward":50},
-    {"id":"case200","title":"Легенда кейсов","desc":"Открой 200 кейсов","stat":"casesOpened","goal":200,"reward":150},
-    {"id":"sell1","title":"Первая сделка","desc":"Продай 1 предмет","stat":"itemsSold","goal":1,"reward":2},
-    {"id":"sell25","title":"Торговец","desc":"Продай 25 предметов","stat":"itemsSold","goal":25,"reward":15},
-    {"id":"sell100","title":"Барыга","desc":"Продай 100 предметов","stat":"itemsSold","goal":100,"reward":50},
-    {"id":"up1","title":"Первый апгрейд","desc":"Успешный апгрейд","stat":"upgradeSuccess","goal":1,"reward":5},
-    {"id":"up10","title":"Кузнец","desc":"10 успешных апгрейдов","stat":"upgradeSuccess","goal":10,"reward":25},
-    {"id":"up50","title":"Мастер апгрейда","desc":"50 успешных апгрейдов","stat":"upgradeSuccess","goal":50,"reward":100},
-    {"id":"col5","title":"Коллекционер","desc":"Собери 5 разных","stat":"uniqueCount","goal":5,"reward":20},
-    {"id":"col10","title":"Фанат","desc":"Собери 10 разных","stat":"uniqueCount","goal":10,"reward":100},
-    {"id":"col12","title":"Полный сет","desc":"Собери все 12","stat":"uniqueCount","goal":12,"reward":500},
-    {"id":"bal500","title":"Сотка","desc":"Заработай 500 всего","stat":"totalEarned","goal":500,"reward":10},
-    {"id":"bal5000","title":"Богач","desc":"Заработай 5000 всего","stat":"totalEarned","goal":5000,"reward":100},
-    {"id":"donate1","title":"Первая звезда","desc":"Купи любой пакет","stat":"donationsTotal","goal":1,"reward":25},
-    {"id":"donate5","title":"Меценат","desc":"Купи 5 пакетов","stat":"donationsTotal","goal":5,"reward":150},
-]
-
 STARS_PACKAGES = {
     "p10":  {"stars":10,  "coins":50,   "bonus":0},
     "p25":  {"stars":25,  "coins":135,  "bonus":8},
@@ -122,7 +107,8 @@ STARS_PACKAGES = {
     "p500": {"stars":500, "coins":4000, "bonus":60},
 }
 
-FREE_COOLDOWN_MS = 24 * 3600 * 1000  # ПОНЕРФЕНО: 24 часа вместо 12
+FREE_COOLDOWN_MS = 24 * 3600 * 1000  # 24 часа
+USER_COOLDOWN_MS = 12 * 3600 * 1000  # 12 часов
 MAX_UPGRADE_CHANCE = 95.0
 MAX_MULTIPLIER = 5
 MAX_UPG_INPUTS = 5
@@ -133,7 +119,6 @@ MAX_UPG_INPUTS = 5
 def init_firebase():
     raw = os.getenv("FIREBASE_CRED_JSON")
     if not raw:
-        log.warning("FIREBASE_CRED_JSON missing — Firebase disabled")
         return False
     try:
         cred_dict = json.loads(raw)
@@ -143,7 +128,6 @@ def init_firebase():
             credentials.Certificate(cred_dict),
             {"databaseURL": FIREBASE_DB_URL},
         )
-        log.info("Firebase OK project=%s", cred_dict.get("project_id"))
         return True
     except Exception:
         log.exception("Firebase init error")
@@ -156,16 +140,14 @@ def user_ref(uid: str):
 
 def _default_user() -> dict:
     return {
-        "balance": 0, "inventory": {}, "lastFree": 0,
+        "balance": 0, "inventory": {}, "lastFree": 0, "lastUser": 0,
         "stats": {"casesOpened":0,"itemsSold":0,"upgradeSuccess":0,"upgradeFail":0,
                   "totalEarned":0,"donationsTotal":0,"starsSpent":0,"uniqueCollected":[]},
-        "achievements": {}, "themes": {"dark": True},
-        "theme": "dark", "referrals": 0,
+        "themes": {"dark": True}, "theme": "dark", "referrals": 0,
     }
 
 def get_user_data(uid: str) -> dict:
-    if not FIREBASE_OK:
-        return _default_user()
+    if not FIREBASE_OK: return _default_user()
     data = user_ref(uid).get() or {}
     defaults = _default_user()
     for k, v in defaults.items():
@@ -175,8 +157,7 @@ def get_user_data(uid: str) -> dict:
     return data
 
 def atomic_update(uid: str, updater) -> dict | None:
-    if not FIREBASE_OK:
-        return None
+    if not FIREBASE_OK: return None
     def tx(current):
         d = current or {}
         defaults = _default_user()
@@ -193,42 +174,36 @@ def atomic_update(uid: str, updater) -> dict | None:
         return None
 
 # ============================================================
-# AUTH
+# АВТОРИЗАЦИЯ
 # ============================================================
 def verify_init_data(init_data: str) -> dict | None:
-    if not init_data or not BOT_TOKEN:
-        return None
+    if not init_data or not BOT_TOKEN: return None
     try:
         parsed = dict(parse_qsl(init_data, strict_parsing=False))
         received_hash = parsed.pop("hash", None)
-        if not received_hash:
-            return None
+        if not received_hash: return None
         dcs = "\n".join(f"{k}={v}" for k, v in sorted(parsed.items()))
         secret = hmac.new(b"WebAppData", BOT_TOKEN.encode(), hashlib.sha256).digest()
         calc = hmac.new(secret, dcs.encode(), hashlib.sha256).hexdigest()
-        if not hmac.compare_digest(calc, received_hash):
-            return None
+        if not hmac.compare_digest(calc, received_hash): return None
         return json.loads(parsed.get("user", "{}"))
     except Exception:
-        log.exception("verify_init_data error")
         return None
 
 async def current_user(x_telegram_init_data: str = Header(None)):
     user = verify_init_data(x_telegram_init_data or "")
-    if not user:
-        raise HTTPException(401, "invalid initData")
+    if not user: raise HTTPException(401, "invalid initData")
     return user
 
 # ============================================================
-# GAME LOGIC
+# ИГРОВАЯ ЛОГИКА
 # ============================================================
 def weighted_pick(entries):
     total = sum(e.get("weight", 1) for e in entries)
     r = random.random() * total
     for e in entries:
         r -= e.get("weight", 1)
-        if r <= 0:
-            return e
+        if r <= 0: return e
     return entries[-1]
 
 def roll_drop(case_type: str) -> dict:
@@ -243,37 +218,18 @@ def make_inv_item(item: dict) -> dict:
     uid = "u_%d_%s" % (int(time.time()*1000), "".join(random.choices("abcdef0123456789", k=6)))
     return {**item, "uid": uid}
 
-def run_achievements(d: dict) -> list:
-    ach = d.setdefault("achievements", {})
-    stats = d.get("stats", {})
-    awarded = []
-    for a in ACHIEVEMENTS:
-        if ach.get(a["id"]):
-            continue
-        if a["stat"] == "uniqueCount":
-            val = len(stats.get("uniqueCollected", []))
-        else:
-            val = int(stats.get(a["stat"], 0))
-        if val >= a["goal"]:
-            ach[a["id"]] = True
-            d["balance"] = int(d.get("balance", 0)) + a["reward"]
-            awarded.append(a)
-    return awarded
-
 def push_drop(nick: str, item_name: str, item_img: str | None):
-    if not FIREBASE_OK:
-        return
+    if not FIREBASE_OK: return
     try:
         drop_id = "d_%d_%s" % (int(time.time()*1000), "".join(random.choices("abcdef", k=4)))
         fbdb.reference(f"drop_feed/{drop_id}").set({
-            "nick": nick, "itemName": item_name,
-            "itemImg": item_img or "", "ts": int(time.time()*1000),
+            "nick": nick, "itemName": item_name, "itemImg": item_img or "", "ts": int(time.time()*1000),
         })
     except Exception:
-        log.exception("push_drop error")
+        pass
 
 # ============================================================
-# AIOGRAM
+# БОТ
 # ============================================================
 bot = Bot(token=BOT_TOKEN) if BOT_TOKEN else None
 dp = Dispatcher()
@@ -303,56 +259,38 @@ async def pre_checkout(q: types.PreCheckoutQuery):
 @dp.message(lambda m: m.successful_payment)
 async def on_paid(message: types.Message):
     sp = message.successful_payment
-    try:
-        payload = json.loads(sp.invoice_payload)
-    except Exception:
-        return
+    try: payload = json.loads(sp.invoice_payload)
+    except: return
     pack = STARS_PACKAGES.get(payload.get("package_id"))
-    if not pack:
-        return
+    if not pack: return
     uid = str(message.from_user.id)
+    
     def upd(d):
         d["balance"] = int(d.get("balance", 0)) + pack["coins"]
         d["stats"]["donationsTotal"] = int(d["stats"].get("donationsTotal", 0)) + 1
         d["stats"]["starsSpent"] = int(d["stats"].get("starsSpent", 0)) + pack["stars"]
         d["stats"]["totalEarned"] = int(d["stats"].get("totalEarned", 0)) + pack["coins"]
-        run_achievements(d)
         return d
+    
     atomic_update(uid, upd)
     await message.answer(f"⭐ <b>Оплата прошла!</b>\n+{pack['coins']} монет начислено.")
 
 # ============================================================
-# LIFESPAN
+# LIFESPAN & FASTAPI
 # ============================================================
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    log.info("=== STARTUP ===")
     if bot and (WEBHOOK_URL or RENDER_URL):
         try:
-            await bot.set_webhook(
-                f"{WEBHOOK_URL or RENDER_URL}/webhook/tg",
-                allowed_updates=dp.resolve_used_update_types(),
-                drop_pending_updates=True,
-            )
-            log.info("Webhook set")
-        except Exception:
-            log.exception("Webhook fail")
+            await bot.set_webhook(f"{WEBHOOK_URL or RENDER_URL}/webhook/tg", allowed_updates=dp.resolve_used_update_types(), drop_pending_updates=True)
+        except Exception: pass
     yield
     if bot:
-        try: await bot.delete_webhook()
-        except: pass
+        await bot.delete_webhook()
         await bot.session.close()
 
-# ============================================================
-# FASTAPI
-# ============================================================
-app = FastAPI(lifespan=lifespan, title="Brainrots Funny")
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=ALLOWED_ORIGINS,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+app = FastAPI(lifespan=lifespan)
+app.add_middleware(CORSMiddleware, allow_origins=ALLOWED_ORIGINS, allow_methods=["*"], allow_headers=["*"])
 
 BASE = Path(__file__).parent
 if (BASE / "assets").exists():
@@ -361,34 +299,26 @@ if (BASE / "assets").exists():
 @app.get("/", response_class=HTMLResponse)
 async def root():
     idx = BASE / "index.html"
-    if not idx.exists():
-        return HTMLResponse("<h1>index.html not found</h1>", status_code=404)
+    if not idx.exists(): return HTMLResponse("<h1>no index</h1>", status_code=404)
     return HTMLResponse(idx.read_text(encoding="utf-8"))
 
 @app.get("/health")
-async def health():
-    return {"ok": True, "firebase": FIREBASE_OK, "bot": bot is not None}
+async def health(): return {"ok": True}
 
 @app.get("/api/me")
 async def api_me(user=Depends(current_user)):
     uid = str(user["id"])
     data = get_user_data(uid)
-    if FIREBASE_OK:
-        def upd(d):
-            run_achievements(d)
-            return d
-        atomic_update(uid, upd)
-        data = get_user_data(uid)
+    
+    # Проверка на наличие юзернейма для кейса за юз
+    uname = (user.get("first_name","") + user.get("last_name","") + user.get("username","")).lower()
+    has_user_case = BOT_USERNAME.lower() in uname
+    
     data["uid"] = uid
-    data["serverTime"] = int(time.time() * 1000)
-    data["items"] = ITEMS
-    data["casePrices"] = CASE_PRICES
-    data["caseTitles"] = CASE_TITLES
-    data["caseImages"] = CASE_IMAGES
-    data["themes"] = THEMES
+    data["hasUserCase"] = has_user_case
     data["freeCooldownMs"] = FREE_COOLDOWN_MS
-    data["achievements"] = ACHIEVEMENTS
-    data["rarities"] = RARITIES
+    data["userCooldownMs"] = USER_COOLDOWN_MS
+    data["lastUser"] = data.get("lastUser", 0)
     return data
 
 @app.post("/api/open_case")
@@ -396,65 +326,61 @@ async def api_open_case(request: Request, user=Depends(current_user)):
     body = await request.json()
     case_type = body.get("case_type", "")
     multiplier = int(body.get("multiplier", 1))
-    if case_type not in CASE_LOOT:
-        raise HTTPException(400, "unknown case")
-    if multiplier < 1 or multiplier > MAX_MULTIPLIER:
-        raise HTTPException(400, "bad multiplier")
-    if case_type == "free":
-        multiplier = 1
+    
+    if case_type not in CASE_LOOT: raise HTTPException(400, "unknown case")
+    if multiplier < 1 or multiplier > MAX_MULTIPLIER: raise HTTPException(400, "bad multiplier")
+    if case_type in ["free", "user"]: multiplier = 1
     
     uid = str(user["id"])
     nick = user.get("first_name") or "Player"
     now = int(time.time() * 1000)
-
     data = get_user_data(uid)
+
+    # Проверка кулдаунов и цен
     if case_type == "free":
-        if now - int(data.get("lastFree", 0)) < FREE_COOLDOWN_MS:
-            raise HTTPException(400, "free case on cooldown")
+        if now - int(data.get("lastFree", 0)) < FREE_COOLDOWN_MS: raise HTTPException(400, "Кулдаун")
+        price = 0
+    elif case_type == "user":
+        uname = (user.get("first_name","") + user.get("last_name","") + user.get("username","")).lower()
+        if BOT_USERNAME.lower() not in uname: raise HTTPException(400, "Вы не указали бота в нике!")
+        if now - int(data.get("lastUser", 0)) < USER_COOLDOWN_MS: raise HTTPException(400, "Кулдаун")
         price = 0
     else:
         price = CASE_PRICES[case_type] * multiplier
-    if int(data.get("balance", 0)) < price:
-        raise HTTPException(400, "not enough coins")
+        
+    if int(data.get("balance", 0)) < price: raise HTTPException(400, "Недостаточно монет")
 
     results = [roll_drop(case_type) for _ in range(multiplier)]
 
     def upd(d):
-        if case_type == "free":
-            if now - int(d.get("lastFree", 0)) < FREE_COOLDOWN_MS:
-                return None
-            d["lastFree"] = now
-        else:
-            bal = int(d.get("balance", 0))
-            if bal < price:
-                return None
-            d["balance"] = bal - price
+        if case_type == "free": d["lastFree"] = now
+        elif case_type == "user": d["lastUser"] = now
+        else: d["balance"] = int(d.get("balance", 0)) - price
+        
         inv = d.setdefault("inventory", {})
         coins_won = 0
         for r in results:
-            if r["type"] == "coin":
-                coins_won += r["amount"]
+            if r["type"] == "coin": coins_won += r["amount"]
             else:
                 new_item = make_inv_item(r["item"])
                 inv[new_item["uid"]] = new_item
                 uniq = set(d["stats"].get("uniqueCollected", []))
                 uniq.add(r["item"]["id"])
                 d["stats"]["uniqueCollected"] = list(uniq)
+                
         d["balance"] = int(d.get("balance", 0)) + coins_won
         d["stats"]["casesOpened"] = int(d["stats"].get("casesOpened", 0)) + multiplier
         d["stats"]["totalEarned"] = int(d["stats"].get("totalEarned", 0)) + coins_won
-        run_achievements(d)
         return d
 
     atomic_update(uid, upd)
+    
     for r in results:
-        if r["type"] == "coin":
-            push_drop(nick, f"{r['amount']} монет", None)
-        else:
-            push_drop(nick, r["item"]["name"], r["item"]["img"])
+        if r["type"] == "coin": push_drop(nick, f"{r['amount']} монет", None)
+        else: push_drop(nick, r["item"]["name"], r["item"]["img"])
 
     new_data = get_user_data(uid)
-    return {"ok": True, "results": results, "balance": new_data["balance"], "inventory": new_data["inventory"], "lastFree": new_data.get("lastFree", 0), "stats": new_data["stats"], "achievements": new_data["achievements"]}
+    return {"ok": True, "results": results, "balance": new_data["balance"], "inventory": new_data["inventory"], "lastFree": new_data.get("lastFree", 0), "lastUser": new_data.get("lastUser", 0)}
 
 @app.post("/api/sell_item")
 async def api_sell_item(request: Request, user=Depends(current_user)):
@@ -468,12 +394,11 @@ async def api_sell_item(request: Request, user=Depends(current_user)):
         del inv[item_uid]
         d["balance"] = int(d.get("balance", 0)) + int(item.get("price", 0))
         d["stats"]["itemsSold"] = int(d["stats"].get("itemsSold", 0)) + 1
-        run_achievements(d)
         return d
     result = atomic_update(uid, upd)
     if result is None: raise HTTPException(400, "sell failed")
     data = get_user_data(uid)
-    return {"ok": True, "balance": data["balance"], "inventory": data["inventory"], "stats": data["stats"]}
+    return {"ok": True, "balance": data["balance"], "inventory": data["inventory"]}
 
 @app.post("/api/sell_all")
 async def api_sell_all(request: Request, user=Depends(current_user)):
@@ -486,11 +411,10 @@ async def api_sell_all(request: Request, user=Depends(current_user)):
         d["inventory"] = {}
         d["balance"] = int(d.get("balance", 0)) + total
         d["stats"]["itemsSold"] = int(d["stats"].get("itemsSold", 0)) + count
-        run_achievements(d)
         return d
     atomic_update(uid, upd)
     data = get_user_data(uid)
-    return {"ok": True, "balance": data["balance"], "inventory": data["inventory"], "stats": data["stats"]}
+    return {"ok": True, "balance": data["balance"], "inventory": data["inventory"]}
 
 @app.post("/api/upgrade")
 async def api_upgrade(request: Request, user=Depends(current_user)):
@@ -526,13 +450,13 @@ async def api_upgrade(request: Request, user=Depends(current_user)):
             d["stats"]["uniqueCollected"] = list(uniq)
         else:
             d["stats"]["upgradeFail"] = int(d["stats"].get("upgradeFail", 0)) + 1
-        run_achievements(d)
         return d
+    
     atomic_update(uid, upd)
     if success: push_drop(user.get("first_name") or "Player", target["name"], target["img"])
 
     new_data = get_user_data(uid)
-    return {"ok": True, "success": success, "chance": chance, "target": target, "balance": new_data["balance"], "inventory": new_data["inventory"], "stats": new_data["stats"]}
+    return {"ok": True, "success": success, "chance": chance, "target": target, "balance": new_data["balance"], "inventory": new_data["inventory"]}
 
 @app.post("/api/choose_theme")
 async def api_choose_theme(request: Request, user=Depends(current_user)):
@@ -554,6 +478,41 @@ async def api_choose_theme(request: Request, user=Depends(current_user)):
     new_data = get_user_data(uid)
     return {"ok": True, "theme": new_data["theme"], "themes": new_data["themes"], "balance": new_data["balance"]}
 
+@app.post("/api/claim_referral")
+async def api_claim_referral(request: Request, user=Depends(current_user)):
+    body = await request.json()
+    ref_id = str(body.get("ref_id", "")).strip()
+    if not ref_id or ref_id == str(user["id"]): raise HTTPException(400, "bad ref")
+    
+    uid = str(user["id"])
+    is_new_user = False
+    
+    def upd(d):
+        nonlocal is_new_user
+        # Реферал работает ТОЛЬКО если чел еще ничего не открывал
+        if d.get("stats", {}).get("casesOpened", 0) > 0: return None
+        if d.get("refUsed"): return None
+        
+        d["refUsed"] = True
+        d["balance"] = int(d.get("balance", 0)) + 2 # Другу 2 монеты
+        d["stats"]["totalEarned"] = int(d["stats"].get("totalEarned", 0)) + 2
+        is_new_user = True
+        return d
+        
+    atomic_update(uid, upd)
+    if not is_new_user:
+        raise HTTPException(400, "Вы уже играли или рефка уже использована")
+        
+    # Пригласившему 4 монеты
+    def upd2(d):
+        d["referrals"] = int(d.get("referrals", 0)) + 1
+        d["balance"] = int(d.get("balance", 0)) + 4
+        d["stats"]["totalEarned"] = int(d["stats"].get("totalEarned", 0)) + 4
+        return d
+    atomic_update(ref_id, upd2)
+    
+    return {"ok": True, "bonus": 2}
+
 @app.post("/api/create-invoice-link")
 async def create_invoice(request: Request, user=Depends(current_user)):
     if not bot: raise HTTPException(503, "bot off")
@@ -570,7 +529,7 @@ async def create_invoice(request: Request, user=Depends(current_user)):
             payload=payload,
             currency="XTR",
             prices=[LabeledPrice(label=f"{pack['coins']} coins", amount=pack["stars"])],
-            provider_token="" # <--- ИСПРАВЛЕНИЕ ДЛЯ STARS
+            provider_token="" # ОБЯЗАТЕЛЬНО ДЛЯ TELEGRAM STARS
         )
     except Exception as e:
         log.exception("create_invoice error")
@@ -585,8 +544,7 @@ async def tg_webhook(request: Request):
     try:
         update = types.Update.model_validate(data, context={"bot": bot})
         await dp.feed_update(bot, update)
-    except Exception:
-        log.exception("update error")
+    except Exception: pass
     return {"ok": True}
 
 if __name__ == "__main__":
