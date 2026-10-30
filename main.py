@@ -59,7 +59,7 @@ CASE_PRICES = {"free": 0, "user": 0, "base": 9, "bro": 25}
 CASE_TITLES = {"free": "Бесплатный", "user": "Кейс за Юз", "base": "Начальный", "bro": "Про Бро"}
 CASE_IMAGES = {
     "free": "assets/cases/free.png",
-    "user": "assets/cases/user.png", # Можешь пока поставить base.png, если нет картинки
+    "user": "assets/cases/user.png", 
     "base": "assets/cases/base.png",
     "bro":  "assets/cases/bro.png",
 }
@@ -310,7 +310,6 @@ async def api_me(user=Depends(current_user)):
     uid = str(user["id"])
     data = get_user_data(uid)
     
-    # Проверка на наличие юзернейма для кейса за юз
     uname = (user.get("first_name","") + user.get("last_name","") + user.get("username","")).lower()
     has_user_case = BOT_USERNAME.lower() in uname
     
@@ -336,7 +335,6 @@ async def api_open_case(request: Request, user=Depends(current_user)):
     now = int(time.time() * 1000)
     data = get_user_data(uid)
 
-    # Проверка кулдаунов и цен
     if case_type == "free":
         if now - int(data.get("lastFree", 0)) < FREE_COOLDOWN_MS: raise HTTPException(400, "Кулдаун")
         price = 0
@@ -489,12 +487,11 @@ async def api_claim_referral(request: Request, user=Depends(current_user)):
     
     def upd(d):
         nonlocal is_new_user
-        # Реферал работает ТОЛЬКО если чел еще ничего не открывал
         if d.get("stats", {}).get("casesOpened", 0) > 0: return None
         if d.get("refUsed"): return None
         
         d["refUsed"] = True
-        d["balance"] = int(d.get("balance", 0)) + 2 # Другу 2 монеты
+        d["balance"] = int(d.get("balance", 0)) + 2 
         d["stats"]["totalEarned"] = int(d["stats"].get("totalEarned", 0)) + 2
         is_new_user = True
         return d
@@ -503,7 +500,6 @@ async def api_claim_referral(request: Request, user=Depends(current_user)):
     if not is_new_user:
         raise HTTPException(400, "Вы уже играли или рефка уже использована")
         
-    # Пригласившему 4 монеты
     def upd2(d):
         d["referrals"] = int(d.get("referrals", 0)) + 1
         d["balance"] = int(d.get("balance", 0)) + 4
@@ -529,7 +525,7 @@ async def create_invoice(request: Request, user=Depends(current_user)):
             payload=payload,
             currency="XTR",
             prices=[LabeledPrice(label=f"{pack['coins']} coins", amount=pack["stars"])],
-            provider_token="" # ОБЯЗАТЕЛЬНО ДЛЯ TELEGRAM STARS
+            provider_token=""
         )
     except Exception as e:
         log.exception("create_invoice error")
