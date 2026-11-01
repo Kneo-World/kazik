@@ -109,7 +109,11 @@
             background: linear-gradient(180deg, rgba(59, 130, 246, 0.15) 0%, transparent 100%);
             display: flex; align-items: center; gap: 15px;
             border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: background 0.2s;
         }
+        .sidebar-header:hover { background: rgba(255,255,255,0.05); }
+        
         .sidebar-avatar {
             width: 55px; height: 55px; border-radius: 50%;
             background: var(--accent-blue); border: 3px solid var(--accent-gold);
@@ -253,21 +257,54 @@
             align-items: center; justify-content: center; padding: 15px;
         }
         .modal.active { display: flex; animation: fadeIn 0.2s; }
+        
         .modal-box {
             background: var(--bg-card); border: 1px solid var(--border);
-            border-radius: 20px; width: 100%; max-width: 400px; padding: 20px;
-            position: relative; max-height: 85vh; overflow-y: auto; text-align: center;
+            border-radius: 20px; width: 100%; max-width: 380px; padding: 20px;
+            position: relative; max-height: 90vh; overflow-y: auto; text-align: center;
             box-shadow: 0 20px 50px rgba(0,0,0,0.8);
         }
         .close-modal { position: absolute; top: 12px; right: 15px; font-size: 24px; color: var(--text-muted); cursor: pointer; }
-
+        
+        /* Красивое модальное окно кейса */
+        .case-modal-header { font-size: 20px; font-weight: 900; margin-bottom: 15px; text-transform: uppercase; }
+        
+        .case-modal-visual {
+            position: relative;
+            height: 130px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+        
+        .modal-case-img {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));
+            transition: opacity 0.3s, transform 0.3s;
+        }
+        
         /* Рулетка */
-        .roulette-wrapper { margin: 15px 0; position: relative; height: 110px; background: #0d0f14; border: 2px solid var(--border); border-radius: 12px; overflow: hidden; }
+        .roulette-wrapper { 
+            position: absolute; inset: 0;
+            background: #0d0f14; border: 2px solid var(--border); border-radius: 12px; overflow: hidden;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s;
+        }
+        .roulette-wrapper.active { opacity: 1; pointer-events: auto; }
+        
         .roulette-pointer { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 4px; height: 100%; background: var(--accent-gold); z-index: 10; box-shadow: 0 0 10px var(--accent-gold); }
         .roulette-track { display: flex; gap: 8px; padding: 8px; position: absolute; left: 0; top: 0; height: 100%; align-items: center; }
         .roulette-item { width: 85px; height: 90px; background: #1c1f2b; border-radius: 10px; border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; }
         .roulette-item img { width: 45px; height: 45px; object-fit: contain; }
-
+        
+        /* Множители */
+        .mult-selector { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; }
+        .mult-btn { width: 50px; padding: 8px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-muted); border-radius: 8px; font-weight: 900; cursor: pointer; transition: 0.2s; }
+        .mult-btn.active { background: var(--accent-blue); color: #fff; border-color: var(--accent-blue); box-shadow: var(--glow-blue); }
+        
+        /* Выигрыш */
         .won-cards { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 15px; }
         .won-card { background: #1c1f2b; border: 2px solid var(--accent-gold); border-radius: 12px; padding: 10px; width: 85px; animation: popIn 0.4s; }
         @keyframes popIn { 0%{transform:scale(0);} 80%{transform:scale(1.1);} 100%{transform:scale(1);} }
@@ -346,7 +383,8 @@
     <!-- БОКОВОЕ МЕНЮ -->
     <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleMenu()"></div>
     <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
+        <!-- КЛИК НА ЭТОТ БЛОК ОТКРЫВАЕТ ПРОФИЛЬ -->
+        <div class="sidebar-header" onclick="switchTab('profile')">
             <div class="sidebar-avatar" id="s-avatar">?</div>
             <div class="sidebar-user-info">
                 <div class="sidebar-name" id="s-name">Игрок</div>
@@ -358,7 +396,6 @@
             <div class="nav-item" data-tab="upgrader" onclick="switchTab('upgrader')"><i class="fa-solid fa-bolt"></i> Апгрейд</div>
             <div class="nav-item" data-tab="coinflip" onclick="switchTab('coinflip')"><i class="fa-solid fa-coins"></i> Монетка</div>
             <div class="nav-item" data-tab="donate" onclick="switchTab('donate')"><i class="fa-solid fa-star"></i> Пополнение</div>
-            <div class="nav-item" data-tab="profile" onclick="switchTab('profile')"><i class="fa-solid fa-user"></i> Профиль</div>
         </div>
     </div>
 
@@ -469,26 +506,28 @@
         </div>
     </div>
 
-    <!-- МОДАЛКА: КЕЙС -->
+    <!-- МОДАЛКА: КЕЙС (ОБНОВЛЕННАЯ) -->
     <div class="modal" id="case-modal">
         <div class="modal-box">
             <span class="close-modal" onclick="closeModal()">&times;</span>
-            <h2 id="modal-title" style="font-size:20px; margin-bottom:10px;">Кейс</h2>
+            <div class="case-modal-header" id="modal-title">Кейс</div>
             
-            <div class="roulette-wrapper" id="roulette-wrapper" style="display:none;">
-                <div class="roulette-pointer"></div>
-                <div class="roulette-track" id="roulette-track"></div>
+            <div class="case-modal-visual">
+                <img id="modal-case-img" class="modal-case-img" src="">
+                <div class="roulette-wrapper" id="roulette-wrapper">
+                    <div class="roulette-pointer"></div>
+                    <div class="roulette-track" id="roulette-track"></div>
+                </div>
             </div>
-            <img id="modal-case-img" src="" style="width:100px; margin:15px 0;">
             
-            <div id="mult-selector" style="display:flex; justify-content:center; gap:10px; margin-bottom:15px;">
-                <button class="btn" style="width:50px; padding:8px;" onclick="setMultiplier(1)">x1</button>
-                <button class="btn" style="width:50px; padding:8px;" onclick="setMultiplier(2)">x2</button>
-                <button class="btn" style="width:50px; padding:8px;" onclick="setMultiplier(5)">x5</button>
+            <div class="mult-selector" id="mult-selector">
+                <button class="mult-btn active" data-mult="1" onclick="setMultiplier(1)">x1</button>
+                <button class="mult-btn" data-mult="2" onclick="setMultiplier(2)">x2</button>
+                <button class="mult-btn" data-mult="5" onclick="setMultiplier(5)">x5</button>
             </div>
             
             <div class="won-cards" id="modal-won-area"></div>
-            <button class="btn gold" id="modal-open-btn" onclick="startCaseOpening()">Открыть</button>
+            <button class="btn gold" id="modal-open-btn" onclick="startCaseOpening()" style="margin-top:10px;">ОТКРЫТЬ</button>
         </div>
     </div>
 
@@ -661,11 +700,15 @@
         function switchTab(tabId) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.getElementById('section-' + tabId).classList.add('active');
+            
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             const activeNav = document.querySelector(`.nav-item[data-tab="${tabId}"]`);
             if (activeNav) activeNav.classList.add('active');
 
-            if (document.getElementById('sidebar').classList.contains('active')) toggleMenu();
+            // Закрываем меню, если открыто
+            if (document.getElementById('sidebar').classList.contains('active')) {
+                toggleMenu();
+            }
             window.scrollTo(0, 0);
         }
 
@@ -717,19 +760,23 @@
             const feed = document.getElementById('live-feed');
             const topBox = document.getElementById('top-drop-box');
             
-            if (!arr || arr.length === 0) {
+            // ФИЛЬТРУЕМ ТОЛЬКО БРЕЙНРОТЫ (у которых есть itemImg)
+            const itemsOnly = arr.filter(d => d.itemImg && d.itemImg.trim() !== '');
+            
+            if (itemsOnly.length === 0) {
                 feed.innerHTML = '<div style="color:var(--text-muted); font-size:12px; padding:10px;">Пока тихо...</div>';
                 topBox.style.display = 'none';
                 return;
             }
 
-            let topDrop = arr[0];
-            arr.forEach(d => { if (d.price > topDrop.price) topDrop = d; });
+            let topDrop = itemsOnly[0];
+            itemsOnly.forEach(d => { if (d.price > topDrop.price) topDrop = d; });
             
-            if (topDrop && topDrop.itemImg) {
+            if (topDrop) {
                 topBox.style.display = 'block';
+                const clickAttr = topDrop.user_id ? `onclick="BF.viewProfile('${topDrop.user_id}', '${topDrop.nick}')"` : '';
                 topBox.innerHTML = `
-                    <div class="top-drop-container" onclick="BF.viewProfile('${topDrop.user_id}', '${topDrop.nick}')">
+                    <div class="top-drop-container" ${clickAttr}>
                         <div class="top-drop-label">ТОП ДНЯ</div>
                         <img src="${topDrop.itemImg}" class="top-drop-img">
                         <div class="top-drop-info">
@@ -742,10 +789,11 @@
                 topBox.style.display = 'none';
             }
 
-            feed.innerHTML = arr.map(d => {
+            feed.innerHTML = itemsOnly.map(d => {
                 const methodIcon = d.method === 'upgrade' ? '<i class="fa-solid fa-bolt" style="color:var(--accent-purple)"></i>' : '<i class="fa-solid fa-box" style="color:var(--accent-blue)"></i>';
+                const clickAttr = d.user_id ? `onclick="BF.viewProfile('${d.user_id}', '${d.nick}')"` : '';
                 return `
-                <div class="feed-item" style="border-color:${d.price > 100 ? 'var(--accent-gold)' : 'var(--border)'}" onclick="BF.viewProfile('${d.user_id}', '${d.nick}')">
+                <div class="feed-item" style="border-color:${d.price > 100 ? 'var(--accent-gold)' : 'var(--border)'}" ${clickAttr}>
                     <img src="${d.itemImg || 'https://via.placeholder.com/40/151722/ffffff?text=?'}">
                     <div class="feed-item-price">${d.price}</div>
                     <div class="feed-hover">
@@ -762,11 +810,18 @@
             
             activeCase = type;
             mult = 1;
+            setMultiplier(1); // Сброс визуала кнопок
+            
             document.getElementById('modal-title').innerText = type.toUpperCase();
-            document.getElementById('roulette-wrapper').style.display = 'none';
-            document.getElementById('modal-case-img').style.display = 'block';
-            document.getElementById('modal-case-img').src = `assets/cases/${type}.png`;
-            document.getElementById('modal-case-img').onerror = function() { this.src = 'https://via.placeholder.com/100/151722/ffffff?text=CASE'; };
+            document.getElementById('modal-case-img').style.opacity = '1';
+            document.getElementById('modal-case-img').style.transform = 'scale(1)';
+            document.getElementById('roulette-wrapper').classList.remove('active');
+            document.getElementById('roulette-track').innerHTML = '';
+            
+            const imgEl = document.getElementById('modal-case-img');
+            imgEl.src = `assets/cases/${type}.png`;
+            imgEl.onerror = function() { this.src = 'https://via.placeholder.com/120/151722/ffffff?text=CASE'; };
+            
             document.getElementById('mult-selector').style.display = (type === 'free' || type === 'user') ? 'none' : 'flex';
             document.getElementById('modal-won-area').innerHTML = '';
             
@@ -774,11 +829,16 @@
             updateModalBtn();
         }
 
-        function closeModal() { if (!isOpening) document.getElementById('case-modal').classList.remove('active'); }
+        function closeModal() { 
+            if (!isOpening) {
+                document.getElementById('case-modal').classList.remove('active');
+            }
+        }
 
         function setMultiplier(m) {
             if (isOpening) return;
             mult = (activeCase === 'free' || activeCase === 'user') ? 1 : m;
+            document.querySelectorAll('.mult-btn').forEach(b => b.classList.toggle('active', Number(b.dataset.mult) === mult));
             updateModalBtn();
         }
 
@@ -792,7 +852,11 @@
             const btn = document.getElementById('modal-open-btn');
             btn.disabled = true;
             btn.innerText = 'ОТКРЫВАЕМ...';
-            document.getElementById('modal-case-img').style.display = 'none';
+            
+            // Прячем картинку кейса и показываем рулетку
+            document.getElementById('modal-case-img').style.opacity = '0';
+            document.getElementById('modal-case-img').style.transform = 'scale(0.8)';
+            document.getElementById('roulette-wrapper').classList.add('active');
             
             try {
                 const res = await apiCall('/api/open_case', 'POST', { case_type: activeCase, multiplier: mult });
@@ -803,7 +867,6 @@
                 updateUI();
 
                 const track = document.getElementById('roulette-track');
-                document.getElementById('roulette-wrapper').style.display = 'block';
                 track.innerHTML = '';
                 
                 const cfg = CASE_LOOT_DATA[activeCase];
@@ -821,7 +884,7 @@
                     return `<div class="roulette-item"><img src="${e.item.img}"></div>`;
                 }).join('');
 
-                const itemWidth = 93; // 85 + 8 gap
+                const itemWidth = 93; // 85px + 8px gap
                 const scrollTo = (25 * itemWidth) - (document.getElementById('roulette-wrapper').offsetWidth / 2) + (itemWidth / 2);
                 
                 track.style.transition = 'transform 3s cubic-bezier(0.1, 1, 0.1, 1)';
@@ -830,7 +893,11 @@
                 setTimeout(() => {
                     isOpening = false;
                     btn.disabled = false;
-                    btn.innerText = 'ОТКРЫТЬ';
+                    btn.innerText = 'ОТКРЫТЬ ЕЩЕ';
+                    
+                    // Прячем рулетку
+                    document.getElementById('roulette-wrapper').classList.remove('active');
+                    
                     let html = '<div class="won-cards">';
                     res.results.forEach(win => {
                         if (win.type === 'coin') html += `<div class="won-card"><i class="fa-solid fa-coins" style="font-size:28px; color:var(--accent-gold)"></i><div style="font-weight:900; margin-top:5px;">+${win.amount}</div></div>`;
@@ -844,7 +911,12 @@
                 isOpening = false;
                 btn.disabled = false;
                 btn.innerText = 'ОТКРЫТЬ';
-                document.getElementById('modal-case-img').style.display = 'block';
+                
+                // Возвращаем картинку кейса
+                document.getElementById('roulette-wrapper').classList.remove('active');
+                document.getElementById('modal-case-img').style.opacity = '1';
+                document.getElementById('modal-case-img').style.transform = 'scale(1)';
+                
                 notify({ type: 'error', message: err.message });
             }
         }
@@ -1005,7 +1077,7 @@
         }
 
         async function viewProfile(uid, nick) {
-            if (!uid || uid === String(MY_ID)) return;
+            if (!uid || uid === String(MY_ID) || uid === 'undefined') return;
             try {
                 const res = await apiCall('/api/user_profile/' + uid);
                 document.getElementById('op-name').innerText = nick || 'Игрок';
