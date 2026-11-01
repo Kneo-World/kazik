@@ -180,7 +180,6 @@ def make_inv_item(item: dict) -> dict:
 
 def push_drop(nick: str, item_name: str, item_img: str | None, price: int, method: str, user_id: str):
     if not FIREBASE_OK: return
-    # ПУШИМ В ЛЕНТУ ТОЛЬКО ПРЕДМЕТЫ (БРЕЙНРОТЫ), НЕ МОНЕТЫ
     if not item_img: return
     
     try:
@@ -331,7 +330,6 @@ async def api_open_case(request: Request, user=Depends(current_user)):
 
     atomic_update(uid, upd)
     
-    # ПУШИМ ТОЛЬКО ПРЕДМЕТЫ В ЛЕНТУ
     for r in results:
         if r["type"] != "coin": 
             push_drop(nick, r["item"]["name"], r["item"]["img"], r["item"]["price"], 'case', uid)
