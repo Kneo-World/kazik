@@ -1,5 +1,4 @@
 # main.py
-# -*- coding: utf-8 -*-
 import os, json, hmac, hashlib, logging, random, time
 from contextlib import asynccontextmanager
 from urllib.parse import parse_qsl
@@ -14,9 +13,6 @@ from fastapi.staticfiles import StaticFiles
 from aiogram import Bot, Dispatcher, types
 from aiogram.types import LabeledPrice
 
-# ============================================================
-# НАСТРОЙКИ И ЛОГИРОВАНИЕ
-# ============================================================
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 log = logging.getLogger("brainrots")
 
@@ -26,7 +22,7 @@ RENDER_URL = (os.getenv("RENDER_EXTERNAL_URL") or "").strip().rstrip("/")
 FIREBASE_DB_URL = os.getenv("FIREBASE_DB_URL", "https://casemine-online-default-rtdb.europe-west1.firebasedatabase.app")
 ALLOWED_ORIGINS = [o.strip() for o in (os.getenv("ALLOWED_ORIGINS") or "*").split(",") if o.strip()]
 
-BOT_USERNAME = "Brain_Funbot" # Для проверки кейса за юз
+BOT_USERNAME = "Brain_Funbot"
 
 # ============================================================
 # ИГРОВЫЕ КОНСТАНТЫ
@@ -64,7 +60,6 @@ CASE_IMAGES = {
     "bro":  "assets/cases/bro.png",
 }
 
-# НЕРФ ЭКОНОМИКИ
 CASE_LOOT = {
     "free": {
         "coinChance": 10,
@@ -74,26 +69,15 @@ CASE_LOOT = {
     "user": {
         "coinChance": 30,
         "coins": [{"amount":3,"weight":100}],
-        "items": [
-            {"id":"trios","weight":40},{"id":"rot67","weight":30},
-            {"id":"hammy","weight":20},{"id":"candyslap","weight":10}
-        ],
+        "items": [{"id":"trios","weight":40},{"id":"rot67","weight":30},{"id":"hammy","weight":20},{"id":"candyslap","weight":10}],
     },
     "base": {
         "coinChance": 0, "coins": [],
-        "items": [
-            {"id":"trios","weight":30},{"id":"rot67","weight":30},
-            {"id":"candyslap","weight":25},{"id":"lagrande","weight":15},
-        ],
+        "items": [{"id":"trios","weight":30},{"id":"rot67","weight":30},{"id":"candyslap","weight":25},{"id":"lagrande","weight":15}],
     },
     "bro": {
         "coinChance": 0, "coins": [],
-        "items": [
-            {"id":"hammy","weight":25},{"id":"noobinis","weight":20},
-            {"id":"tangtang","weight":18},{"id":"tictac","weight":15},
-            {"id":"bacuru","weight":10},{"id":"los67","weight":8},
-            {"id":"yinyang","weight":4},
-        ],
+        "items": [{"id":"hammy","weight":25},{"id":"noobinis","weight":20},{"id":"tangtang","weight":18},{"id":"tictac","weight":15},{"id":"bacuru","weight":10},{"id":"los67","weight":8},{"id":"yinyang","weight":4}],
     },
 }
 
@@ -107,27 +91,23 @@ STARS_PACKAGES = {
     "p500": {"stars":500, "coins":4000, "bonus":60},
 }
 
-FREE_COOLDOWN_MS = 24 * 3600 * 1000  # 24 часа
-USER_COOLDOWN_MS = 12 * 3600 * 1000  # 12 часов
+FREE_COOLDOWN_MS = 24 * 3600 * 1000
+USER_COOLDOWN_MS = 12 * 3600 * 1000
 MAX_UPGRADE_CHANCE = 95.0
 MAX_MULTIPLIER = 5
 MAX_UPG_INPUTS = 5
 
 # ============================================================
-# FIREBASE ADMIN
+# FIREBASE
 # ============================================================
 def init_firebase():
     raw = os.getenv("FIREBASE_CRED_JSON")
-    if not raw:
-        return False
+    if not raw: return False
     try:
         cred_dict = json.loads(raw)
         if "private_key" in cred_dict:
             cred_dict["private_key"] = cred_dict["private_key"].replace("\\n", "\n")
-        firebase_admin.initialize_app(
-            credentials.Certificate(cred_dict),
-            {"databaseURL": FIREBASE_DB_URL},
-        )
+        firebase_admin.initialize_app(credentials.Certificate(cred_dict), {"databaseURL": FIREBASE_DB_URL})
         return True
     except Exception:
         log.exception("Firebase init error")
@@ -135,14 +115,12 @@ def init_firebase():
 
 FIREBASE_OK = init_firebase()
 
-def user_ref(uid: str):
-    return fbdb.reference(f"users/{uid}")
+def user_ref(uid: str): return fbdb.reference(f"users/{uid}")
 
 def _default_user() -> dict:
     return {
-        "balance": 0, "inventory": {}, "lastFree": 0, "lastUser": 0,
-        "stats": {"casesOpened":0,"itemsSold":0,"upgradeSuccess":0,"upgradeFail":0,
-                  "totalEarned":0,"donationsTotal":0,"starsSpent":0,"uniqueCollected":[]},
+        "balance": 0, "inventory": {}, "lastFree": 0, "lastUser": 0, "used_promos": {},
+        "stats": {"casesOpened":0,"itemsSold":0,"upgradeSuccess":0,"upgradeFail":0, "totalEarned":0,"donationsTotal":0,"starsSpent":0,"uniqueCollected":[]},
         "themes": {"dark": True}, "theme": "dark", "referrals": 0,
     }
 
@@ -150,10 +128,8 @@ def get_user_data(uid: str) -> dict:
     if not FIREBASE_OK: return _default_user()
     data = user_ref(uid).get() or {}
     defaults = _default_user()
-    for k, v in defaults.items():
-        data.setdefault(k, v)
-    for k, v in defaults["stats"].items():
-        data["stats"].setdefault(k, v)
+    for k, v in defaults.items(): data.setdefault(k, v)
+    for k, v in defaults["stats"].items(): data["stats"].setdefault(k, v)
     return data
 
 def atomic_update(uid: str, updater) -> dict | None:
@@ -161,21 +137,15 @@ def atomic_update(uid: str, updater) -> dict | None:
     def tx(current):
         d = current or {}
         defaults = _default_user()
-        for k, v in defaults.items():
-            d.setdefault(k, v)
-        for k, v in defaults["stats"].items():
-            d["stats"].setdefault(k, v)
+        for k, v in defaults.items(): d.setdefault(k, v)
+        for k, v in defaults["stats"].items(): d["stats"].setdefault(k, v)
         result = updater(d)
         return result if result is not None else d
-    try:
-        return user_ref(uid).transaction(tx)
+    try: return user_ref(uid).transaction(tx)
     except Exception:
         log.exception("transaction error uid=%s", uid)
         return None
 
-# ============================================================
-# АВТОРИЗАЦИЯ
-# ============================================================
 def verify_init_data(init_data: str) -> dict | None:
     if not init_data or not BOT_TOKEN: return None
     try:
@@ -187,8 +157,7 @@ def verify_init_data(init_data: str) -> dict | None:
         calc = hmac.new(secret, dcs.encode(), hashlib.sha256).hexdigest()
         if not hmac.compare_digest(calc, received_hash): return None
         return json.loads(parsed.get("user", "{}"))
-    except Exception:
-        return None
+    except Exception: return None
 
 async def current_user(x_telegram_init_data: str = Header(None)):
     user = verify_init_data(x_telegram_init_data or "")
@@ -196,7 +165,7 @@ async def current_user(x_telegram_init_data: str = Header(None)):
     return user
 
 # ============================================================
-# ИГРОВАЯ ЛОГИКА
+# ЛОГИКА ИГРЫ
 # ============================================================
 def weighted_pick(entries):
     total = sum(e.get("weight", 1) for e in entries)
@@ -218,15 +187,15 @@ def make_inv_item(item: dict) -> dict:
     uid = "u_%d_%s" % (int(time.time()*1000), "".join(random.choices("abcdef0123456789", k=6)))
     return {**item, "uid": uid}
 
-def push_drop(nick: str, item_name: str, item_img: str | None):
+def push_drop(nick: str, item_name: str, item_img: str | None, price: int, method: str, user_id: str):
     if not FIREBASE_OK: return
     try:
         drop_id = "d_%d_%s" % (int(time.time()*1000), "".join(random.choices("abcdef", k=4)))
         fbdb.reference(f"drop_feed/{drop_id}").set({
-            "nick": nick, "itemName": item_name, "itemImg": item_img or "", "ts": int(time.time()*1000),
+            "nick": nick, "itemName": item_name, "itemImg": item_img or "", 
+            "price": price, "method": method, "user_id": user_id, "ts": int(time.time()*1000),
         })
-    except Exception:
-        pass
+    except Exception: pass
 
 # ============================================================
 # БОТ
@@ -253,8 +222,7 @@ async def pre_checkout(q: types.PreCheckoutQuery):
             await q.answer(ok=False, error_message="Unknown package")
             return
         await q.answer(ok=True)
-    except Exception:
-        await q.answer(ok=False, error_message="Bad payload")
+    except Exception: await q.answer(ok=False, error_message="Bad payload")
 
 @dp.message(lambda m: m.successful_payment)
 async def on_paid(message: types.Message):
@@ -271,12 +239,11 @@ async def on_paid(message: types.Message):
         d["stats"]["starsSpent"] = int(d["stats"].get("starsSpent", 0)) + pack["stars"]
         d["stats"]["totalEarned"] = int(d["stats"].get("totalEarned", 0)) + pack["coins"]
         return d
-    
     atomic_update(uid, upd)
     await message.answer(f"⭐ <b>Оплата прошла!</b>\n+{pack['coins']} монет начислено.")
 
 # ============================================================
-# LIFESPAN & FASTAPI
+# FASTAPI
 # ============================================================
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -309,15 +276,24 @@ async def health(): return {"ok": True}
 async def api_me(user=Depends(current_user)):
     uid = str(user["id"])
     data = get_user_data(uid)
-    
     uname = (user.get("first_name","") + user.get("last_name","") + user.get("username","")).lower()
     has_user_case = BOT_USERNAME.lower() in uname
+    
+    # Считаем промокоды для админа (если хочет, можно выводить)
+    promo_stats = {}
+    if FIREBASE_OK:
+        try:
+            promos = fbdb.reference("promos").get() or {}
+            for code, info in promos.items():
+                promo_stats[code] = {"used": info.get("used", 0), "max_uses": info.get("max_uses", 0)}
+        except: pass
     
     data["uid"] = uid
     data["hasUserCase"] = has_user_case
     data["freeCooldownMs"] = FREE_COOLDOWN_MS
     data["userCooldownMs"] = USER_COOLDOWN_MS
     data["lastUser"] = data.get("lastUser", 0)
+    data["promoStats"] = promo_stats
     return data
 
 @app.post("/api/open_case")
@@ -374,8 +350,8 @@ async def api_open_case(request: Request, user=Depends(current_user)):
     atomic_update(uid, upd)
     
     for r in results:
-        if r["type"] == "coin": push_drop(nick, f"{r['amount']} монет", None)
-        else: push_drop(nick, r["item"]["name"], r["item"]["img"])
+        if r["type"] == "coin": push_drop(nick, f"{r['amount']} монет", None, r['amount'], 'case', uid)
+        else: push_drop(nick, r["item"]["name"], r["item"]["img"], r["item"]["price"], 'case', uid)
 
     new_data = get_user_data(uid)
     return {"ok": True, "results": results, "balance": new_data["balance"], "inventory": new_data["inventory"], "lastFree": new_data.get("lastFree", 0), "lastUser": new_data.get("lastUser", 0)}
@@ -451,10 +427,84 @@ async def api_upgrade(request: Request, user=Depends(current_user)):
         return d
     
     atomic_update(uid, upd)
-    if success: push_drop(user.get("first_name") or "Player", target["name"], target["img"])
+    if success: push_drop(user.get("first_name") or "Player", target["name"], target["img"], target["price"], 'upgrade', uid)
 
     new_data = get_user_data(uid)
     return {"ok": True, "success": success, "chance": chance, "target": target, "balance": new_data["balance"], "inventory": new_data["inventory"]}
+
+@app.post("/api/coinflip")
+async def api_coinflip(request: Request, user=Depends(current_user)):
+    body = await request.json()
+    bet = int(body.get("bet", 0))
+    choice = body.get("choice", "heads") # heads or tails
+    
+    if bet <= 0: raise HTTPException(400, "Ставка должна быть больше 0")
+    
+    uid = str(user["id"])
+    data = get_user_data(uid)
+    if int(data.get("balance", 0)) < bet: raise HTTPException(400, "Недостаточно монет")
+    
+    won = random.random() < 0.5
+    coin_result = choice if won else ("tails" if choice == "heads" else "heads")
+    
+    def upd(d):
+        bal = int(d.get("balance", 0))
+        if bal < bet: return None
+        d["balance"] = bal - bet
+        if won: d["balance"] += bet * 2
+        return d
+        
+    atomic_update(uid, upd)
+    new_data = get_user_data(uid)
+    return {"ok": True, "won": won, "result": coin_result, "balance": new_data["balance"]}
+
+@app.post("/api/claim_promo")
+async def api_claim_promo(request: Request, user=Depends(current_user)):
+    body = await request.json()
+    code = str(body.get("code", "")).strip().upper()
+    if not code: raise HTTPException(400, "Введите код")
+    
+    uid = str(user["id"])
+    data = get_user_data(uid)
+    if code in data.get("used_promos", {}):
+        raise HTTPException(400, "Вы уже использовали этот промокод")
+    
+    if not FIREBASE_OK:
+        raise HTTPException(503, "База данных недоступна")
+        
+    promo_ref = fbdb.reference(f"promos/{code}")
+    promo_data = promo_ref.get()
+    if not promo_data:
+        raise HTTPException(404, "Промокод не найден")
+        
+    max_uses = int(promo_data.get("max_uses", 0))
+    used = int(promo_data.get("used", 0))
+    reward = int(promo_data.get("reward", 0))
+    
+    if used >= max_uses:
+        raise HTTPException(400, "Промокод больше не активен")
+        
+    # Транзакция для промокода
+    def tx_promo(current):
+        if current is None: return None
+        if int(current.get("used", 0)) >= int(current.get("max_uses", 0)): return None
+        current["used"] = int(current.get("used", 0)) + 1
+        return current
+        
+    promo_ref.transaction(tx_promo)
+    
+    # Начисляем монеты юзеру
+    def upd(d):
+        d["used_promos"] = d.get("used_promos", {})
+        d["used_promos"][code] = True
+        d["balance"] = int(d.get("balance", 0)) + reward
+        d["stats"]["totalEarned"] = int(d["stats"].get("totalEarned", 0)) + reward
+        return d
+        
+    atomic_update(uid, upd)
+    new_data = get_user_data(uid)
+    
+    return {"ok": True, "reward": reward, "balance": new_data["balance"]}
 
 @app.post("/api/choose_theme")
 async def api_choose_theme(request: Request, user=Depends(current_user)):
@@ -489,7 +539,6 @@ async def api_claim_referral(request: Request, user=Depends(current_user)):
         nonlocal is_new_user
         if d.get("stats", {}).get("casesOpened", 0) > 0: return None
         if d.get("refUsed"): return None
-        
         d["refUsed"] = True
         d["balance"] = int(d.get("balance", 0)) + 2 
         d["stats"]["totalEarned"] = int(d["stats"].get("totalEarned", 0)) + 2
@@ -497,8 +546,7 @@ async def api_claim_referral(request: Request, user=Depends(current_user)):
         return d
         
     atomic_update(uid, upd)
-    if not is_new_user:
-        raise HTTPException(400, "Вы уже играли или рефка уже использована")
+    if not is_new_user: raise HTTPException(400, "Вы уже играли или рефка уже использована")
         
     def upd2(d):
         d["referrals"] = int(d.get("referrals", 0)) + 1
@@ -508,6 +556,17 @@ async def api_claim_referral(request: Request, user=Depends(current_user)):
     atomic_update(ref_id, upd2)
     
     return {"ok": True, "bonus": 2}
+
+@app.get("/api/user_profile/{target_uid}")
+async def api_user_profile(target_uid: str, user=Depends(current_user)):
+    data = get_user_data(target_uid)
+    return {
+        "uid": target_uid,
+        "balance": data.get("balance", 0),
+        "inventory": data.get("inventory", {}),
+        "stats": data.get("stats", {}),
+        "nick": "Player" # Можно добавить ник в базу
+    }
 
 @app.post("/api/create-invoice-link")
 async def create_invoice(request: Request, user=Depends(current_user)):
