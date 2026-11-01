@@ -181,7 +181,6 @@ def make_inv_item(item: dict) -> dict:
 def push_drop(nick: str, item_name: str, item_img: str | None, price: int, method: str, user_id: str):
     if not FIREBASE_OK: return
     if not item_img: return
-    
     try:
         drop_id = "d_%d_%s" % (int(time.time()*1000), "".join(random.choices("abcdef", k=4)))
         fbdb.reference(f"drop_feed/{drop_id}").set({
