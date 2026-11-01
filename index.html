@@ -144,49 +144,116 @@
         .nav-item.active { border-left: 4px solid var(--accent-blue); background: linear-gradient(90deg, rgba(59,130,246,0.1), transparent); }
 
         /* ================= СЕКЦИИ ================= */
-        .section { display: none; padding: 20px; max-width: 600px; margin: 0 auto; }
+        .section { display: none; padding: 20px; max-width: 800px; margin: 0 auto; width: 100%; }
         .section.active { display: block; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
         
         .section-title { font-size: 20px; font-weight: 900; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* ================= ПРОФИЛЬ ================= */
-        .profile-banner {
-            background: linear-gradient(135deg, #1e2235, #11131c);
-            border: 1px solid var(--border); border-radius: 20px;
-            padding: 25px 20px; text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            margin-bottom: 20px; position: relative; overflow: hidden;
+        /* ================= ПОЛНОЭКРАННЫЙ ЭКРАН КЕЙСА ================= */
+        #section-case-opening {
+            display: flex; flex-direction: column; min-height: calc(100vh - 70px); padding-bottom: 20px;
         }
-        .profile-banner::before {
-            content: ''; position: absolute; top: -50px; left: 50%; transform: translateX(-50%);
-            width: 200px; height: 200px; background: var(--accent-blue);
-            filter: blur(80px); opacity: 0.3; border-radius: 50%;
+        
+        .case-header {
+            display: flex; align-items: center; gap: 15px; margin-bottom: 20px;
         }
-        .profile-avatar-big {
-            width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 12px;
-            background: var(--accent-blue); border: 4px solid var(--accent-gold);
+        .back-btn {
+            background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+            color: var(--text-main); padding: 10px 15px; border-radius: 12px;
+            font-size: 16px; cursor: pointer; transition: 0.2s;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.1); color: var(--accent-gold); }
+        
+        .case-open-visual {
+            width: 100%; height: 250px; position: relative;
             display: flex; align-items: center; justify-content: center;
-            font-size: 32px; font-weight: bold; box-shadow: var(--glow-gold);
-            position: relative; z-index: 2; overflow: hidden;
+            margin-bottom: 20px;
         }
-        .profile-avatar-big img { width: 100%; height: 100%; object-fit: cover; }
-        .profile-name-big { font-size: 22px; font-weight: 900; position: relative; z-index: 2; }
-        .profile-bal-big {
-            font-size: 32px; font-weight: 900; color: var(--accent-gold);
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-            margin-top: 8px; text-shadow: 0 0 20px rgba(251, 191, 36, 0.4); position: relative; z-index: 2;
+        .case-open-img {
+            max-width: 180px; max-height: 180px; object-fit: contain;
+            filter: drop-shadow(0 15px 30px rgba(0,0,0,0.6));
+            transition: opacity 0.3s, transform 0.3s;
         }
-
-        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
-        .stat-box {
+        
+        /* Рулетка на весь экран */
+        .roulette-full-wrap {
+            position: absolute; inset: 0; background: #0d0f14;
+            border: 2px solid var(--border); border-radius: 20px; overflow: hidden;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s;
+            display: flex; align-items: center;
+        }
+        .roulette-full-wrap.active { opacity: 1; pointer-events: auto; }
+        
+        .roulette-pointer-full {
+            position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+            width: 6px; height: 100%; background: var(--accent-gold);
+            z-index: 10; box-shadow: 0 0 15px var(--accent-gold);
+        }
+        .roulette-track-full {
+            display: flex; gap: 10px; padding: 10px; position: absolute; left: 0;
+            height: 100%; align-items: center; will-change: transform;
+        }
+        .roulette-item-full {
+            width: 120px; height: 120px; background: #1c1f2b;
+            border-radius: 15px; border: 2px solid var(--border);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .roulette-item-full img { width: 70px; height: 70px; object-fit: contain; }
+        
+        /* Управление */
+        .open-controls {
+            display: flex; flex-direction: column; gap: 15px; align-items: center;
+            margin-bottom: 30px;
+        }
+        .mult-selector {
+            display: flex; gap: 10px; background: rgba(255,255,255,0.03);
+            padding: 5px; border-radius: 15px; border: 1px solid var(--border);
+        }
+        .mult-btn {
+            width: 60px; padding: 10px; background: transparent; border: none;
+            color: var(--text-muted); border-radius: 10px; font-weight: 900;
+            font-size: 16px; cursor: pointer; transition: 0.2s;
+        }
+        .mult-btn.active { background: var(--accent-blue); color: #fff; box-shadow: var(--glow-blue); }
+        
+        .btn-open {
+            width: 100%; max-width: 400px; padding: 18px; border-radius: 15px;
+            background: linear-gradient(135deg, var(--accent-gold), #b45309);
+            color: #000; font-size: 18px; font-weight: 900; border: none;
+            cursor: pointer; box-shadow: 0 5px 20px rgba(251, 191, 36, 0.4);
+            transition: transform 0.2s;
+        }
+        .btn-open:active { transform: scale(0.98); }
+        .btn-open:disabled { background: #272a35; color: #555; box-shadow: none; cursor: not-allowed; }
+        
+        /* Превью дропа */
+        .loot-preview-box {
             background: var(--bg-card); border: 1px solid var(--border);
-            border-radius: 15px; padding: 12px; text-align: center;
+            border-radius: 20px; padding: 15px; margin-top: auto;
         }
-        .stat-box__val { font-size: 18px; font-weight: 900; color: var(--text-main); }
-        .stat-box__lbl { font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; margin-top: 5px; }
+        .loot-preview-title {
+            font-size: 14px; font-weight: 800; color: var(--text-muted);
+            margin-bottom: 15px; text-align: center; text-transform: uppercase;
+        }
+        .loot-grid-full {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+            gap: 10px;
+        }
+        .loot-card-full {
+            background: #1c1f2b; border: 1px solid var(--border); border-radius: 12px;
+            padding: 10px 5px; text-align: center; position: relative;
+        }
+        .loot-card-full img { width: 50px; height: 50px; object-fit: contain; margin-bottom: 5px; }
+        .loot-card-full .name { font-size: 10px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .loot-card-full .chance {
+            font-size: 11px; color: var(--accent-gold); font-weight: 900; margin-top: 4px;
+        }
+        .loot-card-full .coin-icon { font-size: 30px; color: var(--accent-gold); margin-bottom: 5px; }
 
-        /* ================= КЕЙСЫ И ЛЕНТА ================= */
+        /* ================= КЕЙСЫ (ГЛАВНАЯ) ================= */
         .top-drop-container {
             background: linear-gradient(90deg, rgba(251, 191, 36, 0.15), rgba(20, 22, 30, 1));
             border: 1px solid var(--accent-gold); border-radius: 15px;
@@ -243,6 +310,42 @@
         .case-price { font-size: 13px; color: var(--accent-gold); font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 4px; }
         .case-card.locked { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
 
+        /* ================= ПРОФИЛЬ ================= */
+        .profile-banner {
+            background: linear-gradient(135deg, #1e2235, #11131c);
+            border: 1px solid var(--border); border-radius: 20px;
+            padding: 25px 20px; text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            margin-bottom: 20px; position: relative; overflow: hidden;
+        }
+        .profile-banner::before {
+            content: ''; position: absolute; top: -50px; left: 50%; transform: translateX(-50%);
+            width: 200px; height: 200px; background: var(--accent-blue);
+            filter: blur(80px); opacity: 0.3; border-radius: 50%;
+        }
+        .profile-avatar-big {
+            width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 12px;
+            background: var(--accent-blue); border: 4px solid var(--accent-gold);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 32px; font-weight: bold; box-shadow: var(--glow-gold);
+            position: relative; z-index: 2; overflow: hidden;
+        }
+        .profile-avatar-big img { width: 100%; height: 100%; object-fit: cover; }
+        .profile-name-big { font-size: 22px; font-weight: 900; position: relative; z-index: 2; }
+        .profile-bal-big {
+            font-size: 32px; font-weight: 900; color: var(--accent-gold);
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            margin-top: 8px; text-shadow: 0 0 20px rgba(251, 191, 36, 0.4); position: relative; z-index: 2;
+        }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
+        .stat-box {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 15px; padding: 12px; text-align: center;
+        }
+        .stat-box__val { font-size: 18px; font-weight: 900; color: var(--text-main); }
+        .stat-box__lbl { font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; margin-top: 5px; }
+
         /* ================= ИНВЕНТАРЬ ================= */
         .inv-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
         .inv-item { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 8px; text-align: center; cursor: pointer; position: relative; }
@@ -250,7 +353,7 @@
         .inv-price { font-size: 11px; color: var(--accent-gold); font-weight: 900; margin-top: 4px; }
         .sell-btn { width: 100%; background: rgba(239, 68, 68, 0.15); color: var(--accent-red); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 6px; padding: 4px; margin-top: 5px; font-size: 9px; font-weight: 800; cursor: pointer; }
 
-        /* ================= МОДАЛКИ ================= */
+        /* ================= МОДАЛКИ (ОСТАЛЬНЫЕ) ================= */
         .modal {
             position: fixed; inset: 0; background: rgba(0,0,0,0.85);
             backdrop-filter: blur(8px); z-index: 200; display: none;
@@ -265,50 +368,6 @@
             box-shadow: 0 20px 50px rgba(0,0,0,0.8);
         }
         .close-modal { position: absolute; top: 12px; right: 15px; font-size: 24px; color: var(--text-muted); cursor: pointer; }
-        
-        /* Красивое модальное окно кейса */
-        .case-modal-header { font-size: 20px; font-weight: 900; margin-bottom: 15px; text-transform: uppercase; }
-        
-        .case-modal-visual {
-            position: relative;
-            height: 130px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 15px;
-        }
-        
-        .modal-case-img {
-            width: 120px;
-            height: 120px;
-            object-fit: contain;
-            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));
-            transition: opacity 0.3s, transform 0.3s;
-        }
-        
-        /* Рулетка */
-        .roulette-wrapper { 
-            position: absolute; inset: 0;
-            background: #0d0f14; border: 2px solid var(--border); border-radius: 12px; overflow: hidden;
-            opacity: 0; pointer-events: none; transition: opacity 0.3s;
-        }
-        .roulette-wrapper.active { opacity: 1; pointer-events: auto; }
-        
-        .roulette-pointer { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 4px; height: 100%; background: var(--accent-gold); z-index: 10; box-shadow: 0 0 10px var(--accent-gold); }
-        .roulette-track { display: flex; gap: 8px; padding: 8px; position: absolute; left: 0; top: 0; height: 100%; align-items: center; }
-        .roulette-item { width: 85px; height: 90px; background: #1c1f2b; border-radius: 10px; border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; }
-        .roulette-item img { width: 45px; height: 45px; object-fit: contain; }
-        
-        /* Множители */
-        .mult-selector { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; }
-        .mult-btn { width: 50px; padding: 8px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-muted); border-radius: 8px; font-weight: 900; cursor: pointer; transition: 0.2s; }
-        .mult-btn.active { background: var(--accent-blue); color: #fff; border-color: var(--accent-blue); box-shadow: var(--glow-blue); }
-        
-        /* Выигрыш */
-        .won-cards { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 15px; }
-        .won-card { background: #1c1f2b; border: 2px solid var(--accent-gold); border-radius: 12px; padding: 10px; width: 85px; animation: popIn 0.4s; }
-        @keyframes popIn { 0%{transform:scale(0);} 80%{transform:scale(1.1);} 100%{transform:scale(1);} }
-        .won-card img { width: 40px; height: 40px; object-fit: contain; }
 
         /* Апгрейд */
         .upg-container { background: var(--bg-card); border: 1px solid var(--border); border-radius: 15px; padding: 15px; }
@@ -383,7 +442,6 @@
     <!-- БОКОВОЕ МЕНЮ -->
     <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleMenu()"></div>
     <div class="sidebar" id="sidebar">
-        <!-- КЛИК НА ЭТОТ БЛОК ОТКРЫВАЕТ ПРОФИЛЬ -->
         <div class="sidebar-header" onclick="switchTab('profile')">
             <div class="sidebar-avatar" id="s-avatar">?</div>
             <div class="sidebar-user-info">
@@ -399,33 +457,67 @@
         </div>
     </div>
 
-    <!-- СЕКЦИЯ: КЕЙСЫ (АКТИВНА ПО УМОЛЧАНИЮ) -->
+    <!-- СЕКЦИЯ: КЕЙСЫ (ГЛАВНАЯ) -->
     <div id="section-cases" class="section active">
         <div id="top-drop-box" style="display:none;"></div>
         <div class="live-feed-container" id="live-feed"></div>
         
         <h2 class="section-title">Кейсы</h2>
         <div class="cases-grid">
-            <div class="case-card" onclick="openCaseModal('free')">
+            <div class="case-card" onclick="openCaseSection('free')">
                 <img src="assets/cases/free.png" class="case-img" onerror="this.src='https://via.placeholder.com/100/151722/ffffff?text=FREE'">
                 <div class="case-title">Бесплатный</div>
                 <div class="case-price" id="free-timer-text">БЕСПЛАТНО</div>
             </div>
-            <div class="case-card" id="user-case-card" onclick="openCaseModal('user')">
+            <div class="case-card" id="user-case-card" onclick="openCaseSection('user')">
                 <img src="assets/cases/user.png" class="case-img" onerror="this.src='https://via.placeholder.com/100/151722/ffffff?text=USER'">
                 <div class="case-title">Кейс за Юз</div>
                 <div class="case-price" id="user-timer-text">ЗА ЮЗ</div>
             </div>
-            <div class="case-card" onclick="openCaseModal('base')">
+            <div class="case-card" onclick="openCaseSection('base')">
                 <img src="assets/cases/base.png" class="case-img" onerror="this.src='https://via.placeholder.com/100/151722/ffffff?text=BASE'">
                 <div class="case-title">Начальный</div>
                 <div class="case-price"><i class="fa-solid fa-coins"></i> 9</div>
             </div>
-            <div class="case-card" onclick="openCaseModal('bro')">
+            <div class="case-card" onclick="openCaseSection('bro')">
                 <img src="assets/cases/bro.png" class="case-img" onerror="this.src='https://via.placeholder.com/100/151722/ffffff?text=BRO'">
                 <div class="case-title">Про Бро</div>
                 <div class="case-price"><i class="fa-solid fa-coins"></i> 25</div>
             </div>
+        </div>
+    </div>
+
+    <!-- СЕКЦИЯ: ОТКРЫТИЕ КЕЙСА (ПОЛНОЭКРАННАЯ) -->
+    <div id="section-case-opening" class="section">
+        <div class="case-header">
+            <button class="back-btn" onclick="switchTab('cases')"><i class="fa-solid fa-arrow-left"></i> Назад</button>
+            <h2 class="section-title" id="open-case-title" style="margin:0;">КЕЙС</h2>
+        </div>
+
+        <div class="case-open-visual">
+            <img id="open-case-img" class="case-open-img" src="">
+            
+            <div class="roulette-full-wrap" id="roulette-wrap-full">
+                <div class="roulette-pointer-full"></div>
+                <div class="roulette-track-full" id="roulette-track-full"></div>
+            </div>
+        </div>
+
+        <div class="open-controls">
+            <div class="mult-selector" id="mult-selector-full">
+                <button class="mult-btn active" data-mult="1" onclick="setMultiplierFull(1)">x1</button>
+                <button class="mult-btn" data-mult="2" onclick="setMultiplierFull(2)">x2</button>
+                <button class="mult-btn" data-mult="5" onclick="setMultiplierFull(5)">x5</button>
+            </div>
+            
+            <div id="won-area-full" style="width:100%; display:flex; justify-content:center; gap:10px; flex-wrap:wrap;"></div>
+            
+            <button class="btn-open" id="btn-open-full" onclick="startCaseOpeningFull()">ОТКРЫТЬ</button>
+        </div>
+
+        <div class="loot-preview-box">
+            <div class="loot-preview-title">Что может выпасть?</div>
+            <div class="loot-grid-full" id="loot-preview-full"></div>
         </div>
     </div>
 
@@ -503,31 +595,6 @@
         
         <div class="inv-grid" id="inventory-list">
             <div style="grid-column: span 3; text-align: center; color: var(--text-muted); padding: 20px;">Пусто</div>
-        </div>
-    </div>
-
-    <!-- МОДАЛКА: КЕЙС (ОБНОВЛЕННАЯ) -->
-    <div class="modal" id="case-modal">
-        <div class="modal-box">
-            <span class="close-modal" onclick="closeModal()">&times;</span>
-            <div class="case-modal-header" id="modal-title">Кейс</div>
-            
-            <div class="case-modal-visual">
-                <img id="modal-case-img" class="modal-case-img" src="">
-                <div class="roulette-wrapper" id="roulette-wrapper">
-                    <div class="roulette-pointer"></div>
-                    <div class="roulette-track" id="roulette-track"></div>
-                </div>
-            </div>
-            
-            <div class="mult-selector" id="mult-selector">
-                <button class="mult-btn active" data-mult="1" onclick="setMultiplier(1)">x1</button>
-                <button class="mult-btn" data-mult="2" onclick="setMultiplier(2)">x2</button>
-                <button class="mult-btn" data-mult="5" onclick="setMultiplier(5)">x5</button>
-            </div>
-            
-            <div class="won-cards" id="modal-won-area"></div>
-            <button class="btn gold" id="modal-open-btn" onclick="startCaseOpening()" style="margin-top:10px;">ОТКРЫТЬ</button>
         </div>
     </div>
 
@@ -620,11 +687,28 @@
             { id: 'skibidi', name: 'Skibidi Toilet', price: 13154, rarity: 'legendary', img: 'assets/brainrots/skibidi_toilet.png' }
         ];
 
+        // ВЕСА ДЛЯ РАСЧЕТА ШАНСОВ (Синхронизировано с main.py)
         const CASE_LOOT_DATA = {
-            free: { coinChance: 10, coins: [{amount:1}], items: [{id:"trios"},{id:"rot67"}] },
-            user: { coinChance: 30, coins: [{amount:3}], items: [{id:"trios"},{id:"rot67"},{id:"hammy"},{id:"candyslap"}] },
-            base: { coinChance: 0, coins: [], items: [{id:"trios"},{id:"rot67"},{id:"candyslap"},{id:"lagrande"}] },
-            bro: { coinChance: 0, coins: [], items: [{id:"hammy"},{id:"noobinis"},{id:"tangtang"},{id:"tictac"},{id:"bacuru"},{id:"los67"},{id:"yinyang"}] }
+            free: { 
+                coinChance: 10, 
+                coins: [{amount:1, weight:100}], 
+                items: [{id:"trios", weight:70},{id:"rot67", weight:30}] 
+            },
+            user: { 
+                coinChance: 30, 
+                coins: [{amount:3, weight:100}], 
+                items: [{id:"trios", weight:40},{id:"rot67", weight:30},{id:"hammy", weight:20},{id:"candyslap", weight:10}] 
+            },
+            base: { 
+                coinChance: 0, 
+                coins: [], 
+                items: [{id:"trios", weight:30},{id:"rot67", weight:30},{id:"candyslap", weight:25},{id:"lagrande", weight:15}] 
+            },
+            bro: { 
+                coinChance: 0, 
+                coins: [], 
+                items: [{id:"hammy", weight:25},{id:"noobinis", weight:20},{id:"tangtang", weight:18},{id:"tictac", weight:15},{id:"bacuru", weight:10},{id:"los67", weight:8},{id:"yinyang", weight:4}] 
+            }
         };
 
         const tg = window.Telegram?.WebApp;
@@ -705,7 +789,6 @@
             const activeNav = document.querySelector(`.nav-item[data-tab="${tabId}"]`);
             if (activeNav) activeNav.classList.add('active');
 
-            // Закрываем меню, если открыто
             if (document.getElementById('sidebar').classList.contains('active')) {
                 toggleMenu();
             }
@@ -720,27 +803,66 @@
             document.getElementById('stat-inv').innerText = Object.keys(state.inventory).length;
             
             renderInventory();
-            checkTimers();
+            updateTimers(); // Вызов обновления таймеров
         }
 
-        function checkTimers() {
-            const diffFree = Date.now() - state.lastFree;
+        // ================= ТАЙМЕРЫ (ИСПРАВЛЕНО) =================
+        function updateTimers() {
+            const now = Date.now();
+            
+            // Таймер бесплатного кейса
+            const diffFree = now - state.lastFree;
             const elFree = document.getElementById('free-timer-text');
-            if (diffFree >= FREE_COOLDOWN) { elFree.innerText = 'БЕСПЛАТНО'; elFree.style.color = 'var(--accent-gold)'; }
-            else { elFree.innerText = 'КД'; elFree.style.color = 'var(--text-muted)'; }
+            const cardFree = elFree.parentElement; // .case-card
+            
+            if (diffFree >= FREE_COOLDOWN) { 
+                elFree.innerText = 'БЕСПЛАТНО'; 
+                elFree.style.color = 'var(--accent-gold)'; 
+                cardFree.classList.remove('locked');
+            } else {
+                const rem = FREE_COOLDOWN - diffFree;
+                const h = Math.floor(rem / 3600000);
+                const m = Math.floor((rem % 3600000) / 60000);
+                const s = Math.floor((rem % 60000) / 1000);
+                elFree.innerText = `${h}ч ${m}м ${s}с`;
+                elFree.style.color = 'var(--text-muted)';
+                cardFree.classList.add('locked'); // Блокируем визуально
+            }
 
+            // Таймер кейса за Юз
             const elUser = document.getElementById('user-timer-text');
-            const cardUser = document.getElementById('user-case-card');
-            if (!state.hasUserCase) { elUser.innerText = 'Нету @Brain_Funbot'; cardUser.classList.add('locked'); }
-            else {
-                cardUser.classList.remove('locked');
-                const diffUser = Date.now() - state.lastUser;
-                if (diffUser >= USER_COOLDOWN) { elUser.innerText = 'ДОСТУПЕН'; elUser.style.color = 'var(--accent-green)'; }
-                else { elUser.innerText = 'КД'; elUser.style.color = 'var(--text-muted)'; }
+            const cardUser = elUser.parentElement;
+            
+            if (!state.hasUserCase) { 
+                elUser.innerText = 'Нету @Brain_Funbot'; 
+                cardUser.classList.add('locked'); 
+            } else {
+                const diffUser = now - state.lastUser;
+                if (diffUser >= USER_COOLDOWN) { 
+                    elUser.innerText = 'ДОСТУПЕН'; 
+                    elUser.style.color = 'var(--accent-green)'; 
+                    cardUser.classList.remove('locked');
+                } else {
+                    const rem = USER_COOLDOWN - diffUser;
+                    const h = Math.floor(rem / 3600000);
+                    const m = Math.floor((rem % 3600000) / 60000);
+                    const s = Math.floor((rem % 60000) / 1000);
+                    elUser.innerText = `${h}ч ${m}м ${s}с`;
+                    elUser.style.color = 'var(--text-muted)';
+                    cardUser.classList.add('locked');
+                }
+            }
+            
+            // Если мы на экране кейса, обновляем кнопку "Открыть"
+            if (document.getElementById('section-case-opening').classList.contains('active') && !isOpening) {
+                updateOpenBtnState();
             }
         }
-        setInterval(checkTimers, 5000);
+        
+        // Запускаем таймер каждую секунду
+        setInterval(updateTimers, 1000);
 
+        // ================= РЕНДЕР ИНВЕНТАРЯ =================
         function renderInventory() {
             const container = document.getElementById('inventory-list');
             const inv = Object.values(state.inventory || {});
@@ -756,6 +878,7 @@
             }).join('');
         }
 
+        // ================= ЛАЙВ ЛЕНТА =================
         window.updateDropFeed = function(arr) {
             const feed = document.getElementById('live-feed');
             const topBox = document.getElementById('top-drop-box');
@@ -804,59 +927,125 @@
             }).join('');
         };
 
-        function openCaseModal(type) {
+        // ================= ОТКРЫТИЕ КЕЙСА (ПОЛНОЭКРАННЫЙ РЕЖИМ) =================
+        function openCaseSection(type) {
             if (isOpening) return;
             if (type === 'user' && !state.hasUserCase) return notify({ type: 'error', message: 'Поставьте @Brain_Funbot в ник!' });
             
+            // Проверка кулдаунов перед открытием
+            const now = Date.now();
+            if (type === 'free' && now - state.lastFree < FREE_COOLDOWN) {
+                return notify({ type: 'error', message: 'Бесплатный кейс еще не готов!' });
+            }
+            if (type === 'user' && now - state.lastUser < USER_COOLDOWN) {
+                return notify({ type: 'error', message: 'Кейс за Юз еще не готов!' });
+            }
+
             activeCase = type;
             mult = 1;
-            setMultiplier(1); // Сброс визуала кнопок
             
-            document.getElementById('modal-title').innerText = type.toUpperCase();
-            document.getElementById('modal-case-img').style.opacity = '1';
-            document.getElementById('modal-case-img').style.transform = 'scale(1)';
-            document.getElementById('roulette-wrapper').classList.remove('active');
-            document.getElementById('roulette-track').innerHTML = '';
+            // Сброс визуала
+            setMultiplierFull(1);
+            document.getElementById('open-case-title').innerText = type.toUpperCase();
+            document.getElementById('open-case-img').style.opacity = '1';
+            document.getElementById('open-case-img').style.transform = 'scale(1)';
+            document.getElementById('roulette-wrap-full').classList.remove('active');
+            document.getElementById('roulette-track-full').innerHTML = '';
+            document.getElementById('won-area-full').innerHTML = '';
             
-            const imgEl = document.getElementById('modal-case-img');
+            const imgEl = document.getElementById('open-case-img');
             imgEl.src = `assets/cases/${type}.png`;
-            imgEl.onerror = function() { this.src = 'https://via.placeholder.com/120/151722/ffffff?text=CASE'; };
+            imgEl.onerror = function() { this.src = 'https://via.placeholder.com/180/151722/ffffff?text=CASE'; };
             
-            document.getElementById('mult-selector').style.display = (type === 'free' || type === 'user') ? 'none' : 'flex';
-            document.getElementById('modal-won-area').innerHTML = '';
+            document.getElementById('mult-selector-full').style.display = (type === 'free' || type === 'user') ? 'none' : 'flex';
             
-            document.getElementById('case-modal').classList.add('active');
-            updateModalBtn();
+            renderLootPreviewFull(type);
+            updateOpenBtnState();
+            
+            // Переключаем вкладку
+            switchTab('case-opening');
         }
 
-        function closeModal() { 
-            if (!isOpening) {
-                document.getElementById('case-modal').classList.remove('active');
+        function updateOpenBtnState() {
+            const btn = document.getElementById('btn-open-full');
+            if (isOpening) return;
+            
+            const now = Date.now();
+            if (activeCase === 'free' && now - state.lastFree < FREE_COOLDOWN) {
+                btn.disabled = true; btn.innerText = 'КУЛДАУН';
+            } else if (activeCase === 'user' && now - state.lastUser < USER_COOLDOWN) {
+                btn.disabled = true; btn.innerText = 'КУЛДАУН';
+            } else {
+                btn.disabled = false; btn.innerText = `ОТКРЫТЬ x${mult}`;
             }
         }
 
-        function setMultiplier(m) {
+        function setMultiplierFull(m) {
             if (isOpening) return;
             mult = (activeCase === 'free' || activeCase === 'user') ? 1 : m;
-            document.querySelectorAll('.mult-btn').forEach(b => b.classList.toggle('active', Number(b.dataset.mult) === mult));
-            updateModalBtn();
+            document.querySelectorAll('#mult-selector-full .mult-btn').forEach(b => b.classList.toggle('active', Number(b.dataset.mult) === mult));
+            updateOpenBtnState();
         }
 
-        function updateModalBtn() {
-            document.getElementById('modal-open-btn').innerText = `ОТКРЫТЬ x${mult}`;
+        // Рендер шансов выпадения
+        function renderLootPreviewFull(type) {
+            const grid = document.getElementById('loot-preview-full');
+            const cfg = CASE_LOOT_DATA[type];
+            let html = '';
+            
+            // Считаем общий вес предметов
+            let totalItemWeight = 0;
+            cfg.items.forEach(it => totalItemWeight += (it.weight || 1));
+            
+            // Процент на монеты
+            if (cfg.coinChance > 0) {
+                html += `
+                <div class="loot-card-full">
+                    <div class="coin-icon"><i class="fa-solid fa-coins"></i></div>
+                    <div class="name">Монеты</div>
+                    <div class="chance">${cfg.coinChance}%</div>
+                </div>`;
+            }
+            
+            // Процент на предметы (оставшийся шанс)
+            const itemTotalChance = 100 - cfg.coinChance;
+            
+            cfg.items.forEach(it => {
+                const itemObj = ALL_ITEMS.find(i => i.id === it.id);
+                if (!itemObj) return;
+                const weight = it.weight || 1;
+                const chance = ((weight / totalItemWeight) * itemTotalChance).toFixed(1);
+                
+                html += `
+                <div class="loot-card-full" style="border-color:${RARITIES[itemObj.rarity].color}">
+                    <img src="${itemObj.img}">
+                    <div class="name">${itemObj.name}</div>
+                    <div class="chance">${chance}%</div>
+                </div>`;
+            });
+            
+            grid.innerHTML = html;
         }
 
-        async function startCaseOpening() {
+        async function startCaseOpeningFull() {
             if (isOpening) return;
+            
+            const now = Date.now();
+            if (activeCase === 'free' && now - state.lastFree < FREE_COOLDOWN) {
+                return notify({ type: 'error', message: 'Бесплатный кейс еще не готов!' });
+            }
+            if (activeCase === 'user' && now - state.lastUser < USER_COOLDOWN) {
+                return notify({ type: 'error', message: 'Кейс за Юз еще не готов!' });
+            }
+
             isOpening = true;
-            const btn = document.getElementById('modal-open-btn');
+            const btn = document.getElementById('btn-open-full');
             btn.disabled = true;
             btn.innerText = 'ОТКРЫВАЕМ...';
             
-            // Прячем картинку кейса и показываем рулетку
-            document.getElementById('modal-case-img').style.opacity = '0';
-            document.getElementById('modal-case-img').style.transform = 'scale(0.8)';
-            document.getElementById('roulette-wrapper').classList.add('active');
+            document.getElementById('open-case-img').style.opacity = '0';
+            document.getElementById('open-case-img').style.transform = 'scale(0.8)';
+            document.getElementById('roulette-wrap-full').classList.add('active');
             
             try {
                 const res = await apiCall('/api/open_case', 'POST', { case_type: activeCase, multiplier: mult });
@@ -866,28 +1055,36 @@
                 state.lastUser = res.lastUser;
                 updateUI();
 
-                const track = document.getElementById('roulette-track');
+                const track = document.getElementById('roulette-track-full');
                 track.innerHTML = '';
                 
                 const cfg = CASE_LOOT_DATA[activeCase];
                 const items = [];
                 for (let i = 0; i < 30; i++) {
-                    if (i === 25) items.push(res.results[0]);
-                    else {
-                        if (Math.random() * 100 < cfg.coinChance) items.push({ type: 'coin', amount: 1 });
-                        else items.push({ type: 'item', item: ALL_ITEMS.find(it => it.id === cfg.items[Math.floor(Math.random()*cfg.items.length)].id) });
+                    if (i === 25) {
+                        items.push(res.results[0]);
+                    } else {
+                        if (Math.random() * 100 < cfg.coinChance) {
+                            items.push({ type: 'coin', amount: 1 });
+                        } else {
+                            const randItem = cfg.items[Math.floor(Math.random() * cfg.items.length)];
+                            items.push({ type: 'item', item: ALL_ITEMS.find(it => it.id === randItem.id) });
+                        }
                     }
                 }
 
                 track.innerHTML = items.map(e => {
-                    if (e.type === 'coin') return `<div class="roulette-item"><i class="fa-solid fa-coins" style="color:var(--accent-gold); font-size:24px;"></i></div>`;
-                    return `<div class="roulette-item"><img src="${e.item.img}"></div>`;
+                    if (e.type === 'coin') {
+                        return `<div class="roulette-item-full"><i class="fa-solid fa-coins" style="color:var(--accent-gold); font-size:40px;"></i></div>`;
+                    }
+                    return `<div class="roulette-item-full" style="border-color:${RARITIES[e.item.rarity].color}"><img src="${e.item.img}"></div>`;
                 }).join('');
 
-                const itemWidth = 93; // 85px + 8px gap
-                const scrollTo = (25 * itemWidth) - (document.getElementById('roulette-wrapper').offsetWidth / 2) + (itemWidth / 2);
+                const itemWidth = 130; // 120px + 10px gap
+                const wrapperWidth = document.getElementById('roulette-wrap-full').offsetWidth;
+                const scrollTo = (25 * itemWidth) - (wrapperWidth / 2) + (itemWidth / 2);
                 
-                track.style.transition = 'transform 3s cubic-bezier(0.1, 1, 0.1, 1)';
+                track.style.transition = 'transform 3.5s cubic-bezier(0.1, 1, 0.1, 1)';
                 track.style.transform = `translateX(-${scrollTo}px)`;
 
                 setTimeout(() => {
@@ -895,32 +1092,34 @@
                     btn.disabled = false;
                     btn.innerText = 'ОТКРЫТЬ ЕЩЕ';
                     
-                    // Прячем рулетку
-                    document.getElementById('roulette-wrapper').classList.remove('active');
+                    document.getElementById('roulette-wrap-full').classList.remove('active');
                     
-                    let html = '<div class="won-cards">';
+                    let html = '';
                     res.results.forEach(win => {
-                        if (win.type === 'coin') html += `<div class="won-card"><i class="fa-solid fa-coins" style="font-size:28px; color:var(--accent-gold)"></i><div style="font-weight:900; margin-top:5px;">+${win.amount}</div></div>`;
-                        else html += `<div class="won-card"><img src="${win.item.img}"><div style="font-weight:900; font-size:9px; margin-top:5px;">${win.item.name}</div></div>`;
+                        if (win.type === 'coin') {
+                            html += `<div class="won-card"><i class="fa-solid fa-coins" style="font-size:36px; color:var(--accent-gold)"></i><div style="font-weight:900; margin-top:5px;">+${win.amount}</div></div>`;
+                        } else {
+                            html += `<div class="won-card"><img src="${win.item.img}"><div style="font-weight:900; font-size:10px; margin-top:5px;">${win.item.name}</div></div>`;
+                        }
                     });
-                    html += '</div>';
-                    document.getElementById('modal-won-area').innerHTML = html;
-                }, 3200);
+                    document.getElementById('won-area-full').innerHTML = html;
+                    updateOpenBtnState();
+                }, 3600);
 
             } catch (err) {
                 isOpening = false;
                 btn.disabled = false;
                 btn.innerText = 'ОТКРЫТЬ';
                 
-                // Возвращаем картинку кейса
-                document.getElementById('roulette-wrapper').classList.remove('active');
-                document.getElementById('modal-case-img').style.opacity = '1';
-                document.getElementById('modal-case-img').style.transform = 'scale(1)';
+                document.getElementById('roulette-wrap-full').classList.remove('active');
+                document.getElementById('open-case-img').style.opacity = '1';
+                document.getElementById('open-case-img').style.transform = 'scale(1)';
                 
                 notify({ type: 'error', message: err.message });
             }
         }
 
+        // ================= ОСТАЛЬНЫЕ ФУНКЦИИ =================
         function renderUpg() {
             const container = document.getElementById('upg-slots');
             let html = '';
@@ -1138,10 +1337,9 @@
             } catch (err) { notify({ type: 'error', message: err.message }); }
         };
         
-        window.openCaseModal = openCaseModal;
-        window.closeModal = closeModal;
-        window.setMultiplier = setMultiplier;
-        window.startCaseOpening = startCaseOpening;
+        window.openCaseSection = openCaseSection;
+        window.setMultiplierFull = setMultiplierFull;
+        window.startCaseOpeningFull = startCaseOpeningFull;
         window.onUpgTargetClick = onUpgTargetClick;
         window.closeTargetModal = closeTargetModal;
         window.runUpgrade = runUpgrade;
@@ -1184,7 +1382,6 @@
 
         if (tg) { tg.ready(); tg.expand(); }
         
-        // Устанавливаем кейсы активными по умолчанию
         switchTab('cases');
         loadData().then(() => checkRef());
 
