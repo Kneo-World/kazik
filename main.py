@@ -1,4 +1,14 @@
 # main.py
+# ============================================================
+# Brainrots Funny — backend
+# ENV:
+#   BOT_TOKEN           — токен бота
+#   WEBHOOK_URL         — внешний URL (напр. https://xxx.onrender.com)
+#   RENDER_EXTERNAL_URL — альтернатива WEBHOOK_URL (Render)
+#   FIREBASE_CRED_JSON  — JSON сервисного аккаунта (строкой)
+#   FIREBASE_DB_URL     — URL Realtime DB
+#   ALLOWED_ORIGINS     — CORS, через запятую, "*" по умолчанию
+# ============================================================
 import os, json, hmac, hashlib, logging, random, time
 from contextlib import asynccontextmanager
 from urllib.parse import parse_qsl
@@ -23,6 +33,7 @@ FIREBASE_DB_URL = os.getenv("FIREBASE_DB_URL", "https://casemine-online-default-
 ALLOWED_ORIGINS = [o.strip() for o in (os.getenv("ALLOWED_ORIGINS") or "*").split(",") if o.strip()]
 
 BOT_USERNAME = "Brain_Funbot"
+INIT_DATA_MAX_AGE = 24 * 3600  # 24 часа (для мобилки — с запасом)
 
 RARITIES = {
     "common":    {"id":"common","name":"Common","color":"#6b7280"},
@@ -49,14 +60,6 @@ ITEMS = [
 ITEMS_BY_ID = {i["id"]: i for i in ITEMS}
 
 CASE_PRICES = {"free": 0, "user": 0, "base": 9, "bro": 25, "allin": 29}
-CASE_TITLES = {"free": "Ежедневный", "user": "Кейс за Юз", "base": "Начальный", "bro": "Про Бро", "allin": "ALL IN"}
-CASE_IMAGES = {
-    "free": {"img": "assets/cases/free.png", "emoji": "🎁"},
-    "user": {"img": "assets/cases/user.png", "emoji": "👤"},
-    "base": {"img": "assets/cases/base.png", "emoji": "📦"},
-    "bro":  {"img": "assets/cases/bro.png", "emoji": "💎"},
-    "allin": {"img": "assets/cases/allin.png", "emoji": "🎰"},
-}
 
 CASE_LOOT = {
     "free": {
@@ -83,7 +86,6 @@ CASE_LOOT = {
     },
 }
 
-THEMES = {"dark": {"name": "Тёмная", "price": 0}, "neon": {"name": "Неоновая", "price": 100}, "gold": {"name": "Золотая", "price": 500}}
 STARS_PACKAGES = {
     "p10":  {"stars":10,  "coins":50,   "bonus":0},
     "p25":  {"stars":25,  "coins":135,  "bonus":8},
@@ -98,78 +100,144 @@ USER_COOLDOWN_MS = 12 * 3600 * 1000
 MAX_UPGRADE_CHANCE = 95.0
 MAX_MULTIPLIER = 5
 MAX_UPG_INPUTS = 5
+MAX_COINFLIP_BET = 1_000_000
 
+
+# ============================================================
+# FIREBASE
+# ============================================================
 def init_firebase():
     raw = os.getenv("FIREBASE_CRED_JSON")
-    if not raw: return False
+    if not raw:
+        log.warning("FIREBASE_CRED_JSON missing")
+        return False
     try:
         cred_dict = json.loads(raw)
         if "private_key" in cred_dict:
             cred_dict["private_key"] = cred_dict["private_key"].replace("\\n", "\n")
-        firebase_admin.initialize_app(credentials.Certificate(cred_dict), {"databaseURL": FIREBASE_DB_URL})
+        if not firebase_admin._apps:
+            firebase_admin.initialize_app(
+                credentials.Certificate(cred_dict),
+                {"databaseURL": FIREBASE_DB_URL},
+            )
         return True
     except Exception:
         log.exception("Firebase init error")
         return False
 
+
 FIREBASE_OK = init_firebase()
 
-def user_ref(uid: str): return fbdb.reference(f"users/{uid}")
+
+def user_ref(uid: str):
+    return fbdb.reference(f"users/{uid}")
+
 
 def _default_user() -> dict:
     return {
-        "balance": 0, "inventory": {}, "lastFree": 0, "lastUser": 0, "used_promos": {},
-        "stats": {"casesOpened":0,"itemsSold":0,"upgradeSuccess":0,"upgradeFail":0, "totalEarned":0,"donationsTotal":0,"starsSpent":0,"uniqueCollected":[]},
-        "themes": {"dark": True}, "theme": "dark", "referrals": 0,
+        "balance": 0,
+        "inventory": {},
+        "lastFree": 0,
+        "lastUser": 0,
+        "used_promos": {},
+        "paid_ids": {},
+        "stats": {
+            "casesOpened": 0,
+            "itemsSold": 0,
+            "upgradeSuccess": 0,
+            "upgradeFail": 0,
+            "totalEarned": 0,
+            "donationsTotal": 0,
+            "starsSpent": 0,
+            "uniqueCollected": [],
+        },
+        "themes": {"dark": True},
+        "theme": "dark",
+        "referrals": 0,
     }
 
-def get_user_data(uid: str) -> dict:
-    if not FIREBASE_OK: return _default_user()
-    data = user_ref(uid).get() or {}
+
+def _normalize(data: dict) -> dict:
     defaults = _default_user()
-    for k, v in defaults.items(): data.setdefault(k, v)
-    for k, v in defaults["stats"].items(): data["stats"].setdefault(k, v)
+    for k, v in defaults.items():
+        data.setdefault(k, v)
+    for k, v in defaults["stats"].items():
+        data["stats"].setdefault(k, v)
     return data
 
-def atomic_update(uid: str, updater) -> dict | None:
-    if not FIREBASE_OK: return None
+
+def get_user_data(uid: str) -> dict:
+    if not FIREBASE_OK:
+        return _default_user()
+    data = user_ref(uid).get() or {}
+    return _normalize(data)
+
+
+def atomic_update(uid: str, updater):
+    """Возвращает True при успехе, False при откате/ошибке."""
+    if not FIREBASE_OK:
+        return False
+
     def tx(current):
-        d = current or {}
-        defaults = _default_user()
-        for k, v in defaults.items(): d.setdefault(k, v)
-        for k, v in defaults["stats"].items(): d["stats"].setdefault(k, v)
+        d = _normalize(current or {})
         result = updater(d)
-        return result if result is not None else d
-    try: return user_ref(uid).transaction(tx)
+        return result if result is not None else None  # None = откат
+
+    try:
+        user_ref(uid).transaction(tx)
+        return True
     except Exception:
         log.exception("transaction error uid=%s", uid)
-        return None
+        return False
 
+
+# ============================================================
+# AUTH
+# ============================================================
 def verify_init_data(init_data: str) -> dict | None:
-    if not init_data or not BOT_TOKEN: return None
+    if not init_data or not BOT_TOKEN:
+        return None
     try:
         parsed = dict(parse_qsl(init_data, strict_parsing=False))
         received_hash = parsed.pop("hash", None)
-        if not received_hash: return None
+        if not received_hash:
+            return None
+
+        # Проверка auth_date (защита от replay)
+        auth_date = int(parsed.get("auth_date", 0) or 0)
+        if not auth_date or (time.time() - auth_date) > INIT_DATA_MAX_AGE:
+            log.warning("initData stale auth_date=%s", auth_date)
+            return None
+
         dcs = "\n".join(f"{k}={v}" for k, v in sorted(parsed.items()))
         secret = hmac.new(b"WebAppData", BOT_TOKEN.encode(), hashlib.sha256).digest()
         calc = hmac.new(secret, dcs.encode(), hashlib.sha256).hexdigest()
-        if not hmac.compare_digest(calc, received_hash): return None
+        if not hmac.compare_digest(calc, received_hash):
+            return None
         return json.loads(parsed.get("user", "{}"))
-    except Exception: return None
+    except Exception:
+        return None
+
 
 async def current_user(x_telegram_init_data: str = Header(None)):
     user = verify_init_data(x_telegram_init_data or "")
-    if not user: raise HTTPException(401, "invalid initData")
+    if not user:
+        raise HTTPException(401, "invalid initData")
     return user
 
+
+# ============================================================
+# DROP LOGIC
+# ============================================================
 def weighted_pick(entries):
     total = sum(e.get("weight", 1) for e in entries)
     r = random.random() * total
     for e in entries:
         r -= e.get("weight", 1)
-        if r <= 0: return e
+        if r <= 0:
+            return e
     return entries[-1]
+
 
 def roll_drop(case_type: str) -> dict:
     cfg = CASE_LOOT[case_type]
@@ -179,23 +247,42 @@ def roll_drop(case_type: str) -> dict:
     picked = weighted_pick(cfg["items"])
     return {"type": "item", "item": dict(ITEMS_BY_ID[picked["id"]])}
 
+
 def make_inv_item(item: dict) -> dict:
-    uid = "u_%d_%s" % (int(time.time()*1000), "".join(random.choices("abcdef0123456789", k=6)))
+    uid = "u_%d_%s" % (
+        int(time.time() * 1000),
+        "".join(random.choices("abcdef0123456789", k=6)),
+    )
     return {**item, "uid": uid}
 
-def push_drop(nick: str, item_name: str, item_img: str | None, price: int, method: str, user_id: str):
-    if not FIREBASE_OK: return
-    if not item_img: return
-    try:
-        drop_id = "d_%d_%s" % (int(time.time()*1000), "".join(random.choices("abcdef", k=4)))
-        fbdb.reference(f"drop_feed/{drop_id}").set({
-            "nick": nick, "itemName": item_name, "itemImg": item_img or "", 
-            "price": price, "method": method, "user_id": str(user_id), "ts": int(time.time()*1000),
-        })
-    except Exception: pass
 
+def push_drop(nick: str, item_name: str, item_img: str | None, price: int, method: str, user_id: str):
+    if not FIREBASE_OK or not item_img:
+        return
+    try:
+        drop_id = "d_%d_%s" % (
+            int(time.time() * 1000),
+            "".join(random.choices("abcdef", k=4)),
+        )
+        fbdb.reference(f"drop_feed/{drop_id}").set({
+            "nick": nick,
+            "itemName": item_name,
+            "itemImg": item_img,
+            "price": price,
+            "method": method,
+            "user_id": str(user_id),
+            "ts": int(time.time() * 1000),
+        })
+    except Exception:
+        pass
+
+
+# ============================================================
+# BOT
+# ============================================================
 bot = Bot(token=BOT_TOKEN) if BOT_TOKEN else None
 dp = Dispatcher()
+
 
 @dp.message()
 async def on_message(message: types.Message):
@@ -205,8 +292,9 @@ async def on_message(message: types.Message):
             "🎮 <b>Brainrots Funny</b>\n\nКрути кейсы, апгрейди брейнротов!",
             reply_markup=types.InlineKeyboardMarkup(inline_keyboard=[[
                 types.InlineKeyboardButton(text="🎮 Открыть", web_app=types.WebAppInfo(url=base))
-            ]])
+            ]]),
         )
+
 
 @dp.pre_checkout_query()
 async def pre_checkout(q: types.PreCheckoutQuery):
@@ -216,190 +304,283 @@ async def pre_checkout(q: types.PreCheckoutQuery):
             await q.answer(ok=False, error_message="Unknown package")
             return
         await q.answer(ok=True)
-    except Exception: await q.answer(ok=False, error_message="Bad payload")
+    except Exception:
+        await q.answer(ok=False, error_message="Bad payload")
+
 
 @dp.message(lambda m: m.successful_payment)
 async def on_paid(message: types.Message):
     sp = message.successful_payment
-    try: payload = json.loads(sp.invoice_payload)
-    except: return
+    try:
+        payload = json.loads(sp.invoice_payload)
+    except Exception:
+        return
     pack = STARS_PACKAGES.get(payload.get("package_id"))
-    if not pack: return
+    if not pack:
+        return
     uid = str(message.from_user.id)
-    
+
+    # Дедуп по charge_id — защита от ретраев вебхука
+    charge_id = sp.telegram_payment_charge_id or sp.provider_payment_charge_id
+    if not charge_id:
+        log.warning("paid without charge_id uid=%s", uid)
+        return
+
     def upd(d):
+        paid = d.setdefault("paid_ids", {})
+        if charge_id in paid:
+            return None  # уже начислено
+        paid[charge_id] = int(time.time() * 1000)
         d["balance"] = int(d.get("balance", 0)) + pack["coins"]
         d["stats"]["donationsTotal"] = int(d["stats"].get("donationsTotal", 0)) + 1
         d["stats"]["starsSpent"] = int(d["stats"].get("starsSpent", 0)) + pack["stars"]
         d["stats"]["totalEarned"] = int(d["stats"].get("totalEarned", 0)) + pack["coins"]
         return d
-    atomic_update(uid, upd)
-    await message.answer(f"⭐ <b>Оплата прошла!</b>\n+{pack['coins']} монет начислено.")
 
+    ok = atomic_update(uid, upd)
+    if ok:
+        await message.answer(f"⭐ <b>Оплата прошла!</b>\n+{pack['coins']} монет начислено.")
+    else:
+        log.info("Duplicate payment skip uid=%s charge=%s", uid, charge_id)
+
+
+# ============================================================
+# APP
+# ============================================================
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     if bot and (WEBHOOK_URL or RENDER_URL):
         try:
-            await bot.set_webhook(f"{WEBHOOK_URL or RENDER_URL}/webhook/tg", allowed_updates=dp.resolve_used_update_types(), drop_pending_updates=True)
-        except Exception: pass
+            await bot.set_webhook(
+                f"{WEBHOOK_URL or RENDER_URL}/webhook/tg",
+                allowed_updates=dp.resolve_used_update_types(),
+                drop_pending_updates=True,
+            )
+        except Exception:
+            log.exception("set_webhook failed")
     yield
     if bot:
-        await bot.delete_webhook()
-        await bot.session.close()
+        try:
+            await bot.delete_webhook()
+            await bot.session.close()
+        except Exception:
+            pass
+
 
 app = FastAPI(lifespan=lifespan)
-app.add_middleware(CORSMiddleware, allow_origins=ALLOWED_ORIGINS, allow_methods=["*"], allow_headers=["*"])
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=ALLOWED_ORIGINS,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 BASE = Path(__file__).parent
 if (BASE / "assets").exists():
     app.mount("/assets", StaticFiles(directory=BASE / "assets"), name="assets")
 
+
 @app.get("/", response_class=HTMLResponse)
 async def root():
     idx = BASE / "index.html"
-    if not idx.exists(): return HTMLResponse("<h1>no index</h1>", status_code=404)
+    if not idx.exists():
+        return HTMLResponse("<h1>no index</h1>", status_code=404)
     return HTMLResponse(idx.read_text(encoding="utf-8"))
 
-@app.get("/health")
-async def health(): return {"ok": True}
 
+@app.get("/health")
+async def health():
+    return {"ok": True, "firebase": FIREBASE_OK}
+
+
+# ============================================================
+# API
+# ============================================================
 @app.get("/api/me")
 async def api_me(user=Depends(current_user)):
     uid = str(user["id"])
     data = get_user_data(uid)
-    uname = (user.get("first_name","") + user.get("last_name","") + user.get("username","")).lower()
-    has_user_case = BOT_USERNAME.lower() in uname
-    
+    uname = (user.get("first_name", "") + user.get("last_name", "") + user.get("username", "")).lower()
     data["uid"] = uid
-    data["hasUserCase"] = has_user_case
+    data["hasUserCase"] = BOT_USERNAME.lower() in uname
     data["freeCooldownMs"] = FREE_COOLDOWN_MS
     data["userCooldownMs"] = USER_COOLDOWN_MS
-    data["lastUser"] = data.get("lastUser", 0)
     return data
+
 
 @app.post("/api/open_case")
 async def api_open_case(request: Request, user=Depends(current_user)):
     body = await request.json()
     case_type = body.get("case_type", "")
     multiplier = int(body.get("multiplier", 1))
-    
-    if case_type not in CASE_LOOT: raise HTTPException(400, "Неизвестный кейс")
-    if multiplier < 1 or multiplier > MAX_MULTIPLIER: raise HTTPException(400, "Неверный множитель")
-    if case_type in ["free", "user"]: multiplier = 1
-    
+
+    if case_type not in CASE_LOOT:
+        raise HTTPException(400, "Неизвестный кейс")
+    if multiplier < 1 or multiplier > MAX_MULTIPLIER:
+        raise HTTPException(400, "Неверный множитель")
+    if case_type in ("free", "user"):
+        multiplier = 1
+
     uid = str(user["id"])
     nick = user.get("first_name") or "Player"
     now = int(time.time() * 1000)
     data = get_user_data(uid)
 
     if case_type == "free":
-        if now - int(data.get("lastFree", 0)) < FREE_COOLDOWN_MS: 
-            raise HTTPException(400, "Бесплатный кейс еще не готов")
+        if now - int(data.get("lastFree", 0)) < FREE_COOLDOWN_MS:
+            raise HTTPException(400, "Бесплатный кейс ещё не готов")
         price = 0
     elif case_type == "user":
-        uname = (user.get("first_name","") + user.get("last_name","") + user.get("username","")).lower()
-        if BOT_USERNAME.lower() not in uname: 
+        uname = (user.get("first_name", "") + user.get("last_name", "") + user.get("username", "")).lower()
+        if BOT_USERNAME.lower() not in uname:
             raise HTTPException(400, "Вы не указали бота в нике!")
-        if now - int(data.get("lastUser", 0)) < USER_COOLDOWN_MS: 
-            raise HTTPException(400, "Кейс за юз еще не готов")
+        if now - int(data.get("lastUser", 0)) < USER_COOLDOWN_MS:
+            raise HTTPException(400, "Кейс за Юз ещё не готов")
         price = 0
     else:
         price = CASE_PRICES[case_type] * multiplier
-        
-    if int(data.get("balance", 0)) < price: 
+
+    if int(data.get("balance", 0)) < price:
         raise HTTPException(400, "Недостаточно монет")
 
     results = [roll_drop(case_type) for _ in range(multiplier)]
 
     def upd(d):
-        if case_type == "free": d["lastFree"] = now
-        elif case_type == "user": d["lastUser"] = now
-        else: d["balance"] = int(d.get("balance", 0)) - price
-        
+        # Повторная проверка баланса — атомарность
+        if price > 0:
+            if int(d.get("balance", 0)) < price:
+                return None
+
+        if case_type == "free":
+            d["lastFree"] = now
+        elif case_type == "user":
+            d["lastUser"] = now
+        else:
+            d["balance"] = int(d.get("balance", 0)) - price
+
         inv = d.setdefault("inventory", {})
         coins_won = 0
         for r in results:
-            if r["type"] == "coin": coins_won += r["amount"]
+            if r["type"] == "coin":
+                coins_won += r["amount"]
             else:
                 new_item = make_inv_item(r["item"])
                 inv[new_item["uid"]] = new_item
                 uniq = set(d["stats"].get("uniqueCollected", []))
                 uniq.add(r["item"]["id"])
                 d["stats"]["uniqueCollected"] = list(uniq)
-                
+
         d["balance"] = int(d.get("balance", 0)) + coins_won
         d["stats"]["casesOpened"] = int(d["stats"].get("casesOpened", 0)) + multiplier
         d["stats"]["totalEarned"] = int(d["stats"].get("totalEarned", 0)) + coins_won
         return d
 
-    atomic_update(uid, upd)
-    
+    if not atomic_update(uid, upd):
+        raise HTTPException(400, "Не удалось открыть кейс. Попробуйте ещё раз.")
+
     for r in results:
-        if r["type"] != "coin": 
-            push_drop(nick, r["item"]["name"], r["item"]["img"], r["item"]["price"], 'case', uid)
+        if r["type"] != "coin":
+            push_drop(nick, r["item"]["name"], r["item"]["img"], r["item"]["price"], "case", uid)
 
     new_data = get_user_data(uid)
-    return {"ok": True, "results": results, "balance": new_data["balance"], "inventory": new_data["inventory"], "lastFree": new_data.get("lastFree", 0), "lastUser": new_data.get("lastUser", 0)}
+    return {
+        "ok": True,
+        "results": results,
+        "balance": new_data["balance"],
+        "inventory": new_data["inventory"],
+        "lastFree": new_data.get("lastFree", 0),
+        "lastUser": new_data.get("lastUser", 0),
+    }
+
 
 @app.post("/api/sell_item")
 async def api_sell_item(request: Request, user=Depends(current_user)):
     body = await request.json()
     item_uid = body.get("uid", "")
+    if not item_uid:
+        raise HTTPException(400, "Не указан предмет")
     uid = str(user["id"])
+
     def upd(d):
         inv = d.get("inventory", {})
-        if item_uid not in inv: return None
-        item = inv[item_uid]
-        del inv[item_uid]
+        if item_uid not in inv:
+            return None
+        item = inv.pop(item_uid)
         d["balance"] = int(d.get("balance", 0)) + int(item.get("price", 0))
         d["stats"]["itemsSold"] = int(d["stats"].get("itemsSold", 0)) + 1
         return d
-    result = atomic_update(uid, upd)
-    if result is None: raise HTTPException(400, "Ошибка продажи")
+
+    if not atomic_update(uid, upd):
+        raise HTTPException(400, "Ошибка продажи")
+
     data = get_user_data(uid)
     return {"ok": True, "balance": data["balance"], "inventory": data["inventory"]}
+
 
 @app.post("/api/sell_all")
 async def api_sell_all(request: Request, user=Depends(current_user)):
     uid = str(user["id"])
+
     def upd(d):
         inv = d.get("inventory", {})
+        if not inv:
+            return None
         total = sum(int(i.get("price", 0)) for i in inv.values())
         count = len(inv)
-        if count == 0: return None
         d["inventory"] = {}
         d["balance"] = int(d.get("balance", 0)) + total
         d["stats"]["itemsSold"] = int(d["stats"].get("itemsSold", 0)) + count
         return d
-    atomic_update(uid, upd)
+
+    if not atomic_update(uid, upd):
+        raise HTTPException(400, "Нечего продавать")
+
     data = get_user_data(uid)
     return {"ok": True, "balance": data["balance"], "inventory": data["inventory"]}
+
 
 @app.post("/api/upgrade")
 async def api_upgrade(request: Request, user=Depends(current_user)):
     body = await request.json()
     input_uids = body.get("input_uids", [])
     target_id = body.get("target_id", "")
+
     if not isinstance(input_uids, list) or not (1 <= len(input_uids) <= MAX_UPG_INPUTS):
-        raise HTTPException(400, "Выберите от 1 до 5 предметов")
+        raise HTTPException(400, f"Выберите от 1 до {MAX_UPG_INPUTS} предметов")
+    if len(set(input_uids)) != len(input_uids):
+        raise HTTPException(400, "Дубликаты предметов")
+
     target = ITEMS_BY_ID.get(target_id)
-    if not target: raise HTTPException(400, "Неизвестная цель")
+    if not target:
+        raise HTTPException(400, "Неизвестная цель")
 
     uid = str(user["id"])
     data = get_user_data(uid)
     inv = data.get("inventory", {})
+
     total = 0
     for iuid in input_uids:
-        if iuid not in inv: raise HTTPException(400, "Предмет не найден")
+        if iuid not in inv:
+            raise HTTPException(400, "Предмет не найден в инвентаре")
         total += int(inv[iuid]["price"])
+
+    if total <= 0:
+        raise HTTPException(400, "Сумма предметов некорректна")
+    if int(target["price"]) <= total:
+        raise HTTPException(400, "Цель должна стоить больше суммы")
+
     chance = min(MAX_UPGRADE_CHANCE, (total / int(target["price"])) * 100)
     success = random.random() * 100 <= chance
 
     def upd(d):
         inv2 = d.get("inventory", {})
+        # атомарная проверка всех предметов
         for iuid in input_uids:
-            if iuid not in inv2: return None
-        for iuid in input_uids: del inv2[iuid]
+            if iuid not in inv2:
+                return None
+        for iuid in input_uids:
+            del inv2[iuid]
+
         if success:
             new_item = make_inv_item(target)
             inv2[new_item["uid"]] = new_item
@@ -410,139 +591,153 @@ async def api_upgrade(request: Request, user=Depends(current_user)):
         else:
             d["stats"]["upgradeFail"] = int(d["stats"].get("upgradeFail", 0)) + 1
         return d
-    
-    atomic_update(uid, upd)
-    if success: 
-        push_drop(user.get("first_name") or "Player", target["name"], target["img"], target["price"], 'upgrade', uid)
+
+    if not atomic_update(uid, upd):
+        raise HTTPException(400, "Ошибка апгрейда")
+
+    if success:
+        push_drop(user.get("first_name") or "Player", target["name"], target["img"], target["price"], "upgrade", uid)
 
     new_data = get_user_data(uid)
-    return {"ok": True, "success": success, "chance": chance, "target": target, "balance": new_data["balance"], "inventory": new_data["inventory"]}
+    return {
+        "ok": True,
+        "success": success,
+        "chance": chance,
+        "target": target,
+        "balance": new_data["balance"],
+        "inventory": new_data["inventory"],
+    }
+
 
 @app.post("/api/coinflip")
 async def api_coinflip(request: Request, user=Depends(current_user)):
     body = await request.json()
     bet = int(body.get("bet", 0))
     choice = body.get("choice", "heads")
-    
-    if bet <= 0: raise HTTPException(400, "Ставка должна быть больше 0")
-    
+
+    if choice not in ("heads", "tails"):
+        raise HTTPException(400, "Неверный выбор")
+    if bet <= 0:
+        raise HTTPException(400, "Ставка должна быть больше 0")
+    if bet > MAX_COINFLIP_BET:
+        raise HTTPException(400, "Слишком большая ставка")
+
     uid = str(user["id"])
     data = get_user_data(uid)
-    if int(data.get("balance", 0)) < bet: raise HTTPException(400, "Недостаточно монет")
-    
+    if int(data.get("balance", 0)) < bet:
+        raise HTTPException(400, "Недостаточно монет")
+
     won = random.random() < 0.5
     coin_result = choice if won else ("tails" if choice == "heads" else "heads")
-    
+
     def upd(d):
         bal = int(d.get("balance", 0))
-        if bal < bet: return None
+        if bal < bet:
+            return None
         d["balance"] = bal - bet
-        if won: d["balance"] += bet * 2
+        if won:
+            d["balance"] += bet * 2
         return d
-        
-    atomic_update(uid, upd)
+
+    if not atomic_update(uid, upd):
+        raise HTTPException(400, "Ошибка ставки")
+
     new_data = get_user_data(uid)
     return {"ok": True, "won": won, "result": coin_result, "balance": new_data["balance"]}
+
 
 @app.post("/api/claim_promo")
 async def api_claim_promo(request: Request, user=Depends(current_user)):
     body = await request.json()
     code = str(body.get("code", "")).strip().upper()
-    if not code: raise HTTPException(400, "Введите код")
-    
+    if not code:
+        raise HTTPException(400, "Введите код")
+    if not FIREBASE_OK:
+        raise HTTPException(503, "База данных недоступна")
+
     uid = str(user["id"])
     data = get_user_data(uid)
     if code in data.get("used_promos", {}):
         raise HTTPException(400, "Вы уже использовали этот промокод")
-    
-    if not FIREBASE_OK: raise HTTPException(503, "База данных недоступна")
-        
+
     promo_ref = fbdb.reference(f"promos/{code}")
     promo_data = promo_ref.get()
-    if not promo_data: raise HTTPException(404, "Промокод не найден")
-        
+    if not promo_data:
+        raise HTTPException(404, "Промокод не найден")
+
     max_uses = int(promo_data.get("max_uses", 0))
     used = int(promo_data.get("used", 0))
     reward = int(promo_data.get("reward", 0))
-    
-    if used >= max_uses: raise HTTPException(400, "Промокод больше не активен")
-        
+
+    if used >= max_uses:
+        raise HTTPException(400, "Промокод больше не активен")
+
+    # атомарное списание использования
     def tx_promo(current):
-        if current is None: return None
-        if int(current.get("used", 0)) >= int(current.get("max_uses", 0)): return None
+        if current is None:
+            return None
+        if int(current.get("used", 0)) >= int(current.get("max_uses", 0)):
+            return None
         current["used"] = int(current.get("used", 0)) + 1
         return current
-        
-    promo_ref.transaction(tx_promo)
-    
+
+    try:
+        promo_ref.transaction(tx_promo)
+    except Exception:
+        raise HTTPException(400, "Не удалось активировать промокод")
+
     def upd(d):
         d["used_promos"] = d.get("used_promos", {})
         d["used_promos"][code] = True
         d["balance"] = int(d.get("balance", 0)) + reward
         d["stats"]["totalEarned"] = int(d["stats"].get("totalEarned", 0)) + reward
         return d
-        
-    atomic_update(uid, upd)
+
+    if not atomic_update(uid, upd):
+        raise HTTPException(400, "Ошибка активации")
+
     new_data = get_user_data(uid)
-    
     return {"ok": True, "reward": reward, "balance": new_data["balance"]}
 
-@app.post("/api/choose_theme")
-async def api_choose_theme(request: Request, user=Depends(current_user)):
-    body = await request.json()
-    theme_id = body.get("theme_id", "")
-    if theme_id not in THEMES: raise HTTPException(400, "Неизвестная тема")
-    uid = str(user["id"])
-    price = int(THEMES[theme_id]["price"])
-    def upd(d):
-        owned = d.get("themes", {"dark": True})
-        if not owned.get(theme_id):
-            if int(d.get("balance", 0)) < price: return None
-            d["balance"] = int(d.get("balance", 0)) - price
-            owned[theme_id] = True
-            d["themes"] = owned
-        d["theme"] = theme_id
-        return d
-    atomic_update(uid, upd)
-    new_data = get_user_data(uid)
-    return {"ok": True, "theme": new_data["theme"], "themes": new_data["themes"], "balance": new_data["balance"]}
 
 @app.post("/api/claim_referral")
 async def api_claim_referral(request: Request, user=Depends(current_user)):
     body = await request.json()
     ref_id = str(body.get("ref_id", "")).strip()
-    if not ref_id or ref_id == str(user["id"]): raise HTTPException(400, "Неверная ссылка")
-    
+    if not ref_id or ref_id == str(user["id"]):
+        raise HTTPException(400, "Неверная ссылка")
+
     uid = str(user["id"])
-    is_new_user = False
-    
+    state = {"ok": False}
+
     def upd(d):
-        nonlocal is_new_user
-        if d.get("stats", {}).get("casesOpened", 0) > 0: return None
-        if d.get("refUsed"): return None
+        if d.get("refUsed"):
+            return None
+        if d.get("stats", {}).get("casesOpened", 0) > 0:
+            return None
         d["refUsed"] = True
-        d["balance"] = int(d.get("balance", 0)) + 2 
+        d["balance"] = int(d.get("balance", 0)) + 2
         d["stats"]["totalEarned"] = int(d["stats"].get("totalEarned", 0)) + 2
-        is_new_user = True
+        state["ok"] = True
         return d
-        
-    atomic_update(uid, upd)
-    if not is_new_user: raise HTTPException(400, "Вы уже играли или рефка уже использована")
-        
+
+    if not atomic_update(uid, upd) or not state["ok"]:
+        raise HTTPException(400, "Рефка уже использована или вы уже играли")
+
     def upd2(d):
         d["referrals"] = int(d.get("referrals", 0)) + 1
         d["balance"] = int(d.get("balance", 0)) + 4
         d["stats"]["totalEarned"] = int(d["stats"].get("totalEarned", 0)) + 4
         return d
+
     atomic_update(ref_id, upd2)
-    
     return {"ok": True, "bonus": 2}
+
 
 @app.get("/api/user_profile/{target_uid}")
 async def api_user_profile(target_uid: str, user=Depends(current_user)):
-    if target_uid == "undefined" or not target_uid:
+    if not target_uid or target_uid == "undefined":
         raise HTTPException(400, "Invalid user ID")
-        
     data = get_user_data(target_uid)
     return {
         "uid": target_uid,
@@ -551,39 +746,48 @@ async def api_user_profile(target_uid: str, user=Depends(current_user)):
         "stats": data.get("stats", {}),
     }
 
+
 @app.post("/api/create-invoice-link")
 async def create_invoice(request: Request, user=Depends(current_user)):
-    if not bot: raise HTTPException(503, "bot off")
+    if not bot:
+        raise HTTPException(503, "bot off")
     body = await request.json()
     pack_id = body.get("package_id")
     pack = STARS_PACKAGES.get(pack_id)
-    if not pack: raise HTTPException(400, "unknown package")
-    
+    if not pack:
+        raise HTTPException(400, "unknown package")
+
     payload = json.dumps({"package_id": pack_id, "coins": pack["coins"]})
     try:
         link = await bot.create_invoice_link(
             title=f"{pack['coins']} монет",
-            description=f"Пакет «{pack_id}» для Brainrots Funny",
+            description=f"Пакет монет для Brainrots Funny",
             payload=payload,
             currency="XTR",
             prices=[LabeledPrice(label=f"{pack['coins']} coins", amount=pack["stars"])],
-            provider_token=""
+            provider_token="",
         )
     except Exception as e:
         log.exception("create_invoice error")
         raise HTTPException(500, str(e))
     return {"invoice_link": link, "stars": pack["stars"], "coins": pack["coins"]}
 
+
 @app.post("/webhook/tg")
 async def tg_webhook(request: Request):
-    if not bot: raise HTTPException(503)
-    try: data = await request.json()
-    except: raise HTTPException(400)
+    if not bot:
+        raise HTTPException(503)
+    try:
+        data = await request.json()
+    except Exception:
+        raise HTTPException(400)
     try:
         update = types.Update.model_validate(data, context={"bot": bot})
         await dp.feed_update(bot, update)
-    except Exception: pass
+    except Exception:
+        log.exception("webhook feed error")
     return {"ok": True}
+
 
 if __name__ == "__main__":
     import uvicorn
