@@ -33,35 +33,36 @@ RARITIES = {
 }
 
 ITEMS = [
-    {"id":"trios",    "name":"Los Trios",           "price":4,     "rarity":"common",    "img":"assets/brainrots/los_trios.png"},
-    {"id":"rot67",    "name":"67",                  "price":5,     "rarity":"common",    "img":"assets/brainrots/67.png"},
-    {"id":"hammy",    "name":"Spinny Hammy",        "price":5,     "rarity":"uncommon",  "img":"assets/brainrots/spinny_hammy.png"},
-    {"id":"candyslap","name":"Candy Slap",          "price":7,     "rarity":"uncommon",  "img":"assets/brainrots/CandySlap.png"},
-    {"id":"noobinis", "name":"Los Noobinis",        "price":7,     "rarity":"rare",      "img":"assets/brainrots/Los_Noobinis.png"},
-    {"id":"tangtang", "name":"Tang Tang Keletang",  "price":8,     "rarity":"rare",      "img":"assets/brainrots/TangTangKeletang.png"},
-    {"id":"lagrande", "name":"La Grande",           "price":9,     "rarity":"epic",      "img":"assets/brainrots/La_Grande_Combinasion.png"},
-    {"id":"tictac",   "name":"Tictac Sahur",        "price":12,    "rarity":"epic",      "img":"assets/brainrots/Tictac-Sahur.png"},
-    {"id":"bacuru",   "name":"Bacuru and Egguru",   "price":12,    "rarity":"epic",      "img":"assets/brainrots/Bacuru_and_Egguru.png"},
-    {"id":"los67",    "name":"Los 67",              "price":12,    "rarity":"epic",      "img":"assets/brainrots/Los_67.png"},
-    {"id":"yinyang",  "name":"Yin Yang Slap",       "price":20,    "rarity":"legendary", "img":"assets/brainrots/YinYangSlap.png"},
-    {"id":"skibidi",  "name":"Skibidi Toilet",      "price":13154, "rarity":"legendary", "img":"assets/brainrots/skibidi_toilet.png"},
+    {"id":"trios",    "name":"Los Trios",           "price":4,     "rarity":"common",    "img":"assets/brainrots/los_trios.png", "emoji":"🥉"},
+    {"id":"rot67",    "name":"67",                  "price":5,     "rarity":"common",    "img":"assets/brainrots/67.png", "emoji":"6️⃣7️⃣"},
+    {"id":"hammy",    "name":"Spinny Hammy",        "price":5,     "rarity":"uncommon",  "img":"assets/brainrots/spinny_hammy.png", "emoji":"🐹"},
+    {"id":"candyslap","name":"Candy Slap",          "price":7,     "rarity":"uncommon",  "img":"assets/brainrots/CandySlap.png", "emoji":"🍬"},
+    {"id":"noobinis", "name":"Los Noobinis",        "price":7,     "rarity":"rare",      "img":"assets/brainrots/Los_Noobinis.png", "emoji":"🤡"},
+    {"id":"tangtang", "name":"Tang Tang Keletang",  "price":8,     "rarity":"rare",      "img":"assets/brainrots/TangTangKeletang.png", "emoji":"🦴"},
+    {"id":"lagrande", "name":"La Grande",           "price":9,     "rarity":"epic",      "img":"assets/brainrots/La_Grande_Combinasion.png", "emoji":"🇫🇷"},
+    {"id":"tictac",   "name":"Tictac Sahur",        "price":12,    "rarity":"epic",      "img":"assets/brainrots/Tictac-Sahur.png", "emoji":"🕒"},
+    {"id":"bacuru",   "name":"Bacuru and Egguru",   "price":12,    "rarity":"epic",      "img":"assets/brainrots/Bacuru_and_Egguru.png", "emoji":"🥚"},
+    {"id":"los67",    "name":"Los 67",              "price":12,    "rarity":"epic",      "img":"assets/brainrots/Los_67.png", "emoji":"🎲"},
+    {"id":"yinyang",  "name":"Yin Yang Slap",       "price":20,    "rarity":"legendary", "img":"assets/brainrots/YinYangSlap.png", "emoji":"☯️"},
+    {"id":"skibidi",  "name":"Skibidi Toilet",      "price":13154, "rarity":"legendary", "img":"assets/brainrots/skibidi_toilet.png", "emoji":"🚽"},
 ]
 ITEMS_BY_ID = {i["id"]: i for i in ITEMS}
 
-CASE_PRICES = {"free": 0, "user": 0, "base": 9, "bro": 25}
-CASE_TITLES = {"free": "Бесплатный", "user": "Кейс за Юз", "base": "Начальный", "bro": "Про Бро"}
+CASE_PRICES = {"free": 0, "user": 0, "base": 9, "bro": 25, "allin": 29}
+CASE_TITLES = {"free": "Ежедневный", "user": "Кейс за Юз", "base": "Начальный", "bro": "Про Бро", "allin": "ALL IN"}
 CASE_IMAGES = {
-    "free": "assets/cases/free.png",
-    "user": "assets/cases/user.png", 
-    "base": "assets/cases/base.png",
-    "bro":  "assets/cases/bro.png",
+    "free": {"img": "assets/cases/free.png", "emoji": "🎁"},
+    "user": {"img": "assets/cases/user.png", "emoji": "👤"},
+    "base": {"img": "assets/cases/base.png", "emoji": "📦"},
+    "bro":  {"img": "assets/cases/bro.png", "emoji": "💎"},
+    "allin": {"img": "assets/cases/allin.png", "emoji": "🎰"},
 }
 
 CASE_LOOT = {
     "free": {
-        "coinChance": 10,
-        "coins": [{"amount":1,"weight":100}],
-        "items": [{"id":"trios","weight":70},{"id":"rot67","weight":30}],
+        "coinChance": 70,
+        "coins": [{"amount":1,"weight":50}, {"amount":2,"weight":30}, {"amount":3,"weight":20}],
+        "items": [{"id":"trios","weight":50},{"id":"rot67","weight":50}],
     },
     "user": {
         "coinChance": 30,
@@ -75,6 +76,10 @@ CASE_LOOT = {
     "bro": {
         "coinChance": 0, "coins": [],
         "items": [{"id":"hammy","weight":25},{"id":"noobinis","weight":20},{"id":"tangtang","weight":18},{"id":"tictac","weight":15},{"id":"bacuru","weight":10},{"id":"los67","weight":8},{"id":"yinyang","weight":4}],
+    },
+    "allin": {
+        "coinChance": 0, "coins": [],
+        "items": [{"id":"lagrande","weight":99},{"id":"skibidi","weight":1}],
     },
 }
 
