@@ -44,103 +44,73 @@
 
         /* ================= ВЕРХНЯЯ ПАНЕЛЬ ================= */
         .top-bar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            display: flex; align-items: center; justify-content: space-between;
             padding: 15px 20px;
             background: rgba(10, 11, 16, 0.85);
             backdrop-filter: blur(10px);
-            position: sticky;
-            top: 0;
-            z-index: 90;
+            position: sticky; top: 0; z-index: 90;
             border-bottom: 1px solid var(--border);
         }
 
-        .menu-btn {
-            background: none; border: none; color: var(--text-main);
-            font-size: 24px; cursor: pointer; transition: 0.2s;
-            padding: 5px;
-        }
+        .menu-btn { background: none; border: none; color: var(--text-main); font-size: 24px; cursor: pointer; padding: 5px; }
         .menu-btn:hover { color: var(--accent-gold); }
 
         .header-profile {
             display: flex; align-items: center; gap: 10px;
             background: rgba(255,255,255,0.05);
             padding: 5px 15px 5px 5px;
-            border-radius: 30px;
-            cursor: pointer;
-            border: 1px solid var(--border);
+            border-radius: 30px; cursor: pointer; border: 1px solid var(--border);
             max-width: 60%;
         }
         .header-avatar {
-            width: 32px; height: 32px; border-radius: 50%;
-            background: var(--accent-blue);
+            width: 32px; height: 32px; border-radius: 50%; background: var(--accent-blue);
             display: flex; align-items: center; justify-content: center;
             font-weight: bold; overflow: hidden; flex-shrink: 0;
         }
         .header-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .header-name { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .header-balance {
-            font-size: 14px; font-weight: 900; color: var(--accent-gold);
-            display: flex; align-items: center; gap: 4px; flex-shrink: 0;
-        }
+        .header-balance { font-size: 14px; font-weight: 900; color: var(--accent-gold); display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
 
         /* ================= БОКОВОЕ МЕНЮ ================= */
         .sidebar-overlay {
             position: fixed; inset: 0; background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(4px); z-index: 100; opacity: 0; pointer-events: none;
-            transition: opacity 0.3s ease;
+            backdrop-filter: blur(4px); z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
         }
         .sidebar-overlay.active { opacity: 1; pointer-events: auto; }
 
         .sidebar {
             position: fixed; top: 0; left: 0; width: 80%; max-width: 320px; height: 100%;
-            background: #11131c; z-index: 101;
-            transform: translateX(-100%);
+            background: #11131c; z-index: 101; transform: translateX(-100%);
             transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             display: flex; flex-direction: column;
-            box-shadow: 5px 0 30px rgba(0,0,0,0.8);
-            border-right: 1px solid var(--border);
+            box-shadow: 5px 0 30px rgba(0,0,0,0.8); border-right: 1px solid var(--border);
         }
         .sidebar.active { transform: translateX(0); }
 
         .sidebar-header {
-            padding: 25px 20px;
-            background: linear-gradient(180deg, rgba(59, 130, 246, 0.15) 0%, transparent 100%);
-            display: flex; align-items: center; gap: 15px;
-            border-bottom: 1px solid var(--border);
-            cursor: pointer;
-            transition: background 0.2s;
+            padding: 25px 20px; background: linear-gradient(180deg, rgba(59, 130, 246, 0.15) 0%, transparent 100%);
+            display: flex; align-items: center; gap: 15px; border-bottom: 1px solid var(--border);
+            cursor: pointer; transition: background 0.2s;
         }
         .sidebar-header:hover { background: rgba(255,255,255,0.05); }
         
         .sidebar-avatar {
-            width: 55px; height: 55px; border-radius: 50%;
-            background: var(--accent-blue); border: 3px solid var(--accent-gold);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 22px; font-weight: bold; overflow: hidden;
-            box-shadow: var(--glow-gold); flex-shrink: 0;
+            width: 55px; height: 55px; border-radius: 50%; background: var(--accent-blue);
+            border: 3px solid var(--accent-gold); display: flex; align-items: center; justify-content: center;
+            font-size: 22px; font-weight: bold; overflow: hidden; box-shadow: var(--glow-gold); flex-shrink: 0;
         }
         .sidebar-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .sidebar-user-info { display: flex; flex-direction: column; overflow: hidden; }
         .sidebar-name { font-size: 18px; font-weight: 900; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .sidebar-bal {
-            font-size: 20px; font-weight: 900; color: var(--accent-gold);
-            display: flex; align-items: center; gap: 5px; margin-top: 2px;
-        }
+        .sidebar-bal { font-size: 20px; font-weight: 900; color: var(--accent-gold); display: flex; align-items: center; gap: 5px; margin-top: 2px; }
 
         .sidebar-nav { padding: 15px 10px; flex: 1; display: flex; flex-direction: column; gap: 8px; }
         .nav-item {
-            display: flex; align-items: center; gap: 15px;
-            padding: 14px 20px; border-radius: 12px;
-            color: var(--text-muted); font-size: 15px; font-weight: 700;
-            cursor: pointer; transition: 0.2s; border: 1px solid transparent;
+            display: flex; align-items: center; gap: 15px; padding: 14px 20px; border-radius: 12px;
+            color: var(--text-muted); font-size: 15px; font-weight: 700; cursor: pointer; transition: 0.2s; border: 1px solid transparent;
         }
         .nav-item i { font-size: 18px; width: 25px; text-align: center; }
-        .nav-item:hover, .nav-item.active {
-            background: rgba(255,255,255,0.05); color: var(--text-main);
-            border-color: rgba(255,255,255,0.1);
-        }
+        .nav-item:hover, .nav-item.active { background: rgba(255,255,255,0.05); color: var(--text-main); border-color: rgba(255,255,255,0.1); }
         .nav-item.active { border-left: 4px solid var(--accent-blue); background: linear-gradient(90deg, rgba(59,130,246,0.1), transparent); }
 
         /* ================= СЕКЦИИ ================= */
@@ -152,193 +122,90 @@
 
         /* ================= ПОЛНОЭКРАННЫЙ ЭКРАН КЕЙСА ================= */
         #section-case-opening { display: none; flex-direction: column; min-height: calc(100vh - 70px); padding-bottom: 20px; }
-        #section-case-opening.active { display: flex; } /* ИСПРАВЛЕНИЕ БАГА С ОТОБРАЖЕНИЕМ */
+        #section-case-opening.active { display: flex; }
         
-        .case-header {
-            display: flex; align-items: center; gap: 15px; margin-bottom: 20px;
-        }
+        .case-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
         .back-btn {
-            background: rgba(255,255,255,0.05); border: 1px solid var(--border);
-            color: var(--text-main); padding: 10px 15px; border-radius: 12px;
-            font-size: 16px; cursor: pointer; transition: 0.2s;
+            background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-main);
+            padding: 10px 15px; border-radius: 12px; font-size: 16px; cursor: pointer; transition: 0.2s;
             display: flex; align-items: center; gap: 8px;
         }
         .back-btn:hover { background: rgba(255,255,255,0.1); color: var(--accent-gold); }
         
-        .case-open-visual {
-            width: 100%; height: 250px; position: relative;
-            display: flex; align-items: center; justify-content: center;
-            margin-bottom: 20px;
-        }
-        .case-open-img {
-            max-width: 180px; max-height: 180px; object-fit: contain;
-            filter: drop-shadow(0 15px 30px rgba(0,0,0,0.6));
-            transition: opacity 0.3s, transform 0.3s;
-        }
+        .case-open-visual { width: 100%; height: 250px; position: relative; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
+        .case-open-img { max-width: 180px; max-height: 180px; object-fit: contain; filter: drop-shadow(0 15px 30px rgba(0,0,0,0.6)); transition: opacity 0.3s, transform 0.3s; }
         
         .roulette-full-wrap {
-            position: absolute; inset: 0; background: #0d0f14;
-            border: 2px solid var(--border); border-radius: 20px; overflow: hidden;
-            opacity: 0; pointer-events: none; transition: opacity 0.3s;
+            position: absolute; inset: 0; background: #0d0f14; border: 2px solid var(--border);
+            border-radius: 20px; overflow: hidden; opacity: 0; pointer-events: none; transition: opacity 0.3s;
             display: flex; align-items: center;
         }
         .roulette-full-wrap.active { opacity: 1; pointer-events: auto; }
         
-        .roulette-pointer-full {
-            position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-            width: 6px; height: 100%; background: var(--accent-gold);
-            z-index: 10; box-shadow: 0 0 15px var(--accent-gold);
-        }
-        .roulette-track-full {
-            display: flex; gap: 10px; padding: 10px; position: absolute; left: 0;
-            height: 100%; align-items: center; will-change: transform;
-        }
+        .roulette-pointer-full { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 6px; height: 100%; background: var(--accent-gold); z-index: 10; box-shadow: 0 0 15px var(--accent-gold); }
+        .roulette-track-full { display: flex; gap: 10px; padding: 10px; position: absolute; left: 0; height: 100%; align-items: center; will-change: transform; }
         .roulette-item-full {
-            width: 120px; height: 120px; background: #1c1f2b;
-            border-radius: 15px; border: 2px solid var(--border);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            flex-shrink: 0;
+            width: 120px; height: 120px; background: #1c1f2b; border-radius: 15px; border: 2px solid var(--border);
+            display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0;
         }
         .roulette-item-full img { width: 70px; height: 70px; object-fit: contain; }
         
-        .open-controls {
-            display: flex; flex-direction: column; gap: 15px; align-items: center;
-            margin-bottom: 30px;
-        }
-        .mult-selector {
-            display: flex; gap: 10px; background: rgba(255,255,255,0.03);
-            padding: 5px; border-radius: 15px; border: 1px solid var(--border);
-        }
-        .mult-btn {
-            width: 60px; padding: 10px; background: transparent; border: none;
-            color: var(--text-muted); border-radius: 10px; font-weight: 900;
-            font-size: 16px; cursor: pointer; transition: 0.2s;
-        }
+        .open-controls { display: flex; flex-direction: column; gap: 15px; align-items: center; margin-bottom: 30px; }
+        .mult-selector { display: flex; gap: 10px; background: rgba(255,255,255,0.03); padding: 5px; border-radius: 15px; border: 1px solid var(--border); }
+        .mult-btn { width: 60px; padding: 10px; background: transparent; border: none; color: var(--text-muted); border-radius: 10px; font-weight: 900; font-size: 16px; cursor: pointer; transition: 0.2s; }
         .mult-btn.active { background: var(--accent-blue); color: #fff; box-shadow: var(--glow-blue); }
         
         .btn-open {
             width: 100%; max-width: 400px; padding: 18px; border-radius: 15px;
-            background: linear-gradient(135deg, var(--accent-gold), #b45309);
-            color: #000; font-size: 18px; font-weight: 900; border: none;
-            cursor: pointer; box-shadow: 0 5px 20px rgba(251, 191, 36, 0.4);
-            transition: transform 0.2s;
+            background: linear-gradient(135deg, var(--accent-gold), #b45309); color: #000;
+            font-size: 18px; font-weight: 900; border: none; cursor: pointer; box-shadow: 0 5px 20px rgba(251, 191, 36, 0.4); transition: transform 0.2s;
         }
         .btn-open:active { transform: scale(0.98); }
         .btn-open:disabled { background: #272a35; color: #555; box-shadow: none; cursor: not-allowed; }
         
-        .loot-preview-box {
-            background: var(--bg-card); border: 1px solid var(--border);
-            border-radius: 20px; padding: 15px; margin-top: auto;
-        }
-        .loot-preview-title {
-            font-size: 14px; font-weight: 800; color: var(--text-muted);
-            margin-bottom: 15px; text-align: center; text-transform: uppercase;
-        }
-        .loot-grid-full {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
-            gap: 10px;
-        }
-        .loot-card-full {
-            background: #1c1f2b; border: 1px solid var(--border); border-radius: 12px;
-            padding: 10px 5px; text-align: center; position: relative;
-        }
-        .loot-card-full img { width: 50px; height: 50px; object-fit: contain; margin-bottom: 5px; }
+        .loot-preview-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 15px; margin-top: auto; }
+        .loot-preview-title { font-size: 14px; font-weight: 800; color: var(--text-muted); margin-bottom: 15px; text-align: center; text-transform: uppercase; }
+        .loot-grid-full { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 10px; }
+        .loot-card-full { background: #1c1f2b; border: 1px solid var(--border); border-radius: 12px; padding: 10px 5px; text-align: center; position: relative; }
+        .loot-card-full img { width: 45px; height: 45px; object-fit: contain; margin-bottom: 5px; }
         .loot-card-full .name { font-size: 10px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .loot-card-full .chance {
-            font-size: 11px; color: var(--accent-gold); font-weight: 900; margin-top: 4px;
-        }
         .loot-card-full .coin-icon { font-size: 30px; color: var(--accent-gold); margin-bottom: 5px; }
 
         /* ================= КЕЙСЫ (ГЛАВНАЯ) ================= */
-        .top-drop-container {
-            background: linear-gradient(90deg, rgba(251, 191, 36, 0.15), rgba(20, 22, 30, 1));
-            border: 1px solid var(--accent-gold); border-radius: 15px;
-            padding: 12px; margin-bottom: 15px; display: flex; align-items: center; gap: 12px;
-            box-shadow: 0 0 15px rgba(251, 191, 36, 0.2); cursor: pointer; position: relative;
-        }
-        .top-drop-label {
-            position: absolute; top: -8px; left: 15px; background: var(--accent-gold);
-            color: #000; font-size: 9px; font-weight: 900; padding: 2px 8px;
-            border-radius: 8px; text-transform: uppercase; letter-spacing: 1px;
-        }
-        .top-drop-img { width: 50px; height: 50px; object-fit: contain; }
-        .top-drop-info { flex: 1; }
-        .top-drop-name { font-size: 14px; font-weight: 800; }
-        .top-drop-price { font-size: 12px; color: var(--accent-gold); font-weight: 900; }
-
-        .live-feed-container {
-            background: var(--bg-card); border: 1px solid var(--border); border-radius: 15px;
-            padding: 10px; display: flex; gap: 8px; overflow-x: auto; margin-bottom: 20px;
-            scrollbar-width: none;
-        }
-        .live-feed-container::-webkit-scrollbar { display: none; }
-        
-        .feed-item {
-            min-width: 70px; height: 90px; background: #1c1f2b;
-            border-radius: 10px; border: 1px solid var(--border);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            position: relative; cursor: pointer; flex-shrink: 0;
-            transition: transform 0.2s;
-        }
-        .feed-item:hover { transform: translateY(-3px); }
-        .feed-item img { width: 40px; height: 40px; object-fit: contain; }
-        .feed-item-price { font-size: 10px; color: var(--accent-gold); font-weight: 900; margin-top: 5px; }
-        
-        .feed-hover {
-            position: absolute; inset: 0; background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(4px); border-radius: 10px;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            opacity: 0; transition: opacity 0.2s; padding: 5px; text-align: center;
-        }
-        .feed-item:hover .feed-hover { opacity: 1; }
-        .feed-hover i { font-size: 18px; margin-bottom: 4px; }
-        .feed-hover span { font-size: 9px; font-weight: 800; text-transform: uppercase; color: var(--text-main); }
+        .case-category { margin-bottom: 25px; }
+        .case-category-title { font-size: 16px; font-weight: 900; color: var(--text-muted); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 1px; }
+        .case-category-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
         .cases-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
         .case-card {
-            background: var(--bg-card); border-radius: 15px; padding: 15px 10px;
-            border: 1px solid var(--border); text-align: center; cursor: pointer;
-            position: relative; transition: 0.2s; overflow: hidden;
+            background: var(--bg-card); border-radius: 15px; padding: 15px 10px; border: 1px solid var(--border);
+            text-align: center; cursor: pointer; position: relative; transition: 0.2s; overflow: hidden;
         }
         .case-card:hover { border-color: var(--accent-blue); transform: translateY(-2px); box-shadow: var(--glow-blue); }
-        .case-img { width: 80px; height: 80px; object-fit: contain; margin-bottom: 10px; }
+        .case-img-wrap { height: 80px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; }
+        .case-img-wrap img { width: 80px; height: 80px; object-fit: contain; }
+        .case-img-wrap .emoji-fallback { font-size: 50px; line-height: 80px; }
+        
         .case-title { font-size: 14px; font-weight: 800; margin-bottom: 4px; }
         .case-price { font-size: 13px; color: var(--accent-gold); font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 4px; }
         .case-card.locked { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
 
         /* ================= ПРОФИЛЬ ================= */
         .profile-banner {
-            background: linear-gradient(135deg, #1e2235, #11131c);
-            border: 1px solid var(--border); border-radius: 20px;
-            padding: 25px 20px; text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            margin-bottom: 20px; position: relative; overflow: hidden;
+            background: linear-gradient(135deg, #1e2235, #11131c); border: 1px solid var(--border); border-radius: 20px;
+            padding: 25px 20px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-bottom: 20px; position: relative; overflow: hidden;
         }
-        .profile-banner::before {
-            content: ''; position: absolute; top: -50px; left: 50%; transform: translateX(-50%);
-            width: 200px; height: 200px; background: var(--accent-blue);
-            filter: blur(80px); opacity: 0.3; border-radius: 50%;
-        }
+        .profile-banner::before { content: ''; position: absolute; top: -50px; left: 50%; transform: translateX(-50%); width: 200px; height: 200px; background: var(--accent-blue); filter: blur(80px); opacity: 0.3; border-radius: 50%; }
         .profile-avatar-big {
-            width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 12px;
-            background: var(--accent-blue); border: 4px solid var(--accent-gold);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 32px; font-weight: bold; box-shadow: var(--glow-gold);
-            position: relative; z-index: 2; overflow: hidden;
+            width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 12px; background: var(--accent-blue); border: 4px solid var(--accent-gold);
+            display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: bold; box-shadow: var(--glow-gold); position: relative; z-index: 2; overflow: hidden;
         }
         .profile-avatar-big img { width: 100%; height: 100%; object-fit: cover; }
         .profile-name-big { font-size: 22px; font-weight: 900; position: relative; z-index: 2; }
-        .profile-bal-big {
-            font-size: 32px; font-weight: 900; color: var(--accent-gold);
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-            margin-top: 8px; text-shadow: 0 0 20px rgba(251, 191, 36, 0.4); position: relative; z-index: 2;
-        }
+        .profile-bal-big { font-size: 32px; font-weight: 900; color: var(--accent-gold); display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 8px; text-shadow: 0 0 20px rgba(251, 191, 36, 0.4); position: relative; z-index: 2; }
 
         .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
-        .stat-box {
-            background: var(--bg-card); border: 1px solid var(--border);
-            border-radius: 15px; padding: 12px; text-align: center;
-        }
+        .stat-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: 15px; padding: 12px; text-align: center; }
         .stat-box__val { font-size: 18px; font-weight: 900; color: var(--text-main); }
         .stat-box__lbl { font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; margin-top: 5px; }
 
@@ -346,38 +213,75 @@
         .inv-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
         .inv-item { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 8px; text-align: center; cursor: pointer; position: relative; transition: 0.2s; }
         .inv-item img { width: 50px; height: 50px; object-fit: contain; }
+        .inv-item .emoji-fallback { font-size: 40px; line-height: 50px; }
         .inv-price { font-size: 11px; color: var(--accent-gold); font-weight: 900; margin-top: 4px; }
         .sell-btn { width: 100%; background: rgba(239, 68, 68, 0.15); color: var(--accent-red); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 6px; padding: 4px; margin-top: 5px; font-size: 9px; font-weight: 800; cursor: pointer; }
 
-        /* ================= АПГРЕЙД ================= */
-        .upg-container { background: var(--bg-card); border: 1px solid var(--border); border-radius: 15px; padding: 15px; }
+        /* ================= АПГРЕЙД (КЛАССИЧЕСКОЕ КОЛЕСО) ================= */
+        .upg-container { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 20px 15px; }
         
-        .upg-slots-big {
+        /* Колесо */
+        .upg-wheel-section {
+            position: relative;
+            width: 260px; height: 260px;
+            margin: 0 auto 20px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .upg-wheel-pointer {
+            position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+            width: 0; height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 25px solid var(--accent-gold);
+            z-index: 10;
+            filter: drop-shadow(0 0 8px gold);
+        }
+        
+        .upg-wheel-disc {
+            width: 100%; height: 100%;
+            border-radius: 50%;
+            border: 4px solid var(--accent-gold);
+            box-shadow: 0 0 30px rgba(251,191,36,0.3), inset 0 0 20px rgba(0,0,0,0.8);
+            position: relative;
+            overflow: hidden;
+            background: #0d0f14;
+            transition: transform 4s cubic-bezier(0.1, 1, 0.1, 1);
+        }
+        
+        /* Сектора создаются через conic-gradient в JS */
+        
+        .upg-wheel-center {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 80px; height: 80px; border-radius: 50%;
+            background: #1c1f2b; border: 3px solid var(--accent-gold);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 5; box-shadow: 0 0 20px rgba(0,0,0,0.8);
+        }
+        .upg-wheel-center .title { font-size: 9px; color: var(--text-muted); font-weight: 800; }
+        .upg-wheel-center .val { font-size: 20px; font-weight: 900; color: var(--accent-gold); }
+
+        /* Шанс и кнопки */
+        .upg-quick-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 15px; }
+        .upg-quick-btns .btn { padding: 10px; font-size: 13px; background: rgba(59, 130, 246, 0.1); color: var(--accent-blue); border: 1px solid rgba(59, 130, 246, 0.3); box-shadow: none; }
+        .upg-quick-btns .btn:hover { background: rgba(59, 130, 246, 0.2); }
+
+        /* Квадраты (вход/цель) */
+        .upg-slots-row { display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .upg-square-box {
+            flex: 1; aspect-ratio: 1 / 1;
             background: #0d0f14; border: 2px dashed var(--border); border-radius: 15px;
-            min-height: 100px; padding: 10px; display: flex; flex-wrap: wrap; gap: 10px;
-            justify-content: center; align-items: center; cursor: pointer; transition: 0.2s;
+            display: flex; flex-wrap: wrap; align-content: center; justify-content: center;
+            gap: 5px; padding: 10px; cursor: pointer; position: relative; overflow: hidden; transition: 0.2s;
         }
-        .upg-slots-big:hover { border-color: var(--accent-blue); }
-        .upg-slots-big .inv-item { width: 60px; height: 75px; padding: 5px; }
-        .upg-slots-big .inv-item img { width: 35px; height: 35px; }
-        .upg-slots-big .inv-price { font-size: 10px; }
+        .upg-square-box:hover { border-color: var(--accent-blue); }
+        .upg-square-box.target { border-color: var(--accent-gold); }
         
-        .upg-target-big {
-            background: #0d0f14; border: 2px dashed var(--accent-gold); border-radius: 15px;
-            min-height: 100px; padding: 10px; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;
-        }
-        .upg-target-big:hover { background: rgba(251, 191, 36, 0.05); }
-        .upg-target-big img { width: 60px; height: 60px; object-fit: contain; }
-        
-        .upg-quick-btns {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 15px 0;
-        }
-        .upg-quick-btns .btn { padding: 8px; font-size: 13px; }
-        
-        .upg-circle { width: 140px; height: 140px; margin: 0 auto 15px; position: relative; }
-        .upg-chance-text { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .upg-chance-text h2 { font-size: 24px; font-weight: 900; color: var(--accent-gold); }
+        .upg-square-box .mini-item { width: 40px; height: 40px; object-fit: contain; position: relative; }
+        .upg-square-box .mini-item .emoji-fallback { font-size: 30px; line-height: 40px; }
+        .upg-square-box .placeholder { color: var(--text-muted); font-size: 12px; font-weight: 700; text-align: center; }
+
+        .btn-upgrade-action { width: 100%; padding: 18px; border-radius: 15px; background: linear-gradient(135deg, var(--accent-gold), #b45309); color: #000; font-size: 18px; font-weight: 900; border: none; cursor: pointer; box-shadow: 0 5px 20px rgba(251, 191, 36, 0.4); }
+        .btn-upgrade-action:disabled { background: #272a35; color: #555; box-shadow: none; cursor: not-allowed; }
 
         /* ================= COINFLIP ================= */
         .coinflip-container { text-align: center; background: var(--bg-card); border: 1px solid var(--border); border-radius: 15px; padding: 20px; }
@@ -404,10 +308,8 @@
 
         /* ================= ОБЩИЕ КНОПКИ И МОДАЛКИ ================= */
         .btn {
-            width: 100%; padding: 14px; border-radius: 12px; border: none;
-            font-size: 15px; font-weight: 900; cursor: pointer; transition: 0.2s;
-            background: linear-gradient(135deg, var(--accent-blue), #1e3a8a); color: #fff;
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+            width: 100%; padding: 14px; border-radius: 12px; border: none; font-size: 15px; font-weight: 900; cursor: pointer; transition: 0.2s;
+            background: linear-gradient(135deg, var(--accent-blue), #1e3a8a); color: #fff; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
         }
         .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6); }
         .btn:disabled { background: #272a35; color: #555; box-shadow: none; cursor: not-allowed; transform: none; }
@@ -415,16 +317,14 @@
         .btn.gold:hover { box-shadow: 0 6px 20px rgba(251, 191, 36, 0.6); }
 
         .modal {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(8px); z-index: 200; display: none;
+            position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 200; display: none;
             align-items: center; justify-content: center; padding: 15px;
         }
         .modal.active { display: flex; animation: fadeIn 0.2s; }
         
         .modal-box {
-            background: var(--bg-card); border: 1px solid var(--border);
-            border-radius: 20px; width: 100%; max-width: 380px; padding: 20px;
-            position: relative; max-height: 90vh; overflow-y: auto; text-align: center;
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px;
+            width: 100%; max-width: 380px; padding: 20px; position: relative; max-height: 90vh; overflow-y: auto; text-align: center;
             box-shadow: 0 20px 50px rgba(0,0,0,0.8);
         }
         .close-modal { position: absolute; top: 12px; right: 15px; font-size: 24px; color: var(--text-muted); cursor: pointer; }
@@ -467,37 +367,70 @@
         </div>
     </div>
 
-    <!-- СЕКЦИЯ: КЕЙСЫ (ГЛАВНАЯ) -->
+    <!-- СЕКЦИЯ: КЕЙСЫ -->
     <div id="section-cases" class="section active">
-        <div id="top-drop-box" style="display:none;"></div>
-        <div class="live-feed-container" id="live-feed"></div>
-        
         <h2 class="section-title">Кейсы</h2>
-        <div class="cases-grid">
-            <div class="case-card" onclick="openCaseSection('free')">
-                <img src="assets/cases/free.png" class="case-img" onerror="this.src='https://via.placeholder.com/100/151722/ffffff?text=FREE'">
-                <div class="case-title">Бесплатный</div>
-                <div class="case-price" id="free-timer-text">БЕСПЛАТНО</div>
+        
+        <div class="case-category">
+            <div class="case-category-title">FREE CASES</div>
+            <div class="cases-grid">
+                <div class="case-card" onclick="openCaseSection('free')">
+                    <div class="case-img-wrap">
+                        <img src="assets/cases/free.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <span class="emoji-fallback" style="display:none;">🎁</span>
+                    </div>
+                    <div class="case-title">Ежедневный</div>
+                    <div class="case-price" id="free-timer-text">БЕСПЛАТНО</div>
+                </div>
+                <div class="case-card" id="user-case-card" onclick="openCaseSection('user')">
+                    <div class="case-img-wrap">
+                        <img src="assets/cases/user.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <span class="emoji-fallback" style="display:none;">👤</span>
+                    </div>
+                    <div class="case-title">Кейс за Юз</div>
+                    <div class="case-price" id="user-timer-text">ЗА ЮЗ</div>
+                </div>
             </div>
-            <div class="case-card" id="user-case-card" onclick="openCaseSection('user')">
-                <img src="assets/cases/user.png" class="case-img" onerror="this.src='https://via.placeholder.com/100/151722/ffffff?text=USER'">
-                <div class="case-title">Кейс за Юз</div>
-                <div class="case-price" id="user-timer-text">ЗА ЮЗ</div>
+        </div>
+
+        <div class="case-category">
+            <div class="case-category-title">ALL IN</div>
+            <div class="cases-grid">
+                <div class="case-card" onclick="openCaseSection('allin')">
+                    <div class="case-img-wrap">
+                        <img src="assets/cases/allin.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <span class="emoji-fallback" style="display:none;">🎰</span>
+                    </div>
+                    <div class="case-title">ALL IN</div>
+                    <div class="case-price"><i class="fa-solid fa-coins"></i> 29</div>
+                </div>
             </div>
-            <div class="case-card" onclick="openCaseSection('base')">
-                <img src="assets/cases/base.png" class="case-img" onerror="this.src='https://via.placeholder.com/100/151722/ffffff?text=BASE'">
-                <div class="case-title">Начальный</div>
-                <div class="case-price"><i class="fa-solid fa-coins"></i> 9</div>
-            </div>
-            <div class="case-card" onclick="openCaseSection('bro')">
-                <img src="assets/cases/bro.png" class="case-img" onerror="this.src='https://via.placeholder.com/100/151722/ffffff?text=BRO'">
-                <div class="case-title">Про Бро</div>
-                <div class="case-price"><i class="fa-solid fa-coins"></i> 25</div>
+        </div>
+
+        <div class="case-category">
+            <div class="case-category-title">STANDARD</div>
+            <div class="cases-grid">
+                <div class="case-card" onclick="openCaseSection('base')">
+                    <div class="case-img-wrap">
+                        <img src="assets/cases/base.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <span class="emoji-fallback" style="display:none;">📦</span>
+                    </div>
+                    <div class="case-title">Начальный</div>
+                    <div class="case-price"><i class="fa-solid fa-coins"></i> 9</div>
+                </div>
+                <div class="case-card" onclick="openCaseSection('bro')">
+                    <div class="case-img-wrap">
+                        <img src="assets/cases/bro.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <span class="emoji-fallback" style="display:none;">💎</span>
+                    </div>
+                    <div class="case-title">Про Бро</div>
+                    <div class="case-price"><i class="fa-solid fa-coins"></i> 25</div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- СЕКЦИЯ: ОТКРЫТИЕ КЕЙСА (ПОЛНОЭКРАННАЯ) -->
+    <!-- СЕКЦИЯ: ОТКРЫТИЕ КЕЙСА -->
     <div id="section-case-opening" class="section">
         <div class="case-header">
             <button class="back-btn" onclick="exitCaseOpening()"><i class="fa-solid fa-arrow-left"></i> Назад</button>
@@ -506,6 +439,7 @@
 
         <div class="case-open-visual">
             <img id="open-case-img" class="case-open-img" src="">
+            <div id="open-case-emoji" class="case-open-img" style="display:none; font-size:100px; line-height:180px;"></div>
             
             <div class="roulette-full-wrap" id="roulette-wrap-full">
                 <div class="roulette-pointer-full"></div>
@@ -535,26 +469,20 @@
     <div id="section-upgrader" class="section">
         <h2 class="section-title">Апгрейд</h2>
         <div class="upg-container">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                <span style="font-size:12px; color:var(--text-muted); font-weight:700;">ВАШИ ПРЕДМЕТЫ (<span id="upg-count">0/5</span>)</span>
-                <button class="btn" style="width:auto; padding:4px 10px; font-size:10px; background:rgba(255,255,255,0.1);" onclick="clearUpgInputs()">Очистить</button>
-            </div>
             
-            <div class="upg-slots-big" id="upg-inputs-container" onclick="openInvPicker()">
-                <div style="color:var(--text-muted); font-size:14px; font-weight:700;">+ Добавить предметы</div>
-            </div>
-            
-            <div style="text-align:center; color:var(--accent-gold); font-size:20px; margin:10px 0;"><i class="fa-solid fa-arrow-down"></i></div>
-            
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                <span style="font-size:12px; color:var(--text-muted); font-weight:700;">ЧТО ХОТИТЕ ПОЛУЧИТЬ?</span>
-            </div>
-            
-            <div class="upg-target-big" id="upg-target-container" onclick="openTargetPicker()">
-                <i class="fa-solid fa-bullseye" style="font-size:30px; color:var(--text-muted);"></i>
-                <div style="font-size:12px; margin-top:5px; color:var(--text-muted);">Нажмите, чтобы выбрать цель</div>
+            <!-- 1. СВЕРХУ КЛАССИЧЕСКОЕ КОЛЕСО -->
+            <div class="upg-wheel-section">
+                <div class="upg-wheel-pointer"></div>
+                <div class="upg-wheel-disc" id="upg-wheel-disc">
+                    <!-- Сектора добавляются в JS через conic-gradient -->
+                </div>
+                <div class="upg-wheel-center">
+                    <div class="title">ШАНС</div>
+                    <div class="val" id="upg-chance-val">0%</div>
+                </div>
             </div>
 
+            <!-- 2. КНОПКИ БЫСТРОГО ВЫБОРА -->
             <div class="upg-quick-btns">
                 <button class="btn" onclick="autoSelect('x2')">x2</button>
                 <button class="btn" onclick="autoSelect('x4')">x4</button>
@@ -563,18 +491,19 @@
                 <button class="btn" onclick="autoSelect('50')">50%</button>
                 <button class="btn" onclick="autoSelect('25')">25%</button>
             </div>
-            
-            <div class="upg-circle">
-                <svg width="140" height="140" style="transform:rotate(-90deg);">
-                    <circle cx="70" cy="70" r="60" stroke="#1c1f2b" stroke-width="10" fill="none"/>
-                    <circle id="upg-progress" cx="70" cy="70" r="60" stroke="var(--accent-gold)" stroke-width="10" fill="none" stroke-dasharray="376.99" stroke-dashoffset="376.99" style="transition: stroke-dashoffset 0.3s;"/>
-                </svg>
-                <div class="upg-chance-text">
-                    <div style="font-size:10px; color:var(--text-muted); font-weight:700;">ШАНС</div>
-                    <h2 id="upg-chance-val">0%</h2>
+
+            <!-- 3. КВАДРАТЫ (ВХОД СЛЕВА, ЦЕЛЬ СПРАВА) -->
+            <div class="upg-slots-row">
+                <div class="upg-square-box" id="upg-input-box" onclick="openInvPicker()">
+                    <div class="placeholder">+ Ваши предметы</div>
+                </div>
+                <div class="upg-square-box target" id="upg-target-box" onclick="openTargetPicker()">
+                    <i class="fa-solid fa-bullseye" style="font-size:30px; color:var(--text-muted);"></i>
                 </div>
             </div>
-            <button class="btn gold" id="btn-upg" onclick="runUpgrade()" disabled>ПРОКАЧАТЬ</button>
+
+            <!-- 4. КНОПКА ДЕЙСТВИЯ -->
+            <button class="btn-upgrade-action" id="btn-upg" onclick="runUpgrade()" disabled>ПРОКАЧАТЬ</button>
         </div>
     </div>
 
@@ -592,7 +521,7 @@
         </div>
     </div>
 
-    <!-- СЕКЦИЯ: ДОНАТ И ПРОМО -->
+    <!-- СЕКЦИЯ: ДОНАТ -->
     <div id="section-donate" class="section">
         <h2 class="section-title">Пополнение</h2>
         <div class="donate-grid" id="donate-grid"></div>
@@ -693,7 +622,6 @@
         const FREE_COOLDOWN = 24 * 3600 * 1000;
         const USER_COOLDOWN = 12 * 3600 * 1000;
         const MAX_UPGRADE_CHANCE = 95;
-        const CIRCUMFERENCE = 2 * Math.PI * 60;
 
         const RARITIES = {
             common: { id: 'common', name: 'Common', color: '#6b7280' },
@@ -713,25 +641,25 @@
         ];
 
         const ALL_ITEMS = [
-            { id: 'trios', name: 'Los Trios', price: 4, rarity: 'common', img: 'assets/brainrots/los_trios.png' },
-            { id: 'rot67', name: '67', price: 5, rarity: 'common', img: 'assets/brainrots/67.png' },
-            { id: 'hammy', name: 'Spinny Hammy', price: 5, rarity: 'uncommon', img: 'assets/brainrots/spinny_hammy.png' },
-            { id: 'candyslap', name: 'Candy Slap', price: 7, rarity: 'uncommon', img: 'assets/brainrots/CandySlap.png' },
-            { id: 'noobinis', name: 'Los Noobinis', price: 7, rarity: 'rare', img: 'assets/brainrots/Los_Noobinis.png' },
-            { id: 'tangtang', name: 'Tang Tang Keletang', price: 8, rarity: 'rare', img: 'assets/brainrots/TangTangKeletang.png' },
-            { id: 'lagrande', name: 'La Grande', price: 9, rarity: 'epic', img: 'assets/brainrots/La_Grande_Combinasion.png' },
-            { id: 'tictac', name: 'Tictac Sahur', price: 12, rarity: 'epic', img: 'assets/brainrots/Tictac-Sahur.png' },
-            { id: 'bacuru', name: 'Bacuru and Egguru', price: 12, rarity: 'epic', img: 'assets/brainrots/Bacuru_and_Egguru.png' },
-            { id: 'los67', name: 'Los 67', price: 12, rarity: 'epic', img: 'assets/brainrots/Los_67.png' },
-            { id: 'yinyang', name: 'Yin Yang Slap', price: 20, rarity: 'legendary', img: 'assets/brainrots/YinYangSlap.png' },
-            { id: 'skibidi', name: 'Skibidi Toilet', price: 13154, rarity: 'legendary', img: 'assets/brainrots/skibidi_toilet.png' }
+            { id: 'trios', name: 'Los Trios', price: 4, rarity: 'common', img: 'assets/brainrots/los_trios.png', emoji: '🥉' },
+            { id: 'rot67', name: '67', price: 5, rarity: 'common', img: 'assets/brainrots/67.png', emoji: '6️⃣7️⃣' },
+            { id: 'hammy', name: 'Spinny Hammy', price: 5, rarity: 'uncommon', img: 'assets/brainrots/spinny_hammy.png', emoji: '🐹' },
+            { id: 'candyslap', name: 'Candy Slap', price: 7, rarity: 'uncommon', img: 'assets/brainrots/CandySlap.png', emoji: '🍬' },
+            { id: 'noobinis', name: 'Los Noobinis', price: 7, rarity: 'rare', img: 'assets/brainrots/Los_Noobinis.png', emoji: '🤡' },
+            { id: 'tangtang', name: 'Tang Tang Keletang', price: 8, rarity: 'rare', img: 'assets/brainrots/TangTangKeletang.png', emoji: '🦴' },
+            { id: 'lagrande', name: 'La Grande', price: 9, rarity: 'epic', img: 'assets/brainrots/La_Grande_Combinasion.png', emoji: '🇫🇷' },
+            { id: 'tictac', name: 'Tictac Sahur', price: 12, rarity: 'epic', img: 'assets/brainrots/Tictac-Sahur.png', emoji: '🕒' },
+            { id: 'bacuru', name: 'Bacuru and Egguru', price: 12, rarity: 'epic', img: 'assets/brainrots/Bacuru_and_Egguru.png', emoji: '🥚' },
+            { id: 'los67', name: 'Los 67', price: 12, rarity: 'epic', img: 'assets/brainrots/Los_67.png', emoji: '🎲' },
+            { id: 'yinyang', name: 'Yin Yang Slap', price: 20, rarity: 'legendary', img: 'assets/brainrots/YinYangSlap.png', emoji: '☯️' },
+            { id: 'skibidi', name: 'Skibidi Toilet', price: 13154, rarity: 'legendary', img: 'assets/brainrots/skibidi_toilet.png', emoji: '🚽' }
         ];
 
         const CASE_LOOT_DATA = {
             free: { 
-                coinChance: 10, 
-                coins: [{amount:1, weight:100}], 
-                items: [{id:"trios", weight:70},{id:"rot67", weight:30}] 
+                coinChance: 70, 
+                coins: [{amount:1, weight:50}, {amount:2, weight:30}, {amount:3, weight:20}], 
+                items: [{id:"trios", weight:50},{id:"rot67", weight:50}] 
             },
             user: { 
                 coinChance: 30, 
@@ -747,6 +675,11 @@
                 coinChance: 0, 
                 coins: [], 
                 items: [{id:"hammy", weight:25},{id:"noobinis", weight:20},{id:"tangtang", weight:18},{id:"tictac", weight:15},{id:"bacuru", weight:10},{id:"los67", weight:8},{id:"yinyang", weight:4}] 
+            },
+            allin: {
+                coinChance: 0,
+                coins: [],
+                items: [{id:"lagrande", weight:99},{id:"skibidi", weight:1}]
             }
         };
 
@@ -904,58 +837,19 @@
             container.innerHTML = inv.map(item => {
                 const r = RARITIES[item.rarity] || RARITIES.common;
                 return `<div class="inv-item" style="border-color:${r.color}" onclick="BF.addToUpg('${item.uid}')">
-                    <img src="${item.img}">
+                    <div style="height:50px; display:flex; align-items:center; justify-content:center; margin: 0 auto;">
+                        <img src="${item.img}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <span class="emoji-fallback" style="display:none;">${item.emoji || '🧠'}</span>
+                    </div>
                     <div class="inv-price">${item.price}</div>
                     <button class="sell-btn" onclick="event.stopPropagation(); BF.sellItem('${item.uid}')">Продать</button>
                 </div>`;
             }).join('');
         }
 
+        // (Функция обновления ленты оставлена для совместимости)
         window.updateDropFeed = function(arr) {
-            const feed = document.getElementById('live-feed');
-            const topBox = document.getElementById('top-drop-box');
-            
-            const itemsOnly = arr.filter(d => d.itemImg && d.itemImg.trim() !== '');
-            
-            if (itemsOnly.length === 0) {
-                feed.innerHTML = '<div style="color:var(--text-muted); font-size:12px; padding:10px;">Пока тихо...</div>';
-                topBox.style.display = 'none';
-                return;
-            }
-
-            let topDrop = itemsOnly[0];
-            itemsOnly.forEach(d => { if (d.price > topDrop.price) topDrop = d; });
-            
-            if (topDrop) {
-                topBox.style.display = 'block';
-                const clickAttr = topDrop.user_id ? `onclick="BF.viewProfile('${topDrop.user_id}', '${topDrop.nick}')"` : '';
-                topBox.innerHTML = `
-                    <div class="top-drop-container" ${clickAttr}>
-                        <div class="top-drop-label">ТОП ДНЯ</div>
-                        <img src="${topDrop.itemImg}" class="top-drop-img">
-                        <div class="top-drop-info">
-                            <div class="top-drop-name">${topDrop.itemName}</div>
-                            <div class="top-drop-price">${topDrop.price} монет</div>
-                        </div>
-                    </div>
-                `;
-            } else {
-                topBox.style.display = 'none';
-            }
-
-            feed.innerHTML = itemsOnly.map(d => {
-                const methodIcon = d.method === 'upgrade' ? '<i class="fa-solid fa-bolt" style="color:var(--accent-purple)"></i>' : '<i class="fa-solid fa-box" style="color:var(--accent-blue)"></i>';
-                const clickAttr = d.user_id ? `onclick="BF.viewProfile('${d.user_id}', '${d.nick}')"` : '';
-                return `
-                <div class="feed-item" style="border-color:${d.price > 100 ? 'var(--accent-gold)' : 'var(--border)'}" ${clickAttr}>
-                    <img src="${d.itemImg || 'https://via.placeholder.com/40/151722/ffffff?text=?'}">
-                    <div class="feed-item-price">${d.price}</div>
-                    <div class="feed-hover">
-                        ${methodIcon}
-                        <span>${d.method === 'upgrade' ? 'АПГРЕЙД' : 'КЕЙС'}</span>
-                    </div>
-                </div>`;
-            }).join('');
+            // Лента не отображается в этом UI
         };
 
         function openCaseSection(type) {
@@ -975,15 +869,32 @@
             
             setMultiplierFull(1);
             document.getElementById('open-case-title').innerText = type.toUpperCase();
-            document.getElementById('open-case-img').style.opacity = '1';
-            document.getElementById('open-case-img').style.transform = 'scale(1)';
+            
+            const imgEl = document.getElementById('open-case-img');
+            const emojiEl = document.getElementById('open-case-emoji');
+            
+            imgEl.style.opacity = '1';
+            imgEl.style.transform = 'scale(1)';
+            emojiEl.style.display = 'none';
+            
             document.getElementById('roulette-wrap-full').classList.remove('active');
             document.getElementById('roulette-track-full').innerHTML = '';
             document.getElementById('won-area-full').innerHTML = '';
             
-            const imgEl = document.getElementById('open-case-img');
-            imgEl.src = `assets/cases/${type}.png`;
-            imgEl.onerror = function() { this.src = 'https://via.placeholder.com/180/151722/ffffff?text=CASE'; };
+            const caseData = {
+                "free": { "img": "assets/cases/free.png", "emoji": "🎁" },
+                "user": { "img": "assets/cases/user.png", "emoji": "👤" },
+                "base": { "img": "assets/cases/base.png", "emoji": "📦" },
+                "bro":  { "img": "assets/cases/bro.png", "emoji": "💎" },
+                "allin": { "img": "assets/cases/allin.png", "emoji": "🎰" }
+            }[type];
+            
+            imgEl.src = caseData.img;
+            imgEl.onerror = function() { 
+                this.style.display = 'none'; 
+                emojiEl.innerText = caseData.emoji;
+                emojiEl.style.display = 'block'; 
+            };
             
             document.getElementById('mult-selector-full').style.display = (type === 'free' || type === 'user') ? 'none' : 'flex';
             
@@ -1027,31 +938,24 @@
             const cfg = CASE_LOOT_DATA[type];
             let html = '';
             
-            let totalItemWeight = 0;
-            cfg.items.forEach(it => totalItemWeight += (it.weight || 1));
-            
-            if (cfg.coinChance > 0) {
+            if (cfg.coins.length > 0 && cfg.coinChance > 0) {
                 html += `
                 <div class="loot-card-full">
                     <div class="coin-icon"><i class="fa-solid fa-coins"></i></div>
                     <div class="name">Монеты</div>
-                    <div class="chance">${cfg.coinChance}%</div>
                 </div>`;
             }
-            
-            const itemTotalChance = 100 - cfg.coinChance;
             
             cfg.items.forEach(it => {
                 const itemObj = ALL_ITEMS.find(i => i.id === it.id);
                 if (!itemObj) return;
-                const weight = it.weight || 1;
-                const chance = ((weight / totalItemWeight) * itemTotalChance).toFixed(1);
-                
                 html += `
                 <div class="loot-card-full" style="border-color:${RARITIES[itemObj.rarity].color}">
-                    <img src="${itemObj.img}">
+                    <div style="height:45px; display:flex; align-items:center; justify-content:center;">
+                        <img src="${itemObj.img}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <span class="emoji-fallback" style="display:none; font-size:30px;">${itemObj.emoji || '🧠'}</span>
+                    </div>
                     <div class="name">${itemObj.name}</div>
-                    <div class="chance">${chance}%</div>
                 </div>`;
             });
             
@@ -1091,9 +995,13 @@
                 
                 const cfg = CASE_LOOT_DATA[activeCase];
                 const items = [];
+                
                 for (let i = 0; i < 30; i++) {
                     if (i === 25) {
                         items.push(res.results[0]);
+                    } else if (i === 26 && res.results[0].type === 'item' && res.results[0].item.rarity !== 'legendary') {
+                        const legendaryItem = ALL_ITEMS.find(it => it.rarity === 'legendary');
+                        items.push({ type: 'item', item: legendaryItem });
                     } else {
                         if (Math.random() * 100 < cfg.coinChance) {
                             items.push({ type: 'coin', amount: 1 });
@@ -1108,14 +1016,20 @@
                     if (e.type === 'coin') {
                         return `<div class="roulette-item-full"><i class="fa-solid fa-coins" style="color:var(--accent-gold); font-size:40px;"></i></div>`;
                     }
-                    return `<div class="roulette-item-full" style="border-color:${RARITIES[e.item.rarity].color}"><img src="${e.item.img}"></div>`;
+                    return `<div class="roulette-item-full" style="border-color:${RARITIES[e.item.rarity].color}">
+                        <div style="height:70px; display:flex; align-items:center; justify-content:center;">
+                            <img src="${e.item.img}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                            <span class="emoji-fallback" style="display:none; font-size:40px;">${e.item.emoji || '🧠'}</span>
+                        </div>
+                    </div>`;
                 }).join('');
 
                 const itemWidth = 130;
                 const wrapperWidth = document.getElementById('roulette-wrap-full').offsetWidth;
-                const scrollTo = (25 * itemWidth) - (wrapperWidth / 2) + (itemWidth / 2);
+                const jitter = (Math.random() - 0.5) * 30; 
+                const scrollTo = (25 * itemWidth) - (wrapperWidth / 2) + (itemWidth / 2) + jitter;
                 
-                track.style.transition = 'transform 3.5s cubic-bezier(0.1, 1, 0.1, 1)';
+                track.style.transition = 'transform 4s cubic-bezier(0.1, 0.8, 0.2, 1)';
                 track.style.transform = `translateX(-${scrollTo}px)`;
 
                 setTimeout(() => {
@@ -1128,14 +1042,20 @@
                     let html = '';
                     res.results.forEach(win => {
                         if (win.type === 'coin') {
-                            html += `<div class="won-card"><i class="fa-solid fa-coins" style="font-size:36px; color:var(--accent-gold)"></i><div style="font-weight:900; margin-top:5px;">+${win.amount}</div></div>`;
+                            html += `<div class="won-card" style="width:70px; padding:8px;"><i class="fa-solid fa-coins" style="font-size:26px; color:var(--accent-gold)"></i><div style="font-weight:900; margin-top:5px; font-size:12px;">+${win.amount}</div></div>`;
                         } else {
-                            html += `<div class="won-card"><img src="${win.item.img}"><div style="font-weight:900; font-size:10px; margin-top:5px;">${win.item.name}</div></div>`;
+                            html += `<div class="won-card" style="width:70px; padding:8px;">
+                                <div style="height:35px; display:flex; align-items:center; justify-content:center;">
+                                    <img src="${win.item.img}" style="width:35px; height:35px; object-fit:contain;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                    <span class="emoji-fallback" style="display:none; font-size:25px;">${win.item.emoji || '🧠'}</span>
+                                </div>
+                                <div style="font-weight:900; font-size:9px; margin-top:5px;">${win.item.name}</div>
+                            </div>`;
                         }
                     });
                     document.getElementById('won-area-full').innerHTML = html;
                     updateOpenBtnState();
-                }, 3600);
+                }, 4100);
 
             } catch (err) {
                 isOpening = false;
@@ -1150,42 +1070,62 @@
             }
         }
 
-        // ================= АПГРЕЙД =================
-        function clearUpgInputs() {
-            upgInputs = [];
-            renderUpgInputs();
-            calcUpg();
+        // ================= АПГРЕЙД (КЛАССИЧЕСКОЕ КОЛЕСО) =================
+        
+        // Функция отрисовки колеса с секторами
+        function initUpgWheel() {
+            const disc = document.getElementById('upg-wheel-disc');
+            // Создаем 8 секторов: 7 серых и 1 золотой (для визуала)
+            // В реальности шанс высчитывается на бэкенде, но визуально мы показываем "золотой" сектор
+            const segments = 8;
+            let gradientStr = '';
+            
+            for (let i = 0; i < segments; i++) {
+                const startAngle = (360 / segments) * i;
+                const endAngle = (360 / segments) * (i + 1);
+                
+                // Делаем один сектор золотым (например, последний), остальные серыми
+                const color = (i === segments - 1) ? 'var(--accent-gold)' : '#1c1f2b';
+                
+                gradientStr += `${color} ${startAngle}deg ${endAngle}deg`;
+                if (i < segments - 1) gradientStr += ', ';
+            }
+            
+            disc.style.background = `conic-gradient(${gradientStr})`;
         }
 
         function renderUpgInputs() {
-            const container = document.getElementById('upg-inputs-container');
+            const container = document.getElementById('upg-input-box');
             if (upgInputs.length === 0) {
-                container.innerHTML = '<div style="color:var(--text-muted); font-size:14px; font-weight:700;">+ Добавить предметы</div>';
+                container.innerHTML = '<div class="placeholder">+ Ваши предметы</div>';
             } else {
                 container.innerHTML = upgInputs.map(uid => {
                     const item = state.inventory[uid];
                     if (!item) return '';
-                    return `<div class="inv-item" style="border-color:${RARITIES[item.rarity].color}" onclick="event.stopPropagation(); BF.removeUpg('${uid}')">
-                        <img src="${item.img}">
-                        <div class="inv-price">${item.price}</div>
+                    return `<div class="mini-item">
+                        <img src="${item.img}" style="width:100%; height:100%; object-fit:contain;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <span class="emoji-fallback" style="display:none;">${item.emoji || '🧠'}</span>
                     </div>`;
                 }).join('');
             }
-            document.getElementById('upg-count').innerText = upgInputs.length + '/5';
         }
 
         function renderUpgTarget() {
-            const container = document.getElementById('upg-target-container');
+            const container = document.getElementById('upg-target-box');
             if (upgTarget) {
                 container.innerHTML = `
-                    <img src="${upgTarget.img}" style="width:70px; height:70px; object-fit:contain;">
-                    <div style="font-weight:800; font-size:14px; margin-top:5px;">${upgTarget.name}</div>
-                    <div style="color:var(--accent-gold); font-weight:900; font-size:12px;">${upgTarget.price} монет</div>
+                    <div style="width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+                        <div style="height:60px; display:flex; align-items:center; justify-content:center;">
+                            <img src="${upgTarget.img}" style="width:60px; height:60px; object-fit:contain;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                            <span class="emoji-fallback" style="display:none; font-size:40px;">${upgTarget.emoji || '🧠'}</span>
+                        </div>
+                        <div style="font-weight:800; font-size:12px; margin-top:5px; text-align:center;">${upgTarget.name}</div>
+                    </div>
                 `;
             } else {
                 container.innerHTML = `
                     <i class="fa-solid fa-bullseye" style="font-size:30px; color:var(--text-muted);"></i>
-                    <div style="font-size:12px; margin-top:5px; color:var(--text-muted);">Нажмите, чтобы выбрать цель</div>
+                    <div style="font-size:11px; margin-top:5px; color:var(--text-muted); text-align:center;">Выбрать цель</div>
                 `;
             }
         }
@@ -1199,7 +1139,10 @@
                 const selected = upgInputs.includes(it.uid);
                 const r = RARITIES[it.rarity] || RARITIES.common;
                 return `<div class="inv-item" style="border-color:${selected ? 'var(--accent-blue)' : r.color}; ${selected ? 'background:rgba(59,130,246,0.1);' : ''}" onclick="BF.toggleUpgItem('${it.uid}')">
-                    <img src="${it.img}">
+                    <div style="height:50px; display:flex; align-items:center; justify-content:center;">
+                        <img src="${it.img}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <span class="emoji-fallback" style="display:none;">${it.emoji || '🧠'}</span>
+                    </div>
                     <div class="inv-price">${it.price}</div>
                 </div>`;
             }).join('');
@@ -1217,7 +1160,7 @@
             }
             renderUpgInputs();
             calcUpg();
-            openInvPicker(); // Перерендерить модалку
+            openInvPicker(); 
         }
 
         function openTargetPicker() {
@@ -1229,14 +1172,15 @@
 
             list.innerHTML = ALL_ITEMS.map(it => {
                 const isDisabled = it.price <= sum;
-                const chance = Math.min(95, (sum / it.price) * 100);
                 const r = RARITIES[it.rarity] || RARITIES.common;
                 
                 return `<div class="inv-item" style="border-color:${r.color}; opacity: ${isDisabled ? 0.5 : 1}; cursor: ${isDisabled ? 'not-allowed' : 'pointer'};" 
                      onclick="${isDisabled ? '' : `BF.chooseTarget('${it.id}')`}">
-                    <img src="${it.img}">
-                                        <div class="inv-price">${it.price}</div>
-                    <div style="font-size:10px; color:var(--accent-gold); font-weight:900; margin-top:4px;">${isDisabled ? 'Мало' : chance.toFixed(1)+'%'}</div>
+                    <div style="height:50px; display:flex; align-items:center; justify-content:center;">
+                        <img src="${it.img}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <span class="emoji-fallback" style="display:none;">${it.emoji || '🧠'}</span>
+                    </div>
+                    <div class="inv-price">${it.price}</div>
                 </div>`;
             }).join('');
             
@@ -1264,49 +1208,51 @@
             }
             
             document.getElementById('upg-chance-val').innerText = chance.toFixed(1) + '%';
-            document.getElementById('upg-progress').style.strokeDashoffset = CIRCUMFERENCE - (CIRCUMFERENCE * (chance / 100));
             document.getElementById('btn-upg').disabled = (chance === 0 || !upgTarget || upgInputs.length === 0);
         }
 
-        // Быстрый автовыбор для апгрейда
+        // УМНЫЙ АВТОВЫБОР (ПОДБИРАЕТ ЦЕЛЬ ПОД ТВОИ ПРЕДМЕТЫ)
         function autoSelect(type) {
-            if (!upgTarget) {
-                return notify({ type: 'warning', message: 'Сначала выберите цель!' });
+            const sum = upgInputs.reduce((acc, uid) => {
+                const item = state.inventory[uid];
+                return acc + (item ? item.price : 0);
+            }, 0);
+
+            if (sum === 0) {
+                return notify({ type: 'warning', message: 'Сначала выберите СВОИ предметы (левый квадрат)!' });
             }
             
-            const targetPrice = upgTarget.price;
-            let requiredSum = 0;
+            let targetPrice = 0;
             
-            if (type === 'x2') requiredSum = targetPrice * 2;
-            else if (type === 'x4') requiredSum = targetPrice * 4;
-            else if (type === 'x10') requiredSum = targetPrice * 10;
-            else if (type === '75') requiredSum = targetPrice * 0.75;
-            else if (type === '50') requiredSum = targetPrice * 0.50;
-            else if (type === '25') requiredSum = targetPrice * 0.25;
+            if (type === 'x2') targetPrice = sum * 2;
+            else if (type === 'x4') targetPrice = sum * 4;
+            else if (type === 'x10') targetPrice = sum * 10;
+            else if (type === '75') targetPrice = sum / 0.75;
+            else if (type === '50') targetPrice = sum / 0.50;
+            else if (type === '25') targetPrice = sum / 0.25;
             
-            // Собираем предметы из инвентаря, пока не наберем нужную сумму или 5 штук
-            const invArray = Object.values(state.inventory || {});
-            // Сортируем по убыванию цены, чтобы набрать быстрее
-            invArray.sort((a, b) => b.price - a.price);
+            let closestItem = null;
+            let minDiff = Infinity;
             
-            upgInputs = [];
-            let currentSum = 0;
-            
-            for (const item of invArray) {
-                if (upgInputs.length >= 5) break;
-                if (currentSum >= requiredSum) break;
+            ALL_ITEMS.forEach(it => {
+                if (it.price <= sum) return;
                 
-                upgInputs.push(item.uid);
-                currentSum += item.price;
+                const diff = Math.abs(it.price - targetPrice);
+                if (diff < minDiff) {
+                    minDiff = diff;
+                    closestItem = it;
+                }
+            });
+            
+            if (!closestItem) {
+                return notify({ type: 'error', message: 'Нет подходящей цели (твои предметы стоят слишком дорого)!' });
             }
             
-            if (upgInputs.length === 0) {
-                return notify({ type: 'warning', message: 'Недостаточно предметов в инвентаре!' });
-            }
-            
-            renderUpgInputs();
+            upgTarget = closestItem;
+            renderUpgTarget();
             calcUpg();
-            notify({ type: 'info', message: `Выбрано ${upgInputs.length} предметов на сумму ${currentSum} (Цель: ${requiredSum})` });
+            
+            notify({ type: 'info', message: `Цель подобрана: ${closestItem.name} (${closestItem.price} монет)` });
         }
 
         async function runUpgrade() {
@@ -1324,15 +1270,27 @@
                 state.inventory = res.inventory;
                 updateUI();
                 renderUpgInputs();
-                calcUpg();
-
+                
+                // Анимация колеса
+                const disc = document.getElementById('upg-wheel-disc');
+                
+                // Если успех - останавливаем на золотом секторе (он последний, например 315-360 градусов, центр ~337)
+                // Если провал - на сером (например, 0-45 градусов, центр ~22)
+                const targetAngle = res.success ? 337 : 22;
+                
+                // Добавляем случайное смещение в пределах сектора (чтобы не всегда в центр)
+                const randomOffset = (Math.random() - 0.5) * 30; 
+                const totalRotation = 360 * 5 + targetAngle + randomOffset;
+                
+                disc.style.transition = 'transform 4s cubic-bezier(0.1, 1, 0.1, 1)';
+                disc.style.transform = `rotate(${totalRotation}deg)`;
+                
                 setTimeout(() => {
                     isUpgrading = false;
                     document.getElementById('btn-upg').innerText = 'ПРОКАЧАТЬ';
                     
                     if (res.success) {
                         notify({ type: 'success', title: 'УСПЕХ!', message: `Вы получили ${res.target.name}!`, duration: 5000 });
-                        // Очищаем инпут после успеха
                         upgInputs = [];
                         upgTarget = null;
                         renderUpgInputs();
@@ -1344,7 +1302,16 @@
                         renderUpgInputs();
                         calcUpg();
                     }
-                }, 1000); // Небольшая задержка для визуала
+                    
+                    // Сбрасываем колесо для следующего раза
+                    setTimeout(() => {
+                        disc.style.transition = 'none';
+                        disc.style.transform = `rotate(0deg)`;
+                        void disc.offsetWidth; 
+                        initUpgWheel(); 
+                    }, 1000);
+                    
+                }, 4100);
                 
             } catch (err) {
                 isUpgrading = false;
@@ -1354,7 +1321,7 @@
             }
         }
 
-        // ================= МОНЕТКА (COINFLIP) =================
+        // ================= МОНЕТКА =================
         function setChoice(c) {
             cfChoice = c;
             document.getElementById('btn-heads').classList.toggle('active', c === 'heads');
@@ -1437,31 +1404,7 @@
             }
         }
 
-        // ================= ПРОСМОТР ПРОФИЛЯ ИЗ ЛЕНТЫ =================
-        async function viewProfile(uid, nick) {
-            if (!uid || uid === String(MY_ID) || uid === 'undefined') return;
-            try {
-                const res = await apiCall('/api/user_profile/' + uid);
-                document.getElementById('op-name').innerText = nick || 'Игрок';
-                document.getElementById('op-bal').innerText = res.balance;
-                
-                const inv = Object.values(res.inventory || {});
-                const grid = document.getElementById('op-inv');
-                if (inv.length === 0) grid.innerHTML = '<div style="grid-column:span 3; text-align:center; font-size:11px; color:var(--text-muted)">Пусто</div>';
-                else grid.innerHTML = inv.map(it => `
-                    <div class="inv-item">
-                        <img src="${it.img}">
-                        <div class="inv-price">${it.price}</div>
-                    </div>
-                `).join('');
-                
-                document.getElementById('other-profile-modal').classList.add('active');
-            } catch (e) { notify({ type: 'error', message: 'Ошибка загрузки' }); }
-        }
-
-        function closeOtherProfile() { document.getElementById('other-profile-modal').classList.remove('active'); }
-
-        // ================= ГЛОБАЛЬНЫЕ ФУНКЦИИ (WINDOW.BF) =================
+        // ================= ГЛОБАЛЬНЫЕ ФУНКЦИИ =================
         window.BF = {
             addToUpg: (uid) => {
                 if (upgInputs.includes(uid)) return;
@@ -1497,11 +1440,9 @@
                     notify({ type: 'success', message: 'Продано' });
                 } catch (err) { notify({ type: 'error', message: err.message }); }
             },
-            buy: buyPackage,
-            viewProfile: viewProfile
+            buy: buyPackage
         };
 
-        // Продать всё
         window.sellAll = async () => {
             if (!Object.keys(state.inventory).length) return;
             try {
@@ -1512,13 +1453,11 @@
             } catch (err) { notify({ type: 'error', message: err.message }); }
         };
         
-        // Прокидываем все нужные функции в window для HTML onclick
         window.openCaseSection = openCaseSection;
         window.exitCaseOpening = exitCaseOpening;
         window.setMultiplierFull = setMultiplierFull;
         window.startCaseOpeningFull = startCaseOpeningFull;
         
-        window.clearUpgInputs = clearUpgInputs;
         window.openInvPicker = openInvPicker;
         window.closeInvPicker = closeInvPicker;
         window.openTargetPicker = openTargetPicker;
@@ -1532,7 +1471,6 @@
         
         window.switchTab = switchTab;
         window.toggleMenu = toggleMenu;
-        window.closeOtherProfile = closeOtherProfile;
 
         // ================= ИНИЦИАЛИЗАЦИЯ =================
         async function loadData() {
@@ -1570,10 +1508,8 @@
         // Запуск
         if (tg) { tg.ready(); tg.expand(); }
         
-        // Открываем кейсы при старте
+        initUpgWheel(); // Рисуем колесо при старте
         switchTab('cases');
-        
-        // Грузим данные и проверяем рефку
         loadData().then(() => checkRef());
 
     })();
