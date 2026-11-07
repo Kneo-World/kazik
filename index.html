@@ -7,29 +7,12 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --bg-main: #0a0b10;
-            --bg-card: #151722;
-            --bg-input: #0d0f14;
-            --accent-blue: #3b82f6;
-            --accent-gold: #fbbf24;
-            --accent-green: #10b981;
-            --accent-red: #ef4444;
-            --accent-purple: #8b5cf6;
-            --text-main: #ffffff;
-            --text-muted: #9ca3af;
-            --border: #272a35;
-            --glow-blue: 0 0 15px rgba(59, 130, 246, 0.4);
-            --glow-gold: 0 0 20px rgba(251, 191, 36, 0.4);
-            --glow-green: 0 0 15px rgba(16, 185, 129, 0.4);
-            --glow-red: 0 0 15px rgba(239, 68, 68, 0.4);
-        }
+        :root { --bg-main: #0a0b10; --bg-card: #151722; --bg-input: #0d0f14; --accent-blue: #3b82f6; --accent-gold: #fbbf24; --accent-green: #10b981; --accent-red: #ef4444; --accent-purple: #8b5cf6; --text-main: #ffffff; --text-muted: #9ca3af; --border: #272a35; --glow-blue: 0 0 15px rgba(59, 130, 246, 0.4); --glow-gold: 0 0 20px rgba(251, 191, 36, 0.4); --glow-green: 0 0 15px rgba(16, 185, 129, 0.4); --glow-red: 0 0 15px rgba(239, 68, 68, 0.4); }
         * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
         body { background: var(--bg-main); background-image: radial-gradient(circle at 50% 0%, #1a1c29 0%, #0a0b10 70%); color: var(--text-main); overflow-x: hidden; padding-bottom: env(safe-area-inset-bottom); min-height: 100vh; }
         img { -webkit-user-drag: none; }
         button { font-family: inherit; }
 
-        /* ================= TOP BAR ================= */
         .top-bar { display: flex; align-items: center; justify-content: space-between; padding: 15px 20px; background: rgba(10, 11, 16, 0.85); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 90; border-bottom: 1px solid var(--border); }
         .top-bar-left { display: flex; gap: 8px; align-items: center; }
         .menu-btn { background: none; border: none; color: var(--text-main); font-size: 22px; cursor: pointer; padding: 6px 10px; border-radius: 8px; transition: 0.2s; }
@@ -44,7 +27,6 @@
         .header-name { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .header-balance { font-size: 14px; font-weight: 900; color: var(--accent-gold); display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
 
-        /* ================= SIDEBAR ================= */
         .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
         .sidebar-overlay.active { opacity: 1; pointer-events: auto; }
         .sidebar { position: fixed; top: 0; left: 0; width: 80%; max-width: 320px; height: 100%; background: #11131c; z-index: 101; transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; flex-direction: column; box-shadow: 5px 0 30px rgba(0,0,0,0.8); border-right: 1px solid var(--border); }
@@ -64,254 +46,78 @@
         .nav-item.admin { color: var(--accent-gold); border: 1px solid rgba(251,191,36,0.3); background: rgba(251,191,36,0.05); }
         .nav-item.admin.active { background: linear-gradient(90deg, rgba(251,191,36,0.15), transparent); border-left: 4px solid var(--accent-gold); }
 
-        /* ================= SECTIONS ================= */
         .section { display: none; padding: 20px; max-width: 800px; margin: 0 auto; width: 100%; }
         .section.active { display: block; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
         .section-title { font-size: 20px; font-weight: 900; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
 
         /* ================= LIVE FEED ================= */
-        .live-feed-section {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 15px;
-            padding: 15px;
-            margin-bottom: 15px;
-        }
-        .live-feed-title {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 13px;
-            font-weight: 900;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin-bottom: 12px;
-        }
-        .live-dot {
-            width: 8px; height: 8px; border-radius: 50%;
-            background: var(--accent-red);
-            box-shadow: 0 0 10px var(--accent-red);
-            animation: livePulse 1.5s infinite;
-        }
+        .live-feed-section { background: var(--bg-card); border: 1px solid var(--border); border-radius: 15px; padding: 15px; margin-bottom: 15px; }
+        .live-feed-title { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 900; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px; }
+        .live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-red); box-shadow: 0 0 10px var(--accent-red); animation: livePulse 1.5s infinite; }
         @keyframes livePulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-        .top-drop-day {
-            background: linear-gradient(135deg, #1a1c29, #11131c);
-            border: 2px solid var(--accent-gold);
-            border-radius: 12px;
-            padding: 12px;
-            margin-bottom: 12px;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            transition: 0.25s;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .top-drop-day:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0 22px rgba(251,191,36,0.35);
-        }
-        .top-drop-day::before {
-            content: 'ТОП ДНЯ';
-            position: absolute;
-            top: -1px; right: -1px;
-            background: var(--accent-gold);
-            color: #000;
-            font-size: 9px;
-            font-weight: 900;
-            letter-spacing: 1px;
-            padding: 3px 10px;
-            border-radius: 0 12px 0 12px;
-            z-index: 2;
-            animation: topGlow 2s infinite;
-        }
-        @keyframes topGlow {
-            0%, 100% { box-shadow: 0 0 15px rgba(251,191,36,0.5); }
-            50% { box-shadow: 0 0 25px rgba(251,191,36,0.9); }
-        }
-        .top-drop-img-wrap {
-            width: 76px;
-            height: 76px;
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(251,191,36,0.08);
-            border-radius: 10px;
-            position: relative;
-        }
-        .top-drop-img-wrap::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: 10px;
-            background: radial-gradient(circle at 50% 50%, rgba(251,191,36,0.25), transparent 70%);
-            animation: topImgGlow 2s infinite;
-        }
-        @keyframes topImgGlow {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 1; }
-        }
-        .top-drop-img {
-            width: 64px;
-            height: 64px;
-            object-fit: contain;
-            filter: drop-shadow(0 0 12px rgba(251,191,36,0.7));
-            position: relative;
-            z-index: 1;
-        }
-        .top-drop-emoji {
-            font-size: 50px;
-            line-height: 1;
-            filter: drop-shadow(0 0 12px rgba(251,191,36,0.7));
-            position: relative;
-            z-index: 1;
-        }
+        .top-drop-day { background: linear-gradient(135deg, #1a1c29, #11131c); border: 2px solid var(--accent-gold); border-radius: 12px; padding: 12px; margin-bottom: 12px; cursor: pointer; position: relative; overflow: hidden; transition: 0.25s; display: flex; align-items: center; gap: 12px; }
+        .top-drop-day:hover { transform: translateY(-2px); box-shadow: 0 0 22px rgba(251,191,36,0.35); }
+        .top-drop-day::before { content: 'ТОП ДНЯ'; position: absolute; top: -1px; right: -1px; background: var(--accent-gold); color: #000; font-size: 9px; font-weight: 900; letter-spacing: 1px; padding: 3px 10px; border-radius: 0 12px 0 12px; z-index: 2; animation: topGlow 2s infinite; }
+        @keyframes topGlow { 0%, 100% { box-shadow: 0 0 15px rgba(251,191,36,0.5); } 50% { box-shadow: 0 0 25px rgba(251,191,36,0.9); } }
+        .top-drop-img-wrap { width: 76px; height: 76px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: rgba(251,191,36,0.08); border-radius: 10px; position: relative; }
+        .top-drop-img-wrap::after { content: ''; position: absolute; inset: 0; border-radius: 10px; background: radial-gradient(circle at 50% 50%, rgba(251,191,36,0.25), transparent 70%); animation: topImgGlow 2s infinite; }
+        @keyframes topImgGlow { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+        .top-drop-img { width: 64px; height: 64px; object-fit: contain; filter: drop-shadow(0 0 12px rgba(251,191,36,0.7)); position: relative; z-index: 1; }
+        .top-drop-emoji { font-size: 50px; line-height: 1; filter: drop-shadow(0 0 12px rgba(251,191,36,0.7)); position: relative; z-index: 1; }
         .top-drop-info { flex: 1; min-width: 0; }
-        .top-drop-name {
-            font-size: 14px;
-            font-weight: 900;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .top-drop-price {
-            font-size: 16px;
-            color: var(--accent-gold);
-            font-weight: 900;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            margin-top: 4px;
-        }
-        .top-drop-method {
-            font-size: 10px;
-            color: var(--text-muted);
-            margin-top: 3px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
+        .top-drop-name { font-size: 14px; font-weight: 900; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .top-drop-price { font-size: 16px; color: var(--accent-gold); font-weight: 900; display: flex; align-items: center; gap: 4px; margin-top: 4px; }
+        .top-drop-method { font-size: 10px; color: var(--text-muted); margin-top: 3px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 4px; }
         .top-drop-method i { font-size: 9px; }
         .top-drop-method.upgrade { color: var(--accent-blue); }
         .top-drop-method.case { color: var(--accent-gold); }
 
+        /* NO SCROLLBAR, FLEX WRAP */
         .live-feed {
             display: flex;
+            flex-wrap: wrap;
             gap: 8px;
-            overflow-x: auto;
-            padding-bottom: 5px;
-            scrollbar-width: thin;
-            scroll-behavior: smooth;
         }
-        .live-feed::-webkit-scrollbar { height: 3px; }
-        .live-feed::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-        .live-feed::-webkit-scrollbar-track { background: transparent; }
-
         .live-drop-item {
-            width: 82px;
-            flex-shrink: 0;
+            width: calc((100% - 24px) / 4);
             background: #1c1f2b;
             border: 2px solid var(--border);
             border-radius: 10px;
-            padding: 8px 5px;
+            padding: 8px 4px;
             text-align: center;
             cursor: pointer;
             position: relative;
             overflow: hidden;
             transition: transform 0.2s, box-shadow 0.2s;
+            min-width: 0;
         }
+        @media (min-width: 500px) { .live-drop-item { width: calc((100% - 48px) / 6); } }
+        @media (min-width: 700px) { .live-drop-item { width: calc((100% - 56px) / 8); } }
         .live-drop-item:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 15px rgba(0,0,0,0.4);
         }
         .live-drop-item img {
-            width: 45px;
+            width: 100%;
+            max-width: 45px;
             height: 45px;
             object-fit: contain;
-            transition: transform 0.2s;
             display: block;
             margin: 0 auto;
         }
-        .live-drop-item .emoji-fallback {
-            font-size: 35px;
-            line-height: 45px;
-            display: block;
-        }
-        .live-drop-item .ld-name {
-            font-size: 9px;
-            font-weight: 800;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            margin-top: 3px;
-            color: var(--text-muted);
-        }
-        .live-drop-item .ld-price {
-            font-size: 10px;
-            font-weight: 900;
-            color: var(--accent-gold);
-            margin-top: 2px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 2px;
-        }
+        .live-drop-item .emoji-fallback { font-size: 30px; line-height: 45px; display: block; }
+        .live-drop-item .ld-name { font-size: 9px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 3px; color: var(--text-muted); }
+        .live-drop-item .ld-price { font-size: 10px; font-weight: 900; color: var(--accent-gold); margin-top: 2px; display: flex; align-items: center; justify-content: center; gap: 2px; }
         .live-drop-item .ld-price i { font-size: 8px; }
-
-        .ld-overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.25s ease, transform 0.25s ease;
-            transform: scale(0.88);
-            z-index: 3;
-            border-radius: 8px;
-        }
-        .live-drop-item:hover .ld-overlay {
-            opacity: 1;
-            transform: scale(1);
-        }
-        .ld-overlay .ld-method-icon {
-            font-size: 20px;
-            color: var(--accent-gold);
-        }
-        .ld-overlay .ld-method-text {
-            font-size: 9px;
-            font-weight: 900;
-            color: var(--accent-gold);
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            text-align: center;
-            padding: 0 4px;
-        }
+        .ld-overlay { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; opacity: 0; pointer-events: none; transition: opacity 0.25s ease, transform 0.25s ease; transform: scale(0.88); z-index: 3; border-radius: 8px; }
+        .live-drop-item:hover .ld-overlay { opacity: 1; transform: scale(1); }
+        .ld-overlay .ld-method-icon { font-size: 20px; color: var(--accent-gold); }
+        .ld-overlay .ld-method-text { font-size: 9px; font-weight: 900; color: var(--accent-gold); text-transform: uppercase; letter-spacing: 0.8px; text-align: center; padding: 0 4px; }
         .ld-overlay.upgrade .ld-method-icon { color: var(--accent-blue); }
         .ld-overlay.upgrade .ld-method-text { color: var(--accent-blue); }
-
-        .live-feed-empty {
-            width: 100%;
-            text-align: center;
-            padding: 20px;
-            color: var(--text-muted);
-            font-size: 12px;
-            font-weight: 600;
-        }
+        .live-feed-empty { width: 100%; text-align: center; padding: 20px; color: var(--text-muted); font-size: 12px; font-weight: 600; }
 
         /* ================= EVENT BANNER ================= */
         .event-banner { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 15px; margin-bottom: 12px; border: 2px solid var(--accent-gold); position: relative; overflow: hidden; animation: eventPulse 2s infinite; }
@@ -328,7 +134,7 @@
         .event-sub { font-size: 11px; opacity: 0.8; margin-top: 2px; }
         .event-mult-badge { background: currentColor; color: #000; font-size: 15px; font-weight: 900; padding: 4px 10px; border-radius: 8px; flex-shrink: 0; }
 
-        /* ================= POLL BANNER ================= */
+        /* ================= POLL ================= */
         .poll-banner { background: var(--bg-card); border: 1px solid var(--border); border-radius: 15px; padding: 15px; margin-bottom: 15px; }
         .poll-question { font-size: 14px; font-weight: 800; margin-bottom: 12px; display: flex; align-items: flex-start; gap: 8px; }
         .poll-question i { color: var(--accent-blue); margin-top: 2px; }
@@ -362,12 +168,10 @@
         .case-price { font-size: 13px; color: var(--accent-gold); font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 4px; }
         .case-card.locked { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
 
-        /* ================= CASE OPENING ================= */
         #section-case-opening { padding-bottom: 20px; }
         .case-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
         .back-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-main); padding: 10px 15px; border-radius: 12px; font-size: 15px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px; font-weight: 700; }
         .back-btn:hover { background: rgba(255,255,255,0.1); color: var(--accent-gold); }
-
         .case-open-visual { width: 100%; min-height: 220px; position: relative; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; transition: height 0.3s; }
         .case-open-img { max-width: 160px; max-height: 160px; object-fit: contain; filter: drop-shadow(0 15px 30px rgba(0,0,0,0.6)); transition: opacity 0.3s, transform 0.3s; }
 
@@ -378,19 +182,20 @@
         .roulette-pointer::before { top: -1px; border-top: 10px solid var(--accent-gold); }
         .roulette-pointer::after { bottom: -1px; border-bottom: 10px solid var(--accent-gold); }
         .roulette-track { display: flex; gap: 10px; padding: 15px; position: absolute; left: 0; height: 100%; align-items: center; will-change: transform; }
-        .roulette-item { width: 120px; height: 120px; background: #1c1f2b; border-radius: 15px; border: 2px solid var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; gap: 4px; position: relative; }
+        .roulette-item { width: 120px; height: 120px; background: #1c1f2b; border-radius: 15px; border: 2px solid var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; gap: 4px; position: relative; transition: border-color 0.3s, box-shadow 0.3s; }
         .roulette-item img { width: 60px; height: 60px; object-fit: contain; }
         .roulette-item .name { font-size: 9px; font-weight: 700; color: var(--text-muted); text-align: center; padding: 0 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
         .roulette-item .coin { color: var(--accent-gold); font-size: 40px; }
+        .roulette-item.landed { border-color: var(--accent-gold); box-shadow: 0 0 22px rgba(251,191,36,0.7); }
 
         .roulette-multi-wrap { position: absolute; inset: 0; background: var(--bg-input); border: 2px solid var(--border); border-radius: 20px; overflow: hidden; opacity: 0; pointer-events: none; transition: opacity 0.3s; display: flex; flex-direction: column; gap: 6px; padding: 8px; }
         .roulette-multi-wrap.active { opacity: 1; pointer-events: auto; }
-        .multi-strip { flex: 1; min-height: 60px; position: relative; background: #0d0f14; border: 2px solid var(--border); border-radius: 12px; overflow: hidden; display: flex; align-items: center; transition: border-color 0.3s, box-shadow 0.3s; }
+        .multi-strip { flex: 1; min-height: 60px; position: relative; background: #0d0f14; border: 2px solid var(--border); border-radius: 12px; overflow: hidden; display: flex; align-items: center; transition: border-color 0.4s, box-shadow 0.4s; }
         .multi-strip.won { border-color: var(--accent-gold); box-shadow: 0 0 18px rgba(251,191,36,0.6); }
         .multi-strip-pointer { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 3px; height: 100%; background: var(--accent-gold); z-index: 10; box-shadow: 0 0 10px var(--accent-gold); }
         .multi-strip-pointer::before { content: ''; position: absolute; top: -1px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 8px solid var(--accent-gold); }
         .multi-strip-track { display: flex; gap: 8px; padding: 0 10px; position: absolute; left: 0; height: 100%; align-items: center; will-change: transform; }
-        .multi-strip-item { width: 70px; height: 70px; background: #1c1f2b; border-radius: 10px; border: 2px solid var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; gap: 2px; position: relative; }
+        .multi-strip-item { width: 70px; height: 70px; background: #1c1f2b; border-radius: 10px; border: 2px solid var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; gap: 2px; position: relative; transition: border-color 0.3s, box-shadow 0.3s; }
         .multi-strip-item img { width: 38px; height: 38px; object-fit: contain; }
         .multi-strip-item .name { font-size: 8px; font-weight: 700; color: var(--text-muted); text-align: center; padding: 0 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
         .multi-strip-item .coin { font-size: 22px; color: var(--accent-gold); }
@@ -419,7 +224,7 @@
         .loot-price { font-size: 10px; color: var(--accent-gold); font-weight: 800; margin-top: 3px; display: flex; align-items: center; justify-content: center; gap: 3px; }
         .loot-price i { font-size: 9px; }
 
-        /* ================= UPGRADER ================= */
+        /* UPGRADER */
         .upg-container { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 20px 15px; }
         .upg-wheel-section { position: relative; width: 280px; height: 280px; margin: 0 auto 20px; }
         .upg-wheel-disc { position: absolute; inset: 0; border-radius: 50%; border: 4px solid var(--accent-gold); box-shadow: 0 0 30px rgba(251,191,36,0.3), inset 0 0 30px rgba(0,0,0,0.9); overflow: hidden; background: #1c1f2b; }
@@ -455,7 +260,7 @@
         .btn-upgrade-action:active:not(:disabled) { transform: scale(0.97); }
         .btn-upgrade-action:disabled { background: #272a35; color: #555; box-shadow: none; cursor: not-allowed; }
 
-        /* ================= COINFLIP ================= */
+        /* COINFLIP */
         .coinflip-container { text-align: center; background: var(--bg-card); border: 1px solid var(--border); border-radius: 15px; padding: 20px; }
         .coin-display { width: 110px; height: 110px; margin: 0 auto 20px; background: linear-gradient(135deg, #fbbf24, #d97706); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 50px; color: #000; box-shadow: 0 0 25px rgba(251, 191, 36, 0.5); transition: transform 0.1s; user-select: none; }
         .coin-display.spin { animation: spinCoin 1.1s ease-in-out; }
@@ -466,7 +271,7 @@
         .choice-btn { flex: 1; padding: 12px; border-radius: 10px; background: #1c1f2b; border: 2px solid var(--border); color: var(--text-muted); font-weight: 800; font-size: 14px; cursor: pointer; transition: 0.2s; }
         .choice-btn.active { background: rgba(59, 130, 246, 0.2); border-color: var(--accent-blue); color: var(--accent-blue); }
 
-        /* ================= DONATE ================= */
+        /* DONATE */
         .donate-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 25px; }
         .donate-card { background: var(--bg-card); border: 2px solid var(--border); border-radius: 15px; padding: 15px 10px; text-align: center; cursor: pointer; position: relative; transition: 0.2s; }
         .donate-card:hover { border-color: var(--accent-gold); transform: translateY(-2px); }
@@ -478,7 +283,7 @@
         .promo-input { width: 100%; background: var(--bg-input); border: 1px solid var(--border); border-radius: 10px; padding: 12px; color: var(--text-main); font-size: 16px; text-align: center; font-weight: 800; letter-spacing: 1px; margin-bottom: 12px; text-transform: uppercase; outline: none; }
         .promo-input:focus { border-color: var(--accent-blue); }
 
-        /* ================= PROFILE ================= */
+        /* PROFILE */
         .profile-banner { background: linear-gradient(135deg, #1e2235, #11131c); border: 1px solid var(--border); border-radius: 20px; padding: 25px 20px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-bottom: 20px; position: relative; overflow: hidden; }
         .profile-banner::before { content: ''; position: absolute; top: -50px; left: 50%; transform: translateX(-50%); width: 200px; height: 200px; background: var(--accent-blue); filter: blur(80px); opacity: 0.3; border-radius: 50%; }
         .profile-avatar-big { width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 12px; background: var(--accent-blue); border: 4px solid var(--accent-gold); display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: bold; box-shadow: var(--glow-gold); position: relative; z-index: 2; overflow: hidden; }
@@ -490,7 +295,7 @@
         .stat-box__val { font-size: 18px; font-weight: 900; color: var(--text-main); }
         .stat-box__lbl { font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; margin-top: 5px; }
 
-        /* ================= INVENTORY ================= */
+        /* INVENTORY */
         .inv-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
         .inv-item { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 8px; text-align: center; cursor: pointer; position: relative; transition: 0.2s; }
         .inv-item:hover { transform: translateY(-2px); }
@@ -501,7 +306,7 @@
         .sell-btn:hover { background: rgba(239, 68, 68, 0.3); }
         .inv-item.selected { background: rgba(59,130,246,0.1); border-color: var(--accent-blue) !important; }
 
-        /* ================= BUTTONS & MODALS ================= */
+        /* BUTTONS & MODALS */
         .btn { width: 100%; padding: 14px; border-radius: 12px; border: none; font-size: 15px; font-weight: 900; cursor: pointer; transition: 0.2s; background: linear-gradient(135deg, var(--accent-blue), #1e3a8a); color: #fff; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); }
         .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6); }
         .btn:active:not(:disabled) { transform: scale(0.97); }
@@ -547,7 +352,7 @@
         .toggle.on { background: var(--accent-green); }
         .toggle.on::after { left: 25px; }
 
-        /* ================= ADMIN ================= */
+        /* ADMIN */
         .admin-tabs { display: flex; gap: 6px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 4px; }
         .admin-tabs::-webkit-scrollbar { height: 3px; }
         .admin-tabs::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
@@ -573,15 +378,43 @@
         .admin-form input:focus, .admin-form select:focus, .admin-form textarea:focus { border-color: var(--accent-blue); }
         .admin-form label { display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px; font-weight: 700; text-transform: uppercase; }
         .admin-current-event { background: var(--bg-input); border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin-bottom: 12px; font-size: 13px; }
+
         .admin-stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 15px; }
-        .admin-stat-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 12px; text-align: center; }
-        .admin-stat-box .v { font-size: 20px; font-weight: 900; color: var(--accent-gold); }
+        .admin-stat-grid.wide { grid-template-columns: repeat(2, 1fr); }
+        .admin-stat-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 12px 8px; text-align: center; }
+        .admin-stat-box .v { font-size: 18px; font-weight: 900; color: var(--accent-gold); word-break: break-word; }
         .admin-stat-box .l { font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; margin-top: 4px; }
+
+        .admin-user-row { display: flex; align-items: center; gap: 10px; padding: 10px; background: var(--bg-input); border-radius: 10px; margin-bottom: 6px; font-size: 12px; cursor: pointer; transition: 0.2s; }
+        .admin-user-row:hover { background: rgba(255,255,255,0.05); }
+        .admin-user-row .rank { font-size: 16px; font-weight: 900; color: var(--accent-gold); width: 24px; text-align: center; }
+        .admin-user-row .info { flex: 1; min-width: 0; }
+        .admin-user-row .nick { font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .admin-user-row .uid { color: var(--text-muted); font-size: 10px; }
+        .admin-user-row .bal { color: var(--accent-gold); font-weight: 900; font-size: 13px; }
+        .admin-user-row .opened { color: var(--accent-blue); font-size: 11px; font-weight: 700; }
+
         .admin-drop-row { display: flex; align-items: center; gap: 10px; padding: 8px; background: var(--bg-input); border-radius: 10px; margin-bottom: 6px; font-size: 12px; }
         .admin-drop-row img { width: 32px; height: 32px; object-fit: contain; }
         .admin-drop-row .meta { flex: 1; }
         .admin-drop-row .nick { font-weight: 800; }
         .admin-drop-row .item { color: var(--text-muted); font-size: 11px; }
+
+        .admin-promo-row { display: flex; align-items: center; gap: 10px; padding: 10px; background: var(--bg-input); border-radius: 10px; margin-bottom: 6px; font-size: 12px; }
+        .admin-promo-row .code { font-weight: 900; color: var(--accent-gold); font-family: monospace; }
+        .admin-promo-row .reward { color: var(--accent-green); font-weight: 700; }
+        .admin-promo-row .uses { color: var(--text-muted); font-size: 11px; }
+
+        .admin-search-result { margin-top: 12px; }
+        .admin-search-card { background: var(--bg-input); border: 1px solid var(--border); border-radius: 12px; padding: 12px; }
+        .admin-search-card .head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .admin-search-card .avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--accent-blue); border: 2px solid var(--accent-gold); display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 18px; }
+        .admin-search-card .name { font-weight: 900; font-size: 14px; }
+        .admin-search-card .id { font-size: 11px; color: var(--text-muted); }
+        .admin-search-card .info-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 12px; border-bottom: 1px solid var(--border); }
+        .admin-search-card .info-row:last-child { border-bottom: none; }
+        .admin-search-card .info-row .k { color: var(--text-muted); }
+        .admin-search-card .info-row .v { font-weight: 800; color: var(--accent-gold); }
 
         @media (max-width: 400px) {
             .section { padding: 15px; }
@@ -630,22 +463,13 @@
     </div>
 </div>
 
-<!-- CASES -->
 <div id="section-cases" class="section active">
     <h2 class="section-title">Кейсы</h2>
-
-    <!-- LIVE FEED -->
     <div class="live-feed-section">
-        <div class="live-feed-title">
-            <span class="live-dot"></span>
-            Последние дропы
-        </div>
+        <div class="live-feed-title"><span class="live-dot"></span> Последние дропы</div>
         <div class="top-drop-day" id="top-drop-day" style="display:none;"></div>
-        <div class="live-feed" id="live-feed">
-            <div class="live-feed-empty">Загрузка...</div>
-        </div>
+        <div class="live-feed" id="live-feed"><div class="live-feed-empty">Загрузка...</div></div>
     </div>
-
     <div class="event-banner" id="event-banner" style="display:none;"></div>
     <div class="poll-banner" id="poll-banner" style="display:none;"></div>
 
@@ -653,54 +477,37 @@
         <div class="case-category-title">Free Cases</div>
         <div class="cases-grid">
             <div class="case-card" data-case="free" onclick="openCaseSection('free')">
-                <div class="case-img-wrap">
-                    <img src="assets/cases/free.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <span class="emoji-fallback" style="display:none;">🎁</span>
-                </div>
+                <div class="case-img-wrap"><img src="assets/cases/free.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><span class="emoji-fallback" style="display:none;">🎁</span></div>
                 <div class="case-title">Ежедневный</div>
                 <div class="case-price" id="free-timer-text">БЕСПЛАТНО</div>
             </div>
             <div class="case-card" data-case="user" id="user-case-card" onclick="openCaseSection('user')">
-                <div class="case-img-wrap">
-                    <img src="assets/cases/user.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <span class="emoji-fallback" style="display:none;">👤</span>
-                </div>
+                <div class="case-img-wrap"><img src="assets/cases/user.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><span class="emoji-fallback" style="display:none;">👤</span></div>
                 <div class="case-title">Кейс за Юз</div>
                 <div class="case-price" id="user-timer-text">ЗА ЮЗ</div>
             </div>
         </div>
     </div>
-
     <div class="case-category">
         <div class="case-category-title">All In</div>
         <div class="cases-grid">
             <div class="case-card" data-case="allin" onclick="openCaseSection('allin')">
-                <div class="case-img-wrap">
-                    <img src="assets/cases/allin.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <span class="emoji-fallback" style="display:none;">🎰</span>
-                </div>
+                <div class="case-img-wrap"><img src="assets/cases/allin.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><span class="emoji-fallback" style="display:none;">🎰</span></div>
                 <div class="case-title">ALL IN</div>
                 <div class="case-price"><i class="fa-solid fa-coins"></i> 29</div>
             </div>
         </div>
     </div>
-
     <div class="case-category">
         <div class="case-category-title">Standard</div>
         <div class="cases-grid">
             <div class="case-card" data-case="base" onclick="openCaseSection('base')">
-                <div class="case-img-wrap">
-                    <img src="assets/cases/base.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <span class="emoji-fallback" style="display:none;">📦</span>
-                </div>
+                <div class="case-img-wrap"><img src="assets/cases/base.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><span class="emoji-fallback" style="display:none;">📦</span></div>
                 <div class="case-title">Начальный</div>
                 <div class="case-price"><i class="fa-solid fa-coins"></i> 9</div>
             </div>
             <div class="case-card" data-case="bro" onclick="openCaseSection('bro')">
-                <div class="case-img-wrap">
-                    <img src="assets/cases/bro.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <span class="emoji-fallback" style="display:none;">💎</span>
-                </div>
+                <div class="case-img-wrap"><img src="assets/cases/bro.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><span class="emoji-fallback" style="display:none;">💎</span></div>
                 <div class="case-title">Про Бро</div>
                 <div class="case-price"><i class="fa-solid fa-coins"></i> 25</div>
             </div>
@@ -708,7 +515,6 @@
     </div>
 </div>
 
-<!-- CASE OPENING -->
 <div id="section-case-opening" class="section">
     <div class="case-header">
         <button class="back-btn" onclick="exitCaseOpening()"><i class="fa-solid fa-arrow-left"></i> Назад</button>
@@ -731,9 +537,7 @@
         </div>
         <div id="won-area" style="width:100%; display:flex; justify-content:center; gap:8px; flex-wrap:wrap;"></div>
         <button class="btn-open" id="btn-open" onclick="startCaseOpening()">ОТКРЫТЬ</button>
-        <button class="btn-skip" id="btn-skip-anim" onclick="doSkipAnimation()" style="display:none;">
-            <i class="fa-solid fa-forward"></i> ПРОПУСТИТЬ АНИМАЦИЮ
-        </button>
+        <button class="btn-skip" id="btn-skip-anim" onclick="doSkipAnimation()" style="display:none;"><i class="fa-solid fa-forward"></i> ПРОПУСТИТЬ АНИМАЦИЮ</button>
     </div>
     <div class="loot-preview-box">
         <div class="loot-preview-title">Что может выпасть?</div>
@@ -741,22 +545,13 @@
     </div>
 </div>
 
-<!-- UPGRADER -->
 <div id="section-upgrader" class="section">
     <h2 class="section-title">Апгрейд</h2>
     <div class="upg-container">
         <div class="upg-wheel-section">
-            <div class="upg-wheel-disc" id="upg-wheel-disc">
-                <div class="upg-wheel-icon" id="upg-wheel-icon"></div>
-            </div>
-            <div class="upg-wheel-pointer-rotator" id="upg-wheel-pointer">
-                <div class="upg-wheel-pointer-tip"></div>
-                <div class="upg-wheel-pointer-needle"></div>
-            </div>
-            <div class="upg-wheel-center">
-                <div class="title">ШАНС</div>
-                <div class="val" id="upg-chance-val">0%</div>
-            </div>
+            <div class="upg-wheel-disc" id="upg-wheel-disc"><div class="upg-wheel-icon" id="upg-wheel-icon"></div></div>
+            <div class="upg-wheel-pointer-rotator" id="upg-wheel-pointer"><div class="upg-wheel-pointer-tip"></div><div class="upg-wheel-pointer-needle"></div></div>
+            <div class="upg-wheel-center"><div class="title">ШАНС</div><div class="val" id="upg-chance-val">0%</div></div>
         </div>
         <div class="upg-quick-btns">
             <button class="btn" onclick="autoSelect('x2')">x2</button>
@@ -767,19 +562,14 @@
             <button class="btn" onclick="autoSelect('25')">25%</button>
         </div>
         <div class="upg-slots-row">
-            <div class="upg-square-box" id="upg-input-box" onclick="openInvPicker()">
-                <div class="placeholder">+ Ваши предметы</div>
-            </div>
-            <div class="upg-square-box target" id="upg-target-box" onclick="openTargetPicker()">
-                <i class="fa-solid fa-bullseye" style="font-size:30px; color:var(--text-muted);"></i>
-            </div>
+            <div class="upg-square-box" id="upg-input-box" onclick="openInvPicker()"><div class="placeholder">+ Ваши предметы</div></div>
+            <div class="upg-square-box target" id="upg-target-box" onclick="openTargetPicker()"><i class="fa-solid fa-bullseye" style="font-size:30px; color:var(--text-muted);"></i></div>
         </div>
         <div class="upg-sum" id="upg-sum">Сумма: <b>0</b> монет</div>
         <button class="btn-upgrade-action" id="btn-upg" onclick="runUpgrade()" disabled>ПРОКАЧАТЬ</button>
     </div>
 </div>
 
-<!-- COINFLIP -->
 <div id="section-coinflip" class="section">
     <h2 class="section-title">Монетка</h2>
     <div class="coinflip-container">
@@ -793,7 +583,6 @@
     </div>
 </div>
 
-<!-- DONATE -->
 <div id="section-donate" class="section">
     <h2 class="section-title">Пополнение</h2>
     <div class="donate-grid" id="donate-grid"></div>
@@ -804,7 +593,6 @@
     </div>
 </div>
 
-<!-- PROFILE -->
 <div id="section-profile" class="section">
     <div class="profile-banner">
         <div class="profile-avatar-big" id="p-avatar">?</div>
@@ -821,20 +609,17 @@
         <h2 class="section-title" style="margin:0;"><i class="fa-solid fa-sack-dollar"></i> Инвентарь</h2>
         <button class="btn red" style="width:auto; padding:8px 14px; font-size:12px;" onclick="sellAll()">Продать всё</button>
     </div>
-    <div class="inv-grid" id="inventory-list">
-        <div style="grid-column: span 3; text-align: center; color: var(--text-muted); padding: 20px;">Пусто</div>
-    </div>
+    <div class="inv-grid" id="inventory-list"><div style="grid-column: span 3; text-align: center; color: var(--text-muted); padding: 20px;">Пусто</div></div>
 </div>
 
-<!-- ADMIN -->
 <div id="section-admin" class="section">
     <h2 class="section-title"><i class="fa-solid fa-shield-halved" style="color:var(--accent-gold);"></i> Админ-панель</h2>
-
     <div class="admin-tabs">
         <button class="admin-tab active" onclick="adminTab('events')"><i class="fa-solid fa-wand-magic-sparkles"></i> Ивенты</button>
         <button class="admin-tab" onclick="adminTab('promo')"><i class="fa-solid fa-ticket"></i> Промо</button>
         <button class="admin-tab" onclick="adminTab('give')"><i class="fa-solid fa-gift"></i> Выдать</button>
         <button class="admin-tab" onclick="adminTab('poll')"><i class="fa-solid fa-chart-simple"></i> Опрос</button>
+        <button class="admin-tab" onclick="adminTab('user')"><i class="fa-solid fa-user-magnifying-glass"></i> Игрок</button>
         <button class="admin-tab" onclick="adminTab('stats')"><i class="fa-solid fa-chart-line"></i> Статы</button>
     </div>
 
@@ -846,31 +631,12 @@
         </div>
         <div class="admin-card">
             <div class="admin-card-title">Запустить ивент</div>
-            <div class="admin-form">
-                <label>Длительность (минуты)</label>
-                <input type="number" id="admin-event-duration" value="60" min="1" max="10080">
-            </div>
+            <div class="admin-form"><label>Длительность (минуты)</label><input type="number" id="admin-event-duration" value="60" min="1" max="10080"></div>
             <div class="admin-event-grid">
-                <div class="admin-event-card" data-type="miniboost">
-                    <div class="name">Минибуст</div>
-                    <div class="mult">1.5x</div>
-                    <button class="btn small" style="background:linear-gradient(135deg,#22c55e,#15803d);" onclick="adminStartEvent('miniboost')">Запустить</button>
-                </div>
-                <div class="admin-event-card" data-type="gold">
-                    <div class="name">Голд</div>
-                    <div class="mult">2x</div>
-                    <button class="btn small gold" onclick="adminStartEvent('gold')">Запустить</button>
-                </div>
-                <div class="admin-event-card" data-type="diamond">
-                    <div class="name">Алмаз</div>
-                    <div class="mult">3x</div>
-                    <button class="btn small" style="background:linear-gradient(135deg,#06b6d4,#0e7490);" onclick="adminStartEvent('diamond')">Запустить</button>
-                </div>
-                <div class="admin-event-card" data-type="bloody">
-                    <div class="name">Кровавый</div>
-                    <div class="mult">4x</div>
-                    <button class="btn small red" onclick="adminStartEvent('bloody')">Запустить</button>
-                </div>
+                <div class="admin-event-card" data-type="miniboost"><div class="name">Минибуст</div><div class="mult">1.5x</div><button class="btn small" style="background:linear-gradient(135deg,#22c55e,#15803d);" onclick="adminStartEvent('miniboost')">Запустить</button></div>
+                <div class="admin-event-card" data-type="gold"><div class="name">Голд</div><div class="mult">2x</div><button class="btn small gold" onclick="adminStartEvent('gold')">Запустить</button></div>
+                <div class="admin-event-card" data-type="diamond"><div class="name">Алмаз</div><div class="mult">3x</div><button class="btn small" style="background:linear-gradient(135deg,#06b6d4,#0e7490);" onclick="adminStartEvent('diamond')">Запустить</button></div>
+                <div class="admin-event-card" data-type="bloody"><div class="name">Кровавый</div><div class="mult">4x</div><button class="btn small red" onclick="adminStartEvent('bloody')">Запустить</button></div>
             </div>
         </div>
     </div>
@@ -879,13 +645,13 @@
         <div class="admin-card">
             <div class="admin-card-title">Создать промокод</div>
             <div class="admin-form">
-                <label>Код (2-32 символа, буквы/цифры/_/-)</label>
+                <label>Код (2-32 символа)</label>
                 <input type="text" id="admin-promo-code" placeholder="WELCOME2025" style="text-transform:uppercase;">
                 <label>Награда (монет)</label>
                 <input type="number" id="admin-promo-reward" value="100" min="1" max="1000000">
                 <label>Максимум использований</label>
                 <input type="number" id="admin-promo-max" value="100" min="1" max="1000000">
-                <button class="btn" onclick="adminCreatePromo()">Создать промокод</button>
+                <button class="btn" onclick="adminCreatePromo()">Создать</button>
             </div>
         </div>
     </div>
@@ -894,14 +660,12 @@
         <div class="admin-card">
             <div class="admin-card-title">Выдать монеты / предмет</div>
             <div class="admin-form">
-                <label>Telegram ID получателя</label>
+                <label>Telegram ID</label>
                 <input type="text" id="admin-give-user" placeholder="123456789">
                 <label>Монет (0 если не выдавать)</label>
                 <input type="number" id="admin-give-coins" value="0" min="0" max="10000000">
-                <label>Предмет (не обязательно)</label>
-                <select id="admin-give-item">
-                    <option value="">— не выдавать предмет —</option>
-                </select>
+                <label>Предмет</label>
+                <select id="admin-give-item"><option value="">— не выдавать —</option></select>
                 <button class="btn gold" onclick="adminGive()">Выдать</button>
             </div>
         </div>
@@ -913,13 +677,13 @@
             <div class="admin-form">
                 <label>Вопрос</label>
                 <input type="text" id="admin-poll-question" placeholder="Какой кейс лучше?">
-                <label>Варианты (2-6)</label>
+                <label>Варианты</label>
                 <div id="admin-poll-options">
                     <input type="text" class="poll-option-input" placeholder="Вариант 1">
                     <input type="text" class="poll-option-input" placeholder="Вариант 2">
                 </div>
-                <button class="btn" style="background:rgba(59,130,246,0.15); color:var(--accent-blue); box-shadow:none; margin-bottom:10px;" onclick="adminAddPollOption()">+ Добавить вариант</button>
-                <label>Длительность (минуты, 0 = бессрочно)</label>
+                <button class="btn" style="background:rgba(59,130,246,0.15); color:var(--accent-blue); box-shadow:none; margin-bottom:10px;" onclick="adminAddPollOption()">+ Добавить</button>
+                <label>Длительность (мин, 0 = бессрочно)</label>
                 <input type="number" id="admin-poll-duration" value="0" min="0" max="43200">
                 <button class="btn" onclick="adminCreatePoll()">Создать опрос</button>
             </div>
@@ -927,14 +691,24 @@
         <div class="admin-card">
             <div class="admin-card-title">Активный опрос</div>
             <div id="admin-current-poll">—</div>
-            <button class="btn red small" style="margin-top:10px;" onclick="adminEndPoll()">Завершить опрос</button>
+            <button class="btn red small" style="margin-top:10px;" onclick="adminEndPoll()">Завершить</button>
+        </div>
+    </div>
+
+    <div class="admin-panel" data-panel="user">
+        <div class="admin-card">
+            <div class="admin-card-title">Поиск игрока</div>
+            <div class="admin-form">
+                <label>Telegram ID</label>
+                <input type="text" id="admin-search-uid" placeholder="123456789">
+                <button class="btn" onclick="adminSearchUser()">Найти</button>
+            </div>
+            <div class="admin-search-result" id="admin-search-result"></div>
         </div>
     </div>
 
     <div class="admin-panel" data-panel="stats">
-        <div id="admin-stats-content">
-            <div style="text-align:center; padding:20px; color:var(--text-muted);">Загрузка...</div>
-        </div>
+        <div id="admin-stats-content"><div style="text-align:center; padding:20px; color:var(--text-muted);">Загрузка...</div></div>
     </div>
 </div>
 
@@ -985,40 +759,22 @@
     <div class="modal-box">
         <span class="close-modal" onclick="closeSettings()">&times;</span>
         <h3 class="modal-title">Настройки</h3>
-        <div class="settings-row">
-            <div class="settings-label"><i class="fa-solid fa-volume-high"></i> Звуки</div>
-            <div class="toggle" id="toggle-sound" onclick="toggleSound()"></div>
-        </div>
-        <div class="settings-row">
-            <div class="settings-label"><i class="fa-solid fa-mobile-screen"></i> Вибрация</div>
-            <div class="toggle" id="toggle-haptic" onclick="toggleHaptic()"></div>
-        </div>
-        <div style="margin-top:20px; font-size:11px; color:var(--text-muted); text-align:center;">Brainrots Funny v2.3</div>
+        <div class="settings-row"><div class="settings-label"><i class="fa-solid fa-volume-high"></i> Звуки</div><div class="toggle" id="toggle-sound" onclick="toggleSound()"></div></div>
+        <div class="settings-row"><div class="settings-label"><i class="fa-solid fa-mobile-screen"></i> Вибрация</div><div class="toggle" id="toggle-haptic" onclick="toggleHaptic()"></div></div>
+        <div style="margin-top:20px; font-size:11px; color:var(--text-muted); text-align:center;">Brainrots Funny v2.4</div>
     </div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyDnmAysvjn6Zu-pbddOhXDt1ohnZaY1Fcw",
-        authDomain: "casemine-online.firebaseapp.com",
-        databaseURL: "https://casemine-online-default-rtdb.europe-west1.firebasedatabase.app",
-        projectId: "casemine-online",
-        storageBucket: "casemine-online.firebasestorage.app",
-        messagingSenderId: "750443799326",
-        appId: "1:750443799326:web:edec309f732337e39a1f0f"
-    };
+    const firebaseConfig = { apiKey: "AIzaSyDnmAysvjn6Zu-pbddOhXDt1ohnZaY1Fcw", authDomain: "casemine-online.firebaseapp.com", databaseURL: "https://casemine-online-default-rtdb.europe-west1.firebasedatabase.app", projectId: "casemine-online", storageBucket: "casemine-online.firebasestorage.app", messagingSenderId: "750443799326", appId: "1:750443799326:web:edec309f732337e39a1f0f" };
     const fbApp = initializeApp(firebaseConfig);
     const fbDb = getDatabase(fbApp);
     const feedRef = ref(fbDb, 'drop_feed');
-
     onValue(feedRef, (snap) => {
         const val = snap.val() || {};
-        const arr = Object.values(val)
-            .sort((a, b) => (b.ts || 0) - (a.ts || 0))
-            .slice(0, 200);
+        const arr = Object.values(val).sort((a, b) => (b.ts || 0) - (a.ts || 0)).slice(0, 200);
         if (window.updateDropFeed) window.updateDropFeed(arr);
     });
 </script>
@@ -1035,20 +791,13 @@
     const MAX_UPG_INPUTS = 5;
     const WIN_INDEX_CASES = 25;
     const ADMIN_IDS = [6636765626, 8364667153];
-
     const CASE_PRICES = { free: 0, user: 0, base: 9, bro: 25, allin: 29 };
 
-    const CASE_ITEM_W = 120;
-    const CASE_GAP = 10;
-    const CASE_STRIDE = CASE_ITEM_W + CASE_GAP;
-    const CASE_TRACK_PAD = 15;
-    const CASE_WRAP_BORDER = 2;
-
-    const MULTI_ITEM_W = 70;
-    const MULTI_GAP = 8;
-    const MULTI_STRIDE = MULTI_ITEM_W + MULTI_GAP;
-    const MULTI_TRACK_PAD = 10;
-    const MULTI_BORDER = 2;
+    // Animation timings
+    const SINGLE_ANIM_DUR = 9000;      // 9s single
+    const MULTI_BASE_DUR = 8000;       // 8s multi (last + stagger)
+    const MULTI_STAGGER = 250;         // 250ms stagger
+    const SKIP_BUFFER = 250;
 
     const RARITIES = {
         common:    { id: 'common',    name: 'Common',    color: '#6b7280' },
@@ -1117,39 +866,31 @@
         balance: 0, inventory: {}, lastFree: 0, lastUser: 0, hasUserCase: false,
         stats: { casesOpened: 0, itemsSold: 0, upgradeSuccess: 0, upgradeFail: 0, totalEarned: 0 }
     };
-
     let activeCase = null, mult = 1, isOpening = false;
     let upgInputs = [], upgTarget = null, isUpgrading = false;
     let cfChoice = 'heads', isCfPlaying = false;
-    let currentEvent = null;
-    let currentPoll = null;
-    let animState = null;
-    let dropFeedData = [];
-    let topDayDrop = null;
+    let currentEvent = null, currentPoll = null, animState = null;
+    let dropFeedData = [], topDayDrop = null;
+    let liveFeedResizeTimer = null;
 
     let soundEnabled = localStorage.getItem('bf_sound') !== '0';
     let hapticEnabled = localStorage.getItem('bf_haptic') !== '0';
 
-    // ========== UTILS ==========
     function escapeHtml(str) {
         return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
     function formatNum(n) { return Number(n).toLocaleString('ru-RU'); }
-    function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
 
     // ========== SOUND ==========
     let audioCtx = null;
     function getCtx() {
-        if (!audioCtx) {
-            try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return null; }
-        }
+        if (!audioCtx) { try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return null; } }
         if (audioCtx.state === 'suspended') audioCtx.resume();
         return audioCtx;
     }
     function playTone(freq, duration, type, volume) {
         if (!soundEnabled) return;
-        const ctx = getCtx();
-        if (!ctx) return;
+        const ctx = getCtx(); if (!ctx) return;
         try {
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
@@ -1157,10 +898,8 @@
             osc.frequency.value = freq;
             gain.gain.setValueAtTime(volume || 0.06, ctx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-            osc.start(ctx.currentTime);
-            osc.stop(ctx.currentTime + duration);
+            osc.connect(gain); gain.connect(ctx.destination);
+            osc.start(ctx.currentTime); osc.stop(ctx.currentTime + duration);
         } catch (e) {}
     }
     function playSound(name) {
@@ -1176,7 +915,6 @@
             case 'error':  playTone(180, 0.15, 'square', 0.06); break;
         }
     }
-
     function haptic(type) {
         if (!hapticEnabled || !tg?.HapticFeedback) return;
         try {
@@ -1189,7 +927,6 @@
         } catch (e) {}
     }
 
-    // ========== API ==========
     async function apiCall(endpoint, method = 'GET', body = null) {
         const headers = { 'Content-Type': 'application/json', 'X-Telegram-Init-Data': tg ? tg.initData : '' };
         const options = { method, headers };
@@ -1203,33 +940,20 @@
         return res.json();
     }
 
-    // ========== NOTIFY ==========
     function notify(opts) {
         if (typeof opts === 'string') opts = { message: opts };
         const type = opts.type || 'info';
         const title = opts.title || (type === 'success' ? 'Успех' : type === 'error' ? 'Ошибка' : type === 'warning' ? 'Внимание' : 'Инфо');
         let container = document.querySelector('.toast-container');
-        if (!container) {
-            container = document.createElement('div');
-            container.className = 'toast-container';
-            document.body.appendChild(container);
-        }
+        if (!container) { container = document.createElement('div'); container.className = 'toast-container'; document.body.appendChild(container); }
         const iconMap = { success: 'fa-circle-check', error: 'fa-circle-xmark', warning: 'fa-triangle-exclamation', info: 'fa-circle-info' };
         const colorMap = { success: 'var(--accent-green)', error: 'var(--accent-red)', warning: 'var(--accent-gold)', info: 'var(--accent-blue)' };
         const el = document.createElement('div');
         el.className = 'toast ' + type;
-        el.innerHTML = `
-            <i class="fa-solid ${iconMap[type] || iconMap.info}" style="font-size:18px; color:${colorMap[type] || colorMap.info}"></i>
-            <div style="flex:1;">
-                <div style="font-weight:800; font-size:13px;">${escapeHtml(title)}</div>
-                <div style="font-size:11px; color:var(--text-muted);">${escapeHtml(opts.message || '')}</div>
-            </div>`;
+        el.innerHTML = `<i class="fa-solid ${iconMap[type] || iconMap.info}" style="font-size:18px; color:${colorMap[type] || colorMap.info}"></i><div style="flex:1;"><div style="font-weight:800; font-size:13px;">${escapeHtml(title)}</div><div style="font-size:11px; color:var(--text-muted);">${escapeHtml(opts.message || '')}</div></div>`;
         container.appendChild(el);
         if (type === 'error') playSound('error');
-        setTimeout(() => {
-            el.style.opacity = '0';
-            setTimeout(() => el.remove(), 300);
-        }, opts.duration || 3500);
+        setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 300); }, opts.duration || 3500);
     }
 
     function burstConfetti() {
@@ -1238,10 +962,8 @@
             const p = document.createElement('div');
             p.className = 'confetti-piece';
             const size = 6 + Math.random() * 8;
-            p.style.left = '50%';
-            p.style.top = '50%';
-            p.style.width = size + 'px';
-            p.style.height = size + 'px';
+            p.style.left = '50%'; p.style.top = '50%';
+            p.style.width = size + 'px'; p.style.height = size + 'px';
             p.style.background = colors[Math.floor(Math.random() * colors.length)];
             p.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
             p.style.setProperty('--tx', ((Math.random() - 0.5) * 900) + 'px');
@@ -1253,33 +975,25 @@
         }
     }
 
-    // ========== NAV ==========
     function toggleMenu() {
         document.getElementById('sidebar').classList.toggle('active');
         document.getElementById('sidebar-overlay').classList.toggle('active');
         haptic('light');
     }
-
     function switchTab(tabId) {
         document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
         const target = document.getElementById('section-' + tabId);
         if (target) target.classList.add('active');
-
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         const activeNav = document.querySelector(`.nav-item[data-tab="${tabId}"]`);
         if (activeNav) activeNav.classList.add('active');
-
         if (document.getElementById('sidebar').classList.contains('active')) toggleMenu();
         window.scrollTo(0, 0);
         haptic('light');
-
         if (tabId === 'admin') loadAdminStats();
     }
-
-    // ========== SETTINGS ==========
     function openSettings() { document.getElementById('settings-modal').classList.add('active'); haptic('light'); }
     function closeSettings() { document.getElementById('settings-modal').classList.remove('active'); }
-
     function toggleSound() {
         soundEnabled = !soundEnabled;
         localStorage.setItem('bf_sound', soundEnabled ? '1' : '0');
@@ -1296,13 +1010,19 @@
         if (hapticEnabled) haptic('medium');
     }
 
-    // ========== LIVE FEED ==========
+    // ========== LIVE FEED (flex-wrap, no scrollbar) ==========
+    function getLiveFeedLimit() {
+        const w = window.innerWidth;
+        if (w < 500) return 8;
+        if (w < 700) return 12;
+        return 16;
+    }
+
     function getRarityColorForItem(name) {
         const it = ALL_ITEMS.find(i => i.name === name);
         if (it) return (RARITIES[it.rarity] || RARITIES.common).color;
         return RARITIES.common.color;
     }
-
     function normalizeTs(ts) {
         const n = Number(ts) || 0;
         if (n === 0) return 0;
@@ -1315,10 +1035,9 @@
         const topBox = document.getElementById('top-drop-day');
         if (!feed || !topBox) return;
 
-        const now = Date.now();
-        const dayAgo = now - 24 * 3600 * 1000;
+        const dayAgo = Date.now() - 24 * 3600 * 1000;
 
-        // Топ дня — самый дорогой за последние 24 часа
+        // Топ дня
         let best = null;
         for (const d of dropFeedData) {
             const t = normalizeTs(d.ts);
@@ -1329,51 +1048,44 @@
 
         if (best) {
             topBox.style.display = 'flex';
-            topBox.onclick = function(e) {
-                e.stopPropagation();
-                openOtherProfile(best.user_id);
-            };
-            const method = best.method === 'upgrade' ? 'upgrade' : 'case';
+            topBox.onclick = function(e) { e.stopPropagation(); openOtherProfile(best.user_id); };
             const methodLabel = best.method === 'upgrade' ? 'Апгрейд' : 'Кейс';
             const methodIcon = best.method === 'upgrade' ? 'fa-bolt' : 'fa-box-open';
             const imgHtml = best.itemImg
-                ? `<img class="top-drop-img" src="${best.itemImg}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                   <span class="top-drop-emoji" style="display:none;">🧠</span>`
+                ? `<img class="top-drop-img" src="${best.itemImg}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><span class="top-drop-emoji" style="display:none;">🧠</span>`
                 : `<span class="top-drop-emoji">🧠</span>`;
             topBox.innerHTML = `
                 <div class="top-drop-img-wrap">${imgHtml}</div>
                 <div class="top-drop-info">
                     <div class="top-drop-name">${escapeHtml(best.itemName || 'Предмет')}</div>
                     <div class="top-drop-price"><i class="fa-solid fa-coins"></i> ${formatNum(best.price || 0)}</div>
-                    <div class="top-drop-method ${method}"><i class="fa-solid ${methodIcon}"></i> ${methodLabel}</div>
-                </div>
-            `;
+                    <div class="top-drop-method ${best.method === 'upgrade' ? 'upgrade' : 'case'}"><i class="fa-solid ${methodIcon}"></i> ${methodLabel}</div>
+                </div>`;
         } else {
             topBox.style.display = 'none';
             topBox.innerHTML = '';
         }
 
-        // Сама лента
+        // Лента
         if (!dropFeedData.length) {
             feed.innerHTML = '<div class="live-feed-empty">Пока нет дропов</div>';
             return;
         }
 
-        const list = dropFeedData.slice(0, 25);
+        const limit = getLiveFeedLimit();
+        const list = dropFeedData.slice(0, limit);
         feed.innerHTML = list.map(d => {
             const borderColor = getRarityColorForItem(d.itemName);
-            const method = d.method === 'upgrade' ? 'upgrade' : 'case';
             const methodLabel = d.method === 'upgrade' ? 'Апгрейд' : 'Кейс';
             const methodIcon = d.method === 'upgrade' ? 'fa-bolt' : 'fa-box-open';
             const imgHtml = d.itemImg
-                ? `<img src="${d.itemImg}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                   <span class="emoji-fallback" style="display:none;">🧠</span>`
+                ? `<img src="${d.itemImg}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><span class="emoji-fallback" style="display:none;">🧠</span>`
                 : `<span class="emoji-fallback">🧠</span>`;
-            return `<div class="live-drop-item" style="border-color:${borderColor}" onclick="BF.openProfile('${d.user_id}')">
+            return `<div class="live-drop-item" style="border-color:${borderColor}" onclick="BF.openProfile('${d.user_id || ''}')">
                 ${imgHtml}
                 <div class="ld-name">${escapeHtml(d.itemName || '')}</div>
                 <div class="ld-price"><i class="fa-solid fa-coins"></i> ${formatNum(d.price || 0)}</div>
-                <div class="ld-overlay ${method}">
+                <div class="ld-overlay ${d.method === 'upgrade' ? 'upgrade' : ''}">
                     <i class="fa-solid ${methodIcon} ld-method-icon"></i>
                     <div class="ld-method-text">${methodLabel}</div>
                 </div>
@@ -1381,22 +1093,32 @@
         }).join('');
     }
 
+    window.addEventListener('resize', () => {
+        if (liveFeedResizeTimer) clearTimeout(liveFeedResizeTimer);
+        liveFeedResizeTimer = setTimeout(() => renderLiveFeed(), 200);
+    });
+
     window.updateDropFeed = function(arr) {
         dropFeedData = Array.isArray(arr) ? arr : [];
         renderLiveFeed();
     };
 
-    // ========== OTHER PROFILE ==========
+    // ========== OTHER PROFILE (with graceful fallback) ==========
     async function openOtherProfile(uid) {
-        if (!uid || uid === 'undefined' || uid === 'null') {
+        if (!uid || uid === 'undefined' || uid === 'null' || uid === '') {
             notify({ type: 'warning', message: 'Не удалось определить игрока' });
             return;
         }
         haptic('light');
         const modal = document.getElementById('other-profile-modal');
         const invBox = document.getElementById('op-inventory');
-        document.getElementById('op-avatar').textContent = '?';
-        document.getElementById('op-name').textContent = 'Загрузка...';
+
+        // Fallback info from drop_feed
+        const dropHint = dropFeedData.find(d => String(d.user_id) === String(uid)) || {};
+        const hintNick = dropHint.nick || '';
+
+        document.getElementById('op-avatar').textContent = hintNick ? hintNick.charAt(0).toUpperCase() : '?';
+        document.getElementById('op-name').textContent = hintNick || ('Игрок #' + uid);
         document.getElementById('op-balance').textContent = '...';
         document.getElementById('op-cases').textContent = '...';
         document.getElementById('op-earned').textContent = '...';
@@ -1406,9 +1128,11 @@
         try {
             const data = await apiCall('/api/user_profile/' + encodeURIComponent(uid));
             const isMe = String(data.uid) === String(MY_ID);
-            document.getElementById('op-name').textContent = isMe ? 'Это вы' : 'Игрок #' + uid;
+            const displayName = (data.nick && data.nick.trim()) || hintNick || (isMe ? 'Это вы' : ('Игрок #' + uid));
+            document.getElementById('op-name').textContent = displayName;
             document.getElementById('op-balance').textContent = formatNum(data.balance || 0);
-            document.getElementById('op-avatar').textContent = isMe ? (tgUser?.first_name?.charAt(0) || 'В') : (String(uid).slice(-2));
+            document.getElementById('op-avatar').textContent = displayName.charAt(0).toUpperCase() || '?';
+
             const st = data.stats || {};
             document.getElementById('op-cases').textContent = formatNum(st.casesOpened || 0);
             document.getElementById('op-earned').textContent = formatNum(st.totalEarned || 0);
@@ -1429,11 +1153,27 @@
                 }).join('');
             }
         } catch (err) {
-            document.getElementById('op-name').textContent = 'Ошибка';
+            // Graceful fallback
+            document.getElementById('op-name').textContent = hintNick || ('Игрок #' + uid);
             document.getElementById('op-balance').textContent = '—';
             document.getElementById('op-cases').textContent = '—';
             document.getElementById('op-earned').textContent = '—';
-            invBox.innerHTML = '<div style="grid-column: span 3; text-align:center; color:var(--accent-red); padding:15px; font-size:12px;">' + escapeHtml(err.message) + '</div>';
+            if (dropHint.itemName) {
+                invBox.innerHTML = `
+                    <div style="grid-column: span 3; padding: 15px; background: var(--bg-input); border-radius: 10px;">
+                        <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Последний дроп</div>
+                        <div style="display: flex; align-items: center; gap: 10px; justify-content: center;">
+                            ${dropHint.itemImg ? `<img src="${dropHint.itemImg}" style="width: 50px; height: 50px; object-fit: contain;">` : ''}
+                            <div style="text-align: left;">
+                                <div style="font-weight: 800; font-size: 13px;">${escapeHtml(dropHint.itemName)}</div>
+                                <div style="color: var(--accent-gold); font-weight: 900;">${formatNum(dropHint.price || 0)}</div>
+                            </div>
+                        </div>
+                        <div style="font-size: 11px; color: var(--text-muted); margin-top: 10px; text-align: center;">Полный профиль недоступен</div>
+                    </div>`;
+            } else {
+                invBox.innerHTML = '<div style="grid-column: span 3; text-align:center; color:var(--text-muted); padding:15px; font-size:12px;">Профиль недоступен</div>';
+            }
         }
     }
 
@@ -1442,134 +1182,70 @@
         haptic('light');
     }
 
-    // ========== EVENT BANNER ==========
+    // ========== EVENT / POLL ==========
     function renderEventBanner() {
         const banner = document.getElementById('event-banner');
         if (!banner) return;
-        if (!currentEvent || currentEvent.endsAt <= Date.now()) {
-            banner.style.display = 'none';
-            return;
-        }
+        if (!currentEvent || currentEvent.endsAt <= Date.now()) { banner.style.display = 'none'; return; }
         const ev = EVENT_TYPES[currentEvent.type] || {};
         const multi = currentEvent.multiplier || ev.multiplier || 1;
         banner.className = 'event-banner event-' + currentEvent.type;
         banner.style.display = 'flex';
         banner.innerHTML = `
             <div class="event-icon"><i class="fa-solid ${currentEvent.icon || ev.icon || 'fa-star'}"></i></div>
-            <div class="event-info">
-                <div class="event-name">Ивент «${escapeHtml(currentEvent.name)}»</div>
-                <div class="event-sub" id="event-time-remaining">удача x${multi}</div>
-            </div>
-            <div class="event-mult-badge">x${multi}</div>
-        `;
+            <div class="event-info"><div class="event-name">Ивент «${escapeHtml(currentEvent.name)}»</div><div class="event-sub" id="event-time-remaining">удача x${multi}</div></div>
+            <div class="event-mult-badge">x${multi}</div>`;
         updateEventCountdown();
     }
-
     function updateEventCountdown() {
         if (!currentEvent) return;
         const el = document.getElementById('event-time-remaining');
         if (!el) return;
         const rem = currentEvent.endsAt - Date.now();
-        if (rem <= 0) {
-            currentEvent = null;
-            renderEventBanner();
-            applyEventToCases();
-            return;
-        }
+        if (rem <= 0) { currentEvent = null; renderEventBanner(); applyEventToCases(); return; }
         el.textContent = `Удача x${currentEvent.multiplier} • осталось ${formatRemaining(rem)}`;
     }
-
     function applyEventToCases() {
         document.querySelectorAll('.case-card').forEach(card => {
             card.classList.remove('event-boosted', 'event-miniboost', 'event-gold', 'event-diamond', 'event-bloody');
-            if (currentEvent && currentEvent.endsAt > Date.now()) {
-                card.classList.add('event-boosted', 'event-' + currentEvent.type);
-            }
+            if (currentEvent && currentEvent.endsAt > Date.now()) card.classList.add('event-boosted', 'event-' + currentEvent.type);
         });
     }
-
-    // ========== POLL BANNER ==========
     function renderPollBanner() {
         const el = document.getElementById('poll-banner');
         if (!el) return;
-        if (!currentPoll) {
-            el.style.display = 'none';
-            return;
-        }
+        if (!currentPoll) { el.style.display = 'none'; return; }
         const hasVoted = typeof currentPoll.myVote === 'number';
         const total = currentPoll.totalVotes || 0;
-
         const optionsHtml = (currentPoll.options || []).map((opt, i) => {
             const pct = total > 0 ? (opt.votes / total * 100) : 0;
             const isMy = hasVoted && i === currentPoll.myVote;
-            return `<button class="poll-option ${hasVoted ? 'voted' : ''} ${isMy ? 'my-vote' : ''}"
-                        ${hasVoted ? 'disabled' : `onclick="votePoll(${i})"`}>
+            return `<button class="poll-option ${hasVoted ? 'voted' : ''} ${isMy ? 'my-vote' : ''}" ${hasVoted ? 'disabled' : `onclick="votePoll(${i})"`}>
                 <div class="poll-option-bar" style="width:${hasVoted ? pct : 0}%;"></div>
-                <div class="poll-option-content">
-                    <span>${escapeHtml(opt.text)}${isMy ? ' ✓' : ''}</span>
-                    ${hasVoted ? `<span style="font-weight:800;">${pct.toFixed(0)}%</span>` : ''}
-                </div>
+                <div class="poll-option-content"><span>${escapeHtml(opt.text)}${isMy ? ' ✓' : ''}</span>${hasVoted ? `<span style="font-weight:800;">${pct.toFixed(0)}%</span>` : ''}</div>
             </button>`;
         }).join('');
-
-        const endsText = currentPoll.endsAt
-            ? ` • до конца ${formatRemaining(currentPoll.endsAt - Date.now())}`
-            : '';
-
+        const endsText = currentPoll.endsAt ? ` • до конца ${formatRemaining(currentPoll.endsAt - Date.now())}` : '';
         el.style.display = 'block';
-        el.innerHTML = `
-            <div class="poll-question">
-                <i class="fa-solid fa-chart-simple"></i>
-                <span>${escapeHtml(currentPoll.question)}</span>
-            </div>
-            <div class="poll-options">${optionsHtml}</div>
-            <div class="poll-meta">${total} голосов${endsText}</div>
-        `;
+        el.innerHTML = `<div class="poll-question"><i class="fa-solid fa-chart-simple"></i><span>${escapeHtml(currentPoll.question)}</span></div><div class="poll-options">${optionsHtml}</div><div class="poll-meta">${total} голосов${endsText}</div>`;
     }
-
     async function votePoll(index) {
-        try {
-            await apiCall('/api/poll/vote', 'POST', { option_index: index });
-            haptic('success');
-            await loadPoll();
-        } catch (err) {
-            haptic('error');
-            notify({ type: 'error', message: err.message });
-        }
+        try { await apiCall('/api/poll/vote', 'POST', { option_index: index }); haptic('success'); await loadPoll(); }
+        catch (err) { haptic('error'); notify({ type: 'error', message: err.message }); }
     }
-
-    async function loadEvent() {
-        try {
-            const res = await apiCall('/api/event');
-            currentEvent = res.event;
-            renderEventBanner();
-            applyEventToCases();
-        } catch (e) {}
-    }
-
-    async function loadPoll() {
-        try {
-            const res = await apiCall('/api/poll');
-            currentPoll = res.poll;
-            renderPollBanner();
-        } catch (e) {}
-    }
+    async function loadEvent() { try { const res = await apiCall('/api/event'); currentEvent = res.event; renderEventBanner(); applyEventToCases(); } catch (e) {} }
+    async function loadPoll() { try { const res = await apiCall('/api/poll'); currentPoll = res.poll; renderPollBanner(); } catch (e) {} }
 
     // ========== UI UPDATE ==========
     function updateUI() {
-        ['h-balance', 's-balance', 'p-balance'].forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.textContent = formatNum(state.balance);
-        });
+        ['h-balance', 's-balance', 'p-balance'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = formatNum(state.balance); });
         document.getElementById('stat-cases').textContent = formatNum(state.stats.casesOpened || 0);
         document.getElementById('stat-earned').textContent = formatNum(state.stats.totalEarned || 0);
         document.getElementById('stat-upg').textContent = formatNum(state.stats.upgradeSuccess || 0);
         document.getElementById('stat-inv').textContent = Object.keys(state.inventory || {}).length;
         renderInventory();
         updateTimers();
-        if (document.getElementById('section-case-opening').classList.contains('active') && !isOpening) {
-            updateOpenBtnState();
-        }
+        if (document.getElementById('section-case-opening').classList.contains('active') && !isOpening) updateOpenBtnState();
     }
 
     function updateTimers() {
@@ -1577,55 +1253,19 @@
         const elFree = document.getElementById('free-timer-text');
         const cardFree = elFree ? elFree.closest('.case-card') : null;
         if (elFree && cardFree) {
-            if (now - state.lastFree >= FREE_COOLDOWN) {
-                elFree.textContent = 'БЕСПЛАТНО';
-                elFree.style.color = 'var(--accent-gold)';
-                cardFree.classList.remove('locked');
-            } else {
-                const rem = FREE_COOLDOWN - (now - state.lastFree);
-                elFree.textContent = formatRemaining(rem);
-                elFree.style.color = 'var(--text-muted)';
-                cardFree.classList.add('locked');
-            }
+            if (now - state.lastFree >= FREE_COOLDOWN) { elFree.textContent = 'БЕСПЛАТНО'; elFree.style.color = 'var(--accent-gold)'; cardFree.classList.remove('locked'); }
+            else { const rem = FREE_COOLDOWN - (now - state.lastFree); elFree.textContent = formatRemaining(rem); elFree.style.color = 'var(--text-muted)'; cardFree.classList.add('locked'); }
         }
         const elUser = document.getElementById('user-timer-text');
         const cardUser = elUser ? elUser.closest('.case-card') : null;
         if (elUser && cardUser) {
-            if (!state.hasUserCase) {
-                elUser.textContent = 'Нету @' + BOT_USERNAME;
-                elUser.style.color = 'var(--text-muted)';
-                cardUser.classList.add('locked');
-            } else if (now - state.lastUser >= USER_COOLDOWN) {
-                elUser.textContent = 'ДОСТУПЕН';
-                elUser.style.color = 'var(--accent-green)';
-                cardUser.classList.remove('locked');
-            } else {
-                const rem = USER_COOLDOWN - (now - state.lastUser);
-                elUser.textContent = formatRemaining(rem);
-                elUser.style.color = 'var(--text-muted)';
-                cardUser.classList.add('locked');
-            }
+            if (!state.hasUserCase) { elUser.textContent = 'Нету @' + BOT_USERNAME; elUser.style.color = 'var(--text-muted)'; cardUser.classList.add('locked'); }
+            else if (now - state.lastUser >= USER_COOLDOWN) { elUser.textContent = 'ДОСТУПЕН'; elUser.style.color = 'var(--accent-green)'; cardUser.classList.remove('locked'); }
+            else { const rem = USER_COOLDOWN - (now - state.lastUser); elUser.textContent = formatRemaining(rem); elUser.style.color = 'var(--text-muted)'; cardUser.classList.add('locked'); }
         }
-        if (document.getElementById('section-case-opening').classList.contains('active') && !isOpening) {
-            updateOpenBtnState();
-        }
-        if (currentEvent) {
-            const rem = currentEvent.endsAt - now;
-            if (rem <= 0) {
-                currentEvent = null;
-                renderEventBanner();
-                applyEventToCases();
-            } else {
-                updateEventCountdown();
-            }
-        }
-        if (currentPoll && currentPoll.endsAt) {
-            const rem = currentPoll.endsAt - now;
-            if (rem <= 0) {
-                currentPoll = null;
-                renderPollBanner();
-            }
-        }
+        if (document.getElementById('section-case-opening').classList.contains('active') && !isOpening) updateOpenBtnState();
+        if (currentEvent) { const rem = currentEvent.endsAt - now; if (rem <= 0) { currentEvent = null; renderEventBanner(); applyEventToCases(); } else updateEventCountdown(); }
+        if (currentPoll && currentPoll.endsAt) { const rem = currentPoll.endsAt - now; if (rem <= 0) { currentPoll = null; renderPollBanner(); } }
     }
 
     function formatRemaining(ms) {
@@ -1638,20 +1278,12 @@
     }
 
     setInterval(updateTimers, 1000);
-    setInterval(() => {
-        if (isOpening || isUpgrading) return;
-        if (document.hidden) return;
-        loadEvent();
-        loadPoll();
-    }, 30000);
+    setInterval(() => { if (isOpening || isUpgrading) return; if (document.hidden) return; loadEvent(); loadPoll(); }, 30000);
 
     function renderInventory() {
         const container = document.getElementById('inventory-list');
         const inv = Object.values(state.inventory || {});
-        if (!inv.length) {
-            container.innerHTML = '<div style="grid-column: span 3; text-align: center; color: var(--text-muted); padding: 20px;">Пусто</div>';
-            return;
-        }
+        if (!inv.length) { container.innerHTML = '<div style="grid-column: span 3; text-align: center; color: var(--text-muted); padding: 20px;">Пусто</div>'; return; }
         container.innerHTML = inv.map(item => {
             const r = RARITIES[item.rarity] || RARITIES.common;
             return `<div class="inv-item" style="border-color:${r.color}" onclick="BF.addToUpg('${item.uid}')">
@@ -1701,11 +1333,7 @@
             allin:  { img: 'assets/cases/allin.png', emoji: '🎰' }
         }[type];
 
-        imgEl.onerror = function() {
-            this.style.display = 'none';
-            emojiEl.textContent = caseData.emoji;
-            emojiEl.style.display = 'block';
-        };
+        imgEl.onerror = function() { this.style.display = 'none'; emojiEl.textContent = caseData.emoji; emojiEl.style.display = 'block'; };
         imgEl.src = caseData.img;
         document.getElementById('mult-selector').style.display = (type === 'free' || type === 'user') ? 'none' : 'flex';
         renderLootPreview(type);
@@ -1714,9 +1342,7 @@
     }
 
     function exitCaseOpening() {
-        if (isOpening && animState) {
-            animState.finish(true);
-        }
+        if (isOpening && animState) animState.finish(true);
         document.getElementById('roulette-wrap').classList.remove('active');
         document.getElementById('roulette-multi-wrap').classList.remove('active');
         document.getElementById('case-open-visual').style.height = '';
@@ -1732,14 +1358,8 @@
         const btn = document.getElementById('btn-open');
         if (isOpening) return;
         const now = Date.now();
-        if (activeCase === 'free' && now - state.lastFree < FREE_COOLDOWN) {
-            btn.disabled = true; btn.textContent = 'КУЛДАУН';
-            return;
-        }
-        if (activeCase === 'user' && now - state.lastUser < USER_COOLDOWN) {
-            btn.disabled = true; btn.textContent = 'КУЛДАУН';
-            return;
-        }
+        if (activeCase === 'free' && now - state.lastFree < FREE_COOLDOWN) { btn.disabled = true; btn.textContent = 'КУЛДАУН'; return; }
+        if (activeCase === 'user' && now - state.lastUser < USER_COOLDOWN) { btn.disabled = true; btn.textContent = 'КУЛДАУН'; return; }
         if (activeCase && activeCase !== 'free' && activeCase !== 'user') {
             const price = (CASE_PRICES[activeCase] || 0) * mult;
             if (state.balance < price) {
@@ -1756,9 +1376,7 @@
     function setMultiplier(m) {
         if (isOpening) return;
         mult = (activeCase === 'free' || activeCase === 'user') ? 1 : m;
-        document.querySelectorAll('#mult-selector .mult-btn').forEach(b => {
-            b.classList.toggle('active', Number(b.dataset.mult) === mult);
-        });
+        document.querySelectorAll('#mult-selector .mult-btn').forEach(b => b.classList.toggle('active', Number(b.dataset.mult) === mult));
         updateOpenBtnState();
         haptic('light');
     }
@@ -1767,89 +1385,79 @@
         const grid = document.getElementById('loot-preview');
         const cfg = CASE_LOOT_DATA[type];
         let html = '';
-
         if (cfg.coins.length > 0 && cfg.coinChance > 0) {
             const amounts = cfg.coins.map(c => c.amount);
-            const minC = Math.min(...amounts);
-            const maxC = Math.max(...amounts);
-            html += `<div class="loot-card" style="border-color:var(--accent-gold);">
-                <div class="coin"><i class="fa-solid fa-coins"></i></div>
-                <div class="name">Монеты</div>
-                <div class="loot-price"><i class="fa-solid fa-coins"></i> ${minC}-${maxC}</div>
-            </div>`;
+            const minC = Math.min(...amounts), maxC = Math.max(...amounts);
+            html += `<div class="loot-card" style="border-color:var(--accent-gold);"><div class="coin"><i class="fa-solid fa-coins"></i></div><div class="name">Монеты</div><div class="loot-price"><i class="fa-solid fa-coins"></i> ${minC}-${maxC}</div></div>`;
         }
-
         cfg.items.forEach(it => {
             const itemObj = ITEMS_BY_ID[it.id];
             if (!itemObj) return;
-            html += `<div class="loot-card" style="border-color:${RARITIES[itemObj.rarity].color}">
-                <div style="height:45px; display:flex; align-items:center; justify-content:center;">
-                    <img src="${itemObj.img}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <span class="emoji-fallback" style="display:none; font-size:30px;">${itemObj.emoji || '🧠'}</span>
-                </div>
-                <div class="name">${itemObj.name}</div>
-                <div class="loot-price"><i class="fa-solid fa-coins"></i> ${itemObj.price}</div>
-            </div>`;
+            html += `<div class="loot-card" style="border-color:${RARITIES[itemObj.rarity].color}"><div style="height:45px; display:flex; align-items:center; justify-content:center;"><img src="${itemObj.img}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><span class="emoji-fallback" style="display:none; font-size:30px;">${itemObj.emoji || '🧠'}</span></div><div class="name">${itemObj.name}</div><div class="loot-price"><i class="fa-solid fa-coins"></i> ${itemObj.price}</div></div>`;
         });
-
         grid.innerHTML = html;
     }
 
     function getRandomCaseDrop(cfg) {
-        if (Math.random() * 100 < cfg.coinChance) {
-            return { type: 'coin', amount: 1 };
-        }
+        if (Math.random() * 100 < cfg.coinChance) return { type: 'coin', amount: 1 };
         const totalW = cfg.items.reduce((s, i) => s + i.weight, 0);
         let r = Math.random() * totalW;
-        for (const it of cfg.items) {
-            r -= it.weight;
-            if (r <= 0) return { type: 'item', item: ITEMS_BY_ID[it.id] };
-        }
+        for (const it of cfg.items) { r -= it.weight; if (r <= 0) return { type: 'item', item: ITEMS_BY_ID[it.id] }; }
         return { type: 'item', item: ITEMS_BY_ID[cfg.items[0].id] };
     }
 
-    function renderCaseStripItem(drop, isWin) {
-        const glow = isWin ? 'box-shadow: 0 0 22px rgba(251,191,36,0.7);' : '';
+    // Render WITHOUT winner highlight (for intrigue)
+    function renderCaseStripItem(drop) {
         if (drop.type === 'coin') {
-            return `<div class="roulette-item" style="border-color:var(--accent-gold); ${glow}">
+            return `<div class="roulette-item" style="border-color:var(--accent-gold);">
                 <div class="coin"><i class="fa-solid fa-coins"></i></div>
                 <div class="name">+${drop.amount || 1}</div>
             </div>`;
         }
         const r = RARITIES[drop.item.rarity] || RARITIES.common;
-        const bc = isWin ? 'var(--accent-gold)' : r.color;
-        return `<div class="roulette-item" style="border-color:${bc}; ${glow}">
+        return `<div class="roulette-item" style="border-color:${r.color};">
             <img src="${drop.item.img}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
             <span class="emoji-fallback" style="display:none; font-size:36px;">${drop.item.emoji || '🧠'}</span>
             <div class="name">${drop.item.name}</div>
         </div>`;
     }
 
-    function renderMultiStripItem(drop, isWin) {
-        const glow = isWin ? 'box-shadow: 0 0 15px rgba(251,191,36,0.6);' : '';
+    function renderMultiStripItem(drop) {
         if (drop.type === 'coin') {
-            return `<div class="multi-strip-item" style="border-color:var(--accent-gold); ${glow}">
+            return `<div class="multi-strip-item" style="border-color:var(--accent-gold);">
                 <div class="coin"><i class="fa-solid fa-coins"></i></div>
                 <div class="name">+${drop.amount || 1}</div>
             </div>`;
         }
         const r = RARITIES[drop.item.rarity] || RARITIES.common;
-        const bc = isWin ? 'var(--accent-gold)' : r.color;
-        return `<div class="multi-strip-item" style="border-color:${bc}; ${glow}">
+        return `<div class="multi-strip-item" style="border-color:${r.color};">
             <img src="${drop.item.img}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
             <span class="emoji-fallback" style="display:none;">${drop.item.emoji || '🧠'}</span>
             <div class="name">${drop.item.name}</div>
         </div>`;
     }
 
-    function calcCaseScrollTo(idx, wrapW) {
-        const itemCenter = CASE_WRAP_BORDER + CASE_TRACK_PAD + idx * CASE_STRIDE + CASE_ITEM_W / 2;
-        return Math.max(0, itemCenter - wrapW / 2);
+    // Reliable position calculation using getBoundingClientRect
+    function computeScrollTo(track, container, idx) {
+        const itemEl = track.children[idx];
+        if (!itemEl) return 0;
+        const oldTransform = track.style.transform;
+        track.style.transform = 'translateX(0)';
+        void track.offsetWidth; // force reflow
+        const itemRect = itemEl.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
+        const itemCenterX = itemRect.left - containerRect.left + itemRect.width / 2;
+        const shift = itemCenterX - containerRect.width / 2;
+        track.style.transform = oldTransform;
+        return Math.max(0, shift);
     }
 
-    function calcMultiScrollTo(idx, stripW) {
-        const itemCenter = MULTI_BORDER + MULTI_TRACK_PAD + idx * MULTI_STRIDE + MULTI_ITEM_W / 2;
-        return Math.max(0, itemCenter - stripW / 2);
+    function highlightWinner(trackEl, idx) {
+        const winEl = trackEl.children[idx];
+        if (winEl) {
+            winEl.style.borderColor = 'var(--accent-gold)';
+            winEl.style.boxShadow = '0 0 22px rgba(251,191,36,0.7)';
+        }
     }
 
     function addResultToWonArea(win) {
@@ -1859,29 +1467,18 @@
         if (win.type === 'coin') {
             div.className = 'loot-card';
             div.style.cssText = 'width:70px; padding:8px;';
-            div.innerHTML = `<i class="fa-solid fa-coins" style="font-size:26px; color:var(--accent-gold)"></i>
-                <div style="font-weight:900; margin-top:5px; font-size:12px;">+${win.amount}</div>`;
+            div.innerHTML = `<i class="fa-solid fa-coins" style="font-size:26px; color:var(--accent-gold)"></i><div style="font-weight:900; margin-top:5px; font-size:12px;">+${win.amount}</div>`;
         } else {
             const r = RARITIES[win.item.rarity] || RARITIES.common;
             div.className = 'loot-card';
             div.style.cssText = `width:70px; padding:8px; border-color:${r.color};`;
-            div.innerHTML = `<div style="height:35px; display:flex; align-items:center; justify-content:center;">
-                <img src="${win.item.img}" style="width:35px; height:35px; object-fit:contain;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                <span class="emoji-fallback" style="display:none; font-size:25px;">${win.item.emoji || '🧠'}</span>
-            </div>
-            <div style="font-weight:900; font-size:9px; margin-top:5px;">${win.item.name}</div>`;
+            div.innerHTML = `<div style="height:35px; display:flex; align-items:center; justify-content:center;"><img src="${win.item.img}" style="width:35px; height:35px; object-fit:contain;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><span class="emoji-fallback" style="display:none; font-size:25px;">${win.item.emoji || '🧠'}</span></div><div style="font-weight:900; font-size:9px; margin-top:5px;">${win.item.name}</div>`;
         }
         area.appendChild(div);
     }
 
-    function showSkipBtn() {
-        const b = document.getElementById('btn-skip-anim');
-        if (b) b.style.display = 'flex';
-    }
-    function hideSkipBtn() {
-        const b = document.getElementById('btn-skip-anim');
-        if (b) b.style.display = 'none';
-    }
+    function showSkipBtn() { const b = document.getElementById('btn-skip-anim'); if (b) b.style.display = 'flex'; }
+    function hideSkipBtn() { const b = document.getElementById('btn-skip-anim'); if (b) b.style.display = 'none'; }
 
     function playSingleOpening(res, cfg, onDone) {
         const track = document.getElementById('roulette-track');
@@ -1890,45 +1487,47 @@
             if (i === WIN_INDEX_CASES) items.push(res.results[0]);
             else items.push(getRandomCaseDrop(cfg));
         }
-        track.innerHTML = items.map((d, i) => renderCaseStripItem(d, i === WIN_INDEX_CASES)).join('');
+        track.innerHTML = items.map(renderCaseStripItem).join('');
         track.style.transition = 'none';
         track.style.transform = 'translateX(0)';
-
-        const wrapW = document.getElementById('roulette-wrap').offsetWidth;
-        const jitter = (Math.random() - 0.5) * 16;
-        const scrollTo = calcCaseScrollTo(WIN_INDEX_CASES, wrapW) + jitter;
 
         document.getElementById('roulette-wrap').classList.add('active');
         showSkipBtn();
 
-        let finished = false;
-        let timer = null;
-        const tickInterval = setInterval(() => playSound('tick'), 120);
-
-        const finish = (skip) => {
-            if (finished) return;
-            finished = true;
-            clearInterval(tickInterval);
-            if (timer) clearTimeout(timer);
-            if (skip) {
-                track.style.transition = 'none';
-                track.style.transform = `translateX(-${scrollTo}px)`;
-            }
-            animState = null;
-            onDone();
-        };
-
-        animState = { mode: 'single', finish };
-
+        // Wait for layout, then measure
         requestAnimationFrame(() => {
             requestAnimationFrame(() => {
-                track.style.transition = 'transform 4.2s cubic-bezier(0.15, 0.85, 0.25, 1)';
+                const jitter = (Math.random() - 0.5) * 16;
+                const scrollTo = computeScrollTo(track, document.getElementById('roulette-wrap'), WIN_INDEX_CASES) + jitter;
+
+                let finished = false;
+                let timer = null;
+                const tickInterval = setInterval(() => playSound('tick'), 200);
+
+                const finish = (skip) => {
+                    if (finished) return;
+                    finished = true;
+                    clearInterval(tickInterval);
+                    if (timer) clearTimeout(timer);
+                    if (skip) {
+                        track.style.transition = 'none';
+                        track.style.transform = `translateX(-${scrollTo}px)`;
+                    }
+                    // Highlight winner AFTER landing
+                    highlightWinner(track, WIN_INDEX_CASES);
+                    animState = null;
+                    onDone();
+                };
+
+                animState = { mode: 'single', finish };
+
+                track.style.transition = `transform ${SINGLE_ANIM_DUR}ms cubic-bezier(0.15, 0.85, 0.2, 1)`;
                 track.style.transform = `translateX(-${scrollTo}px)`;
+
+                playSound('spin');
+                timer = setTimeout(() => finish(false), SINGLE_ANIM_DUR + SKIP_BUFFER);
             });
         });
-
-        playSound('spin');
-        timer = setTimeout(() => finish(false), 4400);
     }
 
     function playMultiOpening(res, cfg, onDone) {
@@ -1943,11 +1542,7 @@
         for (let i = 0; i < N; i++) {
             const strip = document.createElement('div');
             strip.className = 'multi-strip';
-            strip.innerHTML = `
-                <div class="multi-strip-pointer"></div>
-                <div class="multi-strip-badge">${i + 1}/${N}</div>
-                <div class="multi-strip-track"></div>
-            `;
+            strip.innerHTML = `<div class="multi-strip-pointer"></div><div class="multi-strip-badge">${i + 1}/${N}</div><div class="multi-strip-track"></div>`;
             wrap.appendChild(strip);
 
             const track = strip.querySelector('.multi-strip-track');
@@ -1956,7 +1551,7 @@
                 if (j === WIN_INDEX_CASES) items.push(res.results[i]);
                 else items.push(getRandomCaseDrop(cfg));
             }
-            track.innerHTML = items.map((d, j) => renderMultiStripItem(d, j === WIN_INDEX_CASES)).join('');
+            track.innerHTML = items.map(renderMultiStripItem).join('');
             track.style.transition = 'none';
             track.style.transform = 'translateX(0)';
 
@@ -1969,22 +1564,18 @@
 
         setTimeout(() => {
             for (const s of strips) {
-                const stripW = s.el.offsetWidth;
                 const jitter = (Math.random() - 0.5) * 10;
-                s.scrollTo = calcMultiScrollTo(WIN_INDEX_CASES, stripW) + jitter;
+                s.scrollTo = computeScrollTo(s.track, s.el, WIN_INDEX_CASES) + jitter;
             }
 
-            const baseDur = 3.2;
-            const stagger = 0.18;
-
             strips.forEach((s, i) => {
-                const dur = baseDur + i * stagger;
+                const dur = MULTI_BASE_DUR + i * MULTI_STAGGER;
                 s.dur = dur;
-                s.track.style.transition = `transform ${dur}s cubic-bezier(0.15, 0.85, 0.25, 1)`;
+                s.track.style.transition = `transform ${dur}ms cubic-bezier(0.15, 0.85, 0.2, 1)`;
                 s.track.style.transform = `translateX(-${s.scrollTo}px)`;
             });
 
-            const tickInterval = setInterval(() => playSound('tick'), 100);
+            const tickInterval = setInterval(() => playSound('tick'), 180);
             const timers = [];
 
             const landStrip = (s, instant) => {
@@ -1994,6 +1585,7 @@
                     s.track.style.transition = 'none';
                     s.track.style.transform = `translateX(-${s.scrollTo}px)`;
                 }
+                highlightWinner(s.track, WIN_INDEX_CASES);
                 s.el.classList.add('won');
                 haptic('light');
                 playSound('coin');
@@ -2001,30 +1593,24 @@
             };
 
             let finished = false;
-
             const finish = (skip) => {
                 if (finished) return;
                 finished = true;
                 clearInterval(tickInterval);
                 timers.forEach(t => clearTimeout(t));
-                if (skip) {
-                    strips.forEach(s => {
-                        if (!s.landed) landStrip(s, true);
-                    });
-                }
+                if (skip) strips.forEach(s => { if (!s.landed) landStrip(s, true); });
                 animState = null;
                 onDone();
             };
 
             animState = { mode: 'multi', finish };
 
-            strips.forEach((s, i) => {
-                const landAt = s.dur * 1000;
-                timers.push(setTimeout(() => landStrip(s, false), landAt));
+            strips.forEach((s) => {
+                timers.push(setTimeout(() => landStrip(s, false), s.dur));
             });
 
-            const totalDur = (baseDur + (N - 1) * stagger) * 1000 + 250;
-            timers.push(setTimeout(() => finish(false), totalDur));
+            const totalDur = MULTI_BASE_DUR + (N - 1) * MULTI_STAGGER;
+            timers.push(setTimeout(() => finish(false), totalDur + SKIP_BUFFER));
         }, 60);
     }
 
@@ -2050,16 +1636,11 @@
     async function startCaseOpening() {
         if (isOpening) return;
         const now = Date.now();
-        if (activeCase === 'free' && now - state.lastFree < FREE_COOLDOWN)
-            return notify({ type: 'error', message: 'Бесплатный кейс ещё не готов' });
-        if (activeCase === 'user' && now - state.lastUser < USER_COOLDOWN)
-            return notify({ type: 'error', message: 'Кейс за Юз ещё не готов' });
-
+        if (activeCase === 'free' && now - state.lastFree < FREE_COOLDOWN) return notify({ type: 'error', message: 'Бесплатный кейс ещё не готов' });
+        if (activeCase === 'user' && now - state.lastUser < USER_COOLDOWN) return notify({ type: 'error', message: 'Кейс за Юз ещё не готов' });
         if (activeCase && activeCase !== 'free' && activeCase !== 'user') {
             const price = (CASE_PRICES[activeCase] || 0) * mult;
-            if (state.balance < price) {
-                return notify({ type: 'error', message: `Не хватает ${formatNum(price - state.balance)} монет` });
-            }
+            if (state.balance < price) return notify({ type: 'error', message: `Не хватает ${formatNum(price - state.balance)} монет` });
         }
 
         isOpening = true;
@@ -2082,7 +1663,6 @@
             updateUI();
 
             const cfg = CASE_LOOT_DATA[activeCase];
-
             const onDone = () => {
                 finalizeOpening();
                 const hasLegendary = res.results.some(r => r.type === 'item' && r.item.rarity === 'legendary');
@@ -2092,16 +1672,11 @@
                     burstConfetti();
                     const leg = res.results.find(r => r.type === 'item' && r.item.rarity === 'legendary');
                     showWinModal(leg.item);
-                } else {
-                    haptic('light');
-                }
+                } else haptic('light');
             };
 
-            if (res.results.length === 1) {
-                playSingleOpening(res, cfg, onDone);
-            } else {
-                playMultiOpening(res, cfg, onDone);
-            }
+            if (res.results.length === 1) playSingleOpening(res, cfg, onDone);
+            else playMultiOpening(res, cfg, onDone);
 
         } catch (err) {
             isOpening = false;
@@ -2120,89 +1695,49 @@
 
     function showWinModal(item) {
         const visual = document.getElementById('win-item-visual');
-        visual.innerHTML = `
-            <img class="win-item-img" src="${item.img}" alt="" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-            <div class="win-item-emoji" style="display:none;">${item.emoji || '🧠'}</div>`;
+        visual.innerHTML = `<img class="win-item-img" src="${item.img}" alt="" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><div class="win-item-emoji" style="display:none;">${item.emoji || '🧠'}</div>`;
         document.getElementById('win-item-name').textContent = item.name;
         document.getElementById('win-item-price').textContent = item.price;
         document.getElementById('win-modal').classList.add('active');
     }
-    function closeWinModal() {
-        document.getElementById('win-modal').classList.remove('active');
-        haptic('light');
-    }
+    function closeWinModal() { document.getElementById('win-modal').classList.remove('active'); haptic('light'); }
 
     // ========== UPGRADER ==========
     function renderUpgInputs() {
         const container = document.getElementById('upg-input-box');
-        if (upgInputs.length === 0) {
-            container.innerHTML = '<div class="placeholder">+ Ваши предметы</div>';
-            return;
-        }
+        if (upgInputs.length === 0) { container.innerHTML = '<div class="placeholder">+ Ваши предметы</div>'; return; }
         container.innerHTML = upgInputs.map(uid => {
             const item = state.inventory[uid];
             if (!item) return '';
             const r = RARITIES[item.rarity] || RARITIES.common;
-            return `<div class="mini-item" title="${escapeHtml(item.name)}" onclick="event.stopPropagation(); BF.removeUpg('${uid}')" style="border-bottom: 2px solid ${r.color};">
-                <img src="${item.img}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                <span class="emoji-fallback" style="display:none;">${item.emoji || '🧠'}</span>
-            </div>`;
+            return `<div class="mini-item" title="${escapeHtml(item.name)}" onclick="event.stopPropagation(); BF.removeUpg('${uid}')" style="border-bottom: 2px solid ${r.color};"><img src="${item.img}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><span class="emoji-fallback" style="display:none;">${item.emoji || '🧠'}</span></div>`;
         }).join('');
     }
-
     function renderUpgTarget() {
         const container = document.getElementById('upg-target-box');
         if (upgTarget) {
             const r = RARITIES[upgTarget.rarity] || RARITIES.common;
-            container.innerHTML = `<div class="target-preview">
-                <img src="${upgTarget.img}" style="filter:drop-shadow(0 0 10px ${r.color});" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                <div class="emoji" style="display:none;">${upgTarget.emoji || '🧠'}</div>
-                <div class="name">${escapeHtml(upgTarget.name)}</div>
-            </div>`;
+            container.innerHTML = `<div class="target-preview"><img src="${upgTarget.img}" style="filter:drop-shadow(0 0 10px ${r.color});" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><div class="emoji" style="display:none;">${upgTarget.emoji || '🧠'}</div><div class="name">${escapeHtml(upgTarget.name)}</div></div>`;
         } else {
             container.innerHTML = `<i class="fa-solid fa-bullseye" style="font-size:30px; color:var(--text-muted);"></i>`;
         }
     }
-
     function updateWheelVisual() {
-        const sum = upgInputs.reduce((acc, uid) => {
-            const item = state.inventory[uid];
-            return acc + (item ? item.price : 0);
-        }, 0);
-
+        const sum = upgInputs.reduce((acc, uid) => { const item = state.inventory[uid]; return acc + (item ? item.price : 0); }, 0);
         let chance = 0;
-        if (upgTarget && sum > 0) {
-            chance = Math.min(MAX_UPGRADE_CHANCE, (sum / upgTarget.price) * 100);
-        }
-
+        if (upgTarget && sum > 0) chance = Math.min(MAX_UPGRADE_CHANCE, (sum / upgTarget.price) * 100);
         const disc = document.getElementById('upg-wheel-disc');
         const iconEl = document.getElementById('upg-wheel-icon');
         const chanceEl = document.getElementById('upg-chance-val');
-
         const winAngle = chance > 0 ? Math.max(0.5, chance * 3.6) : 0;
-
-        if (chance > 0) {
-            disc.style.background = `conic-gradient(
-                var(--accent-gold) 0deg ${winAngle}deg,
-                #1c1f2b ${winAngle}deg 360deg
-            )`;
-        } else {
-            disc.style.background = '#1c1f2b';
-        }
-
+        if (chance > 0) disc.style.background = `conic-gradient(var(--accent-gold) 0deg ${winAngle}deg, #1c1f2b ${winAngle}deg 360deg)`;
+        else disc.style.background = '#1c1f2b';
         if (upgTarget && chance > 0 && iconEl) {
             const centerAngle = winAngle / 2;
             iconEl.style.display = 'block';
             iconEl.style.transform = `rotate(${centerAngle}deg) translateY(-95px) rotate(${-centerAngle}deg)`;
-            iconEl.innerHTML = `
-                <img src="${upgTarget.img}" alt=""
-                     onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                <span class="emoji" style="display:none;">${upgTarget.emoji || '🧠'}</span>`;
-        } else if (iconEl) {
-            iconEl.style.display = 'none';
-            iconEl.innerHTML = '';
-        }
-
+            iconEl.innerHTML = `<img src="${upgTarget.img}" alt="" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><span class="emoji" style="display:none;">${upgTarget.emoji || '🧠'}</span>`;
+        } else if (iconEl) { iconEl.style.display = 'none'; iconEl.innerHTML = ''; }
         if (chanceEl) {
             chanceEl.textContent = chance > 0 ? chance.toFixed(1) + '%' : '0%';
             if (chance >= 50) chanceEl.style.color = 'var(--accent-green)';
@@ -2211,117 +1746,62 @@
             else chanceEl.style.color = 'var(--text-muted)';
         }
     }
-
     function calcUpg() {
         let sum = 0;
-        upgInputs.forEach(uid => {
-            if (state.inventory[uid]) sum += state.inventory[uid].price;
-        });
+        upgInputs.forEach(uid => { if (state.inventory[uid]) sum += state.inventory[uid].price; });
         let chance = 0;
         if (upgTarget && sum > 0) chance = Math.min(MAX_UPGRADE_CHANCE, (sum / upgTarget.price) * 100);
-
         updateWheelVisual();
-
         const sumEl = document.getElementById('upg-sum');
-        if (sumEl) {
-            sumEl.innerHTML = `Сумма: <b>${formatNum(sum)}</b> монет${upgTarget ? ` → <b>${formatNum(upgTarget.price)}</b>` : ''}`;
-        }
-
+        if (sumEl) sumEl.innerHTML = `Сумма: <b>${formatNum(sum)}</b> монет${upgTarget ? ` → <b>${formatNum(upgTarget.price)}</b>` : ''}`;
         const btn = document.getElementById('btn-upg');
         const canPlay = chance > 0 && upgTarget && upgInputs.length > 0;
         btn.disabled = !canPlay || isUpgrading;
         btn.textContent = canPlay ? `ПРОКАЧАТЬ (${chance.toFixed(1)}%)` : 'ПРОКАЧАТЬ';
     }
-
     function openInvPicker() {
-        if (!state.inventory || Object.keys(state.inventory).length === 0) {
-            return notify({ type: 'warning', message: 'У вас нет предметов' });
-        }
+        if (!state.inventory || Object.keys(state.inventory).length === 0) return notify({ type: 'warning', message: 'У вас нет предметов' });
         renderInvPicker();
         document.getElementById('inv-picker-modal').classList.add('active');
         haptic('light');
     }
-
     function renderInvPicker() {
         const list = document.getElementById('inv-picker-list');
         const entries = Object.values(state.inventory || {});
         list.innerHTML = entries.map(it => {
             const selected = upgInputs.includes(it.uid);
             const r = RARITIES[it.rarity] || RARITIES.common;
-            return `<div class="inv-item ${selected ? 'selected' : ''}" style="border-color:${r.color}" onclick="BF.toggleUpgItem('${it.uid}')">
-                <div style="height:50px; display:flex; align-items:center; justify-content:center;">
-                    <img src="${it.img}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <span class="emoji-fallback" style="display:none;">${it.emoji || '🧠'}</span>
-                </div>
-                <div class="inv-price">${it.price}</div>
-            </div>`;
+            return `<div class="inv-item ${selected ? 'selected' : ''}" style="border-color:${r.color}" onclick="BF.toggleUpgItem('${it.uid}')"><div style="height:50px; display:flex; align-items:center; justify-content:center;"><img src="${it.img}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><span class="emoji-fallback" style="display:none;">${it.emoji || '🧠'}</span></div><div class="inv-price">${it.price}</div></div>`;
         }).join('');
         const counter = document.getElementById('inv-picker-count');
         if (counter) counter.textContent = `(${upgInputs.length}/${MAX_UPG_INPUTS})`;
     }
-
-    function closeInvPicker() {
-        document.getElementById('inv-picker-modal').classList.remove('active');
-        haptic('light');
-    }
-
+    function closeInvPicker() { document.getElementById('inv-picker-modal').classList.remove('active'); haptic('light'); }
     function toggleUpgItem(uid) {
-        if (upgInputs.includes(uid)) {
-            upgInputs = upgInputs.filter(u => u !== uid);
-        } else {
-            if (upgInputs.length >= MAX_UPG_INPUTS) return notify({ type: 'warning', message: `Максимум ${MAX_UPG_INPUTS} предметов` });
-            upgInputs.push(uid);
-        }
+        if (upgInputs.includes(uid)) upgInputs = upgInputs.filter(u => u !== uid);
+        else { if (upgInputs.length >= MAX_UPG_INPUTS) return notify({ type: 'warning', message: `Максимум ${MAX_UPG_INPUTS} предметов` }); upgInputs.push(uid); }
         haptic('light');
         renderInvPicker();
         renderUpgInputs();
         calcUpg();
     }
-
     function openTargetPicker() {
-        const sum = upgInputs.reduce((acc, uid) => {
-            const item = state.inventory[uid];
-            return acc + (item ? item.price : 0);
-        }, 0);
+        const sum = upgInputs.reduce((acc, uid) => { const item = state.inventory[uid]; return acc + (item ? item.price : 0); }, 0);
         if (sum === 0) return notify({ type: 'warning', message: 'Сначала выберите предметы слева' });
-
         const list = document.getElementById('target-list');
         list.innerHTML = ALL_ITEMS.map(it => {
             const isDisabled = it.price <= sum;
             const r = RARITIES[it.rarity] || RARITIES.common;
-            return `<div class="inv-item" style="border-color:${r.color}; opacity: ${isDisabled ? 0.35 : 1}; cursor: ${isDisabled ? 'not-allowed' : 'pointer'};"
-                 onclick="${isDisabled ? '' : `BF.chooseTarget('${it.id}')`}">
-                <div style="height:50px; display:flex; align-items:center; justify-content:center;">
-                    <img src="${it.img}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <span class="emoji-fallback" style="display:none;">${it.emoji || '🧠'}</span>
-                </div>
-                <div class="inv-price">${it.price}</div>
-            </div>`;
+            return `<div class="inv-item" style="border-color:${r.color}; opacity: ${isDisabled ? 0.35 : 1}; cursor: ${isDisabled ? 'not-allowed' : 'pointer'};" onclick="${isDisabled ? '' : `BF.chooseTarget('${it.id}')`}"><div style="height:50px; display:flex; align-items:center; justify-content:center;"><img src="${it.img}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><span class="emoji-fallback" style="display:none;">${it.emoji || '🧠'}</span></div><div class="inv-price">${it.price}</div></div>`;
         }).join('');
         document.getElementById('target-modal').classList.add('active');
         haptic('light');
     }
-
-    function closeTargetModal() {
-        document.getElementById('target-modal').classList.remove('active');
-        haptic('light');
-    }
-
-    function chooseTarget(id) {
-        upgTarget = ITEMS_BY_ID[id];
-        closeTargetModal();
-        renderUpgTarget();
-        calcUpg();
-        haptic('medium');
-    }
-
+    function closeTargetModal() { document.getElementById('target-modal').classList.remove('active'); haptic('light'); }
+    function chooseTarget(id) { upgTarget = ITEMS_BY_ID[id]; closeTargetModal(); renderUpgTarget(); calcUpg(); haptic('medium'); }
     function autoSelect(type) {
-        const sum = upgInputs.reduce((acc, uid) => {
-            const item = state.inventory[uid];
-            return acc + (item ? item.price : 0);
-        }, 0);
+        const sum = upgInputs.reduce((acc, uid) => { const item = state.inventory[uid]; return acc + (item ? item.price : 0); }, 0);
         if (sum === 0) return notify({ type: 'warning', message: 'Сначала выберите СВОИ предметы (левый квадрат)' });
-
         let targetPrice = 0;
         if (type === 'x2') targetPrice = sum * 2;
         else if (type === 'x4') targetPrice = sum * 4;
@@ -2329,15 +1809,9 @@
         else if (type === '75') targetPrice = sum / 0.75;
         else if (type === '50') targetPrice = sum / 0.50;
         else if (type === '25') targetPrice = sum / 0.25;
-
         let closest = null, minDiff = Infinity;
-        ALL_ITEMS.forEach(it => {
-            if (it.price <= sum) return;
-            const diff = Math.abs(it.price - targetPrice);
-            if (diff < minDiff) { minDiff = diff; closest = it; }
-        });
+        ALL_ITEMS.forEach(it => { if (it.price <= sum) return; const diff = Math.abs(it.price - targetPrice); if (diff < minDiff) { minDiff = diff; closest = it; } });
         if (!closest) return notify({ type: 'error', message: 'Нет подходящей цели' });
-
         upgTarget = closest;
         renderUpgTarget();
         calcUpg();
@@ -2348,59 +1822,39 @@
     async function runUpgrade() {
         if (isUpgrading) return;
         if (!upgTarget || upgInputs.length === 0) return;
-
         isUpgrading = true;
         const btn = document.getElementById('btn-upg');
         btn.disabled = true;
         btn.textContent = 'ПРОКАЧКА...';
         haptic('medium');
         playSound('spin');
-
         const inputsSnapshot = [...upgInputs];
-
         try {
-            const res = await apiCall('/api/upgrade', 'POST', {
-                input_uids: inputsSnapshot,
-                target_id: upgTarget.id
-            });
-
+            const res = await apiCall('/api/upgrade', 'POST', { input_uids: inputsSnapshot, target_id: upgTarget.id });
             state.balance = res.balance;
             state.inventory = res.inventory;
             updateUI();
             renderUpgInputs();
-
             const winAngle = Math.max(0.5, res.chance * 3.6);
             let landingAngle;
-            if (res.success) {
-                landingAngle = winAngle * (0.1 + Math.random() * 0.8);
-            } else {
-                const greySize = 360 - winAngle;
-                landingAngle = winAngle + greySize * (0.1 + Math.random() * 0.8);
-            }
-
+            if (res.success) landingAngle = winAngle * (0.1 + Math.random() * 0.8);
+            else landingAngle = winAngle + (360 - winAngle) * (0.1 + Math.random() * 0.8);
             const totalRotation = 360 * 5 + landingAngle;
-
             const pointer = document.getElementById('upg-wheel-pointer');
             void pointer.offsetWidth;
             pointer.style.transition = 'transform 4.5s cubic-bezier(0.15, 0.85, 0.15, 1)';
             pointer.style.transform = `rotate(${totalRotation}deg)`;
-
             const tickInterval = setInterval(() => playSound('tick'), 140);
-
             setTimeout(() => {
                 clearInterval(tickInterval);
                 isUpgrading = false;
-
                 if (res.success) {
                     haptic('success');
                     playSound('win');
                     burstConfetti();
                     showWinModal(res.target);
-                    upgInputs = [];
-                    upgTarget = null;
-                    renderUpgInputs();
-                    renderUpgTarget();
-                    calcUpg();
+                    upgInputs = []; upgTarget = null;
+                    renderUpgInputs(); renderUpgTarget(); calcUpg();
                 } else {
                     haptic('error');
                     playSound('lose');
@@ -2409,15 +1863,8 @@
                     renderUpgInputs();
                     calcUpg();
                 }
-
-                setTimeout(() => {
-                    pointer.style.transition = 'none';
-                    pointer.style.transform = 'rotate(0deg)';
-                    void pointer.offsetWidth;
-                    updateWheelVisual();
-                }, 1200);
+                setTimeout(() => { pointer.style.transition = 'none'; pointer.style.transform = 'rotate(0deg)'; void pointer.offsetWidth; updateWheelVisual(); }, 1200);
             }, 4600);
-
         } catch (err) {
             isUpgrading = false;
             calcUpg();
@@ -2427,25 +1874,17 @@
     }
 
     // ========== COINFLIP ==========
-    function setChoice(c) {
-        cfChoice = c;
-        document.getElementById('btn-heads').classList.toggle('active', c === 'heads');
-        document.getElementById('btn-tails').classList.toggle('active', c === 'tails');
-        haptic('light');
-    }
-
+    function setChoice(c) { cfChoice = c; document.getElementById('btn-heads').classList.toggle('active', c === 'heads'); document.getElementById('btn-tails').classList.toggle('active', c === 'tails'); haptic('light'); }
     async function playCoinflip() {
         if (isCfPlaying) return;
         const bet = parseInt(document.getElementById('cf-bet').value);
         if (!bet || bet <= 0) return notify({ type: 'error', message: 'Введите ставку больше 0' });
         if (bet > state.balance) return notify({ type: 'error', message: 'Недостаточно монет' });
-
         isCfPlaying = true;
         const coin = document.getElementById('coin');
         coin.classList.add('spin');
         haptic('medium');
         playSound('spin');
-
         try {
             const res = await apiCall('/api/coinflip', 'POST', { bet, choice: cfChoice });
             state.balance = res.balance;
@@ -2454,15 +1893,8 @@
                 coin.textContent = res.result === 'heads' ? '🦅' : '🪙';
                 updateUI();
                 isCfPlaying = false;
-                if (res.won) {
-                    haptic('success');
-                    playSound('win');
-                    notify({ type: 'success', title: 'ПОБЕДА!', message: `Выиграно ${bet * 2} монет` });
-                } else {
-                    haptic('error');
-                    playSound('lose');
-                    notify({ type: 'error', title: 'ПРОИГРЫШ', message: `Потеряно ${bet} монет` });
-                }
+                if (res.won) { haptic('success'); playSound('win'); notify({ type: 'success', title: 'ПОБЕДА!', message: `Выиграно ${bet * 2} монет` }); }
+                else { haptic('error'); playSound('lose'); notify({ type: 'error', title: 'ПРОИГРЫШ', message: `Потеряно ${bet} монет` }); }
             }, 1100);
         } catch (err) {
             coin.classList.remove('spin');
@@ -2485,50 +1917,31 @@
             haptic('success');
             playSound('win');
             notify({ type: 'success', title: 'ПРОМО АКТИВИРОВАН', message: `Получено ${res.reward} монет` });
-        } catch (err) {
-            haptic('error');
-            notify({ type: 'error', message: err.message });
-        }
+        } catch (err) { haptic('error'); notify({ type: 'error', message: err.message }); }
     }
 
     // ========== DONATE ==========
     function renderDonate() {
         const grid = document.getElementById('donate-grid');
-        grid.innerHTML = STARS_PACKAGES.map(p => `
-            <div class="donate-card ${p.best ? 'best' : ''}" onclick="BF.buy('${p.id}')">
-                <div class="donate-stars">${p.stars} ⭐</div>
-                <div class="donate-coins"><i class="fa-solid fa-coins"></i> ${formatNum(p.coins)}</div>
-                ${p.bonus ? `<div style="font-size:11px; color:var(--accent-green); font-weight:800; margin-top:3px;">+${p.bonus}%</div>` : ''}
-            </div>
-        `).join('');
+        grid.innerHTML = STARS_PACKAGES.map(p => `<div class="donate-card ${p.best ? 'best' : ''}" onclick="BF.buy('${p.id}')"><div class="donate-stars">${p.stars} ⭐</div><div class="donate-coins"><i class="fa-solid fa-coins"></i> ${formatNum(p.coins)}</div>${p.bonus ? `<div style="font-size:11px; color:var(--accent-green); font-weight:800; margin-top:3px;">+${p.bonus}%</div>` : ''}</div>`).join('');
     }
-
     async function buyPackage(id) {
         haptic('medium');
         try {
             const data = await apiCall('/api/create-invoice-link', 'POST', { package_id: id });
             if (tg && tg.openInvoice) {
                 tg.openInvoice(data.invoice_link, (status) => {
-                    if (status === 'paid') {
-                        haptic('success');
-                        playSound('win');
-                        notify({ type: 'success', message: 'Оплата прошла! Зачисляем...' });
-                        setTimeout(loadData, 2500);
-                    }
+                    if (status === 'paid') { haptic('success'); playSound('win'); notify({ type: 'success', message: 'Оплата прошла! Зачисляем...' }); setTimeout(loadData, 2500); }
                 });
-            } else {
-                notify({ type: 'error', message: 'Откройте приложение через Telegram' });
-            }
-        } catch (err) {
-            notify({ type: 'error', message: err.message });
-        }
+            } else notify({ type: 'error', message: 'Откройте приложение через Telegram' });
+        } catch (err) { notify({ type: 'error', message: err.message }); }
     }
 
     // ========== ADMIN ==========
     function adminTab(name) {
         document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
-        const labelMap = { events: 'ивент', promo: 'промо', give: 'выдать', poll: 'опрос', stats: 'статы' };
+        const labelMap = { events: 'ивент', promo: 'промо', give: 'выдать', poll: 'опрос', user: 'игрок', stats: 'статы' };
         const tabBtn = Array.from(document.querySelectorAll('.admin-tab')).find(b => b.textContent.toLowerCase().includes(labelMap[name]));
         if (tabBtn) tabBtn.classList.add('active');
         const panel = document.querySelector(`.admin-panel[data-panel="${name}"]`);
@@ -2558,42 +1971,84 @@
                 const ev = d.active_event;
                 const rem = Math.max(0, ev.endsAt - Date.now());
                 evBox.innerHTML = `<b style="color:${ev.color || '#fbbf24'};">${escapeHtml(ev.name)}</b> (x${ev.multiplier}) — осталось ${formatRemaining(rem)}`;
-            } else {
-                evBox.innerHTML = '<span style="color:var(--text-muted);">Нет активного ивента</span>';
-            }
+            } else evBox.innerHTML = '<span style="color:var(--text-muted);">Нет активного ивента</span>';
         }
-
         const pollBox = document.getElementById('admin-current-poll');
         if (pollBox) {
             if (d.active_poll) {
                 const p = d.active_poll;
                 const endsText = p.endsAt ? ` • до ${new Date(p.endsAt).toLocaleString('ru-RU')}` : '';
                 pollBox.innerHTML = `<b>${escapeHtml(p.question)}</b><br><span style="color:var(--text-muted); font-size:11px;">${p.totalVotes} голосов${endsText}</span>`;
-            } else {
-                pollBox.innerHTML = '<span style="color:var(--text-muted);">Нет активного опроса</span>';
-            }
+            } else pollBox.innerHTML = '<span style="color:var(--text-muted);">Нет активного опроса</span>';
         }
 
-        let dropsHtml = '';
-        if (d.recent_drops && d.recent_drops.length) {
-            dropsHtml = d.recent_drops.map(dr => `
-                <div class="admin-drop-row">
-                    ${dr.itemImg ? `<img src="/${dr.itemImg}" onerror="this.style.display='none';">` : ''}
-                    <div class="meta">
-                        <div class="nick">${escapeHtml(dr.nick || '?')}</div>
-                        <div class="item">${escapeHtml(dr.itemName || '')} (${dr.price || 0})</div>
-                    </div>
+        // TOP PLAYERS
+        const topHtml = (d.top_players || []).map((p, i) => {
+            const medal = ['🥇','🥈','🥉','4️⃣','5️⃣'][i] || (i+1);
+            const nick = p.nick || ('Игрок #' + p.uid);
+            return `<div class="admin-user-row" onclick="openOtherProfile('${p.uid}')">
+                <div class="rank">${medal}</div>
+                <div class="info">
+                    <div class="nick">${escapeHtml(nick)}</div>
+                    <div class="uid">ID: ${p.uid}</div>
                 </div>
-            `).join('');
-        } else {
-            dropsHtml = '<div style="text-align:center; color:var(--text-muted); padding:12px;">Нет дропов</div>';
-        }
+                <div class="bal">${formatNum(p.balance)}</div>
+            </div>`;
+        }).join('') || '<div style="text-align:center; color:var(--text-muted); padding:12px;">Нет данных</div>';
+
+        // TOP OPENERS
+        const topOpenersHtml = (d.top_openers || []).slice(0, 5).map((p, i) => {
+            const medal = ['🥇','🥈','🥉','4️⃣','5️⃣'][i] || (i+1);
+            const nick = p.nick || ('Игрок #' + p.uid);
+            return `<div class="admin-user-row" onclick="openOtherProfile('${p.uid}')">
+                <div class="rank">${medal}</div>
+                <div class="info">
+                    <div class="nick">${escapeHtml(nick)}</div>
+                    <div class="uid">ID: ${p.uid}</div>
+                </div>
+                <div class="opened">${formatNum(p.opened || 0)} 🎁</div>
+            </div>`;
+        }).join('') || '<div style="text-align:center; color:var(--text-muted); padding:12px;">Нет данных</div>';
+
+        // RECENT PROMOS
+        const promosHtml = (d.recent_promos || []).slice(0, 5).map(p => `
+            <div class="admin-promo-row">
+                <div class="code">${escapeHtml(p.code)}</div>
+                <div class="reward">+${formatNum(p.reward)}</div>
+                <div class="uses">${p.used}/${p.max_uses}</div>
+            </div>`).join('') || '<div style="text-align:center; color:var(--text-muted); padding:12px; font-size:11px;">Нет промокодов</div>';
+
+        // RECENT DROPS
+        const dropsHtml = (d.recent_drops || []).length
+            ? d.recent_drops.map(dr => `<div class="admin-drop-row">${dr.itemImg ? `<img src="/${dr.itemImg}" onerror="this.style.display='none';">` : ''}<div class="meta"><div class="nick">${escapeHtml(dr.nick || '?')}</div><div class="item">${escapeHtml(dr.itemName || '')} (${dr.price || 0})</div></div></div>`).join('')
+            : '<div style="text-align:center; color:var(--text-muted); padding:12px;">Нет дропов</div>';
 
         box.innerHTML = `
             <div class="admin-stat-grid">
                 <div class="admin-stat-box"><div class="v">${formatNum(d.total_users || 0)}</div><div class="l">Юзеров</div></div>
-                <div class="admin-stat-box"><div class="v">${formatNum(d.total_balance || 0)}</div><div class="l">Монет всего</div></div>
+                <div class="admin-stat-box"><div class="v">${formatNum(d.total_balance || 0)}</div><div class="l">Монет</div></div>
                 <div class="admin-stat-box"><div class="v">${formatNum(d.total_opened || 0)}</div><div class="l">Кейсов</div></div>
+            </div>
+            <div class="admin-stat-grid">
+                <div class="admin-stat-box"><div class="v" style="color:var(--accent-green);">${formatNum(d.total_upg_success || 0)}</div><div class="l">Апгрейд ✓</div></div>
+                <div class="admin-stat-box"><div class="v" style="color:var(--accent-red);">${formatNum(d.total_upg_fail || 0)}</div><div class="l">Апгрейд ✗</div></div>
+                <div class="admin-stat-box"><div class="v" style="color:var(--accent-blue);">${formatNum(d.total_sold || 0)}</div><div class="l">Продано</div></div>
+            </div>
+            <div class="admin-stat-grid wide">
+                <div class="admin-stat-box"><div class="v">${formatNum(d.total_inv_value || 0)}</div><div class="l">Инвентарь (стоим.)</div></div>
+                <div class="admin-stat-box"><div class="v" style="color:var(--accent-purple);">${formatNum(d.total_donations || 0)}</div><div class="l">Донатов</div></div>
+            </div>
+            <div class="admin-card">
+                <div class="admin-card-title">🏆 Топ по балансу</div>
+                ${topHtml}
+            </div>
+            <div class="admin-card">
+                <div class="admin-card-title">🎁 Топ по кейсам</div>
+                ${topOpenersHtml}
+            </div>
+            <div class="admin-card">
+                <div class="admin-card-title">🎟 Промокоды</div>
+                ${promosHtml}
             </div>
             <div class="admin-card">
                 <div class="admin-card-title">Последние дропы</div>
@@ -2612,12 +2067,8 @@
             notify({ type: 'success', message: `Ивент «${EVENT_TYPES[type].name}» запущен` });
             await loadEvent();
             await loadAdminStats();
-        } catch (err) {
-            haptic('error');
-            notify({ type: 'error', message: err.message });
-        }
+        } catch (err) { haptic('error'); notify({ type: 'error', message: err.message }); }
     }
-
     async function adminStopEvent() {
         try {
             await apiCall('/api/admin/event', 'POST', { type: null });
@@ -2625,11 +2076,8 @@
             notify({ type: 'success', message: 'Ивент остановлен' });
             await loadEvent();
             await loadAdminStats();
-        } catch (err) {
-            notify({ type: 'error', message: err.message });
-        }
+        } catch (err) { notify({ type: 'error', message: err.message }); }
     }
-
     async function adminCreatePromo() {
         const code = document.getElementById('admin-promo-code').value.trim().toUpperCase();
         const reward = parseInt(document.getElementById('admin-promo-reward').value);
@@ -2640,12 +2088,8 @@
             haptic('success');
             notify({ type: 'success', title: 'Промокод создан', message: `${res.code} — ${res.reward} монет × ${res.max_uses}` });
             document.getElementById('admin-promo-code').value = '';
-        } catch (err) {
-            haptic('error');
-            notify({ type: 'error', message: err.message });
-        }
+        } catch (err) { haptic('error'); notify({ type: 'error', message: err.message }); }
     }
-
     async function adminGive() {
         const user_id = document.getElementById('admin-give-user').value.trim();
         const coins = parseInt(document.getElementById('admin-give-coins').value) || 0;
@@ -2662,12 +2106,8 @@
             document.getElementById('admin-give-user').value = '';
             document.getElementById('admin-give-coins').value = '0';
             document.getElementById('admin-give-item').value = '';
-        } catch (err) {
-            haptic('error');
-            notify({ type: 'error', message: err.message });
-        }
+        } catch (err) { haptic('error'); notify({ type: 'error', message: err.message }); }
     }
-
     function adminAddPollOption() {
         const wrap = document.getElementById('admin-poll-options');
         const count = wrap.querySelectorAll('.poll-option-input').length;
@@ -2678,7 +2118,6 @@
         input.placeholder = `Вариант ${count + 1}`;
         wrap.appendChild(input);
     }
-
     async function adminCreatePoll() {
         const question = document.getElementById('admin-poll-question').value.trim();
         const inputs = Array.from(document.querySelectorAll('.poll-option-input'));
@@ -2687,23 +2126,15 @@
         if (!question) return notify({ type: 'warning', message: 'Введите вопрос' });
         if (options.length < 2) return notify({ type: 'warning', message: 'Минимум 2 варианта' });
         try {
-            await apiCall('/api/admin/poll', 'POST', {
-                question,
-                options,
-                duration_minutes: duration > 0 ? duration : null
-            });
+            await apiCall('/api/admin/poll', 'POST', { question, options, duration_minutes: duration > 0 ? duration : null });
             haptic('success');
             notify({ type: 'success', message: 'Опрос создан' });
             document.getElementById('admin-poll-question').value = '';
             inputs.forEach(i => i.value = '');
             await loadPoll();
             await loadAdminStats();
-        } catch (err) {
-            haptic('error');
-            notify({ type: 'error', message: err.message });
-        }
+        } catch (err) { haptic('error'); notify({ type: 'error', message: err.message }); }
     }
-
     async function adminEndPoll() {
         try {
             await apiCall('/api/admin/poll/end', 'POST');
@@ -2711,8 +2142,51 @@
             notify({ type: 'success', message: 'Опрос завершён' });
             await loadPoll();
             await loadAdminStats();
+        } catch (err) { notify({ type: 'error', message: err.message }); }
+    }
+
+    async function adminSearchUser() {
+        const uid = document.getElementById('admin-search-uid').value.trim();
+        const box = document.getElementById('admin-search-result');
+        if (!uid) return notify({ type: 'warning', message: 'Введите Telegram ID' });
+        box.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:15px;">Поиск...</div>';
+        try {
+            const d = await apiCall('/api/admin/user_info/' + encodeURIComponent(uid));
+            const nick = d.nick || d.username || ('Игрок #' + d.uid);
+            const st = d.stats || {};
+            const inv = Object.values(d.inventory || {});
+            const invValue = inv.reduce((s, i) => s + (parseInt(i.price) || 0), 0);
+            const usedPromos = (d.used_promos || []).length;
+
+            let invHtml = '';
+            if (inv.length) {
+                invHtml = `<div style="margin-top:10px;"><div style="font-size:11px; color:var(--text-muted); margin-bottom:6px;">Инвентарь (${inv.length})</div>
+                    <div style="display:flex; flex-wrap:wrap; gap:4px;">
+                        ${inv.slice(0, 12).map(i => `<div style="width:36px; height:36px; background:var(--bg-card); border:1px solid ${(RARITIES[i.rarity]||RARITIES.common).color}; border-radius:6px; display:flex; align-items:center; justify-content:center;"><img src="${i.img}" style="width:28px; height:28px; object-fit:contain;" onerror="this.style.display='none';"></div>`).join('')}
+                        ${inv.length > 12 ? `<div style="width:36px; height:36px; background:var(--bg-card); border:1px solid var(--border); border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:10px; color:var(--text-muted);">+${inv.length - 12}</div>` : ''}
+                    </div>
+                </div>`;
+            }
+
+            box.innerHTML = `
+                <div class="admin-search-card">
+                    <div class="head">
+                        <div class="avatar">${nick.charAt(0).toUpperCase()}</div>
+                        <div><div class="name">${escapeHtml(nick)}</div><div class="id">ID: ${d.uid}</div></div>
+                    </div>
+                    <div class="info-row"><span class="k">Баланс</span><span class="v">${formatNum(d.balance || 0)}</span></div>
+                    <div class="info-row"><span class="k">Кейсов открыто</span><span class="v">${formatNum(st.casesOpened || 0)}</span></div>
+                    <div class="info-row"><span class="k">Заработано</span><span class="v">${formatNum(st.totalEarned || 0)}</span></div>
+                    <div class="info-row"><span class="k">Апгрейдов (✓/✗)</span><span class="v">${st.upgradeSuccess || 0} / ${st.upgradeFail || 0}</span></div>
+                    <div class="info-row"><span class="k">Продано предметов</span><span class="v">${st.itemsSold || 0}</span></div>
+                    <div class="info-row"><span class="k">Предметов в инвентаре</span><span class="v">${inv.length} (${formatNum(invValue)})</span></div>
+                    <div class="info-row"><span class="k">Рефералов</span><span class="v">${d.referrals || 0}</span></div>
+                    <div class="info-row"><span class="k">Использовано промо</span><span class="v">${usedPromos}</span></div>
+                    ${invHtml}
+                </div>
+            `;
         } catch (err) {
-            notify({ type: 'error', message: err.message });
+            box.innerHTML = `<div style="text-align:center; color:var(--accent-red); padding:15px; font-size:12px;">${escapeHtml(err.message)}</div>`;
         }
     }
 
@@ -2730,11 +2204,7 @@
     // ========== GLOBAL ==========
     window.BF = {
         addToUpg: (uid) => {
-            if (upgInputs.includes(uid)) {
-                notify({ type: 'info', message: 'Уже добавлен' });
-                switchTab('upgrader');
-                return;
-            }
+            if (upgInputs.includes(uid)) { notify({ type: 'info', message: 'Уже добавлен' }); switchTab('upgrader'); return; }
             if (upgInputs.length >= MAX_UPG_INPUTS) return notify({ type: 'warning', message: `Максимум ${MAX_UPG_INPUTS} предметов` });
             upgInputs.push(uid);
             renderUpgInputs();
@@ -2742,12 +2212,7 @@
             haptic('light');
             switchTab('upgrader');
         },
-        removeUpg: (uid) => {
-            upgInputs = upgInputs.filter(u => u !== uid);
-            renderUpgInputs();
-            calcUpg();
-            haptic('light');
-        },
+        removeUpg: (uid) => { upgInputs = upgInputs.filter(u => u !== uid); renderUpgInputs(); calcUpg(); haptic('light'); },
         toggleUpgItem: toggleUpgItem,
         chooseTarget: chooseTarget,
         openProfile: openOtherProfile,
@@ -2763,9 +2228,7 @@
                 haptic('light');
                 playSound('coin');
                 notify({ type: 'success', message: 'Продано' });
-            } catch (err) {
-                notify({ type: 'error', message: err.message });
-            }
+            } catch (err) { notify({ type: 'error', message: err.message }); }
         },
         buy: buyPackage
     };
@@ -2783,9 +2246,7 @@
             haptic('success');
             playSound('coin');
             notify({ type: 'success', message: 'Всё продано' });
-        } catch (err) {
-            notify({ type: 'error', message: err.message });
-        }
+        } catch (err) { notify({ type: 'error', message: err.message }); }
     };
 
     window.openCaseSection = openCaseSection;
@@ -2810,6 +2271,7 @@
     window.toggleHaptic = toggleHaptic;
     window.closeWinModal = closeWinModal;
     window.closeOtherProfile = closeOtherProfile;
+    window.openOtherProfile = openOtherProfile;
     window.votePoll = votePoll;
     window.adminTab = adminTab;
     window.adminStartEvent = adminStartEvent;
@@ -2819,6 +2281,7 @@
     window.adminAddPollOption = adminAddPollOption;
     window.adminCreatePoll = adminCreatePoll;
     window.adminEndPoll = adminEndPoll;
+    window.adminSearchUser = adminSearchUser;
 
     // ========== INIT ==========
     async function loadData() {
@@ -2830,12 +2293,10 @@
             state.lastUser = data.lastUser || 0;
             state.hasUserCase = data.hasUserCase || false;
             state.stats = data.stats || {};
-
             if (data.isAdmin || IS_ADMIN) {
                 const navAdmin = document.getElementById('nav-admin');
                 if (navAdmin) navAdmin.style.display = 'flex';
             }
-
             updateUI();
             renderUpgInputs();
             renderUpgTarget();
@@ -2854,32 +2315,19 @@
         if (!start || !start.startsWith('ref_')) return;
         const refId = start.replace('ref_', '');
         if (refId === String(MY_ID)) return;
-        try {
-            const res = await apiCall('/api/claim_referral', 'POST', { ref_id: refId });
-            if (res.ok) {
-                notify({ type: 'success', message: 'Бонус за вход' });
-                loadData();
-            }
-        } catch (e) {}
+        try { const res = await apiCall('/api/claim_referral', 'POST', { ref_id: refId }); if (res.ok) { notify({ type: 'success', message: 'Бонус за вход' }); loadData(); } } catch (e) {}
     }
 
     document.getElementById('toggle-sound').classList.toggle('on', soundEnabled);
     document.getElementById('toggle-haptic').classList.toggle('on', hapticEnabled);
     const sBtn = document.getElementById('sound-toggle');
-    if (!soundEnabled) {
-        sBtn.innerHTML = '<i class="fa-solid fa-volume-xmark"></i>';
-        sBtn.classList.add('off');
-    }
+    if (!soundEnabled) { sBtn.innerHTML = '<i class="fa-solid fa-volume-xmark"></i>'; sBtn.classList.add('off'); }
 
     populateGiveItems();
 
     switchTab('cases');
     renderDonate();
-    loadData().then(() => {
-        checkRef();
-        loadEvent();
-        loadPoll();
-    });
+    loadData().then(() => { checkRef(); loadEvent(); loadPoll(); });
 
 })();
 </script>
