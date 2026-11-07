@@ -70,6 +70,249 @@
         @keyframes fadeIn { from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
         .section-title { font-size: 20px; font-weight: 900; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
 
+        /* ================= LIVE FEED ================= */
+        .live-feed-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .live-feed-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 900;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 12px;
+        }
+        .live-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: var(--accent-red);
+            box-shadow: 0 0 10px var(--accent-red);
+            animation: livePulse 1.5s infinite;
+        }
+        @keyframes livePulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+        .top-drop-day {
+            background: linear-gradient(135deg, #1a1c29, #11131c);
+            border: 2px solid var(--accent-gold);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: 0.25s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .top-drop-day:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 22px rgba(251,191,36,0.35);
+        }
+        .top-drop-day::before {
+            content: 'ТОП ДНЯ';
+            position: absolute;
+            top: -1px; right: -1px;
+            background: var(--accent-gold);
+            color: #000;
+            font-size: 9px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            padding: 3px 10px;
+            border-radius: 0 12px 0 12px;
+            z-index: 2;
+            animation: topGlow 2s infinite;
+        }
+        @keyframes topGlow {
+            0%, 100% { box-shadow: 0 0 15px rgba(251,191,36,0.5); }
+            50% { box-shadow: 0 0 25px rgba(251,191,36,0.9); }
+        }
+        .top-drop-img-wrap {
+            width: 76px;
+            height: 76px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(251,191,36,0.08);
+            border-radius: 10px;
+            position: relative;
+        }
+        .top-drop-img-wrap::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 10px;
+            background: radial-gradient(circle at 50% 50%, rgba(251,191,36,0.25), transparent 70%);
+            animation: topImgGlow 2s infinite;
+        }
+        @keyframes topImgGlow {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+        .top-drop-img {
+            width: 64px;
+            height: 64px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 12px rgba(251,191,36,0.7));
+            position: relative;
+            z-index: 1;
+        }
+        .top-drop-emoji {
+            font-size: 50px;
+            line-height: 1;
+            filter: drop-shadow(0 0 12px rgba(251,191,36,0.7));
+            position: relative;
+            z-index: 1;
+        }
+        .top-drop-info { flex: 1; min-width: 0; }
+        .top-drop-name {
+            font-size: 14px;
+            font-weight: 900;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .top-drop-price {
+            font-size: 16px;
+            color: var(--accent-gold);
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 4px;
+        }
+        .top-drop-method {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-top: 3px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .top-drop-method i { font-size: 9px; }
+        .top-drop-method.upgrade { color: var(--accent-blue); }
+        .top-drop-method.case { color: var(--accent-gold); }
+
+        .live-feed {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+            scrollbar-width: thin;
+            scroll-behavior: smooth;
+        }
+        .live-feed::-webkit-scrollbar { height: 3px; }
+        .live-feed::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+        .live-feed::-webkit-scrollbar-track { background: transparent; }
+
+        .live-drop-item {
+            width: 82px;
+            flex-shrink: 0;
+            background: #1c1f2b;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            padding: 8px 5px;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .live-drop-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        }
+        .live-drop-item img {
+            width: 45px;
+            height: 45px;
+            object-fit: contain;
+            transition: transform 0.2s;
+            display: block;
+            margin: 0 auto;
+        }
+        .live-drop-item .emoji-fallback {
+            font-size: 35px;
+            line-height: 45px;
+            display: block;
+        }
+        .live-drop-item .ld-name {
+            font-size: 9px;
+            font-weight: 800;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-top: 3px;
+            color: var(--text-muted);
+        }
+        .live-drop-item .ld-price {
+            font-size: 10px;
+            font-weight: 900;
+            color: var(--accent-gold);
+            margin-top: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+        }
+        .live-drop-item .ld-price i { font-size: 8px; }
+
+        .ld-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            transform: scale(0.88);
+            z-index: 3;
+            border-radius: 8px;
+        }
+        .live-drop-item:hover .ld-overlay {
+            opacity: 1;
+            transform: scale(1);
+        }
+        .ld-overlay .ld-method-icon {
+            font-size: 20px;
+            color: var(--accent-gold);
+        }
+        .ld-overlay .ld-method-text {
+            font-size: 9px;
+            font-weight: 900;
+            color: var(--accent-gold);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            text-align: center;
+            padding: 0 4px;
+        }
+        .ld-overlay.upgrade .ld-method-icon { color: var(--accent-blue); }
+        .ld-overlay.upgrade .ld-method-text { color: var(--accent-blue); }
+
+        .live-feed-empty {
+            width: 100%;
+            text-align: center;
+            padding: 20px;
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 600;
+        }
+
         /* ================= EVENT BANNER ================= */
         .event-banner { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 15px; margin-bottom: 12px; border: 2px solid var(--accent-gold); position: relative; overflow: hidden; animation: eventPulse 2s infinite; }
         .event-banner::before { content: ''; position: absolute; inset: 0; background: currentColor; opacity: 0.1; z-index: 0; }
@@ -128,7 +371,6 @@
         .case-open-visual { width: 100%; min-height: 220px; position: relative; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; transition: height 0.3s; }
         .case-open-img { max-width: 160px; max-height: 160px; object-fit: contain; filter: drop-shadow(0 15px 30px rgba(0,0,0,0.6)); transition: opacity 0.3s, transform 0.3s; }
 
-        /* Single roulette */
         .roulette-wrap { position: absolute; inset: 0; background: var(--bg-input); border: 2px solid var(--border); border-radius: 20px; overflow: hidden; opacity: 0; pointer-events: none; transition: opacity 0.3s; display: flex; align-items: center; }
         .roulette-wrap.active { opacity: 1; pointer-events: auto; }
         .roulette-pointer { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 4px; height: 100%; background: var(--accent-gold); z-index: 10; box-shadow: 0 0 15px var(--accent-gold), 0 0 30px rgba(251,191,36,0.5); }
@@ -141,7 +383,6 @@
         .roulette-item .name { font-size: 9px; font-weight: 700; color: var(--text-muted); text-align: center; padding: 0 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
         .roulette-item .coin { color: var(--accent-gold); font-size: 40px; }
 
-        /* Multi roulette (x2/x5) */
         .roulette-multi-wrap { position: absolute; inset: 0; background: var(--bg-input); border: 2px solid var(--border); border-radius: 20px; overflow: hidden; opacity: 0; pointer-events: none; transition: opacity 0.3s; display: flex; flex-direction: column; gap: 6px; padding: 8px; }
         .roulette-multi-wrap.active { opacity: 1; pointer-events: auto; }
         .multi-strip { flex: 1; min-height: 60px; position: relative; background: #0d0f14; border: 2px solid var(--border); border-radius: 12px; overflow: hidden; display: flex; align-items: center; transition: border-color 0.3s, box-shadow 0.3s; }
@@ -276,7 +517,7 @@
         .modal-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; width: 100%; max-width: 380px; padding: 20px; position: relative; max-height: 85vh; overflow-y: auto; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
         .modal-box::-webkit-scrollbar { width: 5px; }
         .modal-box::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-        .close-modal { position: absolute; top: 12px; right: 15px; font-size: 24px; color: var(--text-muted); cursor: pointer; line-height: 1; transition: 0.2s; }
+        .close-modal { position: absolute; top: 12px; right: 15px; font-size: 24px; color: var(--text-muted); cursor: pointer; line-height: 1; transition: 0.2s; z-index: 10; }
         .close-modal:hover { color: var(--text-main); }
         .modal-title { font-size: 18px; font-weight: 900; margin-bottom: 15px; }
 
@@ -350,6 +591,9 @@
             .upg-wheel-center .val { font-size: 18px; }
             .roulette-item { width: 100px; height: 100px; }
             .roulette-item img { width: 50px; height: 50px; }
+            .top-drop-img-wrap { width: 64px; height: 64px; }
+            .top-drop-img { width: 54px; height: 54px; }
+            .top-drop-emoji { font-size: 42px; }
         }
     </style>
 </head>
@@ -389,6 +633,19 @@
 <!-- CASES -->
 <div id="section-cases" class="section active">
     <h2 class="section-title">Кейсы</h2>
+
+    <!-- LIVE FEED -->
+    <div class="live-feed-section">
+        <div class="live-feed-title">
+            <span class="live-dot"></span>
+            Последние дропы
+        </div>
+        <div class="top-drop-day" id="top-drop-day" style="display:none;"></div>
+        <div class="live-feed" id="live-feed">
+            <div class="live-feed-empty">Загрузка...</div>
+        </div>
+    </div>
+
     <div class="event-banner" id="event-banner" style="display:none;"></div>
     <div class="poll-banner" id="poll-banner" style="display:none;"></div>
 
@@ -709,6 +966,21 @@
     </div>
 </div>
 
+<div class="modal" id="other-profile-modal" onclick="if(event.target===this) closeOtherProfile()">
+    <div class="modal-box">
+        <span class="close-modal" onclick="closeOtherProfile()">&times;</span>
+        <div class="profile-avatar-big" id="op-avatar" style="width:70px; height:70px; font-size:26px; margin-top:5px;">?</div>
+        <h3 class="modal-title" id="op-name" style="margin-top:12px; font-size:18px;">Загрузка...</h3>
+        <div class="profile-bal-big" style="font-size:26px; margin-bottom:15px;"><i class="fa-solid fa-coins"></i> <span id="op-balance">0</span></div>
+        <div class="stats-grid" style="margin-bottom:15px;">
+            <div class="stat-box" style="padding:10px;"><div class="stat-box__val" id="op-cases" style="font-size:16px;">0</div><div class="stat-box__lbl">Кейсов</div></div>
+            <div class="stat-box" style="padding:10px;"><div class="stat-box__val" id="op-earned" style="font-size:16px;">0</div><div class="stat-box__lbl">Заработано</div></div>
+        </div>
+        <h3 style="font-size:13px; margin:15px 0 10px; text-align:left; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted);"><i class="fa-solid fa-sack-dollar"></i> Инвентарь</h3>
+        <div class="inv-grid" id="op-inventory" style="max-height:250px; overflow-y:auto;"></div>
+    </div>
+</div>
+
 <div class="modal" id="settings-modal" onclick="if(event.target===this) closeSettings()">
     <div class="modal-box">
         <span class="close-modal" onclick="closeSettings()">&times;</span>
@@ -721,7 +993,7 @@
             <div class="settings-label"><i class="fa-solid fa-mobile-screen"></i> Вибрация</div>
             <div class="toggle" id="toggle-haptic" onclick="toggleHaptic()"></div>
         </div>
-        <div style="margin-top:20px; font-size:11px; color:var(--text-muted); text-align:center;">Brainrots Funny v2.2</div>
+        <div style="margin-top:20px; font-size:11px; color:var(--text-muted); text-align:center;">Brainrots Funny v2.3</div>
     </div>
 </div>
 
@@ -744,7 +1016,9 @@
 
     onValue(feedRef, (snap) => {
         const val = snap.val() || {};
-        const arr = Object.values(val).sort((a, b) => (b.ts||0) - (a.ts||0)).slice(0, 20);
+        const arr = Object.values(val)
+            .sort((a, b) => (b.ts || 0) - (a.ts || 0))
+            .slice(0, 200);
         if (window.updateDropFeed) window.updateDropFeed(arr);
     });
 </script>
@@ -764,17 +1038,15 @@
 
     const CASE_PRICES = { free: 0, user: 0, base: 9, bro: 25, allin: 29 };
 
-    // Roulette sizes (from CSS)
     const CASE_ITEM_W = 120;
     const CASE_GAP = 10;
-    const CASE_STRIDE = CASE_ITEM_W + CASE_GAP; // 130
+    const CASE_STRIDE = CASE_ITEM_W + CASE_GAP;
     const CASE_TRACK_PAD = 15;
     const CASE_WRAP_BORDER = 2;
 
-    // Multi strip sizes (from CSS)
     const MULTI_ITEM_W = 70;
     const MULTI_GAP = 8;
-    const MULTI_STRIDE = MULTI_ITEM_W + MULTI_GAP; // 78
+    const MULTI_STRIDE = MULTI_ITEM_W + MULTI_GAP;
     const MULTI_TRACK_PAD = 10;
     const MULTI_BORDER = 2;
 
@@ -852,6 +1124,8 @@
     let currentEvent = null;
     let currentPoll = null;
     let animState = null;
+    let dropFeedData = [];
+    let topDayDrop = null;
 
     let soundEnabled = localStorage.getItem('bf_sound') !== '0';
     let hapticEnabled = localStorage.getItem('bf_haptic') !== '0';
@@ -1020,6 +1294,152 @@
         localStorage.setItem('bf_haptic', hapticEnabled ? '1' : '0');
         document.getElementById('toggle-haptic').classList.toggle('on', hapticEnabled);
         if (hapticEnabled) haptic('medium');
+    }
+
+    // ========== LIVE FEED ==========
+    function getRarityColorForItem(name) {
+        const it = ALL_ITEMS.find(i => i.name === name);
+        if (it) return (RARITIES[it.rarity] || RARITIES.common).color;
+        return RARITIES.common.color;
+    }
+
+    function normalizeTs(ts) {
+        const n = Number(ts) || 0;
+        if (n === 0) return 0;
+        if (n < 1e12) return n * 1000;
+        return n;
+    }
+
+    function renderLiveFeed() {
+        const feed = document.getElementById('live-feed');
+        const topBox = document.getElementById('top-drop-day');
+        if (!feed || !topBox) return;
+
+        const now = Date.now();
+        const dayAgo = now - 24 * 3600 * 1000;
+
+        // Топ дня — самый дорогой за последние 24 часа
+        let best = null;
+        for (const d of dropFeedData) {
+            const t = normalizeTs(d.ts);
+            if (t < dayAgo) continue;
+            if (!best || (Number(d.price) || 0) > (Number(best.price) || 0)) best = d;
+        }
+        topDayDrop = best;
+
+        if (best) {
+            topBox.style.display = 'flex';
+            topBox.onclick = function(e) {
+                e.stopPropagation();
+                openOtherProfile(best.user_id);
+            };
+            const method = best.method === 'upgrade' ? 'upgrade' : 'case';
+            const methodLabel = best.method === 'upgrade' ? 'Апгрейд' : 'Кейс';
+            const methodIcon = best.method === 'upgrade' ? 'fa-bolt' : 'fa-box-open';
+            const imgHtml = best.itemImg
+                ? `<img class="top-drop-img" src="${best.itemImg}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                   <span class="top-drop-emoji" style="display:none;">🧠</span>`
+                : `<span class="top-drop-emoji">🧠</span>`;
+            topBox.innerHTML = `
+                <div class="top-drop-img-wrap">${imgHtml}</div>
+                <div class="top-drop-info">
+                    <div class="top-drop-name">${escapeHtml(best.itemName || 'Предмет')}</div>
+                    <div class="top-drop-price"><i class="fa-solid fa-coins"></i> ${formatNum(best.price || 0)}</div>
+                    <div class="top-drop-method ${method}"><i class="fa-solid ${methodIcon}"></i> ${methodLabel}</div>
+                </div>
+            `;
+        } else {
+            topBox.style.display = 'none';
+            topBox.innerHTML = '';
+        }
+
+        // Сама лента
+        if (!dropFeedData.length) {
+            feed.innerHTML = '<div class="live-feed-empty">Пока нет дропов</div>';
+            return;
+        }
+
+        const list = dropFeedData.slice(0, 25);
+        feed.innerHTML = list.map(d => {
+            const borderColor = getRarityColorForItem(d.itemName);
+            const method = d.method === 'upgrade' ? 'upgrade' : 'case';
+            const methodLabel = d.method === 'upgrade' ? 'Апгрейд' : 'Кейс';
+            const methodIcon = d.method === 'upgrade' ? 'fa-bolt' : 'fa-box-open';
+            const imgHtml = d.itemImg
+                ? `<img src="${d.itemImg}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                   <span class="emoji-fallback" style="display:none;">🧠</span>`
+                : `<span class="emoji-fallback">🧠</span>`;
+            return `<div class="live-drop-item" style="border-color:${borderColor}" onclick="BF.openProfile('${d.user_id}')">
+                ${imgHtml}
+                <div class="ld-name">${escapeHtml(d.itemName || '')}</div>
+                <div class="ld-price"><i class="fa-solid fa-coins"></i> ${formatNum(d.price || 0)}</div>
+                <div class="ld-overlay ${method}">
+                    <i class="fa-solid ${methodIcon} ld-method-icon"></i>
+                    <div class="ld-method-text">${methodLabel}</div>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    window.updateDropFeed = function(arr) {
+        dropFeedData = Array.isArray(arr) ? arr : [];
+        renderLiveFeed();
+    };
+
+    // ========== OTHER PROFILE ==========
+    async function openOtherProfile(uid) {
+        if (!uid || uid === 'undefined' || uid === 'null') {
+            notify({ type: 'warning', message: 'Не удалось определить игрока' });
+            return;
+        }
+        haptic('light');
+        const modal = document.getElementById('other-profile-modal');
+        const invBox = document.getElementById('op-inventory');
+        document.getElementById('op-avatar').textContent = '?';
+        document.getElementById('op-name').textContent = 'Загрузка...';
+        document.getElementById('op-balance').textContent = '...';
+        document.getElementById('op-cases').textContent = '...';
+        document.getElementById('op-earned').textContent = '...';
+        invBox.innerHTML = '<div style="grid-column: span 3; text-align:center; color:var(--text-muted); padding:15px;">Загрузка...</div>';
+        modal.classList.add('active');
+
+        try {
+            const data = await apiCall('/api/user_profile/' + encodeURIComponent(uid));
+            const isMe = String(data.uid) === String(MY_ID);
+            document.getElementById('op-name').textContent = isMe ? 'Это вы' : 'Игрок #' + uid;
+            document.getElementById('op-balance').textContent = formatNum(data.balance || 0);
+            document.getElementById('op-avatar').textContent = isMe ? (tgUser?.first_name?.charAt(0) || 'В') : (String(uid).slice(-2));
+            const st = data.stats || {};
+            document.getElementById('op-cases').textContent = formatNum(st.casesOpened || 0);
+            document.getElementById('op-earned').textContent = formatNum(st.totalEarned || 0);
+
+            const inv = Object.values(data.inventory || {});
+            if (!inv.length) {
+                invBox.innerHTML = '<div style="grid-column: span 3; text-align:center; color:var(--text-muted); padding:15px;">Пусто</div>';
+            } else {
+                invBox.innerHTML = inv.map(item => {
+                    const r = RARITIES[item.rarity] || RARITIES.common;
+                    return `<div class="inv-item" style="border-color:${r.color}; cursor:default;">
+                        <div style="height:45px; display:flex; align-items:center; justify-content:center;">
+                            <img src="${item.img}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                            <span class="emoji-fallback" style="display:none;">${item.emoji || '🧠'}</span>
+                        </div>
+                        <div class="inv-price">${item.price}</div>
+                    </div>`;
+                }).join('');
+            }
+        } catch (err) {
+            document.getElementById('op-name').textContent = 'Ошибка';
+            document.getElementById('op-balance').textContent = '—';
+            document.getElementById('op-cases').textContent = '—';
+            document.getElementById('op-earned').textContent = '—';
+            invBox.innerHTML = '<div style="grid-column: span 3; text-align:center; color:var(--accent-red); padding:15px; font-size:12px;">' + escapeHtml(err.message) + '</div>';
+        }
+    }
+
+    function closeOtherProfile() {
+        document.getElementById('other-profile-modal').classList.remove('active');
+        haptic('light');
     }
 
     // ========== EVENT BANNER ==========
@@ -1245,8 +1665,6 @@
         }).join('');
     }
 
-    window.updateDropFeed = function(arr) {};
-
     // ========== CASES ==========
     function openCaseSection(type) {
         if (isOpening) return;
@@ -1322,7 +1740,6 @@
             btn.disabled = true; btn.textContent = 'КУЛДАУН';
             return;
         }
-        // Проверка баланса для платных кейсов
         if (activeCase && activeCase !== 'free' && activeCase !== 'user') {
             const price = (CASE_PRICES[activeCase] || 0) * mult;
             if (state.balance < price) {
@@ -1391,7 +1808,6 @@
         return { type: 'item', item: ITEMS_BY_ID[cfg.items[0].id] };
     }
 
-    // Рендер айтема для одиночной полосы
     function renderCaseStripItem(drop, isWin) {
         const glow = isWin ? 'box-shadow: 0 0 22px rgba(251,191,36,0.7);' : '';
         if (drop.type === 'coin') {
@@ -1409,7 +1825,6 @@
         </div>`;
     }
 
-    // Рендер айтема для полосы в мульти-режиме
     function renderMultiStripItem(drop, isWin) {
         const glow = isWin ? 'box-shadow: 0 0 15px rgba(251,191,36,0.6);' : '';
         if (drop.type === 'coin') {
@@ -1468,7 +1883,6 @@
         if (b) b.style.display = 'none';
     }
 
-    // ========== SINGLE OPENING ==========
     function playSingleOpening(res, cfg, onDone) {
         const track = document.getElementById('roulette-track');
         const items = [];
@@ -1517,14 +1931,12 @@
         timer = setTimeout(() => finish(false), 4400);
     }
 
-    // ========== MULTI OPENING (x2/x5) ==========
     function playMultiOpening(res, cfg, onDone) {
         const N = res.results.length;
         const wrap = document.getElementById('roulette-multi-wrap');
         wrap.innerHTML = '';
 
-        // Рассчитаем высоту: N*70 + (N-1)*6 + 16 padding
-        const totalH = N * 70 + (N - 1) * 6 + 16 + 4; // 4 = border
+        const totalH = N * 70 + (N - 1) * 6 + 16 + 4;
         document.getElementById('case-open-visual').style.height = Math.max(220, totalH) + 'px';
 
         const strips = [];
@@ -1555,20 +1967,16 @@
         showSkipBtn();
         playSound('spin');
 
-        // Ждём layout
         setTimeout(() => {
-            // Считаем scrollTo для каждой полосы
             for (const s of strips) {
                 const stripW = s.el.offsetWidth;
                 const jitter = (Math.random() - 0.5) * 10;
                 s.scrollTo = calcMultiScrollTo(WIN_INDEX_CASES, stripW) + jitter;
             }
 
-            // Базовая длительность + стаггер
             const baseDur = 3.2;
             const stagger = 0.18;
 
-            // Запускаем все полосы одновременно с разной длительностью
             strips.forEach((s, i) => {
                 const dur = baseDur + i * stagger;
                 s.dur = dur;
@@ -1610,13 +2018,11 @@
 
             animState = { mode: 'multi', finish };
 
-            // Ставим таймеры на приземление каждой полосы
             strips.forEach((s, i) => {
                 const landAt = s.dur * 1000;
                 timers.push(setTimeout(() => landStrip(s, false), landAt));
             });
 
-            // Общий таймер на завершение (последняя + запас)
             const totalDur = (baseDur + (N - 1) * stagger) * 1000 + 250;
             timers.push(setTimeout(() => finish(false), totalDur));
         }, 60);
@@ -1649,7 +2055,6 @@
         if (activeCase === 'user' && now - state.lastUser < USER_COOLDOWN)
             return notify({ type: 'error', message: 'Кейс за Юз ещё не готов' });
 
-        // Проверка баланса (защита от обхода через devtools)
         if (activeCase && activeCase !== 'free' && activeCase !== 'user') {
             const price = (CASE_PRICES[activeCase] || 0) * mult;
             if (state.balance < price) {
@@ -1680,7 +2085,6 @@
 
             const onDone = () => {
                 finalizeOpening();
-                // Проверка на легендарку — показать модалку
                 const hasLegendary = res.results.some(r => r.type === 'item' && r.item.rarity === 'legendary');
                 if (hasLegendary) {
                     haptic('success');
@@ -2346,6 +2750,7 @@
         },
         toggleUpgItem: toggleUpgItem,
         chooseTarget: chooseTarget,
+        openProfile: openOtherProfile,
         sellItem: async (uid) => {
             try {
                 const res = await apiCall('/api/sell_item', 'POST', { uid });
@@ -2404,6 +2809,7 @@
     window.toggleSound = toggleSound;
     window.toggleHaptic = toggleHaptic;
     window.closeWinModal = closeWinModal;
+    window.closeOtherProfile = closeOtherProfile;
     window.votePoll = votePoll;
     window.adminTab = adminTab;
     window.adminStartEvent = adminStartEvent;
