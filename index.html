@@ -384,6 +384,17 @@
         .admin-drop-row .item { color: var(--text-muted); font-size: 11px; }
         .admin-rank-badge { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 11px; color: #000; flex-shrink: 0; }
 
+        /* ITEM EDITOR */
+        .admin-item-row {
+            display: flex; align-items: center; gap: 10px; padding: 8px;
+            background: var(--bg-input); border-radius: 10px; margin-bottom: 6px; font-size: 12px;
+            flex-wrap: wrap;
+        }
+        .admin-item-row img { width: 36px; height: 36px; object-fit: contain; background: #1c1f2b; border-radius: 6px; padding: 2px; }
+        .admin-item-row .item-name { flex: 1; font-weight: 800; font-size: 13px; min-width: 80px; }
+        .admin-item-row input { width: 70px; margin-bottom: 0 !important; padding: 6px !important; font-size: 12px !important; text-align: center; }
+        .admin-item-row select { width: 110px; margin-bottom: 0 !important; padding: 6px !important; font-size: 12px !important; }
+
         @media (max-width: 400px) {
             .section { padding: 15px; }
             .case-open-visual { min-height: 180px; }
@@ -395,6 +406,9 @@
             .top-drop-img-wrap { width: 64px; height: 64px; }
             .top-drop-img { width: 54px; height: 54px; }
             .top-drop-emoji { font-size: 42px; }
+            .admin-item-row { gap: 6px; }
+            .admin-item-row input { width: 60px; }
+            .admin-item-row select { width: 100px; }
         }
     </style>
 </head>
@@ -632,6 +646,7 @@
 
     <div class="admin-tabs">
         <button class="admin-tab active" onclick="adminTab('events')"><i class="fa-solid fa-wand-magic-sparkles"></i> Ивенты</button>
+        <button class="admin-tab" onclick="adminTab('items')"><i class="fa-solid fa-gem"></i> Предметы</button>
         <button class="admin-tab" onclick="adminTab('promo')"><i class="fa-solid fa-ticket"></i> Промо</button>
         <button class="admin-tab" onclick="adminTab('give')"><i class="fa-solid fa-gift"></i> Выдать</button>
         <button class="admin-tab" onclick="adminTab('manage')"><i class="fa-solid fa-user-gear"></i> Игрок</button>
@@ -676,11 +691,21 @@
         </div>
     </div>
 
+    <!-- НОВАЯ ВКЛАДКА: ПРЕДМЕТЫ -->
+    <div class="admin-panel" data-panel="items">
+        <div class="admin-card">
+            <div class="admin-card-title">Настройка брейнротов (Цена / Редкость)</div>
+            <div id="admin-items-list" style="max-height: 500px; overflow-y: auto;">
+                <div style="text-align:center; color:var(--text-muted); padding:12px; font-size:12px;">Загрузка...</div>
+            </div>
+        </div>
+    </div>
+
     <div class="admin-panel" data-panel="promo">
         <div class="admin-card">
             <div class="admin-card-title">Создать промокод</div>
             <div class="admin-form">
-                <label>Код (2-32 символа, буквы/цифры/_/-)</label>
+                <label>Код (2-32 символа)</label>
                 <input type="text" id="admin-promo-code" placeholder="WELCOME2025" style="text-transform:uppercase;">
                 <label>Награда (монет)</label>
                 <input type="number" id="admin-promo-reward" value="100" min="1" max="1000000">
@@ -817,7 +842,7 @@
             <div class="settings-label"><i class="fa-solid fa-mobile-screen"></i> Вибрация</div>
             <div class="toggle" id="toggle-haptic" onclick="toggleHaptic()"></div>
         </div>
-        <div style="margin-top:20px; font-size:11px; color:var(--text-muted); text-align:center;">Brainrots Funny v2.5</div>
+        <div style="margin-top:20px; font-size:11px; color:var(--text-muted); text-align:center;">Brainrots Funny v2.6</div>
     </div>
 </div>
 
@@ -890,28 +915,15 @@
         { id: 'p500', stars: 500, coins: 4000, bonus: 60, best: false }
     ];
 
-    const ALL_ITEMS = [
-        { id: 'trios',    name: 'Los Trios',           price: 4,     rarity: 'common',    img: 'assets/brainrots/los_trios.png',               emoji: '🥉' },
-        { id: 'rot67',    name: '67',                  price: 5,     rarity: 'common',    img: 'assets/brainrots/67.png',                      emoji: '6️⃣7️⃣' },
-        { id: 'hammy',    name: 'Spinny Hammy',        price: 5,     rarity: 'uncommon',  img: 'assets/brainrots/spinny_hammy.png',            emoji: '🐹' },
-        { id: 'candyslap',name: 'Candy Slap',          price: 7,     rarity: 'uncommon',  img: 'assets/brainrots/CandySlap.png',               emoji: '🍬' },
-        { id: 'noobinis', name: 'Los Noobinis',        price: 7,     rarity: 'rare',      img: 'assets/brainrots/Los_Noobinis.png',            emoji: '🤡' },
-        { id: 'tangtang', name: 'Tang Tang Keletang',  price: 8,     rarity: 'rare',      img: 'assets/brainrots/TangTangKeletang.png',        emoji: '🦴' },
-        { id: 'lagrande', name: 'La Grande',           price: 9,     rarity: 'epic',      img: 'assets/brainrots/La_Grande_Combinasion.png',   emoji: '🇫🇷' },
-        { id: 'tictac',   name: 'Tictac Sahur',        price: 12,    rarity: 'epic',      img: 'assets/brainrots/Tictac-Sahur.png',            emoji: '🕒' },
-        { id: 'bacuru',   name: 'Bacuru and Egguru',   price: 12,    rarity: 'epic',      img: 'assets/brainrots/Bacuru_and_Egguru.png',       emoji: '🥚' },
-        { id: 'los67',    name: 'Los 67',              price: 12,    rarity: 'epic',      img: 'assets/brainrots/Los_67.png',                  emoji: '🎲' },
-        { id: 'yinyang',  name: 'Yin Yang Slap',       price: 20,    rarity: 'legendary', img: 'assets/brainrots/YinYangSlap.png',             emoji: '☯️' },
-        { id: 'skibidi',  name: 'Skibidi Toilet',      price: 13154, rarity: 'legendary', img: 'assets/brainrots/skibidi_toilet.png',          emoji: '🚽' }
-    ];
-    const ITEMS_BY_ID = ALL_ITEMS.reduce((a, i) => (a[i.id] = i, a), {});
+    // Данные будут загружаться с бэкенда в STATE.items
+    let STATE = { items: {}, itemsArray: [] };
 
     const CASE_LOOT_DATA = {
-        free:  { coinChance: 70, coins: [{amount:1,weight:50},{amount:2,weight:30},{amount:3,weight:20}], items: [{id:"trios",weight:50},{id:"rot67",weight:50}] },
-        user:  { coinChance: 30, coins: [{amount:3,weight:100}], items: [{id:"trios",weight:40},{id:"rot67",weight:30},{id:"hammy",weight:20},{id:"candyslap",weight:10}] },
-        base:  { coinChance: 0,  coins: [], items: [{id:"trios",weight:30},{id:"rot67",weight:30},{id:"candyslap",weight:25},{id:"lagrande",weight:15}] },
-        bro:   { coinChance: 0,  coins: [], items: [{id:"hammy",weight:25},{id:"noobinis",weight:20},{id:"tangtang",weight:18},{id:"tictac",weight:15},{id:"bacuru",weight:10},{id:"los67",weight:8},{id:"yinyang",weight:4}] },
-        allin: { coinChance: 0,  coins: [], items: [{id:"lagrande",weight:99},{id:"skibidi",weight:1}] }
+        free:  { coinChance: 70, coins: [{amount:1,weight:50},{amount:2,weight:30},{amount:3,weight:20}], items: [{id:"trios",weight:30},{id:"rot67",weight:30},{id:"defmut",weight:40}] },
+        user:  { coinChance: 30, coins: [{amount:3,weight:100}], items: [{id:"trios",weight:30},{id:"rot67",weight:30},{id:"hammy",weight:20},{id:"candyslap",weight:10},{id:"esok",weight:10}] },
+        base:  { coinChance: 0,  coins: [], items: [{id:"trios",weight:20},{id:"rot67",weight:20},{id:"candyslap",weight:20},{id:"lagrande",weight:15},{id:"ketupat",weight:15},{id:"hotspot",weight:10}] },
+        bro:   { coinChance: 0,  coins: [], items: [{id:"hammy",weight:15},{id:"noobinis",weight:15},{id:"tangtang",weight:15},{id:"tictac",weight:10},{id:"bacuru",weight:10},{id:"los67",weight:10},{id:"cashcard",weight:8},{id:"ketchuru",weight:7},{id:"garama",weight:5},{id:"yinyang",weight:5}] },
+        allin: { coinChance: 0,  coins: [], items: [{id:"lagrande",weight:40},{id:"bloodrot",weight:20},{id:"burguro",weight:15},{id:"pavone",weight:10},{id:"cerberus",weight:5},{id:"dragon",weight:4},{id:"capitano",weight:3},{id:"mmpuggy",weight:2},{id:"strawberry",weight:1}] }
     };
 
     const tg = window.Telegram?.WebApp;
@@ -1015,6 +1027,22 @@
         return res.json();
     }
 
+    async function loadItems() {
+        try {
+            const res = await apiCall('/api/items');
+            STATE.itemsArray = res.items || [];
+            STATE.items = {};
+            STATE.itemsArray.forEach(it => { STATE.items[it.id] = it; });
+            
+            renderAdminItemsList();
+            populateGiveItems();
+            renderLootPreview(activeCase || 'free');
+        } catch (err) {
+            console.error("Ошибка загрузки предметов", err);
+            notify({ type: 'error', message: 'Не удалось загрузить список предметов' });
+        }
+    }
+
     function notify(opts) {
         if (typeof opts === 'string') opts = { message: opts };
         const type = opts.type || 'info';
@@ -1109,7 +1137,7 @@
     }
 
     function getRarityColorForItem(name) {
-        const it = ALL_ITEMS.find(i => i.name === name);
+        const it = STATE.itemsArray.find(i => i.name === name);
         if (it) return (RARITIES[it.rarity] || RARITIES.common).color;
         return RARITIES.common.color;
     }
@@ -1200,8 +1228,6 @@
 
     async function openOtherProfile(uid, nickFallback, priceFallback) {
         uid = String(uid || '').trim();
-        
-        // Если user_id нет (старые дропы) или он невалидный — не мучаем бэк, показываем уведомление
         if (!uid || uid === 'undefined' || uid === 'null' || uid === '') {
             notify({ type: 'warning', message: 'Профиль этого игрока недоступен' });
             return;
@@ -1483,6 +1509,7 @@
         if (document.hidden) return;
         loadEvent();
         loadPoll();
+        loadItems(); // Периодически обновляем цены, если их поменял админ
     }, 30000);
 
     function renderInventory() {
@@ -1605,6 +1632,8 @@
     function renderLootPreview(type) {
         const grid = document.getElementById('loot-preview');
         const cfg = CASE_LOOT_DATA[type];
+        if (!cfg) return;
+        
         let html = '';
 
         if (cfg.coins.length > 0 && cfg.coinChance > 0) {
@@ -1619,9 +1648,10 @@
         }
 
         cfg.items.forEach(it => {
-            const itemObj = ITEMS_BY_ID[it.id];
+            const itemObj = STATE.items[it.id];
             if (!itemObj) return;
-            html += `<div class="loot-card" style="border-color:${RARITIES[itemObj.rarity].color}">
+            const rColor = (RARITIES[itemObj.rarity] || RARITIES.common).color;
+            html += `<div class="loot-card" style="border-color:${rColor}">
                 <div style="height:45px; display:flex; align-items:center; justify-content:center;">
                     <img src="${itemObj.img}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                     <span class="emoji-fallback" style="display:none; font-size:30px;">${itemObj.emoji || '🧠'}</span>
@@ -1642,9 +1672,9 @@
         let r = Math.random() * totalW;
         for (const it of cfg.items) {
             r -= it.weight;
-            if (r <= 0) return { type: 'item', item: ITEMS_BY_ID[it.id] };
+            if (r <= 0) return { type: 'item', item: STATE.items[it.id] };
         }
-        return { type: 'item', item: ITEMS_BY_ID[cfg.items[0].id] };
+        return { type: 'item', item: STATE.items[cfg.items[0].id] };
     }
 
     function renderCaseStripItem(drop) {
@@ -2141,7 +2171,7 @@
         if (sum === 0) return notify({ type: 'warning', message: 'Сначала выберите предметы слева' });
 
         const list = document.getElementById('target-list');
-        list.innerHTML = ALL_ITEMS.map(it => {
+        list.innerHTML = STATE.itemsArray.map(it => {
             const isDisabled = it.price <= sum;
             const r = RARITIES[it.rarity] || RARITIES.common;
             return `<div class="inv-item" style="border-color:${r.color}; opacity: ${isDisabled ? 0.35 : 1}; cursor: ${isDisabled ? 'not-allowed' : 'pointer'};"
@@ -2163,7 +2193,7 @@
     }
 
     function chooseTarget(id) {
-        upgTarget = ITEMS_BY_ID[id];
+        upgTarget = STATE.items[id];
         closeTargetModal();
         renderUpgTarget();
         calcUpg();
@@ -2186,7 +2216,7 @@
         else if (type === '25') targetPrice = sum / 0.25;
 
         let closest = null, minDiff = Infinity;
-        ALL_ITEMS.forEach(it => {
+        STATE.itemsArray.forEach(it => {
             if (it.price <= sum) return;
             const diff = Math.abs(it.price - targetPrice);
             if (diff < minDiff) { minDiff = diff; closest = it; }
@@ -2379,7 +2409,7 @@
     function adminTab(name) {
         document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
-        const labelMap = { events: 'ивент', promo: 'промо', give: 'выдать', manage: 'игрок', poll: 'опрос', stats: 'статы' };
+        const labelMap = { events: 'ивент', items: 'предметы', promo: 'промо', give: 'выдать', manage: 'игрок', poll: 'опрос', stats: 'статы' };
         const tabBtn = Array.from(document.querySelectorAll('.admin-tab')).find(b => b.textContent.toLowerCase().includes(labelMap[name]));
         if (tabBtn) tabBtn.classList.add('active');
         const panel = document.querySelector(`.admin-panel[data-panel="${name}"]`);
@@ -2387,6 +2417,7 @@
         haptic('light');
         if (name === 'stats') loadAdminStats();
         if (name === 'promo') loadAdminPromos();
+        if (name === 'items') renderAdminItemsList();
     }
 
     async function loadAdminStats() {
@@ -2423,6 +2454,63 @@
             }).join('');
         } catch (err) {
             box.innerHTML = `<div style="color:var(--accent-red); text-align:center; padding:12px; font-size:12px;">${escapeHtml(err.message)}</div>`;
+        }
+    }
+
+    function renderAdminItemsList() {
+        const box = document.getElementById('admin-items-list');
+        if (!box) return;
+        
+        if (!STATE.itemsArray.length) {
+            box.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:12px;">Загрузка...</div>';
+            return;
+        }
+
+        let rarityOptions = '';
+        Object.values(RARITIES).forEach(r => {
+            rarityOptions += `<option value="${r.id}">${r.name}</option>`;
+        });
+
+        box.innerHTML = STATE.itemsArray.map(it => {
+            return `<div class="admin-item-row">
+                <img src="${it.img}" onerror="this.style.display='none';">
+                <div class="item-name">${escapeHtml(it.name)}</div>
+                <input type="number" id="item-price-${it.id}" value="${it.price}" placeholder="Цена">
+                <select id="item-rarity-${it.id}">
+                    ${Object.values(RARITIES).map(r => `<option value="${r.id}" ${it.rarity === r.id ? 'selected' : ''}>${r.name}</option>`).join('')}
+                </select>
+                <button class="btn small green" onclick="adminSaveItem('${it.id}')" style="padding:4px 8px; font-size:11px;">ОК</button>
+            </div>`;
+        }).join('');
+    }
+
+    async function adminSaveItem(itemId) {
+        const priceInput = document.getElementById(`item-price-${itemId}`);
+        const raritySelect = document.getElementById(`item-rarity-${itemId}`);
+        
+        const newPrice = parseInt(priceInput.value);
+        const newRarity = raritySelect.value;
+
+        if (isNaN(newPrice) || newPrice < 0) {
+            return notify({ type: 'warning', message: 'Введите корректную цену' });
+        }
+
+        try {
+            await apiCall('/api/admin/item/update', 'POST', {
+                item_id: itemId,
+                price: newPrice,
+                rarity: newRarity
+            });
+            haptic('success');
+            notify({ type: 'success', message: 'Предмет обновлен' });
+            // Перезагружаем предметы, чтобы изменения вступили в силу везде
+            await loadItems();
+            // Обновляем инвентарь (цены могли поменяться)
+            renderInventory();
+            calcUpg();
+        } catch (err) {
+            haptic('error');
+            notify({ type: 'error', message: err.message });
         }
     }
 
@@ -2739,7 +2827,8 @@
     function populateGiveItems() {
         const sel = document.getElementById('admin-give-item');
         if (!sel) return;
-        ALL_ITEMS.forEach(it => {
+        sel.innerHTML = '<option value="">— не выдавать предмет —</option>';
+        STATE.itemsArray.forEach(it => {
             const opt = document.createElement('option');
             opt.value = it.id;
             opt.textContent = `${it.name} (${it.price})`;
@@ -2842,6 +2931,7 @@
     window.adminAddPollOption = adminAddPollOption;
     window.adminCreatePoll = adminCreatePoll;
     window.adminEndPoll = adminEndPoll;
+    window.adminSaveItem = adminSaveItem;
 
     async function loadData() {
         try {
@@ -2893,14 +2983,15 @@
         sBtn.classList.add('off');
     }
 
-    populateGiveItems();
-
-    switchTab('cases');
-    renderDonate();
-    loadData().then(() => {
-        checkRef();
-        loadEvent();
-        loadPoll();
+    // Инициализация
+    loadItems().then(() => {
+        switchTab('cases');
+        renderDonate();
+        loadData().then(() => {
+            checkRef();
+            loadEvent();
+            loadPoll();
+        });
     });
 
 })();
