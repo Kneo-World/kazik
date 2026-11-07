@@ -25,9 +25,6 @@ ALLOWED_ORIGINS = [o.strip() for o in (os.getenv("ALLOWED_ORIGINS") or "*").spli
 BOT_USERNAME = "Brain_Funbot"
 INIT_DATA_MAX_AGE = 24 * 3600
 
-# ============================================================
-# ADMIN
-# ============================================================
 ADMIN_IDS = {6636765626, 8364667153}
 
 def is_admin(user) -> bool:
@@ -36,13 +33,6 @@ def is_admin(user) -> bool:
     except Exception:
         return False
 
-async def current_admin(user=Depends(lambda: None)):
-    # заменится ниже, Depends резолвится после объявления current_user
-    pass
-
-# ============================================================
-# RARITIES / ITEMS
-# ============================================================
 RARITIES = {
     "common":    {"id":"common","name":"Common","color":"#6b7280"},
     "uncommon":  {"id":"uncommon","name":"Uncommon","color":"#22c55e"},
@@ -70,33 +60,13 @@ ITEMS_BY_ID = {i["id"]: i for i in ITEMS}
 CASE_PRICES = {"free": 0, "user": 0, "base": 9, "bro": 25, "allin": 29}
 
 CASE_LOOT = {
-    "free": {
-        "coinChance": 70,
-        "coins": [{"amount":1,"weight":50}, {"amount":2,"weight":30}, {"amount":3,"weight":20}],
-        "items": [{"id":"trios","weight":50},{"id":"rot67","weight":50}],
-    },
-    "user": {
-        "coinChance": 30,
-        "coins": [{"amount":3,"weight":100}],
-        "items": [{"id":"trios","weight":40},{"id":"rot67","weight":30},{"id":"hammy","weight":20},{"id":"candyslap","weight":10}],
-    },
-    "base": {
-        "coinChance": 0, "coins": [],
-        "items": [{"id":"trios","weight":30},{"id":"rot67","weight":30},{"id":"candyslap","weight":25},{"id":"lagrande","weight":15}],
-    },
-    "bro": {
-        "coinChance": 0, "coins": [],
-        "items": [{"id":"hammy","weight":25},{"id":"noobinis","weight":20},{"id":"tangtang","weight":18},{"id":"tictac","weight":15},{"id":"bacuru","weight":10},{"id":"los67","weight":8},{"id":"yinyang","weight":4}],
-    },
-    "allin": {
-        "coinChance": 0, "coins": [],
-        "items": [{"id":"lagrande","weight":99},{"id":"skibidi","weight":1}],
-    },
+    "free": {"coinChance": 70, "coins": [{"amount":1,"weight":50}, {"amount":2,"weight":30}, {"amount":3,"weight":20}], "items": [{"id":"trios","weight":50},{"id":"rot67","weight":50}]},
+    "user": {"coinChance": 30, "coins": [{"amount":3,"weight":100}], "items": [{"id":"trios","weight":40},{"id":"rot67","weight":30},{"id":"hammy","weight":20},{"id":"candyslap","weight":10}]},
+    "base": {"coinChance": 0, "coins": [], "items": [{"id":"trios","weight":30},{"id":"rot67","weight":30},{"id":"candyslap","weight":25},{"id":"lagrande","weight":15}]},
+    "bro": {"coinChance": 0, "coins": [], "items": [{"id":"hammy","weight":25},{"id":"noobinis","weight":20},{"id":"tangtang","weight":18},{"id":"tictac","weight":15},{"id":"bacuru","weight":10},{"id":"los67","weight":8},{"id":"yinyang","weight":4}]},
+    "allin": {"coinChance": 0, "coins": [], "items": [{"id":"lagrande","weight":99},{"id":"skibidi","weight":1}]}
 }
 
-# ============================================================
-# EVENTS
-# ============================================================
 EVENT_TYPES = {
     "miniboost": {"name": "Минибуст", "multiplier": 1.5, "color": "#22c55e", "icon": "fa-bolt"},
     "gold":      {"name": "Голд",     "multiplier": 2.0, "color": "#fbbf24", "icon": "fa-star"},
@@ -104,9 +74,6 @@ EVENT_TYPES = {
     "bloody":    {"name": "Кровавый", "multiplier": 4.0, "color": "#dc2626", "icon": "fa-fire"},
 }
 
-# ============================================================
-# STARS
-# ============================================================
 STARS_PACKAGES = {
     "p10":  {"stars":10,  "coins":50,   "bonus":0},
     "p25":  {"stars":25,  "coins":135,  "bonus":8},
@@ -131,7 +98,7 @@ MAX_PROMO_USES = 1_000_000
 def init_firebase():
     raw = os.getenv("FIREBASE_CRED_JSON")
     if not raw:
-        log.warning("FIREBASE_CRED_JSON missing")
+        log.error("FIREBASE_CRED_JSON is missing! Admin stats will be 0.")
         return False
     try:
         cred_dict = json.loads(raw)
@@ -142,9 +109,10 @@ def init_firebase():
                 credentials.Certificate(cred_dict),
                 {"databaseURL": FIREBASE_DB_URL},
             )
+        log.info("Firebase initialized successfully.")
         return True
-    except Exception:
-        log.exception("Firebase init error")
+    except Exception as e:
+        log.exception("Firebase init error: %s", e)
         return False
 
 
@@ -157,26 +125,13 @@ def user_ref(uid: str):
 
 def _default_user() -> dict:
     return {
-        "balance": 0,
-        "inventory": {},
-        "lastFree": 0,
-        "lastUser": 0,
-        "used_promos": {},
-        "paid_ids": {},
-        "refUsed": False,
+        "balance": 0, "inventory": {}, "lastFree": 0, "lastUser": 0,
+        "used_promos": {}, "paid_ids": {}, "refUsed": False,
         "stats": {
-            "casesOpened": 0,
-            "itemsSold": 0,
-            "upgradeSuccess": 0,
-            "upgradeFail": 0,
-            "totalEarned": 0,
-            "donationsTotal": 0,
-            "starsSpent": 0,
-            "uniqueCollected": [],
+            "casesOpened": 0, "itemsSold": 0, "upgradeSuccess": 0, "upgradeFail": 0,
+            "totalEarned": 0, "donationsTotal": 0, "starsSpent": 0, "uniqueCollected": [],
         },
-        "themes": {"dark": True},
-        "theme": "dark",
-        "referrals": 0,
+        "themes": {"dark": True}, "theme": "dark", "referrals": 0,
     }
 
 
@@ -189,11 +144,13 @@ def _normalize(data: dict) -> dict:
     return data
 
 
-def get_user_data(uid: str) -> dict:
+def get_user_data(uid: str, strict: bool = False) -> dict | None:
     if not FIREBASE_OK:
-        return _default_user()
-    data = user_ref(uid).get() or {}
-    return _normalize(data)
+        return None if strict else _default_user()
+    data = user_ref(uid).get()
+    if data is None and strict:
+        return None
+    return _normalize(data or {})
 
 
 def atomic_update(uid: str, updater):
@@ -250,9 +207,6 @@ async def require_admin(user=Depends(current_user)):
     return user
 
 
-# ============================================================
-# DROP LOGIC
-# ============================================================
 def weighted_pick(entries):
     total = sum(e.get("weight", 1) for e in entries)
     r = random.random() * total
@@ -279,7 +233,6 @@ def drop_value(drop: dict) -> int:
 
 
 def roll_with_event_luck(case_type: str, luck_mult: float) -> dict:
-    """Роллит дроп и при активном ивенте делает доп. роллы, оставляя лучший."""
     best = roll_drop(case_type)
     extra = max(0.0, luck_mult - 1.0)
     integer_extra = int(extra)
@@ -297,10 +250,7 @@ def roll_with_event_luck(case_type: str, luck_mult: float) -> dict:
 
 
 def make_inv_item(item: dict) -> dict:
-    uid = "u_%d_%s" % (
-        int(time.time() * 1000),
-        "".join(random.choices("abcdef0123456789", k=6)),
-    )
+    uid = "u_%d_%s" % (int(time.time() * 1000), "".join(random.choices("abcdef0123456789", k=6)))
     return {**item, "uid": uid}
 
 
@@ -308,26 +258,20 @@ def push_drop(nick: str, item_name: str, item_img: str | None, price: int, metho
     if not FIREBASE_OK or not item_img:
         return
     try:
-        drop_id = "d_%d_%s" % (
-            int(time.time() * 1000),
-            "".join(random.choices("abcdef", k=4)),
-        )
+        drop_id = "d_%d_%s" % (int(time.time() * 1000), "".join(random.choices("abcdef", k=4)))
         fbdb.reference(f"drop_feed/{drop_id}").set({
             "nick": nick,
             "itemName": item_name,
             "itemImg": item_img,
             "price": price,
             "method": method,
-            "user_id": str(user_id),
+            "user_id": str(user_id), # Всегда строка
             "ts": int(time.time() * 1000),
         })
     except Exception:
         pass
 
 
-# ============================================================
-# EVENT / POLL HELPERS
-# ============================================================
 def get_active_event() -> dict | None:
     if not FIREBASE_OK:
         return None
@@ -356,9 +300,6 @@ def get_active_poll() -> dict | None:
         return None
 
 
-# ============================================================
-# BOT
-# ============================================================
 bot = Bot(token=BOT_TOKEN) if BOT_TOKEN else None
 dp = Dispatcher()
 
@@ -400,7 +341,6 @@ async def on_paid(message: types.Message):
     uid = str(message.from_user.id)
     charge_id = sp.telegram_payment_charge_id or sp.provider_payment_charge_id
     if not charge_id:
-        log.warning("paid without charge_id uid=%s", uid)
         return
 
     def upd(d):
@@ -419,9 +359,6 @@ async def on_paid(message: types.Message):
         await message.answer(f"⭐ <b>Оплата прошла!</b>\n+{pack['coins']} монет начислено.")
 
 
-# ============================================================
-# APP
-# ============================================================
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     if bot and (WEBHOOK_URL or RENDER_URL):
@@ -465,12 +402,11 @@ async def root():
 
 @app.get("/health")
 async def health():
-    return {"ok": True, "firebase": FIREBASE_OK}
+    return {"ok": True, "firebase_ok": FIREBASE_OK}
 
 
-# ============================================================
-# PUBLIC API
-# ============================================================
+# ============ PUBLIC API ============
+
 @app.get("/api/me")
 async def api_me(user=Depends(current_user)):
     uid = str(user["id"])
@@ -519,7 +455,7 @@ async def api_poll_vote(request: Request, user=Depends(current_user)):
         raise HTTPException(400, "bad option")
 
     if not FIREBASE_OK:
-        raise HTTPException(503)
+        raise HTTPException(503, "Database unavailable")
 
     uid = str(user["id"])
     ref = fbdb.reference("meta/poll")
@@ -590,7 +526,6 @@ async def api_open_case(request: Request, user=Depends(current_user)):
     if int(data.get("balance", 0)) < price:
         raise HTTPException(400, "Недостаточно монет")
 
-    # Ивент: буст удачи
     event = get_active_event()
     luck_mult = float(event["multiplier"]) if event else 1.0
 
@@ -883,6 +818,25 @@ async def api_claim_referral(request: Request, user=Depends(current_user)):
     return {"ok": True, "bonus": 2}
 
 
+@app.get("/api/user_profile/{target_uid}")
+async def api_user_profile(target_uid: str, user=Depends(current_user)):
+    if not target_uid or target_uid == "undefined" or target_uid == "null":
+        raise HTTPException(400, "Invalid user ID")
+    
+    data = get_user_data(target_uid, strict=True)
+    if data is None:
+        raise HTTPException(404, "Пользователь не найден в базе данных")
+
+    return {
+        "uid": target_uid,
+        "balance": int(data.get("balance", 0) or 0),
+        "inventory": data.get("inventory") or {},
+        "stats": data.get("stats") or {},
+        "lastFree": int(data.get("lastFree", 0) or 0),
+        "lastUser": int(data.get("lastUser", 0) or 0),
+    }
+
+
 @app.post("/api/create-invoice-link")
 async def create_invoice(request: Request, user=Depends(current_user)):
     if not bot:
@@ -909,13 +863,12 @@ async def create_invoice(request: Request, user=Depends(current_user)):
     return {"invoice_link": link, "stars": pack["stars"], "coins": pack["coins"]}
 
 
-# ============================================================
-# ADMIN API
-# ============================================================
+# ============ ADMIN API ============
+
 @app.post("/api/admin/event")
 async def admin_set_event(request: Request, user=Depends(require_admin)):
     if not FIREBASE_OK:
-        raise HTTPException(503)
+        raise HTTPException(503, "Database unavailable")
     body = await request.json()
     ev_type = body.get("type")
 
@@ -937,14 +890,9 @@ async def admin_set_event(request: Request, user=Depends(require_admin)):
     now = int(time.time() * 1000)
     meta = EVENT_TYPES[ev_type]
     ev = {
-        "type": ev_type,
-        "name": meta["name"],
-        "multiplier": meta["multiplier"],
-        "color": meta["color"],
-        "icon": meta["icon"],
-        "startedAt": now,
-        "endsAt": now + duration_minutes * 60 * 1000,
-        "startedBy": str(user["id"]),
+        "type": ev_type, "name": meta["name"], "multiplier": meta["multiplier"],
+        "color": meta["color"], "icon": meta["icon"], "startedAt": now,
+        "endsAt": now + duration_minutes * 60 * 1000, "startedBy": str(user["id"]),
     }
     fbdb.reference("meta/event").set(ev)
     return {"ok": True, "event": ev}
@@ -953,7 +901,7 @@ async def admin_set_event(request: Request, user=Depends(require_admin)):
 @app.post("/api/admin/promo")
 async def admin_create_promo(request: Request, user=Depends(require_admin)):
     if not FIREBASE_OK:
-        raise HTTPException(503)
+        raise HTTPException(503, "Database unavailable")
     body = await request.json()
     code = str(body.get("code", "")).strip().upper()
     reward = int(body.get("reward", 0))
@@ -973,19 +921,48 @@ async def admin_create_promo(request: Request, user=Depends(require_admin)):
         raise HTTPException(400, "Промокод уже существует")
 
     ref.set({
-        "reward": reward,
-        "max_uses": max_uses,
-        "used": 0,
-        "createdAt": int(time.time() * 1000),
-        "createdBy": str(user["id"]),
+        "reward": reward, "max_uses": max_uses, "used": 0,
+        "createdAt": int(time.time() * 1000), "createdBy": str(user["id"]),
     })
     return {"ok": True, "code": code, "reward": reward, "max_uses": max_uses}
+
+
+@app.get("/api/admin/promos")
+async def admin_list_promos(user=Depends(require_admin)):
+    if not FIREBASE_OK:
+        raise HTTPException(503, "Database unavailable")
+    try:
+        promos = fbdb.reference("promos").get() or {}
+    except Exception:
+        promos = {}
+    result = []
+    for code, p in promos.items():
+        if not isinstance(p, dict):
+            continue
+        result.append({
+            "code": code, "reward": p.get("reward", 0), "used": p.get("used", 0),
+            "max_uses": p.get("max_uses", 0), "createdAt": p.get("createdAt", 0),
+        })
+    result.sort(key=lambda x: x.get("createdAt", 0), reverse=True)
+    return {"promos": result}
+
+
+@app.post("/api/admin/promo/delete")
+async def admin_delete_promo(request: Request, user=Depends(require_admin)):
+    if not FIREBASE_OK:
+        raise HTTPException(503, "Database unavailable")
+    body = await request.json()
+    code = str(body.get("code", "")).strip().upper()
+    if not code:
+        raise HTTPException(400, "no code")
+    fbdb.reference(f"promos/{code}").delete()
+    return {"ok": True}
 
 
 @app.post("/api/admin/give")
 async def admin_give(request: Request, user=Depends(require_admin)):
     if not FIREBASE_OK:
-        raise HTTPException(503)
+        raise HTTPException(503, "Database unavailable")
     body = await request.json()
     target_id = str(body.get("user_id", "")).strip()
     coins = int(body.get("coins", 0) or 0)
@@ -1001,10 +978,6 @@ async def admin_give(request: Request, user=Depends(require_admin)):
         raise HTTPException(400, f"Максимум {MAX_GIVE_COINS} монет")
     if item_id and item_id not in ITEMS_BY_ID:
         raise HTTPException(400, "Неизвестный предмет")
-
-    target_data = get_user_data(target_id)
-    if not target_data or (int(target_data.get("balance", 0)) == 0 and not target_data.get("inventory") and not target_id):
-        pass  # юзер может быть новым — просто создадим запись через atomic_update
 
     gave = {"coins": 0, "item": None}
 
@@ -1025,10 +998,29 @@ async def admin_give(request: Request, user=Depends(require_admin)):
     return {"ok": True, "gave": gave, "target_id": target_id}
 
 
+@app.post("/api/admin/reset_cooldowns")
+async def admin_reset_cooldowns(request: Request, user=Depends(require_admin)):
+    if not FIREBASE_OK:
+        raise HTTPException(503, "Database unavailable")
+    body = await request.json()
+    target_id = str(body.get("user_id", "")).strip()
+    if not target_id:
+        raise HTTPException(400, "Укажите user_id")
+
+    def upd(d):
+        d["lastFree"] = 0
+        d["lastUser"] = 0
+        return d
+
+    if not atomic_update(target_id, upd):
+        raise HTTPException(400, "Не удалось сбросить кулдауны")
+    return {"ok": True, "user_id": target_id}
+
+
 @app.post("/api/admin/poll")
 async def admin_create_poll(request: Request, user=Depends(require_admin)):
     if not FIREBASE_OK:
-        raise HTTPException(503)
+        raise HTTPException(503, "Database unavailable")
     body = await request.json()
     question = str(body.get("question", "")).strip()
     options = body.get("options", [])
@@ -1056,13 +1048,9 @@ async def admin_create_poll(request: Request, user=Depends(require_admin)):
         ends_at = now + dm * 60 * 1000
 
     poll = {
-        "id": "poll_" + str(now),
-        "question": question,
+        "id": "poll_" + str(now), "question": question,
         "options": [{"text": o, "votes": 0} for o in cleaned],
-        "createdAt": now,
-        "endsAt": ends_at,
-        "createdBy": str(user["id"]),
-        "voters": {},
+        "createdAt": now, "endsAt": ends_at, "createdBy": str(user["id"]), "voters": {},
     }
     fbdb.reference("meta/poll").set(poll)
     return {"ok": True}
@@ -1071,7 +1059,7 @@ async def admin_create_poll(request: Request, user=Depends(require_admin)):
 @app.post("/api/admin/poll/end")
 async def admin_end_poll(user=Depends(require_admin)):
     if not FIREBASE_OK:
-        raise HTTPException(503)
+        raise HTTPException(503, "Database unavailable")
     fbdb.reference("meta/poll").delete()
     return {"ok": True}
 
@@ -1079,7 +1067,16 @@ async def admin_end_poll(user=Depends(require_admin)):
 @app.get("/api/admin/stats")
 async def admin_stats(user=Depends(require_admin)):
     if not FIREBASE_OK:
-        raise HTTPException(503)
+        return {
+            "firebase_ok": False,
+            "total_users": 0, "total_balance": 0, "total_opened": 0,
+            "total_inventory_items": 0, "total_unique_collected": 0, "active_24h": 0,
+            "total_referrals": 0, "total_donations": 0, "total_stars": 0,
+            "top_by_balance": [], "top_by_opened": [], "recent_drops": [],
+            "recent_count_1h": 0, "recent_count_24h": 0,
+            "active_event": None, "active_poll": None,
+        }
+
     try:
         users = fbdb.reference("users").get() or {}
     except Exception:
@@ -1088,31 +1085,65 @@ async def admin_stats(user=Depends(require_admin)):
     total_users = 0
     total_balance = 0
     total_opened = 0
-    for u in users.values():
+    total_inventory_items = 0
+    total_unique_collected = 0
+    active_24h = 0
+    total_referrals = 0
+    total_donations = 0
+    total_stars = 0
+    user_list = []
+
+    now_ms = int(time.time() * 1000)
+    day_ago = now_ms - 24 * 3600 * 1000
+
+    for uid, u in users.items():
         if not isinstance(u, dict):
             continue
         total_users += 1
-        try:
-            total_balance += int(u.get("balance", 0) or 0)
-            stats = u.get("stats") or {}
-            total_opened += int(stats.get("casesOpened", 0) or 0)
-        except Exception:
-            pass
+        bal = int(u.get("balance", 0) or 0)
+        total_balance += bal
+        stats = u.get("stats") or {}
+        opened = int(stats.get("casesOpened", 0) or 0)
+        total_opened += opened
+        total_unique_collected += len(stats.get("uniqueCollected", []) or [])
+        total_donations += int(stats.get("donationsTotal", 0) or 0)
+        total_stars += int(stats.get("starsSpent", 0) or 0)
+        inv = u.get("inventory") or {}
+        if isinstance(inv, dict):
+            total_inventory_items += len(inv)
+        total_referrals += int(u.get("referrals", 0) or 0)
+        last_free = int(u.get("lastFree", 0) or 0)
+        last_user = int(u.get("lastUser", 0) or 0)
+        last_activity = max(last_free, last_user)
+        if last_activity > day_ago:
+            active_24h += 1
+        user_list.append({"uid": str(uid), "balance": bal, "opened": opened})
+
+    top_by_balance = sorted(user_list, key=lambda x: x["balance"], reverse=True)[:5]
+    top_by_opened = sorted(user_list, key=lambda x: x["opened"], reverse=True)[:5]
 
     try:
         drops = fbdb.reference("drop_feed").get() or {}
-        recent = sorted(drops.values(), key=lambda d: d.get("ts", 0), reverse=True)[:20]
+        drops_list = list(drops.values()) if isinstance(drops, dict) else []
+        recent = sorted(drops_list, key=lambda d: d.get("ts", 0), reverse=True)[:20]
+        recent_count_1h = sum(1 for d in drops_list if d.get("ts", 0) > now_ms - 3600 * 1000)
+        recent_count_24h = sum(1 for d in drops_list if d.get("ts", 0) > day_ago)
     except Exception:
         recent = []
+        recent_count_1h = 0
+        recent_count_24h = 0
 
     ev = get_active_event()
     poll = get_active_poll()
 
     return {
-        "total_users": total_users,
-        "total_balance": total_balance,
-        "total_opened": total_opened,
-        "recent_drops": recent,
+        "firebase_ok": True,
+        "total_users": total_users, "total_balance": total_balance, "total_opened": total_opened,
+        "total_inventory_items": total_inventory_items, "total_unique_collected": total_unique_collected,
+        "active_24h": active_24h, "total_referrals": total_referrals,
+        "total_donations": total_donations, "total_stars": total_stars,
+        "top_by_balance": top_by_balance, "top_by_opened": top_by_opened,
+        "recent_drops": recent, "recent_count_1h": recent_count_1h, "recent_count_24h": recent_count_24h,
         "active_event": ev,
         "active_poll": {
             "question": poll.get("question") if poll else None,
@@ -1122,9 +1153,6 @@ async def admin_stats(user=Depends(require_admin)):
     }
 
 
-# ============================================================
-# WEBHOOK
-# ============================================================
 @app.post("/webhook/tg")
 async def tg_webhook(request: Request):
     if not bot:
