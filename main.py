@@ -1,4 +1,3 @@
-# main.py
 import os, json, hmac, hashlib, logging, random, time
 from contextlib import asynccontextmanager
 from urllib.parse import parse_qsl
@@ -181,7 +180,6 @@ def verify_init_data(init_data: str) -> dict | None:
 
         auth_date = int(parsed.get("auth_date", 0) or 0)
         if not auth_date or (time.time() - auth_date) > INIT_DATA_MAX_AGE:
-            log.warning("initData stale auth_date=%s", auth_date)
             return None
 
         dcs = "\n".join(f"{k}={v}" for k, v in sorted(parsed.items()))
@@ -259,17 +257,18 @@ def push_drop(nick: str, item_name: str, item_img: str | None, price: int, metho
         return
     try:
         drop_id = "d_%d_%s" % (int(time.time() * 1000), "".join(random.choices("abcdef", k=4)))
+        # ВАЖНО: Сохраняем user_id, чтобы профиль открывался!
         fbdb.reference(f"drop_feed/{drop_id}").set({
             "nick": nick,
             "itemName": item_name,
             "itemImg": item_img,
             "price": price,
             "method": method,
-            "user_id": str(user_id), # Всегда строка
+            "user_id": str(user_id),
             "ts": int(time.time() * 1000),
         })
-    except Exception:
-        pass
+    except Exception as e:
+        log.error(f"Error pushing drop: {e}")
 
 
 def get_active_event() -> dict | None:
@@ -821,11 +820,12 @@ async def api_claim_referral(request: Request, user=Depends(current_user)):
 @app.get("/api/user_profile/{target_uid}")
 async def api_user_profile(target_uid: str, user=Depends(current_user)):
     if not target_uid or target_uid == "undefined" or target_uid == "null":
-        raise HTTPException(400, "Invalid user ID")
+        raise HTTPException(400, "Неверный ID игрока")
     
+    # strict=True заставляет вернуть None, если юзера нет в базе
     data = get_user_data(target_uid, strict=True)
     if data is None:
-        raise HTTPException(404, "Пользователь не найден в базе данных")
+        raise HTTPException(404, "Игрок не найден в базе данных")
 
     return {
         "uid": target_uid,
@@ -1096,27 +1096,58 @@ async def admin_stats(user=Depends(require_admin)):
     now_ms = int(time.time() * 1000)
     day_ago = now_ms - 24 * 3600 * 1000
 
+    # Защищенный цикл парсинга
     for uid, u in users.items():
         if not isinstance(u, dict):
             continue
         total_users += 1
-        bal = int(u.get("balance", 0) or 0)
+        
+        try:
+            bal = int(u.get("balance", 0) or 0)
+        except:
+            bal = 0
         total_balance += bal
-        stats = u.get("stats") or {}
-        opened = int(stats.get("casesOpened", 0) or 0)
+        
+        stats = u.get("stats")
+        if not isinstance(stats, dict):
+            stats = {}
+            
+        try:
+            opened = int(stats.get("casesOpened", 0) or 0)
+        except:
+            opened = 0
         total_opened += opened
-        total_unique_collected += len(stats.get("uniqueCollected", []) or [])
-        total_donations += int(stats.get("donationsTotal", 0) or 0)
-        total_stars += int(stats.get("starsSpent", 0) or 0)
-        inv = u.get("inventory") or {}
+        
+        uniq = stats.get("uniqueCollected")
+        if isinstance(uniq, list):
+            total_unique_collected += len(uniq)
+            
+        try:
+            total_donations += int(stats.get("donationsTotal", 0) or 0)
+        except: pass
+        try:
+            total_stars += int(stats.get("starsSpent", 0) or 0)
+        except: pass
+        
+        inv = u.get("inventory")
         if isinstance(inv, dict):
             total_inventory_items += len(inv)
-        total_referrals += int(u.get("referrals", 0) or 0)
-        last_free = int(u.get("lastFree", 0) or 0)
-        last_user = int(u.get("lastUser", 0) or 0)
+            
+        try:
+            total_referrals += int(u.get("referrals", 0) or 0)
+        except: pass
+        
+        try:
+            last_free = int(u.get("lastFree", 0) or 0)
+        except: last_free = 0
+        try:
+            last_user = int(u.get("lastUser", 0) or 0)
+        except: last_user = 0
+        
         last_activity = max(last_free, last_user)
         if last_activity > day_ago:
             active_24h += 1
+            
         user_list.append({"uid": str(uid), "balance": bal, "opened": opened})
 
     top_by_balance = sorted(user_list, key=lambda x: x["balance"], reverse=True)[:5]
@@ -1125,9 +1156,16 @@ async def admin_stats(user=Depends(require_admin)):
     try:
         drops = fbdb.reference("drop_feed").get() or {}
         drops_list = list(drops.values()) if isinstance(drops, dict) else []
-        recent = sorted(drops_list, key=lambda d: d.get("ts", 0), reverse=True)[:20]
-        recent_count_1h = sum(1 for d in drops_list if d.get("ts", 0) > now_ms - 3600 * 1000)
-        recent_count_24h = sum(1 for d in drops_list if d.get("ts", 0) > day_ago)
+        
+        def get_ts(d):
+            if not isinstance(d, dict): return 0
+            t = d.get("ts", 0)
+            try: return int(t)
+            except: return 0
+                
+        recent = sorted(drops_list, key=lambda d: get_ts(d), reverse=True)[:20]
+        recent_count_1h = sum(1 for d in drops_list if get_ts(d) > now_ms - 3600 * 1000)
+        recent_count_24h = sum(1 for d in drops_list if get_ts(d) > day_ago)
     except Exception:
         recent = []
         recent_count_1h = 0
