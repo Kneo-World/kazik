@@ -7,7 +7,7 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* ================= ПЕРЕМЕННЫЕ И БАЗА ================== */
+        /* ================= ПЕРЕМЕННЫЕ И БАЗА ================= */
         :root {
             --bg-main: #0a0b10;
             --bg-card: #151722;
@@ -88,14 +88,13 @@
         .case-price { font-size: 13px; color: var(--accent-gold); font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 4px; }
         .case-card.locked { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
 
-        /* ================= ОТКРЫТИЕ КЕЙСА (CS:GO СТРИП) ================= */
+        /* ================= ОТКРЫТИЕ КЕЙСА ================= */
         #section-case-opening { padding-bottom: 20px; }
         .case-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
         .back-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-main); padding: 10px 15px; border-radius: 12px; font-size: 15px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px; font-weight: 700; }
         .back-btn:hover { background: rgba(255,255,255,0.1); color: var(--accent-gold); }
         .case-open-visual { width: 100%; height: 220px; position: relative; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
         .case-open-img { max-width: 160px; max-height: 160px; object-fit: contain; filter: drop-shadow(0 15px 30px rgba(0,0,0,0.6)); transition: opacity 0.3s, transform 0.3s; }
-
         .roulette-wrap { position: absolute; inset: 0; background: var(--bg-input); border: 2px solid var(--border); border-radius: 20px; overflow: hidden; opacity: 0; pointer-events: none; transition: opacity 0.3s; display: flex; align-items: center; }
         .roulette-wrap.active { opacity: 1; pointer-events: auto; }
         .roulette-pointer { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 4px; height: 100%; background: var(--accent-gold); z-index: 10; box-shadow: 0 0 15px var(--accent-gold), 0 0 30px rgba(251,191,36,0.5); }
@@ -107,7 +106,6 @@
         .roulette-item img { width: 60px; height: 60px; object-fit: contain; }
         .roulette-item .name { font-size: 9px; font-weight: 700; color: var(--text-muted); text-align: center; padding: 0 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
         .roulette-item .coin { color: var(--accent-gold); font-size: 40px; }
-
         .open-controls { display: flex; flex-direction: column; gap: 15px; align-items: center; margin-bottom: 25px; }
         .mult-selector { display: flex; gap: 6px; background: rgba(255,255,255,0.03); padding: 5px; border-radius: 15px; border: 1px solid var(--border); }
         .mult-btn { min-width: 56px; padding: 10px 12px; background: transparent; border: none; color: var(--text-muted); border-radius: 10px; font-weight: 900; font-size: 15px; cursor: pointer; transition: 0.2s; }
@@ -115,7 +113,6 @@
         .btn-open { width: 100%; max-width: 400px; padding: 16px; border-radius: 15px; background: linear-gradient(135deg, var(--accent-gold), #b45309); color: #000; font-size: 17px; font-weight: 900; border: none; cursor: pointer; box-shadow: 0 5px 20px rgba(251, 191, 36, 0.4); transition: transform 0.2s, box-shadow 0.2s; }
         .btn-open:active:not(:disabled) { transform: scale(0.97); }
         .btn-open:disabled { background: #272a35; color: #555; box-shadow: none; cursor: not-allowed; }
-
         .loot-preview-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 15px; }
         .loot-preview-title { font-size: 13px; font-weight: 800; color: var(--text-muted); margin-bottom: 15px; text-align: center; text-transform: uppercase; letter-spacing: 1px; }
         .loot-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 10px; }
@@ -124,19 +121,118 @@
         .loot-card .name { font-size: 10px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .loot-card .coin { font-size: 30px; color: var(--accent-gold); margin-bottom: 5px; }
 
-        /* ================= АПГРЕЙДЕР (CS:GO СТРИП) ================= */
+        /* ================= АПГРЕЙД: КОЛЕСО + СТРЕЛКА ================= */
         .upg-container { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 20px 15px; }
-        .upg-chance-badge { text-align: center; margin-bottom: 15px; }
-        .upg-chance-badge .label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 800; }
-        .upg-chance-badge .val { font-size: 36px; font-weight: 900; line-height: 1; margin-top: 5px; transition: color 0.3s; }
 
-        .upg-strip-wrap { position: relative; width: 100%; height: 130px; background: var(--bg-input); border: 2px solid var(--border); border-radius: 15px; overflow: hidden; margin-bottom: 18px; display: flex; align-items: center; }
-        .upg-strip-pointer { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 4px; height: 100%; background: var(--accent-gold); z-index: 10; box-shadow: 0 0 15px var(--accent-gold); }
-        .upg-strip-track { display: flex; gap: 8px; padding: 0 8px; position: absolute; left: 0; height: 100%; align-items: center; will-change: transform; }
-        .upg-strip-item { width: 100px; height: 100px; background: #1c1f2b; border-radius: 12px; border: 2px solid var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; gap: 2px; }
-        .upg-strip-item img { width: 55px; height: 55px; object-fit: contain; }
-        .upg-strip-item .name { font-size: 8px; font-weight: 700; color: var(--text-muted); text-align: center; padding: 0 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
-        .upg-strip-item .emoji { font-size: 30px; }
+        .upg-wheel-section {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            margin: 0 auto 20px;
+        }
+        .upg-wheel-disc {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            border: 4px solid var(--accent-gold);
+            box-shadow:
+                0 0 30px rgba(251,191,36,0.3),
+                inset 0 0 30px rgba(0,0,0,0.9);
+            overflow: hidden;
+            background: #1c1f2b;
+        }
+        .upg-wheel-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 40px;
+            height: 40px;
+            margin: -20px 0 0 -20px;
+            transform-origin: center center;
+            display: none;
+            z-index: 2;
+            pointer-events: none;
+        }
+        .upg-wheel-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 0 8px rgba(251,191,36,0.9));
+        }
+        .upg-wheel-icon .emoji {
+            font-size: 30px;
+            line-height: 40px;
+            text-align: center;
+            display: block;
+            filter: drop-shadow(0 0 8px rgba(251,191,36,0.9));
+        }
+        .upg-wheel-pointer-rotator {
+            position: absolute;
+            inset: 0;
+            z-index: 4;
+            pointer-events: none;
+            will-change: transform;
+            transform: rotate(0deg);
+            transform-origin: center center;
+        }
+        .upg-wheel-pointer-tip {
+            position: absolute;
+            top: -2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 16px solid var(--accent-gold);
+            filter: drop-shadow(0 0 10px rgba(251,191,36,0.9));
+        }
+        .upg-wheel-pointer-needle {
+            position: absolute;
+            top: 14px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 3px;
+            height: calc(50% - 14px);
+            background: linear-gradient(to bottom, var(--accent-gold) 0%, rgba(251,191,36,0.6) 70%, rgba(251,191,36,0.1) 100%);
+            border-radius: 2px;
+        }
+        .upg-wheel-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 88px;
+            height: 88px;
+            border-radius: 50%;
+            background: #1c1f2b;
+            border: 3px solid var(--accent-gold);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 5;
+            box-shadow:
+                0 0 20px rgba(0,0,0,0.9),
+                0 0 15px rgba(251,191,36,0.4);
+            text-align: center;
+            padding: 5px;
+        }
+        .upg-wheel-center .title {
+            font-size: 8px;
+            color: var(--text-muted);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .upg-wheel-center .val {
+            font-size: 22px;
+            font-weight: 900;
+            color: var(--accent-gold);
+            line-height: 1;
+            margin-top: 3px;
+            transition: color 0.3s;
+        }
 
         .upg-quick-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 15px; }
         .upg-quick-btns .btn { padding: 10px; font-size: 13px; background: rgba(59, 130, 246, 0.1); color: var(--accent-blue); border: 1px solid rgba(59, 130, 246, 0.3); box-shadow: none; }
@@ -228,7 +324,6 @@
         .close-modal:hover { color: var(--text-main); }
         .modal-title { font-size: 18px; font-weight: 900; margin-bottom: 15px; }
 
-        /* Модалка победы */
         .win-modal-box { max-width: 340px; padding: 30px 20px 20px; }
         .win-item-img { width: 140px; height: 140px; margin: 0 auto 15px; filter: drop-shadow(0 0 30px rgba(251,191,36,0.8)); animation: winPulse 1.2s ease-in-out infinite alternate; }
         .win-item-emoji { font-size: 100px; margin-bottom: 15px; animation: winPulse 1.2s ease-in-out infinite alternate; }
@@ -237,7 +332,6 @@
         .win-item-price { color: var(--accent-gold); font-weight: 900; font-size: 16px; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 6px; }
         .win-badge { display: inline-block; background: linear-gradient(135deg, var(--accent-gold), #b45309); color: #000; padding: 4px 12px; border-radius: 8px; font-size: 11px; font-weight: 900; letter-spacing: 1.5px; margin-bottom: 15px; text-transform: uppercase; }
 
-        /* Тосты */
         .toast-container { position: fixed; top: 15px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 8px; width: 90%; max-width: 350px; pointer-events: none; }
         .toast { background: #1c1f2b; border: 1px solid var(--border); padding: 12px; border-radius: 12px; display: flex; gap: 10px; align-items: center; animation: slideDown 0.3s; pointer-events: auto; box-shadow: 0 5px 15px rgba(0,0,0,0.5); transition: opacity 0.3s; }
         @keyframes slideDown { from{transform:translateY(-20px); opacity:0;} to{transform:translateY(0); opacity:1;} }
@@ -245,14 +339,12 @@
         .toast.error { border-color: var(--accent-red); }
         .toast.warning { border-color: var(--accent-gold); }
 
-        /* Конфетти */
         .confetti-piece { position: fixed; pointer-events: none; z-index: 10001; will-change: transform, opacity; animation: confettiFall 2s ease-out forwards; }
         @keyframes confettiFall {
             0% { transform: translate(-50%, -50%) rotate(0); opacity: 1; }
             100% { transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty) + 700px)) rotate(var(--rot)); opacity: 0; }
         }
 
-        /* Настройки */
         .settings-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); }
         .settings-row:last-child { border-bottom: none; }
         .settings-label { font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
@@ -261,13 +353,12 @@
         .toggle.on { background: var(--accent-green); }
         .toggle.on::after { left: 25px; }
 
-        /* Мобильный */
         @media (max-width: 400px) {
             .section { padding: 15px; }
             .case-open-visual { height: 180px; }
-            .upg-strip-wrap { height: 110px; }
-            .upg-strip-item { width: 86px; height: 86px; }
-            .upg-strip-item img { width: 46px; height: 46px; }
+            .upg-wheel-section { width: 240px; height: 240px; }
+            .upg-wheel-center { width: 76px; height: 76px; }
+            .upg-wheel-center .val { font-size: 18px; }
             .roulette-item { width: 100px; height: 100px; }
             .roulette-item img { width: 50px; height: 50px; }
         }
@@ -404,14 +495,21 @@
 <div id="section-upgrader" class="section">
     <h2 class="section-title">Апгрейд</h2>
     <div class="upg-container">
-        <div class="upg-chance-badge">
-            <div class="label">Шанс успеха</div>
-            <div class="val" id="upg-chance-val" style="color: var(--text-muted);">0%</div>
+
+        <div class="upg-wheel-section">
+            <div class="upg-wheel-disc" id="upg-wheel-disc">
+                <div class="upg-wheel-icon" id="upg-wheel-icon"></div>
+            </div>
+            <div class="upg-wheel-pointer-rotator" id="upg-wheel-pointer">
+                <div class="upg-wheel-pointer-tip"></div>
+                <div class="upg-wheel-pointer-needle"></div>
+            </div>
+            <div class="upg-wheel-center">
+                <div class="title">ШАНС</div>
+                <div class="val" id="upg-chance-val">0%</div>
+            </div>
         </div>
-        <div class="upg-strip-wrap" id="upg-strip-wrap">
-            <div class="upg-strip-pointer"></div>
-            <div class="upg-strip-track" id="upg-strip-track"></div>
-        </div>
+
         <div class="upg-quick-btns">
             <button class="btn" onclick="autoSelect('x2')">x2</button>
             <button class="btn" onclick="autoSelect('x4')">x4</button>
@@ -420,6 +518,7 @@
             <button class="btn" onclick="autoSelect('50')">50%</button>
             <button class="btn" onclick="autoSelect('25')">25%</button>
         </div>
+
         <div class="upg-slots-row">
             <div class="upg-square-box" id="upg-input-box" onclick="openInvPicker()">
                 <div class="placeholder">+ Ваши предметы</div>
@@ -428,7 +527,9 @@
                 <i class="fa-solid fa-bullseye" style="font-size:30px; color:var(--text-muted);"></i>
             </div>
         </div>
+
         <div class="upg-sum" id="upg-sum">Сумма: <b>0</b> монет</div>
+
         <button class="btn-upgrade-action" id="btn-upg" onclick="runUpgrade()" disabled>ПРОКАЧАТЬ</button>
     </div>
 </div>
@@ -480,7 +581,7 @@
     </div>
 </div>
 
-<!-- МОДАЛКА: ВЫБОР ПРЕДМЕТОВ -->
+<!-- МОДАЛКИ -->
 <div class="modal" id="inv-picker-modal" onclick="if(event.target===this) closeInvPicker()">
     <div class="modal-box">
         <span class="close-modal" onclick="closeInvPicker()">&times;</span>
@@ -490,7 +591,6 @@
     </div>
 </div>
 
-<!-- МОДАЛКА: ВЫБОР ЦЕЛИ -->
 <div class="modal" id="target-modal" onclick="if(event.target===this) closeTargetModal()">
     <div class="modal-box">
         <span class="close-modal" onclick="closeTargetModal()">&times;</span>
@@ -499,7 +599,6 @@
     </div>
 </div>
 
-<!-- МОДАЛКА: ВЫИГРЫШ -->
 <div class="modal" id="win-modal">
     <div class="modal-box win-modal-box">
         <div class="win-badge">Победа</div>
@@ -510,7 +609,6 @@
     </div>
 </div>
 
-<!-- МОДАЛКА: НАСТРОЙКИ -->
 <div class="modal" id="settings-modal" onclick="if(event.target===this) closeSettings()">
     <div class="modal-box">
         <span class="close-modal" onclick="closeSettings()">&times;</span>
@@ -557,18 +655,14 @@
 (function() {
     'use strict';
 
-    // ================= КОНСТАНТЫ =================
     const API_BASE = 'https://kazik-2.onrender.com';
-    const BOT_URL = 'https://t.me/Brain_Funbot';
     const BOT_USERNAME = 'Brain_Funbot';
     const FREE_COOLDOWN = 24 * 3600 * 1000;
     const USER_COOLDOWN = 12 * 3600 * 1000;
     const MAX_UPGRADE_CHANCE = 95;
     const MAX_UPG_INPUTS = 5;
     const CASE_ITEM_WIDTH = 130;
-    const UPG_ITEM_WIDTH = 108;
     const WIN_INDEX_CASES = 25;
-    const WIN_INDEX_UPG = 30;
 
     const RARITIES = {
         common:    { id: 'common',    name: 'Common',    color: '#6b7280' },
@@ -611,7 +705,6 @@
         allin: { coinChance: 0,  coins: [], items: [{id:"lagrande",weight:99},{id:"skibidi",weight:1}] }
     };
 
-    // ================= TELEGRAM =================
     const tg = window.Telegram?.WebApp;
     let tgUser = tg?.initDataUnsafe?.user;
     if (tg) {
@@ -626,7 +719,6 @@
     }
     const MY_ID = tgUser?.id;
 
-    // ================= СОСТОЯНИЕ =================
     let state = {
         balance: 0, inventory: {}, lastFree: 0, lastUser: 0, hasUserCase: false,
         stats: { casesOpened: 0, itemsSold: 0, upgradeSuccess: 0, upgradeFail: 0, totalEarned: 0 }
@@ -639,13 +731,12 @@
     let soundEnabled = localStorage.getItem('bf_sound') !== '0';
     let hapticEnabled = localStorage.getItem('bf_haptic') !== '0';
 
-    // ================= УТИЛИТЫ =================
     function escapeHtml(str) {
         return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
     function formatNum(n) { return Number(n).toLocaleString('ru-RU'); }
 
-    // ================= ЗВУКИ (Web Audio API) =================
+    // ================= ЗВУКИ =================
     let audioCtx = null;
     function getCtx() {
         if (!audioCtx) {
@@ -674,18 +765,17 @@
     function playSound(name) {
         if (!soundEnabled) return;
         switch (name) {
-            case 'click':    playTone(520, 0.06, 'square', 0.03); break;
-            case 'open':     playTone(660, 0.1, 'sine', 0.05); break;
-            case 'spin':     playTone(220, 0.4, 'sawtooth', 0.03); break;
-            case 'tick':     playTone(880, 0.03, 'square', 0.02); break;
-            case 'win':      [523, 659, 784, 1046].forEach((f, i) => setTimeout(() => playTone(f, 0.25, 'sine', 0.07), i * 100)); break;
-            case 'lose':     [400, 350, 280, 200].forEach((f, i) => setTimeout(() => playTone(f, 0.2, 'sawtooth', 0.05), i * 80)); break;
-            case 'coin':     playTone(1200, 0.1, 'sine', 0.05); setTimeout(() => playTone(1600, 0.1, 'sine', 0.04), 80); break;
-            case 'error':    playTone(180, 0.15, 'square', 0.06); break;
+            case 'click':  playTone(520, 0.06, 'square', 0.03); break;
+            case 'open':   playTone(660, 0.1, 'sine', 0.05); break;
+            case 'spin':   playTone(220, 0.4, 'sawtooth', 0.03); break;
+            case 'tick':   playTone(880, 0.03, 'square', 0.02); break;
+            case 'win':    [523, 659, 784, 1046].forEach((f, i) => setTimeout(() => playTone(f, 0.25, 'sine', 0.07), i * 100)); break;
+            case 'lose':   [400, 350, 280, 200].forEach((f, i) => setTimeout(() => playTone(f, 0.2, 'sawtooth', 0.05), i * 80)); break;
+            case 'coin':   playTone(1200, 0.1, 'sine', 0.05); setTimeout(() => playTone(1600, 0.1, 'sine', 0.04), 80); break;
+            case 'error':  playTone(180, 0.15, 'square', 0.06); break;
         }
     }
 
-    // ================= ХАПТИКА =================
     function haptic(type) {
         if (!hapticEnabled || !tg?.HapticFeedback) return;
         try {
@@ -698,7 +788,6 @@
         } catch (e) {}
     }
 
-    // ================= API =================
     async function apiCall(endpoint, method = 'GET', body = null) {
         const headers = { 'Content-Type': 'application/json', 'X-Telegram-Init-Data': tg ? tg.initData : '' };
         const options = { method, headers };
@@ -712,7 +801,6 @@
         return res.json();
     }
 
-    // ================= TOAST =================
     function notify(opts) {
         if (typeof opts === 'string') opts = { message: opts };
         const type = opts.type || 'info';
@@ -741,7 +829,6 @@
         }, opts.duration || 3500);
     }
 
-    // ================= КОНФЕТТИ =================
     function burstConfetti() {
         const colors = ['#fbbf24', '#ef4444', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899'];
         for (let i = 0; i < 80; i++) {
@@ -763,7 +850,6 @@
         }
     }
 
-    // ================= МЕНЮ / НАВИГАЦИЯ =================
     function toggleMenu() {
         document.getElementById('sidebar').classList.toggle('active');
         document.getElementById('sidebar-overlay').classList.toggle('active');
@@ -784,7 +870,6 @@
         haptic('light');
     }
 
-    // ================= НАСТРОЙКИ =================
     function openSettings() { document.getElementById('settings-modal').classList.add('active'); haptic('light'); }
     function closeSettings() { document.getElementById('settings-modal').classList.remove('active'); }
 
@@ -804,7 +889,6 @@
         if (hapticEnabled) haptic('medium');
     }
 
-    // ================= UI UPDATE =================
     function updateUI() {
         ['h-balance', 's-balance', 'p-balance'].forEach(id => {
             const el = document.getElementById(id);
@@ -820,7 +904,6 @@
 
     function updateTimers() {
         const now = Date.now();
-
         const elFree = document.getElementById('free-timer-text');
         const cardFree = elFree ? elFree.closest('.case-card') : null;
         if (elFree && cardFree) {
@@ -835,7 +918,6 @@
                 cardFree.classList.add('locked');
             }
         }
-
         const elUser = document.getElementById('user-timer-text');
         const cardUser = elUser ? elUser.closest('.case-card') : null;
         if (elUser && cardUser) {
@@ -854,7 +936,6 @@
                 cardUser.classList.add('locked');
             }
         }
-
         if (document.getElementById('section-case-opening').classList.contains('active') && !isOpening) {
             updateOpenBtnState();
         }
@@ -871,7 +952,6 @@
 
     setInterval(updateTimers, 1000);
 
-    // ================= ИНВЕНТАРЬ =================
     function renderInventory() {
         const container = document.getElementById('inventory-list');
         const inv = Object.values(state.inventory || {});
@@ -892,30 +972,20 @@
         }).join('');
     }
 
-    window.updateDropFeed = function(arr) {
-        // Лента дропов не отображается в UI (можно добавить блок при желании)
-    };
+    window.updateDropFeed = function(arr) {};
 
     // ================= КЕЙСЫ =================
     function openCaseSection(type) {
         if (isOpening) return;
         haptic('medium');
-
-        if (type === 'user' && !state.hasUserCase) {
-            return notify({ type: 'error', message: 'Поставьте @' + BOT_USERNAME + ' в ник в Telegram!' });
-        }
+        if (type === 'user' && !state.hasUserCase) return notify({ type: 'error', message: 'Поставьте @' + BOT_USERNAME + ' в ник в Telegram!' });
         const now = Date.now();
-        if (type === 'free' && now - state.lastFree < FREE_COOLDOWN) {
-            return notify({ type: 'error', message: 'Бесплатный кейс ещё не готов' });
-        }
-        if (type === 'user' && now - state.lastUser < USER_COOLDOWN) {
-            return notify({ type: 'error', message: 'Кейс за Юз ещё не готов' });
-        }
+        if (type === 'free' && now - state.lastFree < FREE_COOLDOWN) return notify({ type: 'error', message: 'Бесплатный кейс ещё не готов' });
+        if (type === 'user' && now - state.lastUser < USER_COOLDOWN) return notify({ type: 'error', message: 'Кейс за Юз ещё не готов' });
 
         activeCase = type;
         mult = 1;
         setMultiplier(1);
-
         document.getElementById('open-case-title').textContent = type.toUpperCase();
 
         const imgEl = document.getElementById('open-case-img');
@@ -924,7 +994,6 @@
         imgEl.style.transform = 'scale(1)';
         imgEl.style.display = 'block';
         emojiEl.style.display = 'none';
-
         document.getElementById('roulette-wrap').classList.remove('active');
         document.getElementById('roulette-track').innerHTML = '';
         document.getElementById('won-area').innerHTML = '';
@@ -943,9 +1012,7 @@
             emojiEl.style.display = 'block';
         };
         imgEl.src = caseData.img;
-
         document.getElementById('mult-selector').style.display = (type === 'free' || type === 'user') ? 'none' : 'flex';
-
         renderLootPreview(type);
         updateOpenBtnState();
         switchTab('case-opening');
@@ -988,7 +1055,6 @@
         const grid = document.getElementById('loot-preview');
         const cfg = CASE_LOOT_DATA[type];
         let html = '';
-
         if (cfg.coins.length > 0 && cfg.coinChance > 0) {
             html += `<div class="loot-card">
                 <div class="coin"><i class="fa-solid fa-coins"></i></div>
@@ -1009,7 +1075,6 @@
         grid.innerHTML = html;
     }
 
-    // Вспомогательная функция для случайного дропа из конфига кейса (для визуала стрипа)
     function getRandomCaseDrop(cfg) {
         if (Math.random() * 100 < cfg.coinChance) {
             return { type: 'coin', amount: 1 };
@@ -1065,7 +1130,6 @@
 
             const cfg = CASE_LOOT_DATA[activeCase];
             const items = [];
-            // Заполняем стрип визуальными decoy-дропами
             for (let i = 0; i < 60; i++) {
                 if (i >= WIN_INDEX_CASES && i < WIN_INDEX_CASES + res.results.length) {
                     items.push(res.results[i - WIN_INDEX_CASES]);
@@ -1079,29 +1143,24 @@
             track.style.transition = 'none';
             track.style.transform = 'translateX(0)';
 
-            // Прокрутка к выигрышу
             requestAnimationFrame(() => {
                 const wrapW = document.getElementById('roulette-wrap').offsetWidth;
-                // Центрируемся на ПЕРВОМ выигрыше (индекс WIN_INDEX_CASES)
                 const jitter = (Math.random() - 0.5) * 40;
                 const scrollTo = WIN_INDEX_CASES * (CASE_ITEM_WIDTH + 10) - (wrapW / 2) + (CASE_ITEM_WIDTH / 2) + jitter;
                 track.style.transition = 'transform 4.2s cubic-bezier(0.15, 0.85, 0.25, 1)';
                 track.style.transform = `translateX(-${Math.max(0, scrollTo)}px)`;
             });
 
-            // Тики во время прокрутки
             const tickInterval = setInterval(() => playSound('tick'), 120);
             setTimeout(() => clearInterval(tickInterval), 3200);
 
             setTimeout(() => {
                 isOpening = false;
                 btn.disabled = false;
-
                 document.getElementById('roulette-wrap').classList.remove('active');
                 document.getElementById('open-case-img').style.opacity = '1';
                 document.getElementById('open-case-img').style.transform = 'scale(1)';
 
-                // Показ выигрышей
                 let html = '';
                 res.results.forEach(win => {
                     if (win.type === 'coin') {
@@ -1122,7 +1181,6 @@
                 });
                 document.getElementById('won-area').innerHTML = html;
 
-                // Особый эффект, если выпал легендарный
                 const hasLegendary = res.results.some(r => r.type === 'item' && r.item.rarity === 'legendary');
                 if (hasLegendary) {
                     haptic('success');
@@ -1137,7 +1195,6 @@
                     haptic('light');
                     playSound('coin');
                 }
-
                 updateOpenBtnState();
             }, 4400);
 
@@ -1153,7 +1210,6 @@
         }
     }
 
-    // ================= МОДАЛКА ВЫИГРЫША =================
     function showWinModal(item) {
         const visual = document.getElementById('win-item-visual');
         visual.innerHTML = `
@@ -1198,6 +1254,78 @@
         } else {
             container.innerHTML = `<i class="fa-solid fa-bullseye" style="font-size:30px; color:var(--text-muted);"></i>`;
         }
+    }
+
+    // Пересчитывает и перерисовывает колесо под текущее состояние
+    function updateWheelVisual() {
+        const sum = upgInputs.reduce((acc, uid) => {
+            const item = state.inventory[uid];
+            return acc + (item ? item.price : 0);
+        }, 0);
+
+        let chance = 0;
+        if (upgTarget && sum > 0) {
+            chance = Math.min(MAX_UPGRADE_CHANCE, (sum / upgTarget.price) * 100);
+        }
+
+        const disc = document.getElementById('upg-wheel-disc');
+        const iconEl = document.getElementById('upg-wheel-icon');
+        const chanceEl = document.getElementById('upg-chance-val');
+
+        const winAngle = chance > 0 ? Math.max(0.5, chance * 3.6) : 0;
+
+        // conic-gradient: 0deg — верх, по часовой
+        if (chance > 0) {
+            disc.style.background = `conic-gradient(
+                var(--accent-gold) 0deg ${winAngle}deg,
+                #1c1f2b ${winAngle}deg 360deg
+            )`;
+        } else {
+            disc.style.background = '#1c1f2b';
+        }
+
+        // Иконка цели — центр золотого сектора
+        if (upgTarget && chance > 0 && iconEl) {
+            const centerAngle = winAngle / 2;
+            iconEl.style.display = 'block';
+            iconEl.style.transform = `rotate(${centerAngle}deg) translateY(-95px) rotate(${-centerAngle}deg)`;
+            iconEl.innerHTML = `
+                <img src="${upgTarget.img}" alt=""
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <span class="emoji" style="display:none;">${upgTarget.emoji || '🧠'}</span>`;
+        } else if (iconEl) {
+            iconEl.style.display = 'none';
+            iconEl.innerHTML = '';
+        }
+
+        if (chanceEl) {
+            chanceEl.textContent = chance > 0 ? chance.toFixed(1) + '%' : '0%';
+            if (chance >= 50) chanceEl.style.color = 'var(--accent-green)';
+            else if (chance >= 15) chanceEl.style.color = 'var(--accent-gold)';
+            else if (chance > 0) chanceEl.style.color = 'var(--accent-red)';
+            else chanceEl.style.color = 'var(--text-muted)';
+        }
+    }
+
+    function calcUpg() {
+        let sum = 0;
+        upgInputs.forEach(uid => {
+            if (state.inventory[uid]) sum += state.inventory[uid].price;
+        });
+        let chance = 0;
+        if (upgTarget && sum > 0) chance = Math.min(MAX_UPGRADE_CHANCE, (sum / upgTarget.price) * 100);
+
+        updateWheelVisual();
+
+        const sumEl = document.getElementById('upg-sum');
+        if (sumEl) {
+            sumEl.innerHTML = `Сумма: <b>${formatNum(sum)}</b> монет${upgTarget ? ` → <b>${formatNum(upgTarget.price)}</b>` : ''}`;
+        }
+
+        const btn = document.getElementById('btn-upg');
+        const canPlay = chance > 0 && upgTarget && upgInputs.length > 0;
+        btn.disabled = !canPlay || isUpgrading;
+        btn.textContent = canPlay ? `ПРОКАЧАТЬ (${chance.toFixed(1)}%)` : 'ПРОКАЧАТЬ';
     }
 
     function openInvPicker() {
@@ -1250,16 +1378,13 @@
             const item = state.inventory[uid];
             return acc + (item ? item.price : 0);
         }, 0);
-
-        if (sum === 0) {
-            return notify({ type: 'warning', message: 'Сначала выберите предметы слева' });
-        }
+        if (sum === 0) return notify({ type: 'warning', message: 'Сначала выберите предметы слева' });
 
         const list = document.getElementById('target-list');
         list.innerHTML = ALL_ITEMS.map(it => {
             const isDisabled = it.price <= sum;
             const r = RARITIES[it.rarity] || RARITIES.common;
-            return `<div class="inv-item" style="border-color:${r.color}; opacity: ${isDisabled ? 0.35 : 1}; cursor: ${isDisabled ? 'not-allowed' : 'pointer'};" 
+            return `<div class="inv-item" style="border-color:${r.color}; opacity: ${isDisabled ? 0.35 : 1}; cursor: ${isDisabled ? 'not-allowed' : 'pointer'};"
                  onclick="${isDisabled ? '' : `BF.chooseTarget('${it.id}')`}">
                 <div style="height:50px; display:flex; align-items:center; justify-content:center;">
                     <img src="${it.img}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
@@ -1285,44 +1410,12 @@
         haptic('medium');
     }
 
-    function calcUpg() {
-        let sum = 0;
-        upgInputs.forEach(uid => { if (state.inventory[uid]) sum += state.inventory[uid].price; });
-
-        let chance = 0;
-        if (upgTarget && sum > 0) {
-            chance = Math.min(MAX_UPGRADE_CHANCE, (sum / upgTarget.price) * 100);
-        }
-
-        const chanceEl = document.getElementById('upg-chance-val');
-        chanceEl.textContent = chance.toFixed(1) + '%';
-        if (chance >= 50) chanceEl.style.color = 'var(--accent-green)';
-        else if (chance >= 15) chanceEl.style.color = 'var(--accent-gold)';
-        else if (chance > 0) chanceEl.style.color = 'var(--accent-red)';
-        else chanceEl.style.color = 'var(--text-muted)';
-
-        const sumEl = document.getElementById('upg-sum');
-        sumEl.innerHTML = `Сумма: <b>${formatNum(sum)}</b> монет${upgTarget ? ` → <b>${formatNum(upgTarget.price)}</b>` : ''}`;
-
-        const btn = document.getElementById('btn-upg');
-        const canPlay = chance > 0 && upgTarget && upgInputs.length > 0;
-        btn.disabled = !canPlay;
-        if (canPlay) {
-            btn.textContent = `ПРОКАЧАТЬ (${chance.toFixed(1)}%)`;
-        } else {
-            btn.textContent = 'ПРОКАЧАТЬ';
-        }
-    }
-
     function autoSelect(type) {
         const sum = upgInputs.reduce((acc, uid) => {
             const item = state.inventory[uid];
             return acc + (item ? item.price : 0);
         }, 0);
-
-        if (sum === 0) {
-            return notify({ type: 'warning', message: 'Сначала выберите СВОИ предметы (левый квадрат)' });
-        }
+        if (sum === 0) return notify({ type: 'warning', message: 'Сначала выберите СВОИ предметы (левый квадрат)' });
 
         let targetPrice = 0;
         if (type === 'x2') targetPrice = sum * 2;
@@ -1338,33 +1431,13 @@
             const diff = Math.abs(it.price - targetPrice);
             if (diff < minDiff) { minDiff = diff; closest = it; }
         });
-
-        if (!closest) {
-            return notify({ type: 'error', message: 'Нет подходящей цели' });
-        }
+        if (!closest) return notify({ type: 'error', message: 'Нет подходящей цели' });
 
         upgTarget = closest;
         renderUpgTarget();
         calcUpg();
         haptic('light');
         notify({ type: 'info', message: `Цель: ${closest.name} (${closest.price})` });
-    }
-
-    // Вспомогательная функция — случайные decoy-предметы для стрипа апгрейдера
-    function getRandomUpgDecoy() {
-        const it = ALL_ITEMS[Math.floor(Math.random() * ALL_ITEMS.length)];
-        return it;
-    }
-
-    function renderUpgStripItem(item, isWinner) {
-        const r = RARITIES[item.rarity] || RARITIES.common;
-        const borderColor = isWinner ? 'var(--accent-gold)' : r.color;
-        const glow = isWinner ? 'box-shadow: 0 0 20px var(--accent-gold);' : '';
-        return `<div class="upg-strip-item" style="border-color:${borderColor}; ${glow}">
-            <img src="${item.img}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-            <span class="emoji-fallback" style="display:none;">${item.emoji || '🧠'}</span>
-            <div class="name">${escapeHtml(item.name)}</div>
-        </div>`;
     }
 
     async function runUpgrade() {
@@ -1378,43 +1451,49 @@
         haptic('medium');
         playSound('spin');
 
+        const inputsSnapshot = [...upgInputs];
+
         try {
-            const res = await apiCall('/api/upgrade', 'POST', { input_uids: upgInputs, target_id: upgTarget.id });
+            const res = await apiCall('/api/upgrade', 'POST', {
+                input_uids: inputsSnapshot,
+                target_id: upgTarget.id
+            });
+
             state.balance = res.balance;
             state.inventory = res.inventory;
             updateUI();
+            renderUpgInputs();
 
-            // Строим стрип: 60 элементов, на позиции WIN_INDEX_UPG — победитель или провал
-            const items = [];
-            for (let i = 0; i < 60; i++) {
-                if (i === WIN_INDEX_UPG) {
-                    items.push(res.success ? upgTarget : getRandomUpgDecoy());
-                } else {
-                    items.push(getRandomUpgDecoy());
-                }
+            // --- РАСЧЁТ ПРИЗЕМЛЕНИЯ СТРЕЛКИ ---
+            // winAngle — размер золотого сектора (совпадает с updateWheelVisual по res.chance)
+            const winAngle = Math.max(0.5, res.chance * 3.6);
+
+            // landingAngle — угол, куда должна указать стрелка (0..360, по часовой от верха)
+            let landingAngle;
+            if (res.success) {
+                // Внутри золотого [0..winAngle], не у самых краёв
+                landingAngle = winAngle * (0.1 + Math.random() * 0.8);
+            } else {
+                // Внутри серого [winAngle..360], не у самых краёв
+                const greySize = 360 - winAngle;
+                landingAngle = winAngle + greySize * (0.1 + Math.random() * 0.8);
             }
 
-            const track = document.getElementById('upg-strip-track');
-            track.innerHTML = items.map((item, idx) => renderUpgStripItem(item, idx === WIN_INDEX_UPG)).join('');
-            track.style.transition = 'none';
-            track.style.transform = 'translateX(0)';
+            // Стрелка стартует с rotate(0). Итог: 360*5 полных оборотов + приземление
+            const totalRotation = 360 * 5 + landingAngle;
 
-            const tickInterval = setInterval(() => playSound('tick'), 110);
+            const pointer = document.getElementById('upg-wheel-pointer');
+            // форсируем reflow чтобы transition точно применился
+            void pointer.offsetWidth;
+            pointer.style.transition = 'transform 4.5s cubic-bezier(0.15, 0.85, 0.15, 1)';
+            pointer.style.transform = `rotate(${totalRotation}deg)`;
 
-            requestAnimationFrame(() => {
-                const wrapW = document.getElementById('upg-strip-wrap').offsetWidth;
-                const jitter = (Math.random() - 0.5) * 40;
-                const scrollTo = WIN_INDEX_UPG * (UPG_ITEM_WIDTH + 8) - (wrapW / 2) + (UPG_ITEM_WIDTH / 2) + jitter;
-                track.style.transition = 'transform 3.2s cubic-bezier(0.15, 0.9, 0.25, 1)';
-                track.style.transform = `translateX(-${Math.max(0, scrollTo)}px)`;
-            });
-
-            setTimeout(() => clearInterval(tickInterval), 2600);
+            // Тики во время прокрутки
+            const tickInterval = setInterval(() => playSound('tick'), 140);
 
             setTimeout(() => {
+                clearInterval(tickInterval);
                 isUpgrading = false;
-                updateUI();
-                const btnReset = document.getElementById('btn-upg');
 
                 if (res.success) {
                     haptic('success');
@@ -1435,13 +1514,15 @@
                     calcUpg();
                 }
 
-                // Сброс стрипа
+                // Сброс стрелки в 0 (без анимации), затем плавно перерисовать колесо
                 setTimeout(() => {
-                    track.style.transition = 'none';
-                    track.style.transform = 'translateX(0)';
-                }, 1000);
+                    pointer.style.transition = 'none';
+                    pointer.style.transform = 'rotate(0deg)';
+                    void pointer.offsetWidth;
+                    updateWheelVisual();
+                }, 1200);
 
-            }, 3400);
+            }, 4600);
 
         } catch (err) {
             isUpgrading = false;
@@ -1474,13 +1555,11 @@
         try {
             const res = await apiCall('/api/coinflip', 'POST', { bet, choice: cfChoice });
             state.balance = res.balance;
-
             setTimeout(() => {
                 coin.classList.remove('spin');
                 coin.textContent = res.result === 'heads' ? '🦅' : '🪙';
                 updateUI();
                 isCfPlaying = false;
-
                 if (res.won) {
                     haptic('success');
                     playSound('win');
@@ -1491,7 +1570,6 @@
                     notify({ type: 'error', title: 'ПРОИГРЫШ', message: `Потеряно ${bet} монет` });
                 }
             }, 1100);
-
         } catch (err) {
             coin.classList.remove('spin');
             isCfPlaying = false;
@@ -1505,7 +1583,6 @@
         const input = document.getElementById('promo-code');
         const code = input.value.trim().toUpperCase();
         if (!code) return;
-
         try {
             const res = await apiCall('/api/claim_promo', 'POST', { code });
             state.balance = res.balance;
@@ -1553,7 +1630,7 @@
         }
     }
 
-    // ================= ГЛОБАЛЬНЫЕ ФУНКЦИИ (BF) =================
+    // ================= ГЛОБАЛЬНЫЕ BF =================
     window.BF = {
         addToUpg: (uid) => {
             if (upgInputs.includes(uid)) {
@@ -1561,9 +1638,7 @@
                 switchTab('upgrader');
                 return;
             }
-            if (upgInputs.length >= MAX_UPG_INPUTS) {
-                return notify({ type: 'warning', message: `Максимум ${MAX_UPG_INPUTS} предметов` });
-            }
+            if (upgInputs.length >= MAX_UPG_INPUTS) return notify({ type: 'warning', message: `Максимум ${MAX_UPG_INPUTS} предметов` });
             upgInputs.push(uid);
             renderUpgInputs();
             calcUpg();
@@ -1615,7 +1690,6 @@
         }
     };
 
-    // Экспорт в window
     window.openCaseSection = openCaseSection;
     window.exitCaseOpening = exitCaseOpening;
     window.setMultiplier = setMultiplier;
@@ -1654,7 +1728,6 @@
             renderDonate();
         } catch (err) {
             notify({ type: 'error', message: 'Ошибка загрузки профиля' });
-            // Всё равно рендерим статику
             renderDonate();
             calcUpg();
         }
@@ -1675,7 +1748,6 @@
         } catch (e) {}
     }
 
-    // Начальное состояние тоглов
     document.getElementById('toggle-sound').classList.toggle('on', soundEnabled);
     document.getElementById('toggle-haptic').classList.toggle('on', hapticEnabled);
     const sBtn = document.getElementById('sound-toggle');
@@ -1691,4 +1763,4 @@
 })();
 </script>
 </body>
-        </html>
+    </html>
