@@ -40,9 +40,8 @@ RARITIES = {
     "legendary": {"id":"legendary","name":"Legendary","color":"#f59e0b"},
 }
 
-# Базовый список всех предметов
+# Базовый список всех предметов (БЕЗ МУТАЦИЙ)
 DEFAULT_ITEMS = [
-    # Старые
     {"id":"trios",    "name":"Los Trios",           "price":4,     "rarity":"common",    "img":"assets/brainrots/los_trios.png", "emoji":"🥉"},
     {"id":"rot67",    "name":"67",                  "price":5,     "rarity":"common",    "img":"assets/brainrots/67.png", "emoji":"6️⃣7️⃣"},
     {"id":"hammy",    "name":"Spinny Hammy",        "price":5,     "rarity":"uncommon",  "img":"assets/brainrots/spinny_hammy.png", "emoji":"🐹"},
@@ -55,18 +54,14 @@ DEFAULT_ITEMS = [
     {"id":"los67",    "name":"Los 67",              "price":12,    "rarity":"epic",      "img":"assets/brainrots/Los_67.png", "emoji":"🎲"},
     {"id":"yinyang",  "name":"Yin Yang Slap",       "price":20,    "rarity":"legendary", "img":"assets/brainrots/YinYangSlap.png", "emoji":"☯️"},
     
-    # Новые
-    {"id":"bloodrot",    "name":"Bloodrot",             "price":10,    "rarity":"rare",      "img":"assets/brainrots/Bloodrot_Mutation_Icon.webp", "emoji":"🩸"},
+    # Новые (без мутаций)
     {"id":"burguro",     "name":"Burguro & Fryuro",     "price":15,    "rarity":"epic",      "img":"assets/brainrots/Burguro_And_Fryuro.webp", "emoji":"🍔"},
     {"id":"capitano",    "name":"Capitano Moby",        "price":25,    "rarity":"legendary", "img":"assets/brainrots/Capitano_Moby.webp", "emoji":"🐋"},
     {"id":"cashcard",    "name":"Cash or Card",         "price":8,     "rarity":"rare",      "img":"assets/brainrots/Cash_or_Card_New.webp", "emoji":"💳"},
     {"id":"cerberus",    "name":"Cerberus",             "price":18,    "rarity":"epic",      "img":"assets/brainrots/Cerberus.webp", "emoji":"🐕"},
-    {"id":"defmut",      "name":"Default Mutation",     "price":2,     "rarity":"common",    "img":"assets/brainrots/Default_Mutation_Icon.webp", "emoji":"🧬"},
-    {"id":"diamut",      "name":"Diamond Mutation",     "price":50,    "rarity":"legendary", "img":"assets/brainrots/Diamond_Mutation_Icon.webp", "emoji":"💎"},
     {"id":"dragon",      "name":"Dragon Cannelloni",    "price":22,    "rarity":"epic",      "img":"assets/brainrots/Dragon_Cannelloni.webp", "emoji":"🐉"},
     {"id":"esok",        "name":"Esok Sekolah",         "price":6,     "rarity":"uncommon",  "img":"assets/brainrots/Esok_Sekolah.webp", "emoji":"🎒"},
     {"id":"garama",      "name":"Garamadundung",        "price":11,    "rarity":"rare",      "img":"assets/brainrots/Garamadundung.webp", "emoji":"🥁"},
-    {"id":"goldmut",     "name":"Gold Mutation",        "price":30,    "rarity":"epic",      "img":"assets/brainrots/Gold_Mutation_Icon.webp", "emoji":"🥇"},
     {"id":"hydra",       "name":"Hydra Serpent",        "price":35,    "rarity":"epic",      "img":"assets/brainrots/Hydra_Serpent.webp", "emoji":"🐍"},
     {"id":"ketchuru",    "name":"Ketchuru",             "price":9,     "rarity":"rare",      "img":"assets/brainrots/Ketchuru.webp", "emoji":"🍅"},
     {"id":"ketupat",     "name":"Ketupat Kepat",        "price":8,     "rarity":"uncommon",  "img":"assets/brainrots/KetupatKepat.webp", "emoji":"🍚"},
@@ -76,27 +71,26 @@ DEFAULT_ITEMS = [
     {"id":"mmpuggy",     "name":"Money Money Puggy",    "price":28,    "rarity":"legendary", "img":"assets/brainrots/Money_Money_Puggy.webp", "emoji":"💵"},
     {"id":"pavone",      "name":"Pavoneroventoliero",   "price":16,    "rarity":"epic",      "img":"assets/brainrots/Pavoneroventoliero.webp", "emoji":"🦚"},
     {"id":"hotspot",     "name":"Pot Hotspot",          "price":7,     "rarity":"uncommon",  "img":"assets/brainrots/Pot_Hotspot.webp", "emoji":"🍲"},
-    {"id":"rainbowmut",  "name":"Rainbow Mutation",     "price":75,    "rarity":"legendary", "img":"assets/brainrots/Rainbow_Mutation_Icon.webp", "emoji":"🌈"},
     {"id":"strawberry",  "name":"Strawberry Elephant",  "price":15000, "rarity":"legendary", "img":"assets/brainrots/Strawberry_Elephant.webp", "emoji":"🍓"},
     {"id":"skibidi",     "name":"Skibidi Toilet",       "price":13154, "rarity":"legendary", "img":"assets/brainrots/skibidi_toilet.png", "emoji":"🚽"},
 ]
-ITEMS_BY_ID = {i["id"]: i for i in DEFAULT_ITEMS}
 
 CASE_PRICES = {"free": 0, "user": 0, "base": 9, "bro": 25, "allin": 29}
 
 CASE_LOOT = {
-    "free": {"coinChance": 70, "coins": [{"amount":1,"weight":50}, {"amount":2,"weight":30}, {"amount":3,"weight":20}], "items": [{"id":"trios","weight":30},{"id":"rot67","weight":30},{"id":"defmut","weight":40}]},
+    "free": {"coinChance": 70, "coins": [{"amount":1,"weight":50}, {"amount":2,"weight":30}, {"amount":3,"weight":20}], "items": [{"id":"trios","weight":50},{"id":"rot67","weight":50}]},
     "user": {"coinChance": 30, "coins": [{"amount":3,"weight":100}], "items": [{"id":"trios","weight":30},{"id":"rot67","weight":30},{"id":"hammy","weight":20},{"id":"candyslap","weight":10},{"id":"esok","weight":10}]},
     "base": {"coinChance": 0, "coins": [], "items": [{"id":"trios","weight":20},{"id":"rot67","weight":20},{"id":"candyslap","weight":20},{"id":"lagrande","weight":15},{"id":"ketupat","weight":15},{"id":"hotspot","weight":10}]},
     "bro": {"coinChance": 0, "coins": [], "items": [{"id":"hammy","weight":15},{"id":"noobinis","weight":15},{"id":"tangtang","weight":15},{"id":"tictac","weight":10},{"id":"bacuru","weight":10},{"id":"los67","weight":10},{"id":"cashcard","weight":8},{"id":"ketchuru","weight":7},{"id":"garama","weight":5},{"id":"yinyang","weight":5}]},
-    "allin": {"coinChance": 0, "coins": [], "items": [{"id":"lagrande","weight":40},{"id":"bloodrot","weight":20},{"id":"burguro","weight":15},{"id":"pavone","weight":10},{"id":"cerberus","weight":5},{"id":"dragon","weight":4},{"id":"capitano","weight":3},{"id":"mmpuggy","weight":2},{"id":"strawberry","weight":1}]}
+    "allin": {"coinChance": 0, "coins": [], "items": [{"id":"lagrande","weight":40},{"id":"burguro","weight":20},{"id":"pavone","weight":15},{"id":"cerberus","weight":10},{"id":"dragon","weight":5},{"id":"capitano","weight":3},{"id":"mmpuggy","weight":2},{"id":"strawberry","weight":1}]}
 }
 
+# Ивенты теперь используют картинки мутаций вместо FontAwesome иконок
 EVENT_TYPES = {
-    "miniboost": {"name": "Минибуст", "multiplier": 1.5, "color": "#22c55e", "icon": "fa-bolt"},
-    "gold":      {"name": "Голд",     "multiplier": 2.0, "color": "#fbbf24", "icon": "fa-star"},
-    "diamond":   {"name": "Алмаз",    "multiplier": 3.0, "color": "#06b6d4", "icon": "fa-gem"},
-    "bloody":    {"name": "Кровавый", "multiplier": 4.0, "color": "#dc2626", "icon": "fa-fire"},
+    "miniboost": {"name": "Минибуст", "multiplier": 1.5, "color": "#22c55e", "img": "assets/brainrots/Default_Mutation_Icon.webp"},
+    "gold":      {"name": "Голд",     "multiplier": 2.0, "color": "#fbbf24", "img": "assets/brainrots/Gold_Mutation_Icon.webp"},
+    "diamond":   {"name": "Алмаз",    "multiplier": 3.0, "color": "#06b6d4", "img": "assets/brainrots/Diamond_Mutation_Icon.webp"},
+    "bloody":    {"name": "Кровавый", "multiplier": 4.0, "color": "#dc2626", "img": "assets/brainrots/Bloodrot_Mutation_Icon.webp"},
 }
 
 STARS_PACKAGES = {
@@ -143,20 +137,30 @@ def init_firebase():
 FIREBASE_OK = init_firebase()
 
 def get_items_dict() -> dict:
-    """Возвращает актуальный список предметов из Firebase, либо дефолтный"""
+    """
+    Возвращает актуальный список предметов.
+    Берет дефолтный список и накладывает на него оверрайды (изменения цен/редкости) из Firebase.
+    """
     if not FIREBASE_OK:
-        return ITEMS_BY_ID
+        return {i["id"]: i for i in DEFAULT_ITEMS}
+    
     try:
-        raw = fbdb.reference("meta/items").get()
-        if not raw:
-            # Если в базе пусто, инициализируем дефолтными
-            fbdb.reference("meta/items").set(DEFAULT_ITEMS)
-            return ITEMS_BY_ID
-        # Преобразуем список в словарь
-        return {item["id"]: item for item in raw}
+        # В базе храним только оверрайды: { "item_id": {"price": 100, "rarity": "epic"} }
+        overrides = fbdb.reference("meta/items_overrides").get() or {}
+        
+        final_dict = {}
+        for item in DEFAULT_ITEMS:
+            base_item = dict(item)
+            if base_item["id"] in overrides:
+                ovr = overrides[base_item["id"]]
+                if "price" in ovr: base_item["price"] = int(ovr["price"])
+                if "rarity" in ovr: base_item["rarity"] = ovr["rarity"]
+            final_dict[base_item["id"]] = base_item
+            
+        return final_dict
     except Exception as e:
         log.error(f"Error loading items from DB: {e}")
-        return ITEMS_BY_ID
+        return {i["id"]: i for i in DEFAULT_ITEMS}
 
 def user_ref(uid: str):
     return fbdb.reference(f"users/{uid}")
@@ -255,7 +259,6 @@ def roll_drop(case_type: str, items_dict: dict) -> dict:
     
     item_data = items_dict.get(picked["id"])
     if not item_data:
-        # Фоллбэк, если предмет удалили
         item_data = items_dict.get("trios")
         
     return {"type": "item", "item": dict(item_data)}
@@ -402,7 +405,8 @@ async def health():
 @app.get("/api/items")
 async def api_items():
     """Отдает список всех предметов для фронтенда"""
-    return {"items": list(get_items_dict().values())}
+    items_dict = get_items_dict()
+    return {"items": list(items_dict.values())}
 
 @app.get("/api/me")
 async def api_me(user=Depends(current_user)):
@@ -496,8 +500,6 @@ async def api_open_case(request: Request, user=Depends(current_user)):
 
     event = get_active_event()
     luck_mult = float(event["multiplier"]) if event else 1.0
-    
-    # Загружаем актуальный список предметов
     items_dict = get_items_dict()
 
     results = [roll_with_event_luck(case_type, luck_mult, items_dict) for _ in range(multiplier)]
@@ -776,8 +778,7 @@ async def create_invoice(request: Request, user=Depends(current_user)):
 @app.get("/api/admin/items")
 async def admin_get_items(user=Depends(require_admin)):
     if not FIREBASE_OK: raise HTTPException(503)
-    items_dict = get_items_dict()
-    return {"items": list(items_dict.values())}
+    return {"items": list(get_items_dict().values())}
 
 @app.post("/api/admin/item/update")
 async def admin_update_item(request: Request, user=Depends(require_admin)):
@@ -791,15 +792,11 @@ async def admin_update_item(request: Request, user=Depends(require_admin)):
     if new_price < 0: raise HTTPException(400, "Цена не может быть отрицательной")
     if new_rarity not in RARITIES: raise HTTPException(400, "Неверная редкость")
 
-    items_dict = get_items_dict()
-    if item_id not in items_dict: raise HTTPException(404, "Предмет не найден")
-
-    # Обновляем предмет
-    items_dict[item_id]["price"] = new_price
-    items_dict[item_id]["rarity"] = new_rarity
-
-    # Сохраняем весь список обратно в базу
-    fbdb.reference("meta/items").set(list(items_dict.values()))
+    # Сохраняем только оверрайд в Firebase
+    fbdb.reference(f"meta/items_overrides/{item_id}").update({
+        "price": new_price,
+        "rarity": new_rarity
+    })
     return {"ok": True}
 
 @app.post("/api/admin/event")
@@ -822,7 +819,7 @@ async def admin_set_event(request: Request, user=Depends(require_admin)):
     meta = EVENT_TYPES[ev_type]
     ev = {
         "type": ev_type, "name": meta["name"], "multiplier": meta["multiplier"],
-        "color": meta["color"], "icon": meta["icon"], "startedAt": now,
+        "color": meta["color"], "img": meta["img"], "startedAt": now,
         "endsAt": now + duration_minutes * 60 * 1000, "startedBy": str(user["id"]),
     }
     fbdb.reference("meta/event").set(ev)
