@@ -7,7 +7,6 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* ================= ПЕРЕМЕННЫЕ И БАЗА ================= */
         :root {
             --bg-main: #0a0b10;
             --bg-card: #151722;
@@ -24,18 +23,12 @@
             --glow-gold: 0 0 20px rgba(251, 191, 36, 0.4);
             --glow-green: 0 0 15px rgba(16, 185, 129, 0.4);
             --glow-red: 0 0 15px rgba(239, 68, 68, 0.4);
-            --rar-common: #6b7280;
-            --rar-uncommon: #22c55e;
-            --rar-rare: #3b82f6;
-            --rar-epic: #a855f7;
-            --rar-legendary: #f59e0b;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
         body { background: var(--bg-main); background-image: radial-gradient(circle at 50% 0%, #1a1c29 0%, #0a0b10 70%); color: var(--text-main); overflow-x: hidden; padding-bottom: env(safe-area-inset-bottom); min-height: 100vh; }
         img { -webkit-user-drag: none; }
         button { font-family: inherit; }
 
-        /* ================= ВЕРХНЯЯ ПАНЕЛЬ ================= */
         .top-bar { display: flex; align-items: center; justify-content: space-between; padding: 15px 20px; background: rgba(10, 11, 16, 0.85); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 90; border-bottom: 1px solid var(--border); }
         .top-bar-left { display: flex; gap: 8px; align-items: center; }
         .menu-btn { background: none; border: none; color: var(--text-main); font-size: 22px; cursor: pointer; padding: 6px 10px; border-radius: 8px; transition: 0.2s; }
@@ -50,7 +43,6 @@
         .header-name { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .header-balance { font-size: 14px; font-weight: 900; color: var(--accent-gold); display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
 
-        /* ================= БОКОВОЕ МЕНЮ ================= */
         .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
         .sidebar-overlay.active { opacity: 1; pointer-events: auto; }
         .sidebar { position: fixed; top: 0; left: 0; width: 80%; max-width: 320px; height: 100%; background: #11131c; z-index: 101; transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; flex-direction: column; box-shadow: 5px 0 30px rgba(0,0,0,0.8); border-right: 1px solid var(--border); }
@@ -67,14 +59,92 @@
         .nav-item i { font-size: 18px; width: 25px; text-align: center; }
         .nav-item:hover { background: rgba(255,255,255,0.05); color: var(--text-main); border-color: rgba(255,255,255,0.1); }
         .nav-item.active { border-left: 4px solid var(--accent-blue); background: linear-gradient(90deg, rgba(59,130,246,0.1), transparent); color: var(--text-main); }
+        .nav-item.admin { color: var(--accent-gold); border: 1px solid rgba(251,191,36,0.3); background: rgba(251,191,36,0.05); }
+        .nav-item.admin.active { background: linear-gradient(90deg, rgba(251,191,36,0.15), transparent); border-left: 4px solid var(--accent-gold); }
 
-        /* ================= СЕКЦИИ ================= */
         .section { display: none; padding: 20px; max-width: 800px; margin: 0 auto; width: 100%; }
         .section.active { display: block; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
         .section-title { font-size: 20px; font-weight: 900; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* ================= КЕЙСЫ ================= */
+        /* Event banner */
+        .event-banner {
+            display: flex; align-items: center; gap: 12px;
+            padding: 14px 16px; border-radius: 15px; margin-bottom: 12px;
+            border: 2px solid var(--accent-gold);
+            position: relative; overflow: hidden;
+            animation: eventPulse 2s infinite;
+        }
+        .event-banner::before {
+            content: ''; position: absolute; inset: 0;
+            background: currentColor; opacity: 0.1; z-index: 0;
+        }
+        .event-banner > * { position: relative; z-index: 1; }
+        .event-banner.event-miniboost { color: #22c55e; border-color: #22c55e; }
+        .event-banner.event-gold      { color: #fbbf24; border-color: #fbbf24; }
+        .event-banner.event-diamond   { color: #06b6d4; border-color: #06b6d4; }
+        .event-banner.event-bloody    { color: #dc2626; border-color: #dc2626; }
+        @keyframes eventPulse {
+            0%, 100% { box-shadow: 0 0 20px -8px currentColor; }
+            50%      { box-shadow: 0 0 30px 0 currentColor; }
+        }
+        .event-icon {
+            font-size: 28px; width: 40px; height: 40px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.3); flex-shrink: 0;
+        }
+        .event-info { flex: 1; }
+        .event-name { font-size: 15px; font-weight: 900; }
+        .event-sub { font-size: 11px; opacity: 0.8; margin-top: 2px; }
+        .event-mult-badge {
+            background: currentColor; color: #000;
+            font-size: 15px; font-weight: 900; padding: 4px 10px; border-radius: 8px;
+            flex-shrink: 0;
+        }
+
+        /* Poll banner */
+        .poll-banner {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 15px; padding: 15px; margin-bottom: 15px;
+        }
+        .poll-question {
+            font-size: 14px; font-weight: 800; margin-bottom: 12px;
+            display: flex; align-items: flex-start; gap: 8px;
+        }
+        .poll-question i { color: var(--accent-blue); margin-top: 2px; }
+        .poll-options { display: flex; flex-direction: column; gap: 7px; }
+        .poll-option {
+            background: var(--bg-input); border: 1px solid var(--border);
+            border-radius: 10px; padding: 11px 14px; cursor: pointer;
+            position: relative; overflow: hidden; transition: 0.2s;
+            text-align: left; color: var(--text-main); font-size: 13px; font-weight: 600;
+            width: 100%; font-family: inherit;
+        }
+        .poll-option:hover:not(.voted) { border-color: var(--accent-blue); }
+        .poll-option-bar {
+            position: absolute; top: 0; left: 0; height: 100%;
+            background: rgba(59, 130, 246, 0.18); z-index: 0; transition: width 0.5s;
+        }
+        .poll-option-content {
+            display: flex; justify-content: space-between; gap: 8px;
+            position: relative; z-index: 1;
+        }
+        .poll-option.voted { cursor: default; }
+        .poll-option.my-vote { border-color: var(--accent-gold); }
+        .poll-option.my-vote .poll-option-bar { background: rgba(251, 191, 36, 0.25); }
+        .poll-option.my-vote .poll-option-content > span:first-child { color: var(--accent-gold); }
+        .poll-meta {
+            font-size: 11px; color: var(--text-muted); margin-top: 10px;
+            text-align: center; font-weight: 600;
+        }
+
+        /* Case cards event */
+        .case-card.event-boosted { transition: 0.3s; }
+        .case-card.event-miniboost.event-boosted { border-color: #22c55e; box-shadow: 0 0 15px rgba(34, 197, 94, 0.35); }
+        .case-card.event-gold.event-boosted      { border-color: #fbbf24; box-shadow: 0 0 15px rgba(251, 191, 36, 0.35); }
+        .case-card.event-diamond.event-boosted   { border-color: #06b6d4; box-shadow: 0 0 15px rgba(6, 182, 212, 0.35); }
+        .case-card.event-bloody.event-boosted    { border-color: #dc2626; box-shadow: 0 0 15px rgba(220, 38, 38, 0.35); }
+
         .case-category { margin-bottom: 25px; }
         .case-category-title { font-size: 14px; font-weight: 900; color: var(--text-muted); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 1.5px; }
         .case-category-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
@@ -88,7 +158,6 @@
         .case-price { font-size: 13px; color: var(--accent-gold); font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 4px; }
         .case-card.locked { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
 
-        /* ================= ОТКРЫТИЕ КЕЙСА ================= */
         #section-case-opening { padding-bottom: 20px; }
         .case-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
         .back-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-main); padding: 10px 15px; border-radius: 12px; font-size: 15px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px; font-weight: 700; }
@@ -116,128 +185,29 @@
         .loot-preview-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 15px; }
         .loot-preview-title { font-size: 13px; font-weight: 800; color: var(--text-muted); margin-bottom: 15px; text-align: center; text-transform: uppercase; letter-spacing: 1px; }
         .loot-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 10px; }
-        .loot-card { background: #1c1f2b; border: 1px solid var(--border); border-radius: 12px; padding: 10px 5px; text-align: center; }
+        .loot-card { background: #1c1f2b; border: 1px solid var(--border); border-radius: 12px; padding: 10px 5px; text-align: center; position: relative; }
         .loot-card img { width: 45px; height: 45px; object-fit: contain; margin-bottom: 5px; }
         .loot-card .name { font-size: 10px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .loot-card .coin { font-size: 30px; color: var(--accent-gold); margin-bottom: 5px; }
+        .loot-price { font-size: 10px; color: var(--accent-gold); font-weight: 800; margin-top: 3px; display: flex; align-items: center; justify-content: center; gap: 3px; }
+        .loot-price i { font-size: 9px; }
 
-        /* ================= АПГРЕЙД: КОЛЕСО + СТРЕЛКА ================= */
+        /* UPGRADE WHEEL */
         .upg-container { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 20px 15px; }
-
-        .upg-wheel-section {
-            position: relative;
-            width: 280px;
-            height: 280px;
-            margin: 0 auto 20px;
-        }
-        .upg-wheel-disc {
-            position: absolute;
-            inset: 0;
-            border-radius: 50%;
-            border: 4px solid var(--accent-gold);
-            box-shadow:
-                0 0 30px rgba(251,191,36,0.3),
-                inset 0 0 30px rgba(0,0,0,0.9);
-            overflow: hidden;
-            background: #1c1f2b;
-        }
-        .upg-wheel-icon {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 40px;
-            height: 40px;
-            margin: -20px 0 0 -20px;
-            transform-origin: center center;
-            display: none;
-            z-index: 2;
-            pointer-events: none;
-        }
-        .upg-wheel-icon img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            filter: drop-shadow(0 0 8px rgba(251,191,36,0.9));
-        }
-        .upg-wheel-icon .emoji {
-            font-size: 30px;
-            line-height: 40px;
-            text-align: center;
-            display: block;
-            filter: drop-shadow(0 0 8px rgba(251,191,36,0.9));
-        }
-        .upg-wheel-pointer-rotator {
-            position: absolute;
-            inset: 0;
-            z-index: 4;
-            pointer-events: none;
-            will-change: transform;
-            transform: rotate(0deg);
-            transform-origin: center center;
-        }
-        .upg-wheel-pointer-tip {
-            position: absolute;
-            top: -2px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 10px solid transparent;
-            border-right: 10px solid transparent;
-            border-bottom: 16px solid var(--accent-gold);
-            filter: drop-shadow(0 0 10px rgba(251,191,36,0.9));
-        }
-        .upg-wheel-pointer-needle {
-            position: absolute;
-            top: 14px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 3px;
-            height: calc(50% - 14px);
-            background: linear-gradient(to bottom, var(--accent-gold) 0%, rgba(251,191,36,0.6) 70%, rgba(251,191,36,0.1) 100%);
-            border-radius: 2px;
-        }
-        .upg-wheel-center {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 88px;
-            height: 88px;
-            border-radius: 50%;
-            background: #1c1f2b;
-            border: 3px solid var(--accent-gold);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 5;
-            box-shadow:
-                0 0 20px rgba(0,0,0,0.9),
-                0 0 15px rgba(251,191,36,0.4);
-            text-align: center;
-            padding: 5px;
-        }
-        .upg-wheel-center .title {
-            font-size: 8px;
-            color: var(--text-muted);
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .upg-wheel-center .val {
-            font-size: 22px;
-            font-weight: 900;
-            color: var(--accent-gold);
-            line-height: 1;
-            margin-top: 3px;
-            transition: color 0.3s;
-        }
-
+        .upg-wheel-section { position: relative; width: 280px; height: 280px; margin: 0 auto 20px; }
+        .upg-wheel-disc { position: absolute; inset: 0; border-radius: 50%; border: 4px solid var(--accent-gold); box-shadow: 0 0 30px rgba(251,191,36,0.3), inset 0 0 30px rgba(0,0,0,0.9); overflow: hidden; background: #1c1f2b; }
+        .upg-wheel-icon { position: absolute; top: 50%; left: 50%; width: 40px; height: 40px; margin: -20px 0 0 -20px; transform-origin: center center; display: none; z-index: 2; pointer-events: none; }
+        .upg-wheel-icon img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 0 8px rgba(251,191,36,0.9)); }
+        .upg-wheel-icon .emoji { font-size: 30px; line-height: 40px; text-align: center; display: block; filter: drop-shadow(0 0 8px rgba(251,191,36,0.9)); }
+        .upg-wheel-pointer-rotator { position: absolute; inset: 0; z-index: 4; pointer-events: none; will-change: transform; transform: rotate(0deg); transform-origin: center center; }
+        .upg-wheel-pointer-tip { position: absolute; top: -2px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-bottom: 16px solid var(--accent-gold); filter: drop-shadow(0 0 10px rgba(251,191,36,0.9)); }
+        .upg-wheel-pointer-needle { position: absolute; top: 14px; left: 50%; transform: translateX(-50%); width: 3px; height: calc(50% - 14px); background: linear-gradient(to bottom, var(--accent-gold) 0%, rgba(251,191,36,0.6) 70%, rgba(251,191,36,0.1) 100%); border-radius: 2px; }
+        .upg-wheel-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 88px; height: 88px; border-radius: 50%; background: #1c1f2b; border: 3px solid var(--accent-gold); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 5; box-shadow: 0 0 20px rgba(0,0,0,0.9), 0 0 15px rgba(251,191,36,0.4); text-align: center; padding: 5px; }
+        .upg-wheel-center .title { font-size: 8px; color: var(--text-muted); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+        .upg-wheel-center .val { font-size: 22px; font-weight: 900; color: var(--accent-gold); line-height: 1; margin-top: 3px; transition: color 0.3s; }
         .upg-quick-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 15px; }
         .upg-quick-btns .btn { padding: 10px; font-size: 13px; background: rgba(59, 130, 246, 0.1); color: var(--accent-blue); border: 1px solid rgba(59, 130, 246, 0.3); box-shadow: none; }
         .upg-quick-btns .btn:hover { background: rgba(59, 130, 246, 0.2); }
-
         .upg-slots-row { display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 18px; }
         .upg-square-box { flex: 1; aspect-ratio: 1 / 1; background: var(--bg-input); border: 2px dashed var(--border); border-radius: 15px; display: flex; flex-wrap: wrap; align-content: center; justify-content: center; gap: 5px; padding: 10px; cursor: pointer; position: relative; overflow: hidden; transition: 0.2s; min-height: 140px; }
         .upg-square-box:hover { border-color: var(--accent-blue); background: rgba(59,130,246,0.03); }
@@ -252,15 +222,13 @@
         .upg-square-box .target-preview img { width: 60px; height: 60px; object-fit: contain; }
         .upg-square-box .target-preview .emoji { font-size: 40px; }
         .upg-square-box .target-preview .name { font-size: 11px; font-weight: 800; text-align: center; padding: 0 4px; }
-
         .upg-sum { text-align: center; font-size: 13px; color: var(--text-muted); margin-bottom: 10px; font-weight: 700; }
         .upg-sum b { color: var(--accent-gold); }
-
         .btn-upgrade-action { width: 100%; padding: 16px; border-radius: 15px; background: linear-gradient(135deg, var(--accent-gold), #b45309); color: #000; font-size: 17px; font-weight: 900; border: none; cursor: pointer; box-shadow: 0 5px 20px rgba(251, 191, 36, 0.4); transition: transform 0.2s; }
         .btn-upgrade-action:active:not(:disabled) { transform: scale(0.97); }
         .btn-upgrade-action:disabled { background: #272a35; color: #555; box-shadow: none; cursor: not-allowed; }
 
-        /* ================= COINFLIP ================= */
+        /* COINFLIP */
         .coinflip-container { text-align: center; background: var(--bg-card); border: 1px solid var(--border); border-radius: 15px; padding: 20px; }
         .coin-display { width: 110px; height: 110px; margin: 0 auto 20px; background: linear-gradient(135deg, #fbbf24, #d97706); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 50px; color: #000; box-shadow: 0 0 25px rgba(251, 191, 36, 0.5); transition: transform 0.1s; user-select: none; }
         .coin-display.spin { animation: spinCoin 1.1s ease-in-out; }
@@ -271,7 +239,7 @@
         .choice-btn { flex: 1; padding: 12px; border-radius: 10px; background: #1c1f2b; border: 2px solid var(--border); color: var(--text-muted); font-weight: 800; font-size: 14px; cursor: pointer; transition: 0.2s; }
         .choice-btn.active { background: rgba(59, 130, 246, 0.2); border-color: var(--accent-blue); color: var(--accent-blue); }
 
-        /* ================= ДОНАТ / ПРОМО ================= */
+        /* DONATE */
         .donate-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 25px; }
         .donate-card { background: var(--bg-card); border: 2px solid var(--border); border-radius: 15px; padding: 15px 10px; text-align: center; cursor: pointer; position: relative; transition: 0.2s; }
         .donate-card:hover { border-color: var(--accent-gold); transform: translateY(-2px); }
@@ -283,7 +251,7 @@
         .promo-input { width: 100%; background: var(--bg-input); border: 1px solid var(--border); border-radius: 10px; padding: 12px; color: var(--text-main); font-size: 16px; text-align: center; font-weight: 800; letter-spacing: 1px; margin-bottom: 12px; text-transform: uppercase; outline: none; }
         .promo-input:focus { border-color: var(--accent-blue); }
 
-        /* ================= ПРОФИЛЬ ================= */
+        /* PROFILE */
         .profile-banner { background: linear-gradient(135deg, #1e2235, #11131c); border: 1px solid var(--border); border-radius: 20px; padding: 25px 20px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-bottom: 20px; position: relative; overflow: hidden; }
         .profile-banner::before { content: ''; position: absolute; top: -50px; left: 50%; transform: translateX(-50%); width: 200px; height: 200px; background: var(--accent-blue); filter: blur(80px); opacity: 0.3; border-radius: 50%; }
         .profile-avatar-big { width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 12px; background: var(--accent-blue); border: 4px solid var(--accent-gold); display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: bold; box-shadow: var(--glow-gold); position: relative; z-index: 2; overflow: hidden; }
@@ -295,7 +263,7 @@
         .stat-box__val { font-size: 18px; font-weight: 900; color: var(--text-main); }
         .stat-box__lbl { font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; margin-top: 5px; }
 
-        /* ================= ИНВЕНТАРЬ ================= */
+        /* INVENTORY */
         .inv-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
         .inv-item { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 8px; text-align: center; cursor: pointer; position: relative; transition: 0.2s; }
         .inv-item:hover { transform: translateY(-2px); }
@@ -306,7 +274,7 @@
         .sell-btn:hover { background: rgba(239, 68, 68, 0.3); }
         .inv-item.selected { background: rgba(59,130,246,0.1); border-color: var(--accent-blue) !important; }
 
-        /* ================= КНОПКИ И МОДАЛКИ ================= */
+        /* BUTTONS & MODALS */
         .btn { width: 100%; padding: 14px; border-radius: 12px; border: none; font-size: 15px; font-weight: 900; cursor: pointer; transition: 0.2s; background: linear-gradient(135deg, var(--accent-blue), #1e3a8a); color: #fff; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); }
         .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6); }
         .btn:active:not(:disabled) { transform: scale(0.97); }
@@ -314,6 +282,8 @@
         .btn.gold { background: linear-gradient(135deg, var(--accent-gold), #b45309); color: #000; box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4); }
         .btn.gold:hover { box-shadow: 0 6px 20px rgba(251, 191, 36, 0.6); }
         .btn.red { background: linear-gradient(135deg, var(--accent-red), #991b1b); box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4); }
+        .btn.green { background: linear-gradient(135deg, var(--accent-green), #047857); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4); }
+        .btn.small { padding: 8px 14px; font-size: 12px; width: auto; }
 
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 200; display: none; align-items: center; justify-content: center; padding: 15px; }
         .modal.active { display: flex; animation: fadeIn 0.2s; }
@@ -353,6 +323,67 @@
         .toggle.on { background: var(--accent-green); }
         .toggle.on::after { left: 25px; }
 
+        /* ADMIN PANEL */
+        .admin-tabs { display: flex; gap: 6px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 4px; }
+        .admin-tabs::-webkit-scrollbar { height: 3px; }
+        .admin-tabs::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+        .admin-tab { padding: 9px 14px; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-muted); border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; transition: 0.2s; font-family: inherit; }
+        .admin-tab.active { background: var(--accent-blue); color: #fff; border-color: var(--accent-blue); }
+        .admin-panel { display: none; }
+        .admin-panel.active { display: block; }
+
+        .admin-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 15px; padding: 15px; margin-bottom: 12px; }
+        .admin-card-title { font-size: 13px; font-weight: 900; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); }
+
+        .admin-event-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px; }
+        .admin-event-card { background: var(--bg-card); border: 2px solid var(--border); border-radius: 15px; padding: 15px; text-align: center; }
+        .admin-event-card[data-type="miniboost"] { border-color: #22c55e; }
+        .admin-event-card[data-type="gold"]      { border-color: #fbbf24; }
+        .admin-event-card[data-type="diamond"]   { border-color: #06b6d4; }
+        .admin-event-card[data-type="bloody"]    { border-color: #dc2626; }
+        .admin-event-card .name { font-size: 15px; font-weight: 900; margin-bottom: 4px; }
+        .admin-event-card .mult { font-size: 22px; font-weight: 900; margin-bottom: 10px; }
+        .admin-event-card[data-type="miniboost"] .mult { color: #22c55e; }
+        .admin-event-card[data-type="gold"] .mult      { color: #fbbf24; }
+        .admin-event-card[data-type="diamond"] .mult   { color: #06b6d4; }
+        .admin-event-card[data-type="bloody"] .mult    { color: #dc2626; }
+
+        .admin-form input,
+        .admin-form select,
+        .admin-form textarea {
+            width: 100%;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px;
+            color: var(--text-main);
+            font-size: 14px;
+            margin-bottom: 10px;
+            outline: none;
+            font-family: inherit;
+            resize: vertical;
+        }
+        .admin-form input:focus,
+        .admin-form select:focus,
+        .admin-form textarea:focus { border-color: var(--accent-blue); }
+        .admin-form label { display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px; font-weight: 700; text-transform: uppercase; }
+
+        .admin-current-event {
+            background: var(--bg-input); border: 1px solid var(--border);
+            border-radius: 12px; padding: 12px; margin-bottom: 12px; font-size: 13px;
+        }
+
+        .admin-stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 15px; }
+        .admin-stat-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 12px; text-align: center; }
+        .admin-stat-box .v { font-size: 20px; font-weight: 900; color: var(--accent-gold); }
+        .admin-stat-box .l { font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; margin-top: 4px; }
+
+        .admin-drop-row { display: flex; align-items: center; gap: 10px; padding: 8px; background: var(--bg-input); border-radius: 10px; margin-bottom: 6px; font-size: 12px; }
+        .admin-drop-row img { width: 32px; height: 32px; object-fit: contain; }
+        .admin-drop-row .meta { flex: 1; }
+        .admin-drop-row .nick { font-weight: 800; }
+        .admin-drop-row .item { color: var(--text-muted); font-size: 11px; }
+
         @media (max-width: 400px) {
             .section { padding: 15px; }
             .case-open-visual { height: 180px; }
@@ -366,7 +397,6 @@
 </head>
 <body>
 
-<!-- ВЕРХНЯЯ ПАНЕЛЬ -->
 <div class="top-bar">
     <div class="top-bar-left">
         <button class="menu-btn" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></button>
@@ -380,7 +410,6 @@
     </div>
 </div>
 
-<!-- БОКОВОЕ МЕНЮ -->
 <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleMenu()"></div>
 <div class="sidebar" id="sidebar">
     <div class="sidebar-header" onclick="switchTab('profile')">
@@ -395,18 +424,20 @@
         <div class="nav-item" data-tab="upgrader" onclick="switchTab('upgrader')"><i class="fa-solid fa-bolt"></i> Апгрейд</div>
         <div class="nav-item" data-tab="coinflip" onclick="switchTab('coinflip')"><i class="fa-solid fa-coins"></i> Монетка</div>
         <div class="nav-item" data-tab="donate" onclick="switchTab('donate')"><i class="fa-solid fa-star"></i> Пополнение</div>
-        <div class="nav-item" data-tab="profile" onclick="switchTab('profile')"><i class="fa-solid fa-user"></i> Профиль</div>
+        <div class="nav-item admin" data-tab="admin" id="nav-admin" style="display:none;" onclick="switchTab('admin')"><i class="fa-solid fa-shield-halved"></i> Админ</div>
     </div>
 </div>
 
-<!-- СЕКЦИЯ: КЕЙСЫ -->
+<!-- CASES -->
 <div id="section-cases" class="section active">
     <h2 class="section-title">Кейсы</h2>
+    <div class="event-banner" id="event-banner" style="display:none;"></div>
+    <div class="poll-banner" id="poll-banner" style="display:none;"></div>
 
     <div class="case-category">
         <div class="case-category-title">Free Cases</div>
         <div class="cases-grid">
-            <div class="case-card" onclick="openCaseSection('free')">
+            <div class="case-card" data-case="free" onclick="openCaseSection('free')">
                 <div class="case-img-wrap">
                     <img src="assets/cases/free.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                     <span class="emoji-fallback" style="display:none;">🎁</span>
@@ -414,7 +445,7 @@
                 <div class="case-title">Ежедневный</div>
                 <div class="case-price" id="free-timer-text">БЕСПЛАТНО</div>
             </div>
-            <div class="case-card" id="user-case-card" onclick="openCaseSection('user')">
+            <div class="case-card" data-case="user" id="user-case-card" onclick="openCaseSection('user')">
                 <div class="case-img-wrap">
                     <img src="assets/cases/user.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                     <span class="emoji-fallback" style="display:none;">👤</span>
@@ -428,7 +459,7 @@
     <div class="case-category">
         <div class="case-category-title">All In</div>
         <div class="cases-grid">
-            <div class="case-card" onclick="openCaseSection('allin')">
+            <div class="case-card" data-case="allin" onclick="openCaseSection('allin')">
                 <div class="case-img-wrap">
                     <img src="assets/cases/allin.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                     <span class="emoji-fallback" style="display:none;">🎰</span>
@@ -442,7 +473,7 @@
     <div class="case-category">
         <div class="case-category-title">Standard</div>
         <div class="cases-grid">
-            <div class="case-card" onclick="openCaseSection('base')">
+            <div class="case-card" data-case="base" onclick="openCaseSection('base')">
                 <div class="case-img-wrap">
                     <img src="assets/cases/base.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                     <span class="emoji-fallback" style="display:none;">📦</span>
@@ -450,7 +481,7 @@
                 <div class="case-title">Начальный</div>
                 <div class="case-price"><i class="fa-solid fa-coins"></i> 9</div>
             </div>
-            <div class="case-card" onclick="openCaseSection('bro')">
+            <div class="case-card" data-case="bro" onclick="openCaseSection('bro')">
                 <div class="case-img-wrap">
                     <img src="assets/cases/bro.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                     <span class="emoji-fallback" style="display:none;">💎</span>
@@ -462,7 +493,7 @@
     </div>
 </div>
 
-<!-- СЕКЦИЯ: ОТКРЫТИЕ КЕЙСА -->
+<!-- CASE OPENING -->
 <div id="section-case-opening" class="section">
     <div class="case-header">
         <button class="back-btn" onclick="exitCaseOpening()"><i class="fa-solid fa-arrow-left"></i> Назад</button>
@@ -491,11 +522,10 @@
     </div>
 </div>
 
-<!-- СЕКЦИЯ: АПГРЕЙД -->
+<!-- UPGRADER -->
 <div id="section-upgrader" class="section">
     <h2 class="section-title">Апгрейд</h2>
     <div class="upg-container">
-
         <div class="upg-wheel-section">
             <div class="upg-wheel-disc" id="upg-wheel-disc">
                 <div class="upg-wheel-icon" id="upg-wheel-icon"></div>
@@ -509,7 +539,6 @@
                 <div class="val" id="upg-chance-val">0%</div>
             </div>
         </div>
-
         <div class="upg-quick-btns">
             <button class="btn" onclick="autoSelect('x2')">x2</button>
             <button class="btn" onclick="autoSelect('x4')">x4</button>
@@ -518,7 +547,6 @@
             <button class="btn" onclick="autoSelect('50')">50%</button>
             <button class="btn" onclick="autoSelect('25')">25%</button>
         </div>
-
         <div class="upg-slots-row">
             <div class="upg-square-box" id="upg-input-box" onclick="openInvPicker()">
                 <div class="placeholder">+ Ваши предметы</div>
@@ -527,14 +555,12 @@
                 <i class="fa-solid fa-bullseye" style="font-size:30px; color:var(--text-muted);"></i>
             </div>
         </div>
-
         <div class="upg-sum" id="upg-sum">Сумма: <b>0</b> монет</div>
-
         <button class="btn-upgrade-action" id="btn-upg" onclick="runUpgrade()" disabled>ПРОКАЧАТЬ</button>
     </div>
 </div>
 
-<!-- СЕКЦИЯ: МОНЕТКА -->
+<!-- COINFLIP -->
 <div id="section-coinflip" class="section">
     <h2 class="section-title">Монетка</h2>
     <div class="coinflip-container">
@@ -548,7 +574,7 @@
     </div>
 </div>
 
-<!-- СЕКЦИЯ: ДОНАТ -->
+<!-- DONATE -->
 <div id="section-donate" class="section">
     <h2 class="section-title">Пополнение</h2>
     <div class="donate-grid" id="donate-grid"></div>
@@ -559,7 +585,7 @@
     </div>
 </div>
 
-<!-- СЕКЦИЯ: ПРОФИЛЬ -->
+<!-- PROFILE -->
 <div id="section-profile" class="section">
     <div class="profile-banner">
         <div class="profile-avatar-big" id="p-avatar">?</div>
@@ -581,7 +607,124 @@
     </div>
 </div>
 
-<!-- МОДАЛКИ -->
+<!-- ADMIN -->
+<div id="section-admin" class="section">
+    <h2 class="section-title"><i class="fa-solid fa-shield-halved" style="color:var(--accent-gold);"></i> Админ-панель</h2>
+
+    <div class="admin-tabs">
+        <button class="admin-tab active" onclick="adminTab('events')"><i class="fa-solid fa-wand-magic-sparkles"></i> Ивенты</button>
+        <button class="admin-tab" onclick="adminTab('promo')"><i class="fa-solid fa-ticket"></i> Промо</button>
+        <button class="admin-tab" onclick="adminTab('give')"><i class="fa-solid fa-gift"></i> Выдать</button>
+        <button class="admin-tab" onclick="adminTab('poll')"><i class="fa-solid fa-chart-simple"></i> Опрос</button>
+        <button class="admin-tab" onclick="adminTab('stats')"><i class="fa-solid fa-chart-line"></i> Статы</button>
+    </div>
+
+    <!-- EVENTS -->
+    <div class="admin-panel active" data-panel="events">
+        <div class="admin-card">
+            <div class="admin-card-title">Активный ивент</div>
+            <div id="admin-current-event">—</div>
+            <button class="btn red small" style="margin-top:10px;" onclick="adminStopEvent()">Остановить ивент</button>
+        </div>
+        <div class="admin-card">
+            <div class="admin-card-title">Запустить ивент</div>
+            <div class="admin-form">
+                <label>Длительность (минуты)</label>
+                <input type="number" id="admin-event-duration" value="60" min="1" max="10080">
+            </div>
+            <div class="admin-event-grid">
+                <div class="admin-event-card" data-type="miniboost">
+                    <div class="name">Минибуст</div>
+                    <div class="mult">1.5x</div>
+                    <button class="btn small" style="background:linear-gradient(135deg,#22c55e,#15803d);" onclick="adminStartEvent('miniboost')">Запустить</button>
+                </div>
+                <div class="admin-event-card" data-type="gold">
+                    <div class="name">Голд</div>
+                    <div class="mult">2x</div>
+                    <button class="btn small gold" onclick="adminStartEvent('gold')">Запустить</button>
+                </div>
+                <div class="admin-event-card" data-type="diamond">
+                    <div class="name">Алмаз</div>
+                    <div class="mult">3x</div>
+                    <button class="btn small" style="background:linear-gradient(135deg,#06b6d4,#0e7490);" onclick="adminStartEvent('diamond')">Запустить</button>
+                </div>
+                <div class="admin-event-card" data-type="bloody">
+                    <div class="name">Кровавый</div>
+                    <div class="mult">4x</div>
+                    <button class="btn small red" onclick="adminStartEvent('bloody')">Запустить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PROMO -->
+    <div class="admin-panel" data-panel="promo">
+        <div class="admin-card">
+            <div class="admin-card-title">Создать промокод</div>
+            <div class="admin-form">
+                <label>Код (2-32 символа, буквы/цифры/_/-)</label>
+                <input type="text" id="admin-promo-code" placeholder="WELCOME2025" style="text-transform:uppercase;">
+                <label>Награда (монет)</label>
+                <input type="number" id="admin-promo-reward" value="100" min="1" max="1000000">
+                <label>Максимум использований</label>
+                <input type="number" id="admin-promo-max" value="100" min="1" max="1000000">
+                <button class="btn" onclick="adminCreatePromo()">Создать промокод</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- GIVE -->
+    <div class="admin-panel" data-panel="give">
+        <div class="admin-card">
+            <div class="admin-card-title">Выдать монеты / предмет</div>
+            <div class="admin-form">
+                <label>Telegram ID получателя</label>
+                <input type="text" id="admin-give-user" placeholder="123456789">
+                <label>Монет (0 если не выдавать)</label>
+                <input type="number" id="admin-give-coins" value="0" min="0" max="10000000">
+                <label>Предмет (не обязательно)</label>
+                <select id="admin-give-item">
+                    <option value="">— не выдавать предмет —</option>
+                </select>
+                <button class="btn gold" onclick="adminGive()">Выдать</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- POLL -->
+    <div class="admin-panel" data-panel="poll">
+        <div class="admin-card">
+            <div class="admin-card-title">Создать опрос</div>
+            <div class="admin-form">
+                <label>Вопрос</label>
+                <input type="text" id="admin-poll-question" placeholder="Какой кейс лучше?">
+                <label>Варианты (2-6)</label>
+                <div id="admin-poll-options">
+                    <input type="text" class="poll-option-input" placeholder="Вариант 1">
+                    <input type="text" class="poll-option-input" placeholder="Вариант 2">
+                </div>
+                <button class="btn" style="background:rgba(59,130,246,0.15); color:var(--accent-blue); box-shadow:none; margin-bottom:10px;" onclick="adminAddPollOption()">+ Добавить вариант</button>
+                <label>Длительность (минуты, 0 = бессрочно)</label>
+                <input type="number" id="admin-poll-duration" value="0" min="0" max="43200">
+                <button class="btn" onclick="adminCreatePoll()">Создать опрос</button>
+            </div>
+        </div>
+        <div class="admin-card">
+            <div class="admin-card-title">Активный опрос</div>
+            <div id="admin-current-poll">—</div>
+            <button class="btn red small" style="margin-top:10px;" onclick="adminEndPoll()">Завершить опрос</button>
+        </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="admin-panel" data-panel="stats">
+        <div id="admin-stats-content">
+            <div style="text-align:center; padding:20px; color:var(--text-muted);">Загрузка...</div>
+        </div>
+    </div>
+</div>
+
+<!-- MODALS -->
 <div class="modal" id="inv-picker-modal" onclick="if(event.target===this) closeInvPicker()">
     <div class="modal-box">
         <span class="close-modal" onclick="closeInvPicker()">&times;</span>
@@ -621,7 +764,7 @@
             <div class="settings-label"><i class="fa-solid fa-mobile-screen"></i> Вибрация</div>
             <div class="toggle" id="toggle-haptic" onclick="toggleHaptic()"></div>
         </div>
-        <div style="margin-top:20px; font-size:11px; color:var(--text-muted); text-align:center;">Brainrots Funny v2.0</div>
+        <div style="margin-top:20px; font-size:11px; color:var(--text-muted); text-align:center;">Brainrots Funny v2.1</div>
     </div>
 </div>
 
@@ -650,7 +793,7 @@
     });
 </script>
 
-<!-- ОСНОВНОЙ СКРИПТ -->
+<!-- MAIN SCRIPT -->
 <script>
 (function() {
     'use strict';
@@ -663,6 +806,7 @@
     const MAX_UPG_INPUTS = 5;
     const CASE_ITEM_WIDTH = 130;
     const WIN_INDEX_CASES = 25;
+    const ADMIN_IDS = [6636765626, 8364667153];
 
     const RARITIES = {
         common:    { id: 'common',    name: 'Common',    color: '#6b7280' },
@@ -670,6 +814,13 @@
         rare:      { id: 'rare',      name: 'Rare',      color: '#3b82f6' },
         epic:      { id: 'epic',      name: 'Epic',      color: '#a855f7' },
         legendary: { id: 'legendary', name: 'Legendary', color: '#f59e0b' }
+    };
+
+    const EVENT_TYPES = {
+        miniboost: { name: 'Минибуст', multiplier: 1.5, color: '#22c55e', icon: 'fa-bolt' },
+        gold:      { name: 'Голд',     multiplier: 2,   color: '#fbbf24', icon: 'fa-star' },
+        diamond:   { name: 'Алмаз',    multiplier: 3,   color: '#06b6d4', icon: 'fa-gem' },
+        bloody:    { name: 'Кровавый', multiplier: 4,   color: '#dc2626', icon: 'fa-fire' }
     };
 
     const STARS_PACKAGES = [
@@ -718,6 +869,7 @@
         }
     }
     const MY_ID = tgUser?.id;
+    const IS_ADMIN = MY_ID && ADMIN_IDS.includes(Number(MY_ID));
 
     let state = {
         balance: 0, inventory: {}, lastFree: 0, lastUser: 0, hasUserCase: false,
@@ -727,6 +879,8 @@
     let activeCase = null, mult = 1, isOpening = false;
     let upgInputs = [], upgTarget = null, isUpgrading = false;
     let cfChoice = 'heads', isCfPlaying = false;
+    let currentEvent = null;
+    let currentPoll = null;
 
     let soundEnabled = localStorage.getItem('bf_sound') !== '0';
     let hapticEnabled = localStorage.getItem('bf_haptic') !== '0';
@@ -736,7 +890,7 @@
     }
     function formatNum(n) { return Number(n).toLocaleString('ru-RU'); }
 
-    // ================= ЗВУКИ =================
+    // SOUNDS
     let audioCtx = null;
     function getCtx() {
         if (!audioCtx) {
@@ -868,6 +1022,8 @@
         if (document.getElementById('sidebar').classList.contains('active')) toggleMenu();
         window.scrollTo(0, 0);
         haptic('light');
+
+        if (tabId === 'admin') loadAdminStats();
     }
 
     function openSettings() { document.getElementById('settings-modal').classList.add('active'); haptic('light'); }
@@ -887,6 +1043,119 @@
         localStorage.setItem('bf_haptic', hapticEnabled ? '1' : '0');
         document.getElementById('toggle-haptic').classList.toggle('on', hapticEnabled);
         if (hapticEnabled) haptic('medium');
+    }
+
+    // ================= EVENT BANNER =================
+    function renderEventBanner() {
+        const banner = document.getElementById('event-banner');
+        if (!banner) return;
+        if (!currentEvent || currentEvent.endsAt <= Date.now()) {
+            banner.style.display = 'none';
+            return;
+        }
+        const ev = EVENT_TYPES[currentEvent.type] || {};
+        const mult = currentEvent.multiplier || ev.multiplier || 1;
+        banner.className = 'event-banner event-' + currentEvent.type;
+        banner.style.display = 'flex';
+        banner.innerHTML = `
+            <div class="event-icon"><i class="fa-solid ${currentEvent.icon || ev.icon || 'fa-star'}"></i></div>
+            <div class="event-info">
+                <div class="event-name">Ивент «${escapeHtml(currentEvent.name)}»</div>
+                <div class="event-sub" id="event-time-remaining">удача x${mult}</div>
+            </div>
+            <div class="event-mult-badge">x${mult}</div>
+        `;
+        updateEventCountdown();
+    }
+
+    function updateEventCountdown() {
+        if (!currentEvent) return;
+        const el = document.getElementById('event-time-remaining');
+        if (!el) return;
+        const rem = currentEvent.endsAt - Date.now();
+        if (rem <= 0) {
+            currentEvent = null;
+            renderEventBanner();
+            applyEventToCases();
+            return;
+        }
+        el.textContent = `Удача x${currentEvent.multiplier} • осталось ${formatRemaining(rem)}`;
+    }
+
+    function applyEventToCases() {
+        document.querySelectorAll('.case-card').forEach(card => {
+            card.classList.remove('event-boosted', 'event-miniboost', 'event-gold', 'event-diamond', 'event-bloody');
+            if (currentEvent && currentEvent.endsAt > Date.now()) {
+                card.classList.add('event-boosted', 'event-' + currentEvent.type);
+            }
+        });
+    }
+
+    // ================= POLL BANNER =================
+    function renderPollBanner() {
+        const el = document.getElementById('poll-banner');
+        if (!el) return;
+        if (!currentPoll) {
+            el.style.display = 'none';
+            return;
+        }
+        const hasVoted = typeof currentPoll.myVote === 'number';
+        const total = currentPoll.totalVotes || 0;
+
+        const optionsHtml = (currentPoll.options || []).map((opt, i) => {
+            const pct = total > 0 ? (opt.votes / total * 100) : 0;
+            const isMy = hasVoted && i === currentPoll.myVote;
+            return `<button class="poll-option ${hasVoted ? 'voted' : ''} ${isMy ? 'my-vote' : ''}"
+                        ${hasVoted ? 'disabled' : `onclick="votePoll(${i})"`}>
+                <div class="poll-option-bar" style="width:${hasVoted ? pct : 0}%;"></div>
+                <div class="poll-option-content">
+                    <span>${escapeHtml(opt.text)}${isMy ? ' ✓' : ''}</span>
+                    ${hasVoted ? `<span style="font-weight:800;">${pct.toFixed(0)}%</span>` : ''}
+                </div>
+            </button>`;
+        }).join('');
+
+        const endsText = currentPoll.endsAt
+            ? ` • до конца ${formatRemaining(currentPoll.endsAt - Date.now())}`
+            : '';
+
+        el.style.display = 'block';
+        el.innerHTML = `
+            <div class="poll-question">
+                <i class="fa-solid fa-chart-simple"></i>
+                <span>${escapeHtml(currentPoll.question)}</span>
+            </div>
+            <div class="poll-options">${optionsHtml}</div>
+            <div class="poll-meta">${total} голосов${endsText}</div>
+        `;
+    }
+
+    async function votePoll(index) {
+        try {
+            await apiCall('/api/poll/vote', 'POST', { option_index: index });
+            haptic('success');
+            await loadPoll();
+        } catch (err) {
+            haptic('error');
+            notify({ type: 'error', message: err.message });
+        }
+    }
+
+    async function loadEvent() {
+        try {
+            const res = await apiCall('/api/event');
+            currentEvent = res.event;
+            renderEventBanner();
+            applyEventToCases();
+        } catch (e) {}
+    }
+
+    async function loadPoll() {
+        try {
+            const res = await apiCall('/api/poll');
+            currentPoll = res.poll;
+            renderPollBanner();
+        } catch (e) {}
     }
 
     function updateUI() {
@@ -939,6 +1208,25 @@
         if (document.getElementById('section-case-opening').classList.contains('active') && !isOpening) {
             updateOpenBtnState();
         }
+        // event countdown
+        if (currentEvent) {
+            const rem = currentEvent.endsAt - now;
+            if (rem <= 0) {
+                currentEvent = null;
+                renderEventBanner();
+                applyEventToCases();
+            } else {
+                updateEventCountdown();
+            }
+        }
+        // poll countdown
+        if (currentPoll && currentPoll.endsAt) {
+            const rem = currentPoll.endsAt - now;
+            if (rem <= 0) {
+                currentPoll = null;
+                renderPollBanner();
+            }
+        }
     }
 
     function formatRemaining(ms) {
@@ -951,6 +1239,12 @@
     }
 
     setInterval(updateTimers, 1000);
+    setInterval(() => {
+        if (isOpening || isUpgrading) return;
+        if (document.hidden) return;
+        loadEvent();
+        loadPoll();
+    }, 30000);
 
     function renderInventory() {
         const container = document.getElementById('inventory-list');
@@ -974,7 +1268,7 @@
 
     window.updateDropFeed = function(arr) {};
 
-    // ================= КЕЙСЫ =================
+    // ================= CASES =================
     function openCaseSection(type) {
         if (isOpening) return;
         haptic('medium');
@@ -1055,12 +1349,18 @@
         const grid = document.getElementById('loot-preview');
         const cfg = CASE_LOOT_DATA[type];
         let html = '';
+
         if (cfg.coins.length > 0 && cfg.coinChance > 0) {
-            html += `<div class="loot-card">
+            const amounts = cfg.coins.map(c => c.amount);
+            const minC = Math.min(...amounts);
+            const maxC = Math.max(...amounts);
+            html += `<div class="loot-card" style="border-color:var(--accent-gold);">
                 <div class="coin"><i class="fa-solid fa-coins"></i></div>
                 <div class="name">Монеты</div>
+                <div class="loot-price"><i class="fa-solid fa-coins"></i> ${minC}-${maxC}</div>
             </div>`;
         }
+
         cfg.items.forEach(it => {
             const itemObj = ITEMS_BY_ID[it.id];
             if (!itemObj) return;
@@ -1070,8 +1370,10 @@
                     <span class="emoji-fallback" style="display:none; font-size:30px;">${itemObj.emoji || '🧠'}</span>
                 </div>
                 <div class="name">${itemObj.name}</div>
+                <div class="loot-price"><i class="fa-solid fa-coins"></i> ${itemObj.price}</div>
             </div>`;
         });
+
         grid.innerHTML = html;
     }
 
@@ -1188,9 +1490,6 @@
                     burstConfetti();
                     const leg = res.results.find(r => r.type === 'item' && r.item.rarity === 'legendary');
                     showWinModal(leg.item);
-                } else if (res.results.some(r => r.type === 'item')) {
-                    haptic('light');
-                    playSound('coin');
                 } else {
                     haptic('light');
                     playSound('coin');
@@ -1224,7 +1523,7 @@
         haptic('light');
     }
 
-    // ================= АПГРЕЙДЕР =================
+    // ================= UPGRADER =================
     function renderUpgInputs() {
         const container = document.getElementById('upg-input-box');
         if (upgInputs.length === 0) {
@@ -1256,7 +1555,6 @@
         }
     }
 
-    // Пересчитывает и перерисовывает колесо под текущее состояние
     function updateWheelVisual() {
         const sum = upgInputs.reduce((acc, uid) => {
             const item = state.inventory[uid];
@@ -1274,7 +1572,6 @@
 
         const winAngle = chance > 0 ? Math.max(0.5, chance * 3.6) : 0;
 
-        // conic-gradient: 0deg — верх, по часовой
         if (chance > 0) {
             disc.style.background = `conic-gradient(
                 var(--accent-gold) 0deg ${winAngle}deg,
@@ -1284,7 +1581,6 @@
             disc.style.background = '#1c1f2b';
         }
 
-        // Иконка цели — центр золотого сектора
         if (upgTarget && chance > 0 && iconEl) {
             const centerAngle = winAngle / 2;
             iconEl.style.display = 'block';
@@ -1464,31 +1760,22 @@
             updateUI();
             renderUpgInputs();
 
-            // --- РАСЧЁТ ПРИЗЕМЛЕНИЯ СТРЕЛКИ ---
-            // winAngle — размер золотого сектора (совпадает с updateWheelVisual по res.chance)
             const winAngle = Math.max(0.5, res.chance * 3.6);
-
-            // landingAngle — угол, куда должна указать стрелка (0..360, по часовой от верха)
             let landingAngle;
             if (res.success) {
-                // Внутри золотого [0..winAngle], не у самых краёв
                 landingAngle = winAngle * (0.1 + Math.random() * 0.8);
             } else {
-                // Внутри серого [winAngle..360], не у самых краёв
                 const greySize = 360 - winAngle;
                 landingAngle = winAngle + greySize * (0.1 + Math.random() * 0.8);
             }
 
-            // Стрелка стартует с rotate(0). Итог: 360*5 полных оборотов + приземление
             const totalRotation = 360 * 5 + landingAngle;
 
             const pointer = document.getElementById('upg-wheel-pointer');
-            // форсируем reflow чтобы transition точно применился
             void pointer.offsetWidth;
             pointer.style.transition = 'transform 4.5s cubic-bezier(0.15, 0.85, 0.15, 1)';
             pointer.style.transform = `rotate(${totalRotation}deg)`;
 
-            // Тики во время прокрутки
             const tickInterval = setInterval(() => playSound('tick'), 140);
 
             setTimeout(() => {
@@ -1514,14 +1801,12 @@
                     calcUpg();
                 }
 
-                // Сброс стрелки в 0 (без анимации), затем плавно перерисовать колесо
                 setTimeout(() => {
                     pointer.style.transition = 'none';
                     pointer.style.transform = 'rotate(0deg)';
                     void pointer.offsetWidth;
                     updateWheelVisual();
                 }, 1200);
-
             }, 4600);
 
         } catch (err) {
@@ -1532,7 +1817,7 @@
         }
     }
 
-    // ================= МОНЕТКА =================
+    // ================= COINFLIP =================
     function setChoice(c) {
         cfChoice = c;
         document.getElementById('btn-heads').classList.toggle('active', c === 'heads');
@@ -1578,7 +1863,7 @@
         }
     }
 
-    // ================= ПРОМО =================
+    // ================= PROMO =================
     async function claimPromo() {
         const input = document.getElementById('promo-code');
         const code = input.value.trim().toUpperCase();
@@ -1597,7 +1882,7 @@
         }
     }
 
-    // ================= ДОНАТ =================
+    // ================= DONATE =================
     function renderDonate() {
         const grid = document.getElementById('donate-grid');
         grid.innerHTML = STARS_PACKAGES.map(p => `
@@ -1630,7 +1915,211 @@
         }
     }
 
-    // ================= ГЛОБАЛЬНЫЕ BF =================
+    // ================= ADMIN =================
+    function adminTab(name) {
+        document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
+        const tabBtn = Array.from(document.querySelectorAll('.admin-tab')).find(b => b.textContent.toLowerCase().includes(
+            name === 'events' ? 'ивент' : name === 'promo' ? 'промо' : name === 'give' ? 'выдать' : name === 'poll' ? 'опрос' : 'статы'
+        ));
+        if (tabBtn) tabBtn.classList.add('active');
+        const panel = document.querySelector(`.admin-panel[data-panel="${name}"]`);
+        if (panel) panel.classList.add('active');
+        haptic('light');
+        if (name === 'stats') loadAdminStats();
+    }
+
+    async function loadAdminStats() {
+        if (!IS_ADMIN) return;
+        try {
+            const data = await apiCall('/api/admin/stats');
+            renderAdminStats(data);
+        } catch (err) {
+            const box = document.getElementById('admin-stats-content');
+            if (box) box.innerHTML = `<div style="color:var(--accent-red); text-align:center; padding:20px;">Ошибка: ${escapeHtml(err.message)}</div>`;
+        }
+    }
+
+    function renderAdminStats(d) {
+        const box = document.getElementById('admin-stats-content');
+        if (!box) return;
+
+        const evBox = document.getElementById('admin-current-event');
+        if (evBox) {
+            if (d.active_event) {
+                const ev = d.active_event;
+                const rem = Math.max(0, ev.endsAt - Date.now());
+                evBox.innerHTML = `<b style="color:${ev.color || '#fbbf24'};">${escapeHtml(ev.name)}</b> (x${ev.multiplier}) — осталось ${formatRemaining(rem)}`;
+            } else {
+                evBox.innerHTML = '<span style="color:var(--text-muted);">Нет активного ивента</span>';
+            }
+        }
+
+        const pollBox = document.getElementById('admin-current-poll');
+        if (pollBox) {
+            if (d.active_poll) {
+                const p = d.active_poll;
+                const endsText = p.endsAt ? ` • до ${new Date(p.endsAt).toLocaleString('ru-RU')}` : '';
+                pollBox.innerHTML = `<b>${escapeHtml(p.question)}</b><br><span style="color:var(--text-muted); font-size:11px;">${p.totalVotes} голосов${endsText}</span>`;
+            } else {
+                pollBox.innerHTML = '<span style="color:var(--text-muted);">Нет активного опроса</span>';
+            }
+        }
+
+        let dropsHtml = '';
+        if (d.recent_drops && d.recent_drops.length) {
+            dropsHtml = d.recent_drops.map(dr => `
+                <div class="admin-drop-row">
+                    ${dr.itemImg ? `<img src="/assets/../${dr.itemImg.replace('assets/', '')}" onerror="this.style.display='none';">` : ''}
+                    <div class="meta">
+                        <div class="nick">${escapeHtml(dr.nick || '?')}</div>
+                        <div class="item">${escapeHtml(dr.itemName || '')} (${dr.price || 0})</div>
+                    </div>
+                </div>
+            `).join('');
+        } else {
+            dropsHtml = '<div style="text-align:center; color:var(--text-muted); padding:12px;">Нет дропов</div>';
+        }
+
+        box.innerHTML = `
+            <div class="admin-stat-grid">
+                <div class="admin-stat-box"><div class="v">${formatNum(d.total_users || 0)}</div><div class="l">Юзеров</div></div>
+                <div class="admin-stat-box"><div class="v">${formatNum(d.total_balance || 0)}</div><div class="l">Монет всего</div></div>
+                <div class="admin-stat-box"><div class="v">${formatNum(d.total_opened || 0)}</div><div class="l">Кейсов</div></div>
+            </div>
+            <div class="admin-card">
+                <div class="admin-card-title">Последние дропы</div>
+                ${dropsHtml}
+            </div>
+        `;
+    }
+
+    async function adminStartEvent(type) {
+        const durInput = document.getElementById('admin-event-duration');
+        const duration = durInput ? parseInt(durInput.value) : 60;
+        if (!duration || duration < 1) return notify({ type: 'warning', message: 'Длительность должна быть > 0' });
+        try {
+            await apiCall('/api/admin/event', 'POST', { type, duration_minutes: duration });
+            haptic('success');
+            notify({ type: 'success', message: `Ивент «${EVENT_TYPES[type].name}» запущен` });
+            await loadEvent();
+            await loadAdminStats();
+        } catch (err) {
+            haptic('error');
+            notify({ type: 'error', message: err.message });
+        }
+    }
+
+    async function adminStopEvent() {
+        try {
+            await apiCall('/api/admin/event', 'POST', { type: null });
+            haptic('success');
+            notify({ type: 'success', message: 'Ивент остановлен' });
+            await loadEvent();
+            await loadAdminStats();
+        } catch (err) {
+            notify({ type: 'error', message: err.message });
+        }
+    }
+
+    async function adminCreatePromo() {
+        const code = document.getElementById('admin-promo-code').value.trim().toUpperCase();
+        const reward = parseInt(document.getElementById('admin-promo-reward').value);
+        const maxUses = parseInt(document.getElementById('admin-promo-max').value);
+        if (!code || !reward || !maxUses) return notify({ type: 'warning', message: 'Заполните все поля' });
+        try {
+            const res = await apiCall('/api/admin/promo', 'POST', { code, reward, max_uses: maxUses });
+            haptic('success');
+            notify({ type: 'success', title: 'Промокод создан', message: `${res.code} — ${res.reward} монет × ${res.max_uses}` });
+            document.getElementById('admin-promo-code').value = '';
+        } catch (err) {
+            haptic('error');
+            notify({ type: 'error', message: err.message });
+        }
+    }
+
+    async function adminGive() {
+        const user_id = document.getElementById('admin-give-user').value.trim();
+        const coins = parseInt(document.getElementById('admin-give-coins').value) || 0;
+        const item_id = document.getElementById('admin-give-item').value || null;
+        if (!user_id) return notify({ type: 'warning', message: 'Укажите Telegram ID' });
+        if (coins === 0 && !item_id) return notify({ type: 'warning', message: 'Нечего выдавать' });
+        try {
+            const res = await apiCall('/api/admin/give', 'POST', { user_id, coins, item_id });
+            haptic('success');
+            const parts = [];
+            if (res.gave.coins) parts.push(`${res.gave.coins} монет`);
+            if (res.gave.item) parts.push(`предмет «${res.gave.item.name}»`);
+            notify({ type: 'success', title: 'Выдано', message: `Пользователю ${user_id}: ${parts.join(', ')}` });
+            document.getElementById('admin-give-user').value = '';
+            document.getElementById('admin-give-coins').value = '0';
+            document.getElementById('admin-give-item').value = '';
+        } catch (err) {
+            haptic('error');
+            notify({ type: 'error', message: err.message });
+        }
+    }
+
+    function adminAddPollOption() {
+        const wrap = document.getElementById('admin-poll-options');
+        const count = wrap.querySelectorAll('.poll-option-input').length;
+        if (count >= 6) return notify({ type: 'warning', message: 'Максимум 6 вариантов' });
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'poll-option-input';
+        input.placeholder = `Вариант ${count + 1}`;
+        wrap.appendChild(input);
+    }
+
+    async function adminCreatePoll() {
+        const question = document.getElementById('admin-poll-question').value.trim();
+        const inputs = Array.from(document.querySelectorAll('.poll-option-input'));
+        const options = inputs.map(i => i.value.trim()).filter(o => o);
+        const duration = parseInt(document.getElementById('admin-poll-duration').value) || 0;
+        if (!question) return notify({ type: 'warning', message: 'Введите вопрос' });
+        if (options.length < 2) return notify({ type: 'warning', message: 'Минимум 2 варианта' });
+        try {
+            await apiCall('/api/admin/poll', 'POST', {
+                question,
+                options,
+                duration_minutes: duration > 0 ? duration : null
+            });
+            haptic('success');
+            notify({ type: 'success', message: 'Опрос создан' });
+            document.getElementById('admin-poll-question').value = '';
+            inputs.forEach(i => i.value = '');
+            await loadPoll();
+            await loadAdminStats();
+        } catch (err) {
+            haptic('error');
+            notify({ type: 'error', message: err.message });
+        }
+    }
+
+    async function adminEndPoll() {
+        try {
+            await apiCall('/api/admin/poll/end', 'POST');
+            haptic('success');
+            notify({ type: 'success', message: 'Опрос завершён' });
+            await loadPoll();
+            await loadAdminStats();
+        } catch (err) {
+            notify({ type: 'error', message: err.message });
+        }
+    }
+
+    function populateGiveItems() {
+        const sel = document.getElementById('admin-give-item');
+        if (!sel) return;
+        ALL_ITEMS.forEach(it => {
+            const opt = document.createElement('option');
+            opt.value = it.id;
+            opt.textContent = `${it.name} (${it.price})`;
+            sel.appendChild(opt);
+        });
+    }
+
+    // ================= GLOBAL =================
     window.BF = {
         addToUpg: (uid) => {
             if (upgInputs.includes(uid)) {
@@ -1710,8 +2199,17 @@
     window.toggleSound = toggleSound;
     window.toggleHaptic = toggleHaptic;
     window.closeWinModal = closeWinModal;
+    window.votePoll = votePoll;
+    window.adminTab = adminTab;
+    window.adminStartEvent = adminStartEvent;
+    window.adminStopEvent = adminStopEvent;
+    window.adminCreatePromo = adminCreatePromo;
+    window.adminGive = adminGive;
+    window.adminAddPollOption = adminAddPollOption;
+    window.adminCreatePoll = adminCreatePoll;
+    window.adminEndPoll = adminEndPoll;
 
-    // ================= ИНИЦИАЛИЗАЦИЯ =================
+    // ================= INIT =================
     async function loadData() {
         try {
             const data = await apiCall('/api/me');
@@ -1721,6 +2219,13 @@
             state.lastUser = data.lastUser || 0;
             state.hasUserCase = data.hasUserCase || false;
             state.stats = data.stats || {};
+
+            // Показать админку если админ
+            if (data.isAdmin || IS_ADMIN) {
+                const navAdmin = document.getElementById('nav-admin');
+                if (navAdmin) navAdmin.style.display = 'flex';
+            }
+
             updateUI();
             renderUpgInputs();
             renderUpgTarget();
@@ -1740,7 +2245,7 @@
         const refId = start.replace('ref_', '');
         if (refId === String(MY_ID)) return;
         try {
-            const res = await apiCall('/api/claim_referral', 'POST', { ref_id: refId });
+            const res = await apiCall('/api/claim_referral', { ref_id: refId });
             if (res.ok) {
                 notify({ type: 'success', message: 'Бонус за вход' });
                 loadData();
@@ -1756,11 +2261,17 @@
         sBtn.classList.add('off');
     }
 
+    populateGiveItems();
+
     switchTab('cases');
     renderDonate();
-    loadData().then(() => checkRef());
+    loadData().then(() => {
+        checkRef();
+        loadEvent();
+        loadPoll();
+    });
 
 })();
 </script>
 </body>
-    </html>
+                </html>
