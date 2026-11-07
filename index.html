@@ -121,7 +121,10 @@
         .event-banner.event-diamond { color: #06b6d4; border-color: #06b6d4; }
         .event-banner.event-bloody { color: #dc2626; border-color: #dc2626; }
         @keyframes eventPulse { 0%, 100% { box-shadow: 0 0 20px -8px currentColor; } 50% { box-shadow: 0 0 30px 0 currentColor; } }
-        .event-icon { font-size: 28px; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.3); flex-shrink: 0; }
+        
+        .event-icon { font-size: 28px; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.3); flex-shrink: 0; overflow: hidden; padding: 4px; }
+        .event-icon img { width: 100%; height: 100%; object-fit: contain; }
+        
         .event-info { flex: 1; }
         .event-name { font-size: 15px; font-weight: 900; }
         .event-sub { font-size: 11px; opacity: 0.8; margin-top: 2px; }
@@ -358,17 +361,23 @@
         .admin-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 15px; padding: 15px; margin-bottom: 12px; }
         .admin-card-title { font-size: 13px; font-weight: 900; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); }
         .admin-event-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px; }
-        .admin-event-card { background: var(--bg-card); border: 2px solid var(--border); border-radius: 15px; padding: 15px; text-align: center; }
+        .admin-event-card { background: var(--bg-card); border: 2px solid var(--border); border-radius: 15px; padding: 15px; text-align: center; position: relative; }
         .admin-event-card[data-type="miniboost"] { border-color: #22c55e; }
         .admin-event-card[data-type="gold"] { border-color: #fbbf24; }
         .admin-event-card[data-type="diamond"] { border-color: #06b6d4; }
         .admin-event-card[data-type="bloody"] { border-color: #dc2626; }
+        
+        /* Картинки в админ-ивентах */
+        .admin-event-card .img-wrap { width: 48px; height: 48px; margin: 0 auto 8px; display: flex; align-items: center; justify-content: center; }
+        .admin-event-card .img-wrap img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 0 5px currentColor); }
+        
         .admin-event-card .name { font-size: 15px; font-weight: 900; margin-bottom: 4px; }
         .admin-event-card .mult { font-size: 22px; font-weight: 900; margin-bottom: 10px; }
         .admin-event-card[data-type="miniboost"] .mult { color: #22c55e; }
         .admin-event-card[data-type="gold"] .mult { color: #fbbf24; }
         .admin-event-card[data-type="diamond"] .mult { color: #06b6d4; }
         .admin-event-card[data-type="bloody"] .mult { color: #dc2626; }
+        
         .admin-form input, .admin-form select, .admin-form textarea { width: 100%; background: var(--bg-input); border: 1px solid var(--border); border-radius: 10px; padding: 12px; color: var(--text-main); font-size: 14px; margin-bottom: 10px; outline: none; font-family: inherit; resize: vertical; }
         .admin-form input:focus, .admin-form select:focus, .admin-form textarea:focus { border-color: var(--accent-blue); }
         .admin-form label { display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px; font-weight: 700; text-transform: uppercase; }
@@ -668,21 +677,25 @@
             </div>
             <div class="admin-event-grid">
                 <div class="admin-event-card" data-type="miniboost">
+                    <div class="img-wrap"><img src="assets/brainrots/Default_Mutation_Icon.webp" onerror="this.style.display='none';"></div>
                     <div class="name">Минибуст</div>
                     <div class="mult">1.5x</div>
                     <button class="btn small" style="background:linear-gradient(135deg,#22c55e,#15803d);" onclick="adminStartEvent('miniboost')">Запустить</button>
                 </div>
                 <div class="admin-event-card" data-type="gold">
+                    <div class="img-wrap"><img src="assets/brainrots/Gold_Mutation_Icon.webp" onerror="this.style.display='none';"></div>
                     <div class="name">Голд</div>
                     <div class="mult">2x</div>
                     <button class="btn small gold" onclick="adminStartEvent('gold')">Запустить</button>
                 </div>
                 <div class="admin-event-card" data-type="diamond">
+                    <div class="img-wrap"><img src="assets/brainrots/Diamond_Mutation_Icon.webp" onerror="this.style.display='none';"></div>
                     <div class="name">Алмаз</div>
                     <div class="mult">3x</div>
                     <button class="btn small" style="background:linear-gradient(135deg,#06b6d4,#0e7490);" onclick="adminStartEvent('diamond')">Запустить</button>
                 </div>
                 <div class="admin-event-card" data-type="bloody">
+                    <div class="img-wrap"><img src="assets/brainrots/Bloodrot_Mutation_Icon.webp" onerror="this.style.display='none';"></div>
                     <div class="name">Кровавый</div>
                     <div class="mult">4x</div>
                     <button class="btn small red" onclick="adminStartEvent('bloody')">Запустить</button>
@@ -691,7 +704,6 @@
         </div>
     </div>
 
-    <!-- НОВАЯ ВКЛАДКА: ПРЕДМЕТЫ -->
     <div class="admin-panel" data-panel="items">
         <div class="admin-card">
             <div class="admin-card-title">Настройка брейнротов (Цена / Редкость)</div>
@@ -842,7 +854,7 @@
             <div class="settings-label"><i class="fa-solid fa-mobile-screen"></i> Вибрация</div>
             <div class="toggle" id="toggle-haptic" onclick="toggleHaptic()"></div>
         </div>
-        <div style="margin-top:20px; font-size:11px; color:var(--text-muted); text-align:center;">Brainrots Funny v2.6</div>
+        <div style="margin-top:20px; font-size:11px; color:var(--text-muted); text-align:center;">Brainrots Funny v2.7</div>
     </div>
 </div>
 
@@ -900,10 +912,10 @@
     };
 
     const EVENT_TYPES = {
-        miniboost: { name: 'Минибуст', multiplier: 1.5, color: '#22c55e', icon: 'fa-bolt' },
-        gold:      { name: 'Голд',     multiplier: 2,   color: '#fbbf24', icon: 'fa-star' },
-        diamond:   { name: 'Алмаз',    multiplier: 3,   color: '#06b6d4', icon: 'fa-gem' },
-        bloody:    { name: 'Кровавый', multiplier: 4,   color: '#dc2626', icon: 'fa-fire' }
+        miniboost: { name: 'Минибуст', multiplier: 1.5, color: '#22c55e', img: 'assets/brainrots/Default_Mutation_Icon.webp' },
+        gold:      { name: 'Голд',     multiplier: 2,   color: '#fbbf24', img: 'assets/brainrots/Gold_Mutation_Icon.webp' },
+        diamond:   { name: 'Алмаз',    multiplier: 3,   color: '#06b6d4', img: 'assets/brainrots/Diamond_Mutation_Icon.webp' },
+        bloody:    { name: 'Кровавый', multiplier: 4,   color: '#dc2626', img: 'assets/brainrots/Bloodrot_Mutation_Icon.webp' }
     };
 
     const STARS_PACKAGES = [
@@ -919,11 +931,11 @@
     let STATE = { items: {}, itemsArray: [] };
 
     const CASE_LOOT_DATA = {
-        free:  { coinChance: 70, coins: [{amount:1,weight:50},{amount:2,weight:30},{amount:3,weight:20}], items: [{id:"trios",weight:30},{id:"rot67",weight:30},{id:"defmut",weight:40}] },
+        free:  { coinChance: 70, coins: [{amount:1,weight:50},{amount:2,weight:30},{amount:3,weight:20}], items: [{id:"trios",weight:50},{id:"rot67",weight:50}] },
         user:  { coinChance: 30, coins: [{amount:3,weight:100}], items: [{id:"trios",weight:30},{id:"rot67",weight:30},{id:"hammy",weight:20},{id:"candyslap",weight:10},{id:"esok",weight:10}] },
         base:  { coinChance: 0,  coins: [], items: [{id:"trios",weight:20},{id:"rot67",weight:20},{id:"candyslap",weight:20},{id:"lagrande",weight:15},{id:"ketupat",weight:15},{id:"hotspot",weight:10}] },
         bro:   { coinChance: 0,  coins: [], items: [{id:"hammy",weight:15},{id:"noobinis",weight:15},{id:"tangtang",weight:15},{id:"tictac",weight:10},{id:"bacuru",weight:10},{id:"los67",weight:10},{id:"cashcard",weight:8},{id:"ketchuru",weight:7},{id:"garama",weight:5},{id:"yinyang",weight:5}] },
-        allin: { coinChance: 0,  coins: [], items: [{id:"lagrande",weight:40},{id:"bloodrot",weight:20},{id:"burguro",weight:15},{id:"pavone",weight:10},{id:"cerberus",weight:5},{id:"dragon",weight:4},{id:"capitano",weight:3},{id:"mmpuggy",weight:2},{id:"strawberry",weight:1}] }
+        allin: { coinChance: 0,  coins: [], items: [{id:"lagrande",weight:40},{id:"burguro",weight:20},{id:"pavone",weight:15},{id:"cerberus",weight:10},{id:"dragon",weight:5},{id:"capitano",weight:3},{id:"mmpuggy",weight:2},{id:"strawberry",weight:1}] }
     };
 
     const tg = window.Telegram?.WebApp;
@@ -1322,8 +1334,18 @@
         const multi = currentEvent.multiplier || ev.multiplier || 1;
         banner.className = 'event-banner event-' + currentEvent.type;
         banner.style.display = 'flex';
+        
+        // Используем картинку мутации вместо иконки
+        const imgUrl = currentEvent.img || ev.img;
+        let iconHtml = '';
+        if (imgUrl) {
+            iconHtml = `<img src="${imgUrl}" style="width:100%; height:100%; object-fit:contain;" onerror="this.style.display='none';">`;
+        } else {
+            iconHtml = `<i class="fa-solid fa-star"></i>`;
+        }
+
         banner.innerHTML = `
-            <div class="event-icon"><i class="fa-solid ${currentEvent.icon || ev.icon || 'fa-star'}"></i></div>
+            <div class="event-icon">${iconHtml}</div>
             <div class="event-info">
                 <div class="event-name">Ивент «${escapeHtml(currentEvent.name)}»</div>
                 <div class="event-sub" id="event-time-remaining">удача x${multi}</div>
@@ -1509,12 +1531,13 @@
         if (document.hidden) return;
         loadEvent();
         loadPoll();
-        loadItems(); // Периодически обновляем цены, если их поменял админ
+        loadItems(); // Периодически обновляем цены
     }, 30000);
 
     function renderInventory() {
         const container = document.getElementById('inventory-list');
-        const inv = Object.values(state.inventory || {});
+        // Сортируем по цене (от дорогих к дешевым)
+        const inv = Object.values(state.inventory || {}).sort((a, b) => b.price - a.price);
         if (!inv.length) {
             container.innerHTML = '<div style="grid-column: span 3; text-align: center; color: var(--text-muted); padding: 20px;">Пусто</div>';
             return;
@@ -2129,7 +2152,8 @@
 
     function renderInvPicker() {
         const list = document.getElementById('inv-picker-list');
-        const entries = Object.values(state.inventory || {});
+        // Сортировка по цене
+        const entries = Object.values(state.inventory || {}).sort((a, b) => b.price - a.price);
         list.innerHTML = entries.map(it => {
             const selected = upgInputs.includes(it.uid);
             const r = RARITIES[it.rarity] || RARITIES.common;
@@ -2171,7 +2195,10 @@
         if (sum === 0) return notify({ type: 'warning', message: 'Сначала выберите предметы слева' });
 
         const list = document.getElementById('target-list');
-        list.innerHTML = STATE.itemsArray.map(it => {
+        // Сортировка по цене (сначала дешевые)
+        const sortedItems = [...STATE.itemsArray].sort((a, b) => a.price - b.price);
+        
+        list.innerHTML = sortedItems.map(it => {
             const isDisabled = it.price <= sum;
             const r = RARITIES[it.rarity] || RARITIES.common;
             return `<div class="inv-item" style="border-color:${r.color}; opacity: ${isDisabled ? 0.35 : 1}; cursor: ${isDisabled ? 'not-allowed' : 'pointer'};"
@@ -2466,11 +2493,6 @@
             return;
         }
 
-        let rarityOptions = '';
-        Object.values(RARITIES).forEach(r => {
-            rarityOptions += `<option value="${r.id}">${r.name}</option>`;
-        });
-
         box.innerHTML = STATE.itemsArray.map(it => {
             return `<div class="admin-item-row">
                 <img src="${it.img}" onerror="this.style.display='none';">
@@ -2503,9 +2525,7 @@
             });
             haptic('success');
             notify({ type: 'success', message: 'Предмет обновлен' });
-            // Перезагружаем предметы, чтобы изменения вступили в силу везде
             await loadItems();
-            // Обновляем инвентарь (цены могли поменяться)
             renderInventory();
             calcUpg();
         } catch (err) {
