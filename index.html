@@ -93,7 +93,6 @@
         .top-drop-method.upgrade { color: var(--accent-blue); }
         .top-drop-method.case { color: var(--accent-gold); }
 
-        /* LIVE FEED — NO SCROLLBAR */
         .live-feed { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; -ms-overflow-style: none; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
         .live-feed::-webkit-scrollbar { display: none; width: 0; height: 0; }
 
@@ -1201,18 +1200,10 @@
 
     async function openOtherProfile(uid, nickFallback, priceFallback) {
         uid = String(uid || '').trim();
+        
+        // Если user_id нет (старые дропы) или он невалидный — не мучаем бэк, показываем уведомление
         if (!uid || uid === 'undefined' || uid === 'null' || uid === '') {
-            // Если user_id невалидный, показываем заглушку
-            document.getElementById('op-avatar').textContent = (nickFallback && nickFallback.charAt(0) || '?').toUpperCase();
-            document.getElementById('op-name').textContent = nickFallback || 'Неизвестный игрок';
-            document.getElementById('op-balance').textContent = '—';
-            document.getElementById('op-cases').textContent = '—';
-            document.getElementById('op-earned').textContent = '—';
-            document.getElementById('op-inventory').innerHTML = `<div style="grid-column: span 3; text-align:center; color:var(--text-muted); padding:15px; font-size:12px;">
-                Профиль недоступен (некорректный ID)<br><span style="color:var(--accent-gold); margin-top:6px; display:block;">Последний дроп: ${formatNum(priceFallback)} монет</span>
-            </div>`;
-            document.getElementById('other-profile-modal').classList.add('active');
-            haptic('light');
+            notify({ type: 'warning', message: 'Профиль этого игрока недоступен' });
             return;
         }
 
@@ -1631,7 +1622,7 @@
             const itemObj = ITEMS_BY_ID[it.id];
             if (!itemObj) return;
             html += `<div class="loot-card" style="border-color:${RARITIES[itemObj.rarity].color}">
-                <div style="height:45px; display:flex; align-items: center; justify-content: center;">
+                <div style="height:45px; display:flex; align-items:center; justify-content:center;">
                     <img src="${itemObj.img}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                     <span class="emoji-fallback" style="display:none; font-size:30px;">${itemObj.emoji || '🧠'}</span>
                 </div>
