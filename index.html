@@ -94,16 +94,7 @@
         .top-drop-method.case { color: var(--accent-gold); }
 
         /* LIVE FEED — NO SCROLLBAR */
-        .live-feed {
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            padding-bottom: 5px;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-            scroll-behavior: smooth;
-            -webkit-overflow-scrolling: touch;
-        }
+        .live-feed { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; -ms-overflow-style: none; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
         .live-feed::-webkit-scrollbar { display: none; width: 0; height: 0; }
 
         .live-drop-item { width: 82px; flex-shrink: 0; background: #1c1f2b; border: 2px solid var(--border); border-radius: 10px; padding: 8px 5px; text-align: center; cursor: pointer; position: relative; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s; }
@@ -191,10 +182,7 @@
         .roulette-item img { width: 60px; height: 60px; object-fit: contain; }
         .roulette-item .name { font-size: 9px; font-weight: 700; color: var(--text-muted); text-align: center; padding: 0 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
         .roulette-item .coin { color: var(--accent-gold); font-size: 40px; }
-        .roulette-item.landed-win {
-            border-color: var(--accent-gold);
-            box-shadow: 0 0 22px rgba(251,191,36,0.7);
-        }
+        .roulette-item.landed-win { border-color: var(--accent-gold); box-shadow: 0 0 22px rgba(251,191,36,0.7); }
 
         .roulette-multi-wrap { position: absolute; inset: 0; background: var(--bg-input); border: 2px solid var(--border); border-radius: 20px; overflow: hidden; opacity: 0; pointer-events: none; transition: opacity 0.3s; display: flex; flex-direction: column; gap: 6px; padding: 8px; }
         .roulette-multi-wrap.active { opacity: 1; pointer-events: auto; }
@@ -830,7 +818,7 @@
             <div class="settings-label"><i class="fa-solid fa-mobile-screen"></i> Вибрация</div>
             <div class="toggle" id="toggle-haptic" onclick="toggleHaptic()"></div>
         </div>
-        <div style="margin-top:20px; font-size:11px; color:var(--text-muted); text-align:center;">Brainrots Funny v2.4</div>
+        <div style="margin-top:20px; font-size:11px; color:var(--text-muted); text-align:center;">Brainrots Funny v2.5</div>
     </div>
 </div>
 
@@ -964,7 +952,6 @@
     }
     function formatNum(n) { return Number(n).toLocaleString('ru-RU'); }
 
-    // SOUND
     let audioCtx = null;
     function getCtx() {
         if (!audioCtx) {
@@ -1122,7 +1109,6 @@
         if (hapticEnabled) haptic('medium');
     }
 
-    // ================= LIVE FEED =================
     function getRarityColorForItem(name) {
         const it = ALL_ITEMS.find(i => i.name === name);
         if (it) return (RARITIES[it.rarity] || RARITIES.common).color;
@@ -1213,25 +1199,20 @@
         renderLiveFeed();
     };
 
-    // ================= OTHER PROFILE =================
     async function openOtherProfile(uid, nickFallback, priceFallback) {
         uid = String(uid || '').trim();
-        if (!uid || uid === 'undefined' || uid === 'null') {
-            if (nickFallback) {
-                // Показываем минимальную инфу
-                document.getElementById('op-avatar').textContent = (nickFallback.charAt(0) || '?').toUpperCase();
-                document.getElementById('op-name').textContent = nickFallback;
-                document.getElementById('op-balance').textContent = '—';
-                document.getElementById('op-cases').textContent = '—';
-                document.getElementById('op-earned').textContent = '—';
-                document.getElementById('op-inventory').innerHTML = `<div style="grid-column: span 3; text-align:center; color:var(--text-muted); padding:15px; font-size:12px;">
-                    Профиль недоступен<br><span style="color:var(--accent-gold); margin-top:6px; display:block;">Последний дроп: ${formatNum(priceFallback)} монет</span>
-                </div>`;
-                document.getElementById('other-profile-modal').classList.add('active');
-                haptic('light');
-                return;
-            }
-            notify({ type: 'warning', message: 'Не удалось определить игрока' });
+        if (!uid || uid === 'undefined' || uid === 'null' || uid === '') {
+            // Если user_id невалидный, показываем заглушку
+            document.getElementById('op-avatar').textContent = (nickFallback && nickFallback.charAt(0) || '?').toUpperCase();
+            document.getElementById('op-name').textContent = nickFallback || 'Неизвестный игрок';
+            document.getElementById('op-balance').textContent = '—';
+            document.getElementById('op-cases').textContent = '—';
+            document.getElementById('op-earned').textContent = '—';
+            document.getElementById('op-inventory').innerHTML = `<div style="grid-column: span 3; text-align:center; color:var(--text-muted); padding:15px; font-size:12px;">
+                Профиль недоступен (некорректный ID)<br><span style="color:var(--accent-gold); margin-top:6px; display:block;">Последний дроп: ${formatNum(priceFallback)} монет</span>
+            </div>`;
+            document.getElementById('other-profile-modal').classList.add('active');
+            haptic('light');
             return;
         }
 
@@ -1292,13 +1273,17 @@
             document.getElementById('op-cases').textContent = '—';
             document.getElementById('op-earned').textContent = '—';
 
+            let errorMsg = err.message || 'Неизвестная ошибка';
+            if (errorMsg.includes('404') || errorMsg.includes('не найден')) {
+                errorMsg = 'Пользователь не найден в базе';
+            }
+
             const fallbackText = priceFallback
                 ? `<span style="color:var(--accent-gold); margin-top:8px; display:block; font-weight:800;">Последний дроп: ${formatNum(priceFallback)} монет</span>`
                 : '';
             invBox.innerHTML = `<div style="grid-column: span 3; text-align:center; color:var(--accent-red); padding:15px; font-size:12px;">
                 <i class="fa-solid fa-triangle-exclamation" style="font-size:20px; margin-bottom:8px; display:block;"></i>
-                Не удалось загрузить профиль<br>
-                <span style="color:var(--text-muted); font-size:11px; margin-top:6px; display:block;">${escapeHtml(err.message || 'Неизвестная ошибка')}</span>
+                ${escapeHtml(errorMsg)}<br>
                 ${fallbackText}
             </div>`;
         }
@@ -1309,7 +1294,6 @@
         haptic('light');
     }
 
-    // ================= EVENT =================
     function renderEventBanner() {
         const banner = document.getElementById('event-banner');
         if (!banner) return;
@@ -1355,7 +1339,6 @@
         });
     }
 
-    // ================= POLL =================
     function renderPollBanner() {
         const el = document.getElementById('poll-banner');
         if (!el) return;
@@ -1422,7 +1405,6 @@
         } catch (e) {}
     }
 
-    // ================= UI =================
     function updateUI() {
         ['h-balance', 's-balance', 'p-balance'].forEach(id => {
             const el = document.getElementById(id);
@@ -1532,7 +1514,6 @@
         }).join('');
     }
 
-    // ================= CASES =================
     function openCaseSection(type) {
         if (isOpening) return;
         haptic('medium');
@@ -1650,7 +1631,7 @@
             const itemObj = ITEMS_BY_ID[it.id];
             if (!itemObj) return;
             html += `<div class="loot-card" style="border-color:${RARITIES[itemObj.rarity].color}">
-                <div style="height:45px; display:flex; align-items:center; justify-content:center;">
+                <div style="height:45px; display:flex; align-items: center; justify-content: center;">
                     <img src="${itemObj.img}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                     <span class="emoji-fallback" style="display:none; font-size:30px;">${itemObj.emoji || '🧠'}</span>
                 </div>
@@ -1675,7 +1656,6 @@
         return { type: 'item', item: ITEMS_BY_ID[cfg.items[0].id] };
     }
 
-    // ВАЖНО: без isWin — во время спина никаких подсветок
     function renderCaseStripItem(drop) {
         if (drop.type === 'coin') {
             return `<div class="roulette-item" style="border-color:var(--accent-gold);">
@@ -1706,7 +1686,6 @@
         </div>`;
     }
 
-    // ТОЧНОЕ ИЗМЕРЕНИЕ через getBoundingClientRect
     function measureSingleScroll(idx) {
         const track = document.getElementById('roulette-track');
         const wrap = document.getElementById('roulette-wrap');
@@ -1762,7 +1741,6 @@
         if (b) b.style.display = 'none';
     }
 
-    // ================= SINGLE OPENING =================
     function playSingleOpening(res, cfg, onDone) {
         const track = document.getElementById('roulette-track');
         const items = [];
@@ -1775,7 +1753,6 @@
         track.style.transform = 'translateX(0)';
         void track.offsetWidth;
 
-        // Измеряем ТОЧНУЮ позицию через getBoundingClientRect
         const jitter = (Math.random() - 0.5) * 20;
         const scrollTo = measureSingleScroll(WIN_INDEX_CASES) + jitter;
 
@@ -1795,7 +1772,6 @@
                 track.style.transition = 'none';
                 track.style.transform = `translateX(-${scrollTo}px)`;
             }
-            // Подсветка победителя ПОСЛЕ приземления
             const winEl = track.children[WIN_INDEX_CASES];
             if (winEl) winEl.classList.add('landed-win');
             animState = null;
@@ -1815,7 +1791,6 @@
         timer = setTimeout(() => finish(false), SINGLE_SPIN_MS + 200);
     }
 
-    // ================= MULTI OPENING =================
     function playMultiOpening(res, cfg, onDone) {
         const N = res.results.length;
         const wrap = document.getElementById('roulette-multi-wrap');
@@ -1853,7 +1828,6 @@
         playSound('spin');
 
         setTimeout(() => {
-            // Force layout
             void wrap.offsetHeight;
 
             for (const s of strips) {
@@ -1862,13 +1836,11 @@
             }
             void wrap.offsetHeight;
 
-            // Точное измерение после layout
             for (const s of strips) {
                 const jitter = (Math.random() - 0.5) * 12;
                 s.scrollTo = measureMultiScroll(s.el, WIN_INDEX_CASES) + jitter;
             }
 
-            // Все полосы стартуют одновременно, но с разной длительностью
             strips.forEach((s, i) => {
                 const dur = MULTI_BASE_MS + i * MULTI_STAGGER_MS;
                 s.dur = dur;
@@ -2025,7 +1997,6 @@
         haptic('light');
     }
 
-    // ================= UPGRADER =================
     function renderUpgInputs() {
         const container = document.getElementById('upg-input-box');
         if (upgInputs.length === 0) {
@@ -2319,7 +2290,6 @@
         }
     }
 
-    // ================= COINFLIP =================
     function setChoice(c) {
         cfChoice = c;
         document.getElementById('btn-heads').classList.toggle('active', c === 'heads');
@@ -2365,7 +2335,6 @@
         }
     }
 
-    // ================= PROMO =================
     async function claimPromo() {
         const input = document.getElementById('promo-code');
         const code = input.value.trim().toUpperCase();
@@ -2384,7 +2353,6 @@
         }
     }
 
-    // ================= DONATE =================
     function renderDonate() {
         const grid = document.getElementById('donate-grid');
         grid.innerHTML = STARS_PACKAGES.map(p => `
@@ -2417,7 +2385,6 @@
         }
     }
 
-    // ================= ADMIN =================
     function adminTab(name) {
         document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
@@ -2471,6 +2438,20 @@
     function renderAdminStats(d) {
         const box = document.getElementById('admin-stats-content');
         if (!box) return;
+
+        if (d.firebase_ok === false) {
+            box.innerHTML = `
+                <div style="background:rgba(239,68,68,0.15); border:1px solid var(--accent-red); border-radius:15px; padding:20px; text-align:center; margin-bottom:15px;">
+                    <i class="fa-solid fa-triangle-exclamation" style="font-size:32px; color:var(--accent-red); margin-bottom:10px;"></i>
+                    <div style="font-weight:900; font-size:16px; margin-bottom:5px;">База данных не подключена</div>
+                    <div style="font-size:12px; color:var(--text-muted); line-height:1.5;">
+                        Переменная окружения <b>FIREBASE_CRED_JSON</b> не задана на Render.<br>
+                        Проверь настройки Environment Variables.
+                    </div>
+                </div>
+            `;
+            return;
+        }
 
         const evBox = document.getElementById('admin-current-event');
         if (evBox) {
@@ -2775,7 +2756,6 @@
         });
     }
 
-    // ================= GLOBAL =================
     window.BF = {
         addToUpg: (uid) => {
             if (upgInputs.includes(uid)) {
@@ -2872,7 +2852,6 @@
     window.adminCreatePoll = adminCreatePoll;
     window.adminEndPoll = adminEndPoll;
 
-    // ================= INIT =================
     async function loadData() {
         try {
             const data = await apiCall('/api/me');
