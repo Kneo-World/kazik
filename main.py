@@ -1,14 +1,4 @@
 # main.py
-# ============================================================
-# Brainrots Funny — backend
-# ENV:
-#   BOT_TOKEN           — токен бота
-#   WEBHOOK_URL         — внешний URL (напр. https://xxx.onrender.com)
-#   RENDER_EXTERNAL_URL — альтернатива WEBHOOK_URL (Render)
-#   FIREBASE_CRED_JSON  — JSON сервисного аккаунта (строкой)
-#   FIREBASE_DB_URL     — URL Realtime DB
-#   ALLOWED_ORIGINS     — CORS, через запятую, "*" по умолчанию
-# ============================================================
 import os, json, hmac, hashlib, logging, random, time
 from contextlib import asynccontextmanager
 from urllib.parse import parse_qsl
@@ -33,8 +23,26 @@ FIREBASE_DB_URL = os.getenv("FIREBASE_DB_URL", "https://casemine-online-default-
 ALLOWED_ORIGINS = [o.strip() for o in (os.getenv("ALLOWED_ORIGINS") or "*").split(",") if o.strip()]
 
 BOT_USERNAME = "Brain_Funbot"
-INIT_DATA_MAX_AGE = 24 * 3600  # 24 часа (для мобилки — с запасом)
+INIT_DATA_MAX_AGE = 24 * 3600
 
+# ============================================================
+# ADMIN
+# ============================================================
+ADMIN_IDS = {6636765626, 8364667153}
+
+def is_admin(user) -> bool:
+    try:
+        return int(user["id"]) in ADMIN_IDS
+    except Exception:
+        return False
+
+async def current_admin(user=Depends(lambda: None)):
+    # заменится ниже, Depends резолвится после объявления current_user
+    pass
+
+# ============================================================
+# RARITIES / ITEMS
+# ============================================================
 RARITIES = {
     "common":    {"id":"common","name":"Common","color":"#6b7280"},
     "uncommon":  {"id":"uncommon","name":"Uncommon","color":"#22c55e"},
@@ -86,6 +94,19 @@ CASE_LOOT = {
     },
 }
 
+# ============================================================
+# EVENTS
+# ============================================================
+EVENT_TYPES = {
+    "miniboost": {"name": "Минибуст", "multiplier": 1.5, "color": "#22c55e", "icon": "fa-bolt"},
+    "gold":      {"name": "Голд",     "multiplier": 2.0, "color": "#fbbf24", "icon": "fa-star"},
+    "diamond":   {"name": "Алмаз",    "multiplier": 3.0, "color": "#06b6d4", "icon": "fa-gem"},
+    "bloody":    {"name": "Кровавый", "multiplier": 4.0, "color": "#dc2626", "icon": "fa-fire"},
+}
+
+# ============================================================
+# STARS
+# ============================================================
 STARS_PACKAGES = {
     "p10":  {"stars":10,  "coins":50,   "bonus":0},
     "p25":  {"stars":25,  "coins":135,  "bonus":8},
@@ -101,11 +122,12 @@ MAX_UPGRADE_CHANCE = 95.0
 MAX_MULTIPLIER = 5
 MAX_UPG_INPUTS = 5
 MAX_COINFLIP_BET = 1_000_000
+MAX_GIVE_COINS = 10_000_000
+MAX_EVENT_MINUTES = 60 * 24 * 7
+MAX_PROMO_REWARD = 1_000_000
+MAX_PROMO_USES = 1_000_000
 
 
-# ============================================================
-# FIREBASE
-# ============================================================
 def init_firebase():
     raw = os.getenv("FIREBASE_CRED_JSON")
     if not raw:
@@ -141,6 +163,7 @@ def _default_user() -> dict:
         "lastUser": 0,
         "used_promos": {},
         "paid_ids": {},
+        "refUsed": False,
         "stats": {
             "casesOpened": 0,
             "itemsSold": 0,
@@ -174,14 +197,13 @@ def get_user_data(uid: str) -> dict:
 
 
 def atomic_update(uid: str, updater):
-    """Возвращает True при успехе, False при откате/ошибке."""
     if not FIREBASE_OK:
         return False
 
     def tx(current):
         d = _normalize(current or {})
         result = updater(d)
-        return result if result is not None else None  # None = откат
+        return result if result is not None else None
 
     try:
         user_ref(uid).transaction(tx)
@@ -191,9 +213,6 @@ def atomic_update(uid: str, updater):
         return False
 
 
-# ============================================================
-# AUTH
-# ============================================================
 def verify_init_data(init_data: str) -> dict | None:
     if not init_data or not BOT_TOKEN:
         return None
@@ -203,7 +222,6 @@ def verify_init_data(init_data: str) -> dict | None:
         if not received_hash:
             return None
 
-        # Проверка auth_date (защита от replay)
         auth_date = int(parsed.get("auth_date", 0) or 0)
         if not auth_date or (time.time() - auth_date) > INIT_DATA_MAX_AGE:
             log.warning("initData stale auth_date=%s", auth_date)
@@ -223,6 +241,12 @@ async def current_user(x_telegram_init_data: str = Header(None)):
     user = verify_init_data(x_telegram_init_data or "")
     if not user:
         raise HTTPException(401, "invalid initData")
+    return user
+
+
+async def require_admin(user=Depends(current_user)):
+    if not is_admin(user):
+        raise HTTPException(403, "admin only")
     return user
 
 
@@ -246,6 +270,30 @@ def roll_drop(case_type: str) -> dict:
         return {"type": "coin", "amount": picked["amount"]}
     picked = weighted_pick(cfg["items"])
     return {"type": "item", "item": dict(ITEMS_BY_ID[picked["id"]])}
+
+
+def drop_value(drop: dict) -> int:
+    if drop["type"] == "coin":
+        return int(drop["amount"])
+    return int(drop["item"]["price"])
+
+
+def roll_with_event_luck(case_type: str, luck_mult: float) -> dict:
+    """Роллит дроп и при активном ивенте делает доп. роллы, оставляя лучший."""
+    best = roll_drop(case_type)
+    extra = max(0.0, luck_mult - 1.0)
+    integer_extra = int(extra)
+    frac_extra = extra - integer_extra
+
+    for _ in range(integer_extra):
+        cand = roll_drop(case_type)
+        if drop_value(cand) > drop_value(best):
+            best = cand
+    if random.random() < frac_extra:
+        cand = roll_drop(case_type)
+        if drop_value(cand) > drop_value(best):
+            best = cand
+    return best
 
 
 def make_inv_item(item: dict) -> dict:
@@ -275,6 +323,37 @@ def push_drop(nick: str, item_name: str, item_img: str | None, price: int, metho
         })
     except Exception:
         pass
+
+
+# ============================================================
+# EVENT / POLL HELPERS
+# ============================================================
+def get_active_event() -> dict | None:
+    if not FIREBASE_OK:
+        return None
+    try:
+        ev = fbdb.reference("meta/event").get()
+        if not ev:
+            return None
+        if int(ev.get("endsAt", 0) or 0) < int(time.time() * 1000):
+            return None
+        return ev
+    except Exception:
+        return None
+
+
+def get_active_poll() -> dict | None:
+    if not FIREBASE_OK:
+        return None
+    try:
+        p = fbdb.reference("meta/poll").get()
+        if not p:
+            return None
+        if p.get("endsAt") and int(p["endsAt"]) < int(time.time() * 1000):
+            return None
+        return p
+    except Exception:
+        return None
 
 
 # ============================================================
@@ -319,8 +398,6 @@ async def on_paid(message: types.Message):
     if not pack:
         return
     uid = str(message.from_user.id)
-
-    # Дедуп по charge_id — защита от ретраев вебхука
     charge_id = sp.telegram_payment_charge_id or sp.provider_payment_charge_id
     if not charge_id:
         log.warning("paid without charge_id uid=%s", uid)
@@ -329,7 +406,7 @@ async def on_paid(message: types.Message):
     def upd(d):
         paid = d.setdefault("paid_ids", {})
         if charge_id in paid:
-            return None  # уже начислено
+            return None
         paid[charge_id] = int(time.time() * 1000)
         d["balance"] = int(d.get("balance", 0)) + pack["coins"]
         d["stats"]["donationsTotal"] = int(d["stats"].get("donationsTotal", 0)) + 1
@@ -340,8 +417,6 @@ async def on_paid(message: types.Message):
     ok = atomic_update(uid, upd)
     if ok:
         await message.answer(f"⭐ <b>Оплата прошла!</b>\n+{pack['coins']} монет начислено.")
-    else:
-        log.info("Duplicate payment skip uid=%s charge=%s", uid, charge_id)
 
 
 # ============================================================
@@ -394,7 +469,7 @@ async def health():
 
 
 # ============================================================
-# API
+# PUBLIC API
 # ============================================================
 @app.get("/api/me")
 async def api_me(user=Depends(current_user)):
@@ -403,9 +478,81 @@ async def api_me(user=Depends(current_user)):
     uname = (user.get("first_name", "") + user.get("last_name", "") + user.get("username", "")).lower()
     data["uid"] = uid
     data["hasUserCase"] = BOT_USERNAME.lower() in uname
+    data["isAdmin"] = is_admin(user)
     data["freeCooldownMs"] = FREE_COOLDOWN_MS
     data["userCooldownMs"] = USER_COOLDOWN_MS
     return data
+
+
+@app.get("/api/event")
+async def api_event():
+    ev = get_active_event()
+    return {"event": ev if ev else None}
+
+
+@app.get("/api/poll")
+async def api_poll(user=Depends(current_user)):
+    p = get_active_poll()
+    if not p:
+        return {"poll": None}
+    uid = str(user["id"])
+    my_vote = p.get("voters", {}).get(uid)
+    options = p.get("options", [])
+    return {
+        "poll": {
+            "id": p.get("id"),
+            "question": p.get("question"),
+            "options": options,
+            "endsAt": p.get("endsAt"),
+            "myVote": my_vote if my_vote is not None else None,
+            "totalVotes": sum(int(o.get("votes", 0)) for o in options),
+        }
+    }
+
+
+@app.post("/api/poll/vote")
+async def api_poll_vote(request: Request, user=Depends(current_user)):
+    body = await request.json()
+    try:
+        option_index = int(body.get("option_index", -1))
+    except Exception:
+        raise HTTPException(400, "bad option")
+
+    if not FIREBASE_OK:
+        raise HTTPException(503)
+
+    uid = str(user["id"])
+    ref = fbdb.reference("meta/poll")
+    result = {"ok": False, "reason": None}
+
+    def tx(current):
+        if not current:
+            result["reason"] = "no poll"
+            return None
+        if current.get("endsAt") and int(current["endsAt"]) < int(time.time() * 1000):
+            result["reason"] = "poll ended"
+            return None
+        opts = current.get("options", [])
+        if option_index < 0 or option_index >= len(opts):
+            result["reason"] = "bad option"
+            return None
+        voters = current.setdefault("voters", {})
+        if uid in voters:
+            result["reason"] = "already voted"
+            return None
+        voters[uid] = option_index
+        opts[option_index]["votes"] = int(opts[option_index].get("votes", 0)) + 1
+        result["ok"] = True
+        return current
+
+    try:
+        ref.transaction(tx)
+    except Exception:
+        raise HTTPException(500, "transaction failed")
+
+    if not result["ok"]:
+        raise HTTPException(400, result["reason"] or "failed")
+    return {"ok": True}
 
 
 @app.post("/api/open_case")
@@ -443,10 +590,13 @@ async def api_open_case(request: Request, user=Depends(current_user)):
     if int(data.get("balance", 0)) < price:
         raise HTTPException(400, "Недостаточно монет")
 
-    results = [roll_drop(case_type) for _ in range(multiplier)]
+    # Ивент: буст удачи
+    event = get_active_event()
+    luck_mult = float(event["multiplier"]) if event else 1.0
+
+    results = [roll_with_event_luck(case_type, luck_mult) for _ in range(multiplier)]
 
     def upd(d):
-        # Повторная проверка баланса — атомарность
         if price > 0:
             if int(d.get("balance", 0)) < price:
                 return None
@@ -490,6 +640,7 @@ async def api_open_case(request: Request, user=Depends(current_user)):
         "inventory": new_data["inventory"],
         "lastFree": new_data.get("lastFree", 0),
         "lastUser": new_data.get("lastUser", 0),
+        "eventBoost": luck_mult,
     }
 
 
@@ -574,7 +725,6 @@ async def api_upgrade(request: Request, user=Depends(current_user)):
 
     def upd(d):
         inv2 = d.get("inventory", {})
-        # атомарная проверка всех предметов
         for iuid in input_uids:
             if iuid not in inv2:
                 return None
@@ -672,7 +822,6 @@ async def api_claim_promo(request: Request, user=Depends(current_user)):
     if used >= max_uses:
         raise HTTPException(400, "Промокод больше не активен")
 
-    # атомарное списание использования
     def tx_promo(current):
         if current is None:
             return None
@@ -734,19 +883,6 @@ async def api_claim_referral(request: Request, user=Depends(current_user)):
     return {"ok": True, "bonus": 2}
 
 
-@app.get("/api/user_profile/{target_uid}")
-async def api_user_profile(target_uid: str, user=Depends(current_user)):
-    if not target_uid or target_uid == "undefined":
-        raise HTTPException(400, "Invalid user ID")
-    data = get_user_data(target_uid)
-    return {
-        "uid": target_uid,
-        "balance": data.get("balance", 0),
-        "inventory": data.get("inventory", {}),
-        "stats": data.get("stats", {}),
-    }
-
-
 @app.post("/api/create-invoice-link")
 async def create_invoice(request: Request, user=Depends(current_user)):
     if not bot:
@@ -773,6 +909,222 @@ async def create_invoice(request: Request, user=Depends(current_user)):
     return {"invoice_link": link, "stars": pack["stars"], "coins": pack["coins"]}
 
 
+# ============================================================
+# ADMIN API
+# ============================================================
+@app.post("/api/admin/event")
+async def admin_set_event(request: Request, user=Depends(require_admin)):
+    if not FIREBASE_OK:
+        raise HTTPException(503)
+    body = await request.json()
+    ev_type = body.get("type")
+
+    if ev_type is None or ev_type == "":
+        fbdb.reference("meta/event").delete()
+        return {"ok": True, "event": None}
+
+    if ev_type not in EVENT_TYPES:
+        raise HTTPException(400, "unknown event type")
+
+    try:
+        duration_minutes = int(body.get("duration_minutes", 60))
+    except Exception:
+        raise HTTPException(400, "bad duration")
+
+    if duration_minutes < 1 or duration_minutes > MAX_EVENT_MINUTES:
+        raise HTTPException(400, f"duration 1..{MAX_EVENT_MINUTES} минут")
+
+    now = int(time.time() * 1000)
+    meta = EVENT_TYPES[ev_type]
+    ev = {
+        "type": ev_type,
+        "name": meta["name"],
+        "multiplier": meta["multiplier"],
+        "color": meta["color"],
+        "icon": meta["icon"],
+        "startedAt": now,
+        "endsAt": now + duration_minutes * 60 * 1000,
+        "startedBy": str(user["id"]),
+    }
+    fbdb.reference("meta/event").set(ev)
+    return {"ok": True, "event": ev}
+
+
+@app.post("/api/admin/promo")
+async def admin_create_promo(request: Request, user=Depends(require_admin)):
+    if not FIREBASE_OK:
+        raise HTTPException(503)
+    body = await request.json()
+    code = str(body.get("code", "")).strip().upper()
+    reward = int(body.get("reward", 0))
+    max_uses = int(body.get("max_uses", 0))
+
+    if not code or len(code) < 2 or len(code) > 32:
+        raise HTTPException(400, "Код должен быть 2..32 символа")
+    if not all(c.isalnum() or c in "_-" for c in code):
+        raise HTTPException(400, "Только буквы, цифры, _ и -")
+    if reward <= 0 or reward > MAX_PROMO_REWARD:
+        raise HTTPException(400, f"Награда 1..{MAX_PROMO_REWARD}")
+    if max_uses < 1 or max_uses > MAX_PROMO_USES:
+        raise HTTPException(400, f"Использований 1..{MAX_PROMO_USES}")
+
+    ref = fbdb.reference(f"promos/{code}")
+    if ref.get():
+        raise HTTPException(400, "Промокод уже существует")
+
+    ref.set({
+        "reward": reward,
+        "max_uses": max_uses,
+        "used": 0,
+        "createdAt": int(time.time() * 1000),
+        "createdBy": str(user["id"]),
+    })
+    return {"ok": True, "code": code, "reward": reward, "max_uses": max_uses}
+
+
+@app.post("/api/admin/give")
+async def admin_give(request: Request, user=Depends(require_admin)):
+    if not FIREBASE_OK:
+        raise HTTPException(503)
+    body = await request.json()
+    target_id = str(body.get("user_id", "")).strip()
+    coins = int(body.get("coins", 0) or 0)
+    item_id = body.get("item_id")
+
+    if not target_id:
+        raise HTTPException(400, "Укажите Telegram ID")
+    if coins == 0 and not item_id:
+        raise HTTPException(400, "Нечего выдавать")
+    if coins < 0:
+        raise HTTPException(400, "Монет не может быть отрицательно")
+    if coins > MAX_GIVE_COINS:
+        raise HTTPException(400, f"Максимум {MAX_GIVE_COINS} монет")
+    if item_id and item_id not in ITEMS_BY_ID:
+        raise HTTPException(400, "Неизвестный предмет")
+
+    target_data = get_user_data(target_id)
+    if not target_data or (int(target_data.get("balance", 0)) == 0 and not target_data.get("inventory") and not target_id):
+        pass  # юзер может быть новым — просто создадим запись через atomic_update
+
+    gave = {"coins": 0, "item": None}
+
+    def upd(d):
+        if coins > 0:
+            d["balance"] = int(d.get("balance", 0)) + coins
+            d["stats"]["totalEarned"] = int(d["stats"].get("totalEarned", 0)) + coins
+            gave["coins"] = coins
+        if item_id:
+            new_item = make_inv_item(ITEMS_BY_ID[item_id])
+            d.setdefault("inventory", {})[new_item["uid"]] = new_item
+            gave["item"] = new_item
+        return d
+
+    if not atomic_update(target_id, upd):
+        raise HTTPException(400, "Не удалось обновить пользователя")
+
+    return {"ok": True, "gave": gave, "target_id": target_id}
+
+
+@app.post("/api/admin/poll")
+async def admin_create_poll(request: Request, user=Depends(require_admin)):
+    if not FIREBASE_OK:
+        raise HTTPException(503)
+    body = await request.json()
+    question = str(body.get("question", "")).strip()
+    options = body.get("options", [])
+    duration_minutes = body.get("duration_minutes")
+
+    if not question or len(question) > 300:
+        raise HTTPException(400, "Вопрос 1..300 символов")
+    if not isinstance(options, list) or len(options) < 2 or len(options) > 6:
+        raise HTTPException(400, "Нужно 2..6 вариантов")
+
+    cleaned = [str(o).strip() for o in options]
+    for o in cleaned:
+        if not o or len(o) > 100:
+            raise HTTPException(400, "Каждый вариант 1..100 символов")
+
+    now = int(time.time() * 1000)
+    ends_at = None
+    if duration_minutes:
+        try:
+            dm = int(duration_minutes)
+        except Exception:
+            raise HTTPException(400, "bad duration")
+        if dm < 1 or dm > 60 * 24 * 30:
+            raise HTTPException(400, "Длительность 1..43200 минут")
+        ends_at = now + dm * 60 * 1000
+
+    poll = {
+        "id": "poll_" + str(now),
+        "question": question,
+        "options": [{"text": o, "votes": 0} for o in cleaned],
+        "createdAt": now,
+        "endsAt": ends_at,
+        "createdBy": str(user["id"]),
+        "voters": {},
+    }
+    fbdb.reference("meta/poll").set(poll)
+    return {"ok": True}
+
+
+@app.post("/api/admin/poll/end")
+async def admin_end_poll(user=Depends(require_admin)):
+    if not FIREBASE_OK:
+        raise HTTPException(503)
+    fbdb.reference("meta/poll").delete()
+    return {"ok": True}
+
+
+@app.get("/api/admin/stats")
+async def admin_stats(user=Depends(require_admin)):
+    if not FIREBASE_OK:
+        raise HTTPException(503)
+    try:
+        users = fbdb.reference("users").get() or {}
+    except Exception:
+        users = {}
+
+    total_users = 0
+    total_balance = 0
+    total_opened = 0
+    for u in users.values():
+        if not isinstance(u, dict):
+            continue
+        total_users += 1
+        try:
+            total_balance += int(u.get("balance", 0) or 0)
+            stats = u.get("stats") or {}
+            total_opened += int(stats.get("casesOpened", 0) or 0)
+        except Exception:
+            pass
+
+    try:
+        drops = fbdb.reference("drop_feed").get() or {}
+        recent = sorted(drops.values(), key=lambda d: d.get("ts", 0), reverse=True)[:20]
+    except Exception:
+        recent = []
+
+    ev = get_active_event()
+    poll = get_active_poll()
+
+    return {
+        "total_users": total_users,
+        "total_balance": total_balance,
+        "total_opened": total_opened,
+        "recent_drops": recent,
+        "active_event": ev,
+        "active_poll": {
+            "question": poll.get("question") if poll else None,
+            "endsAt": poll.get("endsAt") if poll else None,
+            "totalVotes": sum(int(o.get("votes", 0)) for o in poll.get("options", [])) if poll else 0,
+        } if poll else None,
+    }
+
+
+# ============================================================
+# WEBHOOK
+# ============================================================
 @app.post("/webhook/tg")
 async def tg_webhook(request: Request):
     if not bot:
