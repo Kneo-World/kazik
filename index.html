@@ -29,6 +29,7 @@
         img { -webkit-user-drag: none; }
         button { font-family: inherit; }
 
+        /* ================= TOP BAR ================= */
         .top-bar { display: flex; align-items: center; justify-content: space-between; padding: 15px 20px; background: rgba(10, 11, 16, 0.85); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 90; border-bottom: 1px solid var(--border); }
         .top-bar-left { display: flex; gap: 8px; align-items: center; }
         .menu-btn { background: none; border: none; color: var(--text-main); font-size: 22px; cursor: pointer; padding: 6px 10px; border-radius: 8px; transition: 0.2s; }
@@ -43,6 +44,7 @@
         .header-name { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .header-balance { font-size: 14px; font-weight: 900; color: var(--accent-gold); display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
 
+        /* ================= SIDEBAR ================= */
         .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
         .sidebar-overlay.active { opacity: 1; pointer-events: auto; }
         .sidebar { position: fixed; top: 0; left: 0; width: 80%; max-width: 320px; height: 100%; background: #11131c; z-index: 101; transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; flex-direction: column; box-shadow: 5px 0 30px rgba(0,0,0,0.8); border-right: 1px solid var(--border); }
@@ -62,89 +64,48 @@
         .nav-item.admin { color: var(--accent-gold); border: 1px solid rgba(251,191,36,0.3); background: rgba(251,191,36,0.05); }
         .nav-item.admin.active { background: linear-gradient(90deg, rgba(251,191,36,0.15), transparent); border-left: 4px solid var(--accent-gold); }
 
+        /* ================= SECTIONS ================= */
         .section { display: none; padding: 20px; max-width: 800px; margin: 0 auto; width: 100%; }
         .section.active { display: block; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
         .section-title { font-size: 20px; font-weight: 900; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* Event banner */
-        .event-banner {
-            display: flex; align-items: center; gap: 12px;
-            padding: 14px 16px; border-radius: 15px; margin-bottom: 12px;
-            border: 2px solid var(--accent-gold);
-            position: relative; overflow: hidden;
-            animation: eventPulse 2s infinite;
-        }
-        .event-banner::before {
-            content: ''; position: absolute; inset: 0;
-            background: currentColor; opacity: 0.1; z-index: 0;
-        }
+        /* ================= EVENT BANNER ================= */
+        .event-banner { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 15px; margin-bottom: 12px; border: 2px solid var(--accent-gold); position: relative; overflow: hidden; animation: eventPulse 2s infinite; }
+        .event-banner::before { content: ''; position: absolute; inset: 0; background: currentColor; opacity: 0.1; z-index: 0; }
         .event-banner > * { position: relative; z-index: 1; }
         .event-banner.event-miniboost { color: #22c55e; border-color: #22c55e; }
-        .event-banner.event-gold      { color: #fbbf24; border-color: #fbbf24; }
-        .event-banner.event-diamond   { color: #06b6d4; border-color: #06b6d4; }
-        .event-banner.event-bloody    { color: #dc2626; border-color: #dc2626; }
-        @keyframes eventPulse {
-            0%, 100% { box-shadow: 0 0 20px -8px currentColor; }
-            50%      { box-shadow: 0 0 30px 0 currentColor; }
-        }
-        .event-icon {
-            font-size: 28px; width: 40px; height: 40px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            background: rgba(0,0,0,0.3); flex-shrink: 0;
-        }
+        .event-banner.event-gold { color: #fbbf24; border-color: #fbbf24; }
+        .event-banner.event-diamond { color: #06b6d4; border-color: #06b6d4; }
+        .event-banner.event-bloody { color: #dc2626; border-color: #dc2626; }
+        @keyframes eventPulse { 0%, 100% { box-shadow: 0 0 20px -8px currentColor; } 50% { box-shadow: 0 0 30px 0 currentColor; } }
+        .event-icon { font-size: 28px; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.3); flex-shrink: 0; }
         .event-info { flex: 1; }
         .event-name { font-size: 15px; font-weight: 900; }
         .event-sub { font-size: 11px; opacity: 0.8; margin-top: 2px; }
-        .event-mult-badge {
-            background: currentColor; color: #000;
-            font-size: 15px; font-weight: 900; padding: 4px 10px; border-radius: 8px;
-            flex-shrink: 0;
-        }
+        .event-mult-badge { background: currentColor; color: #000; font-size: 15px; font-weight: 900; padding: 4px 10px; border-radius: 8px; flex-shrink: 0; }
 
-        /* Poll banner */
-        .poll-banner {
-            background: var(--bg-card); border: 1px solid var(--border);
-            border-radius: 15px; padding: 15px; margin-bottom: 15px;
-        }
-        .poll-question {
-            font-size: 14px; font-weight: 800; margin-bottom: 12px;
-            display: flex; align-items: flex-start; gap: 8px;
-        }
+        /* ================= POLL BANNER ================= */
+        .poll-banner { background: var(--bg-card); border: 1px solid var(--border); border-radius: 15px; padding: 15px; margin-bottom: 15px; }
+        .poll-question { font-size: 14px; font-weight: 800; margin-bottom: 12px; display: flex; align-items: flex-start; gap: 8px; }
         .poll-question i { color: var(--accent-blue); margin-top: 2px; }
         .poll-options { display: flex; flex-direction: column; gap: 7px; }
-        .poll-option {
-            background: var(--bg-input); border: 1px solid var(--border);
-            border-radius: 10px; padding: 11px 14px; cursor: pointer;
-            position: relative; overflow: hidden; transition: 0.2s;
-            text-align: left; color: var(--text-main); font-size: 13px; font-weight: 600;
-            width: 100%; font-family: inherit;
-        }
+        .poll-option { background: var(--bg-input); border: 1px solid var(--border); border-radius: 10px; padding: 11px 14px; cursor: pointer; position: relative; overflow: hidden; transition: 0.2s; text-align: left; color: var(--text-main); font-size: 13px; font-weight: 600; width: 100%; font-family: inherit; }
         .poll-option:hover:not(.voted) { border-color: var(--accent-blue); }
-        .poll-option-bar {
-            position: absolute; top: 0; left: 0; height: 100%;
-            background: rgba(59, 130, 246, 0.18); z-index: 0; transition: width 0.5s;
-        }
-        .poll-option-content {
-            display: flex; justify-content: space-between; gap: 8px;
-            position: relative; z-index: 1;
-        }
+        .poll-option-bar { position: absolute; top: 0; left: 0; height: 100%; background: rgba(59, 130, 246, 0.18); z-index: 0; transition: width 0.5s; }
+        .poll-option-content { display: flex; justify-content: space-between; gap: 8px; position: relative; z-index: 1; }
         .poll-option.voted { cursor: default; }
         .poll-option.my-vote { border-color: var(--accent-gold); }
         .poll-option.my-vote .poll-option-bar { background: rgba(251, 191, 36, 0.25); }
         .poll-option.my-vote .poll-option-content > span:first-child { color: var(--accent-gold); }
-        .poll-meta {
-            font-size: 11px; color: var(--text-muted); margin-top: 10px;
-            text-align: center; font-weight: 600;
-        }
+        .poll-meta { font-size: 11px; color: var(--text-muted); margin-top: 10px; text-align: center; font-weight: 600; }
 
-        /* Case cards event */
+        /* ================= CASES ================= */
         .case-card.event-boosted { transition: 0.3s; }
         .case-card.event-miniboost.event-boosted { border-color: #22c55e; box-shadow: 0 0 15px rgba(34, 197, 94, 0.35); }
-        .case-card.event-gold.event-boosted      { border-color: #fbbf24; box-shadow: 0 0 15px rgba(251, 191, 36, 0.35); }
-        .case-card.event-diamond.event-boosted   { border-color: #06b6d4; box-shadow: 0 0 15px rgba(6, 182, 212, 0.35); }
-        .case-card.event-bloody.event-boosted    { border-color: #dc2626; box-shadow: 0 0 15px rgba(220, 38, 38, 0.35); }
-
+        .case-card.event-gold.event-boosted { border-color: #fbbf24; box-shadow: 0 0 15px rgba(251, 191, 36, 0.35); }
+        .case-card.event-diamond.event-boosted { border-color: #06b6d4; box-shadow: 0 0 15px rgba(6, 182, 212, 0.35); }
+        .case-card.event-bloody.event-boosted { border-color: #dc2626; box-shadow: 0 0 15px rgba(220, 38, 38, 0.35); }
         .case-category { margin-bottom: 25px; }
         .case-category-title { font-size: 14px; font-weight: 900; color: var(--text-muted); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 1.5px; }
         .case-category-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
@@ -158,12 +119,16 @@
         .case-price { font-size: 13px; color: var(--accent-gold); font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 4px; }
         .case-card.locked { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
 
+        /* ================= CASE OPENING ================= */
         #section-case-opening { padding-bottom: 20px; }
         .case-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
         .back-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-main); padding: 10px 15px; border-radius: 12px; font-size: 15px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px; font-weight: 700; }
         .back-btn:hover { background: rgba(255,255,255,0.1); color: var(--accent-gold); }
-        .case-open-visual { width: 100%; height: 220px; position: relative; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
+
+        .case-open-visual { width: 100%; min-height: 220px; position: relative; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; transition: height 0.3s; }
         .case-open-img { max-width: 160px; max-height: 160px; object-fit: contain; filter: drop-shadow(0 15px 30px rgba(0,0,0,0.6)); transition: opacity 0.3s, transform 0.3s; }
+
+        /* Single roulette */
         .roulette-wrap { position: absolute; inset: 0; background: var(--bg-input); border: 2px solid var(--border); border-radius: 20px; overflow: hidden; opacity: 0; pointer-events: none; transition: opacity 0.3s; display: flex; align-items: center; }
         .roulette-wrap.active { opacity: 1; pointer-events: auto; }
         .roulette-pointer { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 4px; height: 100%; background: var(--accent-gold); z-index: 10; box-shadow: 0 0 15px var(--accent-gold), 0 0 30px rgba(251,191,36,0.5); }
@@ -175,13 +140,34 @@
         .roulette-item img { width: 60px; height: 60px; object-fit: contain; }
         .roulette-item .name { font-size: 9px; font-weight: 700; color: var(--text-muted); text-align: center; padding: 0 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
         .roulette-item .coin { color: var(--accent-gold); font-size: 40px; }
-        .open-controls { display: flex; flex-direction: column; gap: 15px; align-items: center; margin-bottom: 25px; }
+
+        /* Multi roulette (x2/x5) */
+        .roulette-multi-wrap { position: absolute; inset: 0; background: var(--bg-input); border: 2px solid var(--border); border-radius: 20px; overflow: hidden; opacity: 0; pointer-events: none; transition: opacity 0.3s; display: flex; flex-direction: column; gap: 6px; padding: 8px; }
+        .roulette-multi-wrap.active { opacity: 1; pointer-events: auto; }
+        .multi-strip { flex: 1; min-height: 60px; position: relative; background: #0d0f14; border: 2px solid var(--border); border-radius: 12px; overflow: hidden; display: flex; align-items: center; transition: border-color 0.3s, box-shadow 0.3s; }
+        .multi-strip.won { border-color: var(--accent-gold); box-shadow: 0 0 18px rgba(251,191,36,0.6); }
+        .multi-strip-pointer { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 3px; height: 100%; background: var(--accent-gold); z-index: 10; box-shadow: 0 0 10px var(--accent-gold); }
+        .multi-strip-pointer::before { content: ''; position: absolute; top: -1px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 8px solid var(--accent-gold); }
+        .multi-strip-track { display: flex; gap: 8px; padding: 0 10px; position: absolute; left: 0; height: 100%; align-items: center; will-change: transform; }
+        .multi-strip-item { width: 70px; height: 70px; background: #1c1f2b; border-radius: 10px; border: 2px solid var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; gap: 2px; position: relative; }
+        .multi-strip-item img { width: 38px; height: 38px; object-fit: contain; }
+        .multi-strip-item .name { font-size: 8px; font-weight: 700; color: var(--text-muted); text-align: center; padding: 0 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+        .multi-strip-item .coin { font-size: 22px; color: var(--accent-gold); }
+        .multi-strip-item .emoji-fallback { font-size: 22px; line-height: 38px; }
+        .multi-strip-badge { position: absolute; top: 4px; left: 6px; font-size: 9px; font-weight: 900; background: var(--accent-blue); color: #fff; padding: 2px 6px; border-radius: 6px; z-index: 5; letter-spacing: 0.5px; }
+        .multi-strip.won .multi-strip-badge { background: var(--accent-gold); color: #000; }
+
+        .open-controls { display: flex; flex-direction: column; gap: 12px; align-items: center; margin-bottom: 25px; }
         .mult-selector { display: flex; gap: 6px; background: rgba(255,255,255,0.03); padding: 5px; border-radius: 15px; border: 1px solid var(--border); }
         .mult-btn { min-width: 56px; padding: 10px 12px; background: transparent; border: none; color: var(--text-muted); border-radius: 10px; font-weight: 900; font-size: 15px; cursor: pointer; transition: 0.2s; }
         .mult-btn.active { background: var(--accent-blue); color: #fff; box-shadow: var(--glow-blue); }
         .btn-open { width: 100%; max-width: 400px; padding: 16px; border-radius: 15px; background: linear-gradient(135deg, var(--accent-gold), #b45309); color: #000; font-size: 17px; font-weight: 900; border: none; cursor: pointer; box-shadow: 0 5px 20px rgba(251, 191, 36, 0.4); transition: transform 0.2s, box-shadow 0.2s; }
         .btn-open:active:not(:disabled) { transform: scale(0.97); }
         .btn-open:disabled { background: #272a35; color: #555; box-shadow: none; cursor: not-allowed; }
+        .btn-skip { width: 100%; max-width: 400px; padding: 12px; border-radius: 12px; background: rgba(255,255,255,0.08); border: 1px solid var(--border); color: var(--text-muted); font-size: 14px; font-weight: 800; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: inherit; }
+        .btn-skip:hover { background: rgba(255,255,255,0.15); color: var(--text-main); }
+        .btn-skip:active { transform: scale(0.97); }
+
         .loot-preview-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 15px; }
         .loot-preview-title { font-size: 13px; font-weight: 800; color: var(--text-muted); margin-bottom: 15px; text-align: center; text-transform: uppercase; letter-spacing: 1px; }
         .loot-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 10px; }
@@ -192,7 +178,7 @@
         .loot-price { font-size: 10px; color: var(--accent-gold); font-weight: 800; margin-top: 3px; display: flex; align-items: center; justify-content: center; gap: 3px; }
         .loot-price i { font-size: 9px; }
 
-        /* UPGRADE WHEEL */
+        /* ================= UPGRADER ================= */
         .upg-container { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 20px 15px; }
         .upg-wheel-section { position: relative; width: 280px; height: 280px; margin: 0 auto 20px; }
         .upg-wheel-disc { position: absolute; inset: 0; border-radius: 50%; border: 4px solid var(--accent-gold); box-shadow: 0 0 30px rgba(251,191,36,0.3), inset 0 0 30px rgba(0,0,0,0.9); overflow: hidden; background: #1c1f2b; }
@@ -228,7 +214,7 @@
         .btn-upgrade-action:active:not(:disabled) { transform: scale(0.97); }
         .btn-upgrade-action:disabled { background: #272a35; color: #555; box-shadow: none; cursor: not-allowed; }
 
-        /* COINFLIP */
+        /* ================= COINFLIP ================= */
         .coinflip-container { text-align: center; background: var(--bg-card); border: 1px solid var(--border); border-radius: 15px; padding: 20px; }
         .coin-display { width: 110px; height: 110px; margin: 0 auto 20px; background: linear-gradient(135deg, #fbbf24, #d97706); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 50px; color: #000; box-shadow: 0 0 25px rgba(251, 191, 36, 0.5); transition: transform 0.1s; user-select: none; }
         .coin-display.spin { animation: spinCoin 1.1s ease-in-out; }
@@ -239,7 +225,7 @@
         .choice-btn { flex: 1; padding: 12px; border-radius: 10px; background: #1c1f2b; border: 2px solid var(--border); color: var(--text-muted); font-weight: 800; font-size: 14px; cursor: pointer; transition: 0.2s; }
         .choice-btn.active { background: rgba(59, 130, 246, 0.2); border-color: var(--accent-blue); color: var(--accent-blue); }
 
-        /* DONATE */
+        /* ================= DONATE ================= */
         .donate-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 25px; }
         .donate-card { background: var(--bg-card); border: 2px solid var(--border); border-radius: 15px; padding: 15px 10px; text-align: center; cursor: pointer; position: relative; transition: 0.2s; }
         .donate-card:hover { border-color: var(--accent-gold); transform: translateY(-2px); }
@@ -251,7 +237,7 @@
         .promo-input { width: 100%; background: var(--bg-input); border: 1px solid var(--border); border-radius: 10px; padding: 12px; color: var(--text-main); font-size: 16px; text-align: center; font-weight: 800; letter-spacing: 1px; margin-bottom: 12px; text-transform: uppercase; outline: none; }
         .promo-input:focus { border-color: var(--accent-blue); }
 
-        /* PROFILE */
+        /* ================= PROFILE ================= */
         .profile-banner { background: linear-gradient(135deg, #1e2235, #11131c); border: 1px solid var(--border); border-radius: 20px; padding: 25px 20px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-bottom: 20px; position: relative; overflow: hidden; }
         .profile-banner::before { content: ''; position: absolute; top: -50px; left: 50%; transform: translateX(-50%); width: 200px; height: 200px; background: var(--accent-blue); filter: blur(80px); opacity: 0.3; border-radius: 50%; }
         .profile-avatar-big { width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 12px; background: var(--accent-blue); border: 4px solid var(--accent-gold); display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: bold; box-shadow: var(--glow-gold); position: relative; z-index: 2; overflow: hidden; }
@@ -263,7 +249,7 @@
         .stat-box__val { font-size: 18px; font-weight: 900; color: var(--text-main); }
         .stat-box__lbl { font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; margin-top: 5px; }
 
-        /* INVENTORY */
+        /* ================= INVENTORY ================= */
         .inv-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
         .inv-item { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 8px; text-align: center; cursor: pointer; position: relative; transition: 0.2s; }
         .inv-item:hover { transform: translateY(-2px); }
@@ -274,7 +260,7 @@
         .sell-btn:hover { background: rgba(239, 68, 68, 0.3); }
         .inv-item.selected { background: rgba(59,130,246,0.1); border-color: var(--accent-blue) !important; }
 
-        /* BUTTONS & MODALS */
+        /* ================= BUTTONS & MODALS ================= */
         .btn { width: 100%; padding: 14px; border-radius: 12px; border: none; font-size: 15px; font-weight: 900; cursor: pointer; transition: 0.2s; background: linear-gradient(135deg, var(--accent-blue), #1e3a8a); color: #fff; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); }
         .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6); }
         .btn:active:not(:disabled) { transform: scale(0.97); }
@@ -310,10 +296,7 @@
         .toast.warning { border-color: var(--accent-gold); }
 
         .confetti-piece { position: fixed; pointer-events: none; z-index: 10001; will-change: transform, opacity; animation: confettiFall 2s ease-out forwards; }
-        @keyframes confettiFall {
-            0% { transform: translate(-50%, -50%) rotate(0); opacity: 1; }
-            100% { transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty) + 700px)) rotate(var(--rot)); opacity: 0; }
-        }
+        @keyframes confettiFall { 0% { transform: translate(-50%, -50%) rotate(0); opacity: 1; } 100% { transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty) + 700px)) rotate(var(--rot)); opacity: 0; } }
 
         .settings-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); }
         .settings-row:last-child { border-bottom: none; }
@@ -323,7 +306,7 @@
         .toggle.on { background: var(--accent-green); }
         .toggle.on::after { left: 25px; }
 
-        /* ADMIN PANEL */
+        /* ================= ADMIN ================= */
         .admin-tabs { display: flex; gap: 6px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 4px; }
         .admin-tabs::-webkit-scrollbar { height: 3px; }
         .admin-tabs::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
@@ -331,53 +314,28 @@
         .admin-tab.active { background: var(--accent-blue); color: #fff; border-color: var(--accent-blue); }
         .admin-panel { display: none; }
         .admin-panel.active { display: block; }
-
         .admin-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 15px; padding: 15px; margin-bottom: 12px; }
         .admin-card-title { font-size: 13px; font-weight: 900; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); }
-
         .admin-event-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px; }
         .admin-event-card { background: var(--bg-card); border: 2px solid var(--border); border-radius: 15px; padding: 15px; text-align: center; }
         .admin-event-card[data-type="miniboost"] { border-color: #22c55e; }
-        .admin-event-card[data-type="gold"]      { border-color: #fbbf24; }
-        .admin-event-card[data-type="diamond"]   { border-color: #06b6d4; }
-        .admin-event-card[data-type="bloody"]    { border-color: #dc2626; }
+        .admin-event-card[data-type="gold"] { border-color: #fbbf24; }
+        .admin-event-card[data-type="diamond"] { border-color: #06b6d4; }
+        .admin-event-card[data-type="bloody"] { border-color: #dc2626; }
         .admin-event-card .name { font-size: 15px; font-weight: 900; margin-bottom: 4px; }
         .admin-event-card .mult { font-size: 22px; font-weight: 900; margin-bottom: 10px; }
         .admin-event-card[data-type="miniboost"] .mult { color: #22c55e; }
-        .admin-event-card[data-type="gold"] .mult      { color: #fbbf24; }
-        .admin-event-card[data-type="diamond"] .mult   { color: #06b6d4; }
-        .admin-event-card[data-type="bloody"] .mult    { color: #dc2626; }
-
-        .admin-form input,
-        .admin-form select,
-        .admin-form textarea {
-            width: 100%;
-            background: var(--bg-input);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 12px;
-            color: var(--text-main);
-            font-size: 14px;
-            margin-bottom: 10px;
-            outline: none;
-            font-family: inherit;
-            resize: vertical;
-        }
-        .admin-form input:focus,
-        .admin-form select:focus,
-        .admin-form textarea:focus { border-color: var(--accent-blue); }
+        .admin-event-card[data-type="gold"] .mult { color: #fbbf24; }
+        .admin-event-card[data-type="diamond"] .mult { color: #06b6d4; }
+        .admin-event-card[data-type="bloody"] .mult { color: #dc2626; }
+        .admin-form input, .admin-form select, .admin-form textarea { width: 100%; background: var(--bg-input); border: 1px solid var(--border); border-radius: 10px; padding: 12px; color: var(--text-main); font-size: 14px; margin-bottom: 10px; outline: none; font-family: inherit; resize: vertical; }
+        .admin-form input:focus, .admin-form select:focus, .admin-form textarea:focus { border-color: var(--accent-blue); }
         .admin-form label { display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px; font-weight: 700; text-transform: uppercase; }
-
-        .admin-current-event {
-            background: var(--bg-input); border: 1px solid var(--border);
-            border-radius: 12px; padding: 12px; margin-bottom: 12px; font-size: 13px;
-        }
-
+        .admin-current-event { background: var(--bg-input); border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin-bottom: 12px; font-size: 13px; }
         .admin-stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 15px; }
         .admin-stat-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 12px; text-align: center; }
         .admin-stat-box .v { font-size: 20px; font-weight: 900; color: var(--accent-gold); }
         .admin-stat-box .l { font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; margin-top: 4px; }
-
         .admin-drop-row { display: flex; align-items: center; gap: 10px; padding: 8px; background: var(--bg-input); border-radius: 10px; margin-bottom: 6px; font-size: 12px; }
         .admin-drop-row img { width: 32px; height: 32px; object-fit: contain; }
         .admin-drop-row .meta { flex: 1; }
@@ -386,7 +344,7 @@
 
         @media (max-width: 400px) {
             .section { padding: 15px; }
-            .case-open-visual { height: 180px; }
+            .case-open-visual { min-height: 180px; }
             .upg-wheel-section { width: 240px; height: 240px; }
             .upg-wheel-center { width: 76px; height: 76px; }
             .upg-wheel-center .val { font-size: 18px; }
@@ -499,13 +457,14 @@
         <button class="back-btn" onclick="exitCaseOpening()"><i class="fa-solid fa-arrow-left"></i> Назад</button>
         <h2 class="section-title" id="open-case-title" style="margin:0;">КЕЙС</h2>
     </div>
-    <div class="case-open-visual">
+    <div class="case-open-visual" id="case-open-visual">
         <img id="open-case-img" class="case-open-img" src="" alt="">
         <div id="open-case-emoji" class="case-open-img" style="display:none; font-size:100px;"></div>
         <div class="roulette-wrap" id="roulette-wrap">
             <div class="roulette-pointer"></div>
             <div class="roulette-track" id="roulette-track"></div>
         </div>
+        <div class="roulette-multi-wrap" id="roulette-multi-wrap"></div>
     </div>
     <div class="open-controls">
         <div class="mult-selector" id="mult-selector">
@@ -515,6 +474,9 @@
         </div>
         <div id="won-area" style="width:100%; display:flex; justify-content:center; gap:8px; flex-wrap:wrap;"></div>
         <button class="btn-open" id="btn-open" onclick="startCaseOpening()">ОТКРЫТЬ</button>
+        <button class="btn-skip" id="btn-skip-anim" onclick="doSkipAnimation()" style="display:none;">
+            <i class="fa-solid fa-forward"></i> ПРОПУСТИТЬ АНИМАЦИЮ
+        </button>
     </div>
     <div class="loot-preview-box">
         <div class="loot-preview-title">Что может выпасть?</div>
@@ -619,7 +581,6 @@
         <button class="admin-tab" onclick="adminTab('stats')"><i class="fa-solid fa-chart-line"></i> Статы</button>
     </div>
 
-    <!-- EVENTS -->
     <div class="admin-panel active" data-panel="events">
         <div class="admin-card">
             <div class="admin-card-title">Активный ивент</div>
@@ -657,7 +618,6 @@
         </div>
     </div>
 
-    <!-- PROMO -->
     <div class="admin-panel" data-panel="promo">
         <div class="admin-card">
             <div class="admin-card-title">Создать промокод</div>
@@ -673,7 +633,6 @@
         </div>
     </div>
 
-    <!-- GIVE -->
     <div class="admin-panel" data-panel="give">
         <div class="admin-card">
             <div class="admin-card-title">Выдать монеты / предмет</div>
@@ -691,7 +650,6 @@
         </div>
     </div>
 
-    <!-- POLL -->
     <div class="admin-panel" data-panel="poll">
         <div class="admin-card">
             <div class="admin-card-title">Создать опрос</div>
@@ -716,7 +674,6 @@
         </div>
     </div>
 
-    <!-- STATS -->
     <div class="admin-panel" data-panel="stats">
         <div id="admin-stats-content">
             <div style="text-align:center; padding:20px; color:var(--text-muted);">Загрузка...</div>
@@ -764,11 +721,10 @@
             <div class="settings-label"><i class="fa-solid fa-mobile-screen"></i> Вибрация</div>
             <div class="toggle" id="toggle-haptic" onclick="toggleHaptic()"></div>
         </div>
-        <div style="margin-top:20px; font-size:11px; color:var(--text-muted); text-align:center;">Brainrots Funny v2.1</div>
+        <div style="margin-top:20px; font-size:11px; color:var(--text-muted); text-align:center;">Brainrots Funny v2.2</div>
     </div>
 </div>
 
-<!-- FIREBASE LIVE FEED -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
@@ -793,7 +749,6 @@
     });
 </script>
 
-<!-- MAIN SCRIPT -->
 <script>
 (function() {
     'use strict';
@@ -804,9 +759,24 @@
     const USER_COOLDOWN = 12 * 3600 * 1000;
     const MAX_UPGRADE_CHANCE = 95;
     const MAX_UPG_INPUTS = 5;
-    const CASE_ITEM_WIDTH = 130;
     const WIN_INDEX_CASES = 25;
     const ADMIN_IDS = [6636765626, 8364667153];
+
+    const CASE_PRICES = { free: 0, user: 0, base: 9, bro: 25, allin: 29 };
+
+    // Roulette sizes (from CSS)
+    const CASE_ITEM_W = 120;
+    const CASE_GAP = 10;
+    const CASE_STRIDE = CASE_ITEM_W + CASE_GAP; // 130
+    const CASE_TRACK_PAD = 15;
+    const CASE_WRAP_BORDER = 2;
+
+    // Multi strip sizes (from CSS)
+    const MULTI_ITEM_W = 70;
+    const MULTI_GAP = 8;
+    const MULTI_STRIDE = MULTI_ITEM_W + MULTI_GAP; // 78
+    const MULTI_TRACK_PAD = 10;
+    const MULTI_BORDER = 2;
 
     const RARITIES = {
         common:    { id: 'common',    name: 'Common',    color: '#6b7280' },
@@ -881,16 +851,19 @@
     let cfChoice = 'heads', isCfPlaying = false;
     let currentEvent = null;
     let currentPoll = null;
+    let animState = null;
 
     let soundEnabled = localStorage.getItem('bf_sound') !== '0';
     let hapticEnabled = localStorage.getItem('bf_haptic') !== '0';
 
+    // ========== UTILS ==========
     function escapeHtml(str) {
         return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
     function formatNum(n) { return Number(n).toLocaleString('ru-RU'); }
+    function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-    // SOUNDS
+    // ========== SOUND ==========
     let audioCtx = null;
     function getCtx() {
         if (!audioCtx) {
@@ -942,6 +915,7 @@
         } catch (e) {}
     }
 
+    // ========== API ==========
     async function apiCall(endpoint, method = 'GET', body = null) {
         const headers = { 'Content-Type': 'application/json', 'X-Telegram-Init-Data': tg ? tg.initData : '' };
         const options = { method, headers };
@@ -955,6 +929,7 @@
         return res.json();
     }
 
+    // ========== NOTIFY ==========
     function notify(opts) {
         if (typeof opts === 'string') opts = { message: opts };
         const type = opts.type || 'info';
@@ -1004,6 +979,7 @@
         }
     }
 
+    // ========== NAV ==========
     function toggleMenu() {
         document.getElementById('sidebar').classList.toggle('active');
         document.getElementById('sidebar-overlay').classList.toggle('active');
@@ -1026,6 +1002,7 @@
         if (tabId === 'admin') loadAdminStats();
     }
 
+    // ========== SETTINGS ==========
     function openSettings() { document.getElementById('settings-modal').classList.add('active'); haptic('light'); }
     function closeSettings() { document.getElementById('settings-modal').classList.remove('active'); }
 
@@ -1045,7 +1022,7 @@
         if (hapticEnabled) haptic('medium');
     }
 
-    // ================= EVENT BANNER =================
+    // ========== EVENT BANNER ==========
     function renderEventBanner() {
         const banner = document.getElementById('event-banner');
         if (!banner) return;
@@ -1054,16 +1031,16 @@
             return;
         }
         const ev = EVENT_TYPES[currentEvent.type] || {};
-        const mult = currentEvent.multiplier || ev.multiplier || 1;
+        const multi = currentEvent.multiplier || ev.multiplier || 1;
         banner.className = 'event-banner event-' + currentEvent.type;
         banner.style.display = 'flex';
         banner.innerHTML = `
             <div class="event-icon"><i class="fa-solid ${currentEvent.icon || ev.icon || 'fa-star'}"></i></div>
             <div class="event-info">
                 <div class="event-name">Ивент «${escapeHtml(currentEvent.name)}»</div>
-                <div class="event-sub" id="event-time-remaining">удача x${mult}</div>
+                <div class="event-sub" id="event-time-remaining">удача x${multi}</div>
             </div>
-            <div class="event-mult-badge">x${mult}</div>
+            <div class="event-mult-badge">x${multi}</div>
         `;
         updateEventCountdown();
     }
@@ -1091,7 +1068,7 @@
         });
     }
 
-    // ================= POLL BANNER =================
+    // ========== POLL BANNER ==========
     function renderPollBanner() {
         const el = document.getElementById('poll-banner');
         if (!el) return;
@@ -1158,6 +1135,7 @@
         } catch (e) {}
     }
 
+    // ========== UI UPDATE ==========
     function updateUI() {
         ['h-balance', 's-balance', 'p-balance'].forEach(id => {
             const el = document.getElementById(id);
@@ -1169,6 +1147,9 @@
         document.getElementById('stat-inv').textContent = Object.keys(state.inventory || {}).length;
         renderInventory();
         updateTimers();
+        if (document.getElementById('section-case-opening').classList.contains('active') && !isOpening) {
+            updateOpenBtnState();
+        }
     }
 
     function updateTimers() {
@@ -1208,7 +1189,6 @@
         if (document.getElementById('section-case-opening').classList.contains('active') && !isOpening) {
             updateOpenBtnState();
         }
-        // event countdown
         if (currentEvent) {
             const rem = currentEvent.endsAt - now;
             if (rem <= 0) {
@@ -1219,7 +1199,6 @@
                 updateEventCountdown();
             }
         }
-        // poll countdown
         if (currentPoll && currentPoll.endsAt) {
             const rem = currentPoll.endsAt - now;
             if (rem <= 0) {
@@ -1268,7 +1247,7 @@
 
     window.updateDropFeed = function(arr) {};
 
-    // ================= CASES =================
+    // ========== CASES ==========
     function openCaseSection(type) {
         if (isOpening) return;
         haptic('medium');
@@ -1289,8 +1268,12 @@
         imgEl.style.display = 'block';
         emojiEl.style.display = 'none';
         document.getElementById('roulette-wrap').classList.remove('active');
+        document.getElementById('roulette-multi-wrap').classList.remove('active');
         document.getElementById('roulette-track').innerHTML = '';
+        document.getElementById('roulette-multi-wrap').innerHTML = '';
         document.getElementById('won-area').innerHTML = '';
+        document.getElementById('case-open-visual').style.height = '';
+        hideSkipBtn();
 
         const caseData = {
             free:   { img: 'assets/cases/free.png',  emoji: '🎁' },
@@ -1313,10 +1296,16 @@
     }
 
     function exitCaseOpening() {
+        if (isOpening && animState) {
+            animState.finish(true);
+        }
         document.getElementById('roulette-wrap').classList.remove('active');
+        document.getElementById('roulette-multi-wrap').classList.remove('active');
+        document.getElementById('case-open-visual').style.height = '';
         document.getElementById('open-case-img').style.opacity = '1';
         document.getElementById('open-case-img').style.transform = 'scale(1)';
         document.getElementById('won-area').innerHTML = '';
+        hideSkipBtn();
         haptic('light');
         switchTab('cases');
     }
@@ -1327,12 +1316,24 @@
         const now = Date.now();
         if (activeCase === 'free' && now - state.lastFree < FREE_COOLDOWN) {
             btn.disabled = true; btn.textContent = 'КУЛДАУН';
-        } else if (activeCase === 'user' && now - state.lastUser < USER_COOLDOWN) {
-            btn.disabled = true; btn.textContent = 'КУЛДАУН';
-        } else {
-            btn.disabled = false;
-            btn.textContent = mult > 1 ? `ОТКРЫТЬ x${mult}` : 'ОТКРЫТЬ';
+            return;
         }
+        if (activeCase === 'user' && now - state.lastUser < USER_COOLDOWN) {
+            btn.disabled = true; btn.textContent = 'КУЛДАУН';
+            return;
+        }
+        // Проверка баланса для платных кейсов
+        if (activeCase && activeCase !== 'free' && activeCase !== 'user') {
+            const price = (CASE_PRICES[activeCase] || 0) * mult;
+            if (state.balance < price) {
+                const missing = price - state.balance;
+                btn.disabled = true;
+                btn.textContent = `НЕ ХВАТАЕТ ${formatNum(missing)}`;
+                return;
+            }
+        }
+        btn.disabled = false;
+        btn.textContent = mult > 1 ? `ОТКРЫТЬ x${mult}` : 'ОТКРЫТЬ';
     }
 
     function setMultiplier(m) {
@@ -1390,26 +1391,271 @@
         return { type: 'item', item: ITEMS_BY_ID[cfg.items[0].id] };
     }
 
-    function renderCaseStripItem(drop) {
+    // Рендер айтема для одиночной полосы
+    function renderCaseStripItem(drop, isWin) {
+        const glow = isWin ? 'box-shadow: 0 0 22px rgba(251,191,36,0.7);' : '';
         if (drop.type === 'coin') {
-            return `<div class="roulette-item" style="border-color:var(--accent-gold);">
+            return `<div class="roulette-item" style="border-color:var(--accent-gold); ${glow}">
                 <div class="coin"><i class="fa-solid fa-coins"></i></div>
                 <div class="name">+${drop.amount || 1}</div>
             </div>`;
         }
         const r = RARITIES[drop.item.rarity] || RARITIES.common;
-        return `<div class="roulette-item" style="border-color:${r.color};">
+        const bc = isWin ? 'var(--accent-gold)' : r.color;
+        return `<div class="roulette-item" style="border-color:${bc}; ${glow}">
             <img src="${drop.item.img}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
             <span class="emoji-fallback" style="display:none; font-size:36px;">${drop.item.emoji || '🧠'}</span>
             <div class="name">${drop.item.name}</div>
         </div>`;
     }
 
+    // Рендер айтема для полосы в мульти-режиме
+    function renderMultiStripItem(drop, isWin) {
+        const glow = isWin ? 'box-shadow: 0 0 15px rgba(251,191,36,0.6);' : '';
+        if (drop.type === 'coin') {
+            return `<div class="multi-strip-item" style="border-color:var(--accent-gold); ${glow}">
+                <div class="coin"><i class="fa-solid fa-coins"></i></div>
+                <div class="name">+${drop.amount || 1}</div>
+            </div>`;
+        }
+        const r = RARITIES[drop.item.rarity] || RARITIES.common;
+        const bc = isWin ? 'var(--accent-gold)' : r.color;
+        return `<div class="multi-strip-item" style="border-color:${bc}; ${glow}">
+            <img src="${drop.item.img}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <span class="emoji-fallback" style="display:none;">${drop.item.emoji || '🧠'}</span>
+            <div class="name">${drop.item.name}</div>
+        </div>`;
+    }
+
+    function calcCaseScrollTo(idx, wrapW) {
+        const itemCenter = CASE_WRAP_BORDER + CASE_TRACK_PAD + idx * CASE_STRIDE + CASE_ITEM_W / 2;
+        return Math.max(0, itemCenter - wrapW / 2);
+    }
+
+    function calcMultiScrollTo(idx, stripW) {
+        const itemCenter = MULTI_BORDER + MULTI_TRACK_PAD + idx * MULTI_STRIDE + MULTI_ITEM_W / 2;
+        return Math.max(0, itemCenter - stripW / 2);
+    }
+
+    function addResultToWonArea(win) {
+        const area = document.getElementById('won-area');
+        const div = document.createElement('div');
+        div.style.animation = 'fadeIn 0.35s ease';
+        if (win.type === 'coin') {
+            div.className = 'loot-card';
+            div.style.cssText = 'width:70px; padding:8px;';
+            div.innerHTML = `<i class="fa-solid fa-coins" style="font-size:26px; color:var(--accent-gold)"></i>
+                <div style="font-weight:900; margin-top:5px; font-size:12px;">+${win.amount}</div>`;
+        } else {
+            const r = RARITIES[win.item.rarity] || RARITIES.common;
+            div.className = 'loot-card';
+            div.style.cssText = `width:70px; padding:8px; border-color:${r.color};`;
+            div.innerHTML = `<div style="height:35px; display:flex; align-items:center; justify-content:center;">
+                <img src="${win.item.img}" style="width:35px; height:35px; object-fit:contain;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <span class="emoji-fallback" style="display:none; font-size:25px;">${win.item.emoji || '🧠'}</span>
+            </div>
+            <div style="font-weight:900; font-size:9px; margin-top:5px;">${win.item.name}</div>`;
+        }
+        area.appendChild(div);
+    }
+
+    function showSkipBtn() {
+        const b = document.getElementById('btn-skip-anim');
+        if (b) b.style.display = 'flex';
+    }
+    function hideSkipBtn() {
+        const b = document.getElementById('btn-skip-anim');
+        if (b) b.style.display = 'none';
+    }
+
+    // ========== SINGLE OPENING ==========
+    function playSingleOpening(res, cfg, onDone) {
+        const track = document.getElementById('roulette-track');
+        const items = [];
+        for (let i = 0; i < 60; i++) {
+            if (i === WIN_INDEX_CASES) items.push(res.results[0]);
+            else items.push(getRandomCaseDrop(cfg));
+        }
+        track.innerHTML = items.map((d, i) => renderCaseStripItem(d, i === WIN_INDEX_CASES)).join('');
+        track.style.transition = 'none';
+        track.style.transform = 'translateX(0)';
+
+        const wrapW = document.getElementById('roulette-wrap').offsetWidth;
+        const jitter = (Math.random() - 0.5) * 16;
+        const scrollTo = calcCaseScrollTo(WIN_INDEX_CASES, wrapW) + jitter;
+
+        document.getElementById('roulette-wrap').classList.add('active');
+        showSkipBtn();
+
+        let finished = false;
+        let timer = null;
+        const tickInterval = setInterval(() => playSound('tick'), 120);
+
+        const finish = (skip) => {
+            if (finished) return;
+            finished = true;
+            clearInterval(tickInterval);
+            if (timer) clearTimeout(timer);
+            if (skip) {
+                track.style.transition = 'none';
+                track.style.transform = `translateX(-${scrollTo}px)`;
+            }
+            animState = null;
+            onDone();
+        };
+
+        animState = { mode: 'single', finish };
+
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                track.style.transition = 'transform 4.2s cubic-bezier(0.15, 0.85, 0.25, 1)';
+                track.style.transform = `translateX(-${scrollTo}px)`;
+            });
+        });
+
+        playSound('spin');
+        timer = setTimeout(() => finish(false), 4400);
+    }
+
+    // ========== MULTI OPENING (x2/x5) ==========
+    function playMultiOpening(res, cfg, onDone) {
+        const N = res.results.length;
+        const wrap = document.getElementById('roulette-multi-wrap');
+        wrap.innerHTML = '';
+
+        // Рассчитаем высоту: N*70 + (N-1)*6 + 16 padding
+        const totalH = N * 70 + (N - 1) * 6 + 16 + 4; // 4 = border
+        document.getElementById('case-open-visual').style.height = Math.max(220, totalH) + 'px';
+
+        const strips = [];
+        for (let i = 0; i < N; i++) {
+            const strip = document.createElement('div');
+            strip.className = 'multi-strip';
+            strip.innerHTML = `
+                <div class="multi-strip-pointer"></div>
+                <div class="multi-strip-badge">${i + 1}/${N}</div>
+                <div class="multi-strip-track"></div>
+            `;
+            wrap.appendChild(strip);
+
+            const track = strip.querySelector('.multi-strip-track');
+            const items = [];
+            for (let j = 0; j < 60; j++) {
+                if (j === WIN_INDEX_CASES) items.push(res.results[i]);
+                else items.push(getRandomCaseDrop(cfg));
+            }
+            track.innerHTML = items.map((d, j) => renderMultiStripItem(d, j === WIN_INDEX_CASES)).join('');
+            track.style.transition = 'none';
+            track.style.transform = 'translateX(0)';
+
+            strips.push({ el: strip, track, result: res.results[i], landed: false });
+        }
+
+        wrap.classList.add('active');
+        showSkipBtn();
+        playSound('spin');
+
+        // Ждём layout
+        setTimeout(() => {
+            // Считаем scrollTo для каждой полосы
+            for (const s of strips) {
+                const stripW = s.el.offsetWidth;
+                const jitter = (Math.random() - 0.5) * 10;
+                s.scrollTo = calcMultiScrollTo(WIN_INDEX_CASES, stripW) + jitter;
+            }
+
+            // Базовая длительность + стаггер
+            const baseDur = 3.2;
+            const stagger = 0.18;
+
+            // Запускаем все полосы одновременно с разной длительностью
+            strips.forEach((s, i) => {
+                const dur = baseDur + i * stagger;
+                s.dur = dur;
+                s.track.style.transition = `transform ${dur}s cubic-bezier(0.15, 0.85, 0.25, 1)`;
+                s.track.style.transform = `translateX(-${s.scrollTo}px)`;
+            });
+
+            const tickInterval = setInterval(() => playSound('tick'), 100);
+            const timers = [];
+
+            const landStrip = (s, instant) => {
+                if (s.landed) return;
+                s.landed = true;
+                if (instant) {
+                    s.track.style.transition = 'none';
+                    s.track.style.transform = `translateX(-${s.scrollTo}px)`;
+                }
+                s.el.classList.add('won');
+                haptic('light');
+                playSound('coin');
+                addResultToWonArea(s.result);
+            };
+
+            let finished = false;
+
+            const finish = (skip) => {
+                if (finished) return;
+                finished = true;
+                clearInterval(tickInterval);
+                timers.forEach(t => clearTimeout(t));
+                if (skip) {
+                    strips.forEach(s => {
+                        if (!s.landed) landStrip(s, true);
+                    });
+                }
+                animState = null;
+                onDone();
+            };
+
+            animState = { mode: 'multi', finish };
+
+            // Ставим таймеры на приземление каждой полосы
+            strips.forEach((s, i) => {
+                const landAt = s.dur * 1000;
+                timers.push(setTimeout(() => landStrip(s, false), landAt));
+            });
+
+            // Общий таймер на завершение (последняя + запас)
+            const totalDur = (baseDur + (N - 1) * stagger) * 1000 + 250;
+            timers.push(setTimeout(() => finish(false), totalDur));
+        }, 60);
+    }
+
+    function doSkipAnimation() {
+        if (!animState) return;
+        haptic('light');
+        animState.finish(true);
+    }
+
+    function finalizeOpening() {
+        isOpening = false;
+        document.getElementById('btn-open').disabled = false;
+        document.getElementById('btn-open').textContent = 'ОТКРЫТЬ';
+        document.getElementById('roulette-wrap').classList.remove('active');
+        document.getElementById('roulette-multi-wrap').classList.remove('active');
+        document.getElementById('case-open-visual').style.height = '';
+        document.getElementById('open-case-img').style.opacity = '1';
+        document.getElementById('open-case-img').style.transform = 'scale(1)';
+        hideSkipBtn();
+        updateOpenBtnState();
+    }
+
     async function startCaseOpening() {
         if (isOpening) return;
         const now = Date.now();
-        if (activeCase === 'free' && now - state.lastFree < FREE_COOLDOWN) return notify({ type: 'error', message: 'Бесплатный кейс ещё не готов' });
-        if (activeCase === 'user' && now - state.lastUser < USER_COOLDOWN) return notify({ type: 'error', message: 'Кейс за Юз ещё не готов' });
+        if (activeCase === 'free' && now - state.lastFree < FREE_COOLDOWN)
+            return notify({ type: 'error', message: 'Бесплатный кейс ещё не готов' });
+        if (activeCase === 'user' && now - state.lastUser < USER_COOLDOWN)
+            return notify({ type: 'error', message: 'Кейс за Юз ещё не готов' });
+
+        // Проверка баланса (защита от обхода через devtools)
+        if (activeCase && activeCase !== 'free' && activeCase !== 'user') {
+            const price = (CASE_PRICES[activeCase] || 0) * mult;
+            if (state.balance < price) {
+                return notify({ type: 'error', message: `Не хватает ${formatNum(price - state.balance)} монет` });
+            }
+        }
 
         isOpening = true;
         const btn = document.getElementById('btn-open');
@@ -1420,7 +1666,7 @@
 
         document.getElementById('open-case-img').style.opacity = '0';
         document.getElementById('open-case-img').style.transform = 'scale(0.8)';
-        document.getElementById('roulette-wrap').classList.add('active');
+        document.getElementById('won-area').innerHTML = '';
 
         try {
             const res = await apiCall('/api/open_case', 'POST', { case_type: activeCase, multiplier: mult });
@@ -1431,58 +1677,10 @@
             updateUI();
 
             const cfg = CASE_LOOT_DATA[activeCase];
-            const items = [];
-            for (let i = 0; i < 60; i++) {
-                if (i >= WIN_INDEX_CASES && i < WIN_INDEX_CASES + res.results.length) {
-                    items.push(res.results[i - WIN_INDEX_CASES]);
-                } else {
-                    items.push(getRandomCaseDrop(cfg));
-                }
-            }
 
-            const track = document.getElementById('roulette-track');
-            track.innerHTML = items.map(renderCaseStripItem).join('');
-            track.style.transition = 'none';
-            track.style.transform = 'translateX(0)';
-
-            requestAnimationFrame(() => {
-                const wrapW = document.getElementById('roulette-wrap').offsetWidth;
-                const jitter = (Math.random() - 0.5) * 40;
-                const scrollTo = WIN_INDEX_CASES * (CASE_ITEM_WIDTH + 10) - (wrapW / 2) + (CASE_ITEM_WIDTH / 2) + jitter;
-                track.style.transition = 'transform 4.2s cubic-bezier(0.15, 0.85, 0.25, 1)';
-                track.style.transform = `translateX(-${Math.max(0, scrollTo)}px)`;
-            });
-
-            const tickInterval = setInterval(() => playSound('tick'), 120);
-            setTimeout(() => clearInterval(tickInterval), 3200);
-
-            setTimeout(() => {
-                isOpening = false;
-                btn.disabled = false;
-                document.getElementById('roulette-wrap').classList.remove('active');
-                document.getElementById('open-case-img').style.opacity = '1';
-                document.getElementById('open-case-img').style.transform = 'scale(1)';
-
-                let html = '';
-                res.results.forEach(win => {
-                    if (win.type === 'coin') {
-                        html += `<div class="loot-card" style="width:70px; padding:8px;">
-                            <i class="fa-solid fa-coins" style="font-size:26px; color:var(--accent-gold)"></i>
-                            <div style="font-weight:900; margin-top:5px; font-size:12px;">+${win.amount}</div>
-                        </div>`;
-                    } else {
-                        const r = RARITIES[win.item.rarity] || RARITIES.common;
-                        html += `<div class="loot-card" style="width:70px; padding:8px; border-color:${r.color};">
-                            <div style="height:35px; display:flex; align-items:center; justify-content:center;">
-                                <img src="${win.item.img}" style="width:35px; height:35px; object-fit:contain;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                                <span class="emoji-fallback" style="display:none; font-size:25px;">${win.item.emoji || '🧠'}</span>
-                            </div>
-                            <div style="font-weight:900; font-size:9px; margin-top:5px;">${win.item.name}</div>
-                        </div>`;
-                    }
-                });
-                document.getElementById('won-area').innerHTML = html;
-
+            const onDone = () => {
+                finalizeOpening();
+                // Проверка на легендарку — показать модалку
                 const hasLegendary = res.results.some(r => r.type === 'item' && r.item.rarity === 'legendary');
                 if (hasLegendary) {
                     haptic('success');
@@ -1492,18 +1690,25 @@
                     showWinModal(leg.item);
                 } else {
                     haptic('light');
-                    playSound('coin');
                 }
-                updateOpenBtnState();
-            }, 4400);
+            };
+
+            if (res.results.length === 1) {
+                playSingleOpening(res, cfg, onDone);
+            } else {
+                playMultiOpening(res, cfg, onDone);
+            }
 
         } catch (err) {
             isOpening = false;
             btn.disabled = false;
             btn.textContent = 'ОТКРЫТЬ';
             document.getElementById('roulette-wrap').classList.remove('active');
+            document.getElementById('roulette-multi-wrap').classList.remove('active');
+            document.getElementById('case-open-visual').style.height = '';
             document.getElementById('open-case-img').style.opacity = '1';
             document.getElementById('open-case-img').style.transform = 'scale(1)';
+            hideSkipBtn();
             haptic('error');
             notify({ type: 'error', message: err.message });
         }
@@ -1523,7 +1728,7 @@
         haptic('light');
     }
 
-    // ================= UPGRADER =================
+    // ========== UPGRADER ==========
     function renderUpgInputs() {
         const container = document.getElementById('upg-input-box');
         if (upgInputs.length === 0) {
@@ -1817,7 +2022,7 @@
         }
     }
 
-    // ================= COINFLIP =================
+    // ========== COINFLIP ==========
     function setChoice(c) {
         cfChoice = c;
         document.getElementById('btn-heads').classList.toggle('active', c === 'heads');
@@ -1863,7 +2068,7 @@
         }
     }
 
-    // ================= PROMO =================
+    // ========== PROMO ==========
     async function claimPromo() {
         const input = document.getElementById('promo-code');
         const code = input.value.trim().toUpperCase();
@@ -1882,7 +2087,7 @@
         }
     }
 
-    // ================= DONATE =================
+    // ========== DONATE ==========
     function renderDonate() {
         const grid = document.getElementById('donate-grid');
         grid.innerHTML = STARS_PACKAGES.map(p => `
@@ -1915,13 +2120,12 @@
         }
     }
 
-    // ================= ADMIN =================
+    // ========== ADMIN ==========
     function adminTab(name) {
         document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
-        const tabBtn = Array.from(document.querySelectorAll('.admin-tab')).find(b => b.textContent.toLowerCase().includes(
-            name === 'events' ? 'ивент' : name === 'promo' ? 'промо' : name === 'give' ? 'выдать' : name === 'poll' ? 'опрос' : 'статы'
-        ));
+        const labelMap = { events: 'ивент', promo: 'промо', give: 'выдать', poll: 'опрос', stats: 'статы' };
+        const tabBtn = Array.from(document.querySelectorAll('.admin-tab')).find(b => b.textContent.toLowerCase().includes(labelMap[name]));
         if (tabBtn) tabBtn.classList.add('active');
         const panel = document.querySelector(`.admin-panel[data-panel="${name}"]`);
         if (panel) panel.classList.add('active');
@@ -1970,7 +2174,7 @@
         if (d.recent_drops && d.recent_drops.length) {
             dropsHtml = d.recent_drops.map(dr => `
                 <div class="admin-drop-row">
-                    ${dr.itemImg ? `<img src="/assets/../${dr.itemImg.replace('assets/', '')}" onerror="this.style.display='none';">` : ''}
+                    ${dr.itemImg ? `<img src="/${dr.itemImg}" onerror="this.style.display='none';">` : ''}
                     <div class="meta">
                         <div class="nick">${escapeHtml(dr.nick || '?')}</div>
                         <div class="item">${escapeHtml(dr.itemName || '')} (${dr.price || 0})</div>
@@ -2119,7 +2323,7 @@
         });
     }
 
-    // ================= GLOBAL =================
+    // ========== GLOBAL ==========
     window.BF = {
         addToUpg: (uid) => {
             if (upgInputs.includes(uid)) {
@@ -2183,6 +2387,7 @@
     window.exitCaseOpening = exitCaseOpening;
     window.setMultiplier = setMultiplier;
     window.startCaseOpening = startCaseOpening;
+    window.doSkipAnimation = doSkipAnimation;
     window.openInvPicker = openInvPicker;
     window.closeInvPicker = closeInvPicker;
     window.openTargetPicker = openTargetPicker;
@@ -2209,7 +2414,7 @@
     window.adminCreatePoll = adminCreatePoll;
     window.adminEndPoll = adminEndPoll;
 
-    // ================= INIT =================
+    // ========== INIT ==========
     async function loadData() {
         try {
             const data = await apiCall('/api/me');
@@ -2220,7 +2425,6 @@
             state.hasUserCase = data.hasUserCase || false;
             state.stats = data.stats || {};
 
-            // Показать админку если админ
             if (data.isAdmin || IS_ADMIN) {
                 const navAdmin = document.getElementById('nav-admin');
                 if (navAdmin) navAdmin.style.display = 'flex';
@@ -2245,7 +2449,7 @@
         const refId = start.replace('ref_', '');
         if (refId === String(MY_ID)) return;
         try {
-            const res = await apiCall('/api/claim_referral', { ref_id: refId });
+            const res = await apiCall('/api/claim_referral', 'POST', { ref_id: refId });
             if (res.ok) {
                 notify({ type: 'success', message: 'Бонус за вход' });
                 loadData();
@@ -2274,4 +2478,4 @@
 })();
 </script>
 </body>
-                </html>
+</html>
