@@ -29,7 +29,6 @@
         img { -webkit-user-drag: none; }
         button { font-family: inherit; }
 
-        /* TOP BAR (Mobile) */
         .top-bar { display: flex; align-items: center; justify-content: space-between; padding: 15px 20px; background: rgba(10, 11, 16, 0.85); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 90; border-bottom: 1px solid var(--border); }
         .top-bar-left { display: flex; gap: 8px; align-items: center; }
         .menu-btn { background: none; border: none; color: var(--text-main); font-size: 22px; cursor: pointer; padding: 6px 10px; border-radius: 8px; transition: 0.2s; }
@@ -44,7 +43,6 @@
         .header-name { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .header-balance { font-size: 14px; font-weight: 900; color: var(--accent-gold); display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
 
-        /* SIDEBAR (Mobile) */
         .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
         .sidebar-overlay.active { opacity: 1; pointer-events: auto; }
         .sidebar { position: fixed; top: 0; left: 0; width: 80%; max-width: 320px; height: 100%; background: #11131c; z-index: 101; transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; flex-direction: column; box-shadow: 5px 0 30px rgba(0,0,0,0.8); border-right: 1px solid var(--border); }
@@ -64,13 +62,11 @@
         .nav-item.admin { color: var(--accent-gold); border: 1px solid rgba(251,191,36,0.3); background: rgba(251,191,36,0.05); }
         .nav-item.admin.active { background: linear-gradient(90deg, rgba(251,191,36,0.15), transparent); border-left: 4px solid var(--accent-gold); }
 
-        /* SECTIONS */
         .section { display: none; padding: 20px; max-width: 800px; margin: 0 auto; width: 100%; }
         .section.active { display: block; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
         .section-title { font-size: 20px; font-weight: 900; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* LIVE FEED (Mobile) */
         .live-feed-section { background: var(--bg-card); border: 1px solid var(--border); border-radius: 15px; padding: 15px; margin-bottom: 15px; }
         .live-feed-title { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 900; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px; }
         .live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-red); box-shadow: 0 0 10px var(--accent-red); animation: livePulse 1.5s infinite; }
@@ -112,7 +108,6 @@
         .ld-overlay.upgrade .ld-method-text { color: var(--accent-blue); }
         .live-feed-empty { width: 100%; text-align: center; padding: 20px; color: var(--text-muted); font-size: 12px; font-weight: 600; }
 
-        /* EVENT BANNER */
         .event-banner { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 15px; margin-bottom: 12px; border: 2px solid var(--accent-gold); position: relative; overflow: hidden; animation: eventPulse 2s infinite; }
         .event-banner::before { content: ''; position: absolute; inset: 0; background: currentColor; opacity: 0.1; z-index: 0; }
         .event-banner > * { position: relative; z-index: 1; }
@@ -130,7 +125,6 @@
         .event-sub { font-size: 11px; opacity: 0.8; margin-top: 2px; }
         .event-mult-badge { background: currentColor; color: #000; font-size: 15px; font-weight: 900; padding: 4px 10px; border-radius: 8px; flex-shrink: 0; }
 
-        /* POLL */
         .poll-banner { background: var(--bg-card); border: 1px solid var(--border); border-radius: 15px; padding: 15px; margin-bottom: 15px; }
         .poll-question { font-size: 14px; font-weight: 800; margin-bottom: 12px; display: flex; align-items: flex-start; gap: 8px; }
         .poll-question i { color: var(--accent-blue); margin-top: 2px; }
@@ -145,7 +139,6 @@
         .poll-option.my-vote .poll-option-content > span:first-child { color: var(--accent-gold); }
         .poll-meta { font-size: 11px; color: var(--text-muted); margin-top: 10px; text-align: center; font-weight: 600; }
 
-        /* CASES */
         .case-card.event-boosted { transition: 0.3s; }
         .case-card.event-miniboost.event-boosted { border-color: #22c55e; box-shadow: 0 0 15px rgba(34, 197, 94, 0.35); }
         .case-card.event-gold.event-boosted { border-color: #fbbf24; box-shadow: 0 0 15px rgba(251, 191, 36, 0.35); }
@@ -164,7 +157,6 @@
         .case-price { font-size: 13px; color: var(--accent-gold); font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 4px; }
         .case-card.locked { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
 
-        /* CASE OPENING */
         #section-case-opening { padding-bottom: 20px; }
         .case-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
         .back-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-main); padding: 10px 15px; border-radius: 12px; font-size: 15px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px; font-weight: 700; }
@@ -223,7 +215,6 @@
         .loot-price { font-size: 10px; color: var(--accent-gold); font-weight: 800; margin-top: 3px; display: flex; align-items: center; justify-content: center; gap: 3px; }
         .loot-price i { font-size: 9px; }
 
-        /* UPGRADER */
         .upg-container { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 20px 15px; }
         .upg-wheel-section { position: relative; width: 280px; height: 280px; margin: 0 auto 20px; }
         .upg-wheel-disc { position: absolute; inset: 0; border-radius: 50%; border: 4px solid var(--accent-gold); box-shadow: 0 0 30px rgba(251,191,36,0.3), inset 0 0 30px rgba(0,0,0,0.9); overflow: hidden; background: #1c1f2b; }
@@ -259,7 +250,6 @@
         .btn-upgrade-action:active:not(:disabled) { transform: scale(0.97); }
         .btn-upgrade-action:disabled { background: #272a35; color: #555; box-shadow: none; cursor: not-allowed; }
 
-        /* COINFLIP */
         .coinflip-container { text-align: center; background: var(--bg-card); border: 1px solid var(--border); border-radius: 15px; padding: 20px; }
         .coin-display { width: 110px; height: 110px; margin: 0 auto 20px; background: linear-gradient(135deg, #fbbf24, #d97706); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 50px; color: #000; box-shadow: 0 0 25px rgba(251, 191, 36, 0.5); transition: transform 0.1s; user-select: none; }
         .coin-display.spin { animation: spinCoin 1.1s ease-in-out; }
@@ -270,7 +260,6 @@
         .choice-btn { flex: 1; padding: 12px; border-radius: 10px; background: #1c1f2b; border: 2px solid var(--border); color: var(--text-muted); font-weight: 800; font-size: 14px; cursor: pointer; transition: 0.2s; }
         .choice-btn.active { background: rgba(59, 130, 246, 0.2); border-color: var(--accent-blue); color: var(--accent-blue); }
 
-        /* DONATE */
         .donate-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 25px; }
         .donate-card { background: var(--bg-card); border: 2px solid var(--border); border-radius: 15px; padding: 15px 10px; text-align: center; cursor: pointer; position: relative; transition: 0.2s; }
         .donate-card:hover { border-color: var(--accent-gold); transform: translateY(-2px); }
@@ -282,7 +271,6 @@
         .promo-input { width: 100%; background: var(--bg-input); border: 1px solid var(--border); border-radius: 10px; padding: 12px; color: var(--text-main); font-size: 16px; text-align: center; font-weight: 800; letter-spacing: 1px; margin-bottom: 12px; text-transform: uppercase; outline: none; }
         .promo-input:focus { border-color: var(--accent-blue); }
 
-        /* PROFILE */
         .profile-banner { background: linear-gradient(135deg, #1e2235, #11131c); border: 1px solid var(--border); border-radius: 20px; padding: 25px 20px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-bottom: 20px; position: relative; overflow: hidden; }
         .profile-banner::before { content: ''; position: absolute; top: -50px; left: 50%; transform: translateX(-50%); width: 200px; height: 200px; background: var(--accent-blue); filter: blur(80px); opacity: 0.3; border-radius: 50%; }
         .profile-avatar-big { width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 12px; background: var(--accent-blue); border: 4px solid var(--accent-gold); display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: bold; box-shadow: var(--glow-gold); position: relative; z-index: 2; overflow: hidden; }
@@ -294,7 +282,6 @@
         .stat-box__val { font-size: 18px; font-weight: 900; color: var(--text-main); }
         .stat-box__lbl { font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; margin-top: 5px; }
 
-        /* INVENTORY */
         .inv-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
         .inv-item { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 8px; text-align: center; cursor: pointer; position: relative; transition: 0.2s; }
         .inv-item:hover { transform: translateY(-2px); }
@@ -305,7 +292,6 @@
         .sell-btn:hover { background: rgba(239, 68, 68, 0.3); }
         .inv-item.selected { background: rgba(59,130,246,0.1); border-color: var(--accent-blue) !important; }
 
-        /* BUTTONS & MODALS */
         .btn { width: 100%; padding: 14px; border-radius: 12px; border: none; font-size: 15px; font-weight: 900; cursor: pointer; transition: 0.2s; background: linear-gradient(135deg, var(--accent-blue), #1e3a8a); color: #fff; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); }
         .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6); }
         .btn:active:not(:disabled) { transform: scale(0.97); }
@@ -346,10 +332,77 @@
         .settings-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); }
         .settings-row:last-child { border-bottom: none; }
         .settings-label { font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
-        .toggle { position: relative; width: 48px; height: 26px; background: var(--border); border-radius: 13px; cursor: pointer; transition: 0.2s; }
+        .toggle { position: relative; width: 48px; height: 26px; background: var(--border); border-radius: 13px; cursor: pointer; transition: 0.2s; flex-shrink: 0; }
         .toggle::after { content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; background: #fff; border-radius: 50%; transition: 0.2s; }
         .toggle.on { background: var(--accent-green); }
         .toggle.on::after { left: 25px; }
+
+        /* SETTINGS SECTION (для ПК) */
+        .settings-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .settings-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 16px 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            transition: 0.2s;
+        }
+        .settings-item:hover {
+            border-color: rgba(255,255,255,0.15);
+        }
+        .settings-item-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .settings-item-title {
+            font-size: 15px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 4px;
+        }
+        .settings-item-title i {
+            color: var(--accent-blue);
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
+        }
+        .settings-item-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+        .settings-item .btn.small {
+            flex-shrink: 0;
+        }
+        .settings-section-hint {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        .settings-section-hint i {
+            color: var(--accent-blue);
+            font-size: 16px;
+            margin-top: 1px;
+        }
 
         /* ADMIN */
         .admin-tabs { display: flex; gap: 6px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
@@ -366,17 +419,14 @@
         .admin-event-card[data-type="gold"] { border-color: #fbbf24; }
         .admin-event-card[data-type="diamond"] { border-color: #06b6d4; }
         .admin-event-card[data-type="bloody"] { border-color: #dc2626; }
-        
         .admin-event-card .img-wrap { width: 48px; height: 48px; margin: 0 auto 8px; display: flex; align-items: center; justify-content: center; }
         .admin-event-card .img-wrap img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 0 5px currentColor); }
-        
         .admin-event-card .name { font-size: 15px; font-weight: 900; margin-bottom: 4px; }
         .admin-event-card .mult { font-size: 22px; font-weight: 900; margin-bottom: 10px; }
         .admin-event-card[data-type="miniboost"] .mult { color: #22c55e; }
         .admin-event-card[data-type="gold"] .mult { color: #fbbf24; }
         .admin-event-card[data-type="diamond"] .mult { color: #06b6d4; }
         .admin-event-card[data-type="bloody"] .mult { color: #dc2626; }
-        
         .admin-form input, .admin-form select, .admin-form textarea { width: 100%; background: var(--bg-input); border: 1px solid var(--border); border-radius: 10px; padding: 12px; color: var(--text-main); font-size: 14px; margin-bottom: 10px; outline: none; font-family: inherit; resize: vertical; }
         .admin-form input:focus, .admin-form select:focus, .admin-form textarea:focus { border-color: var(--accent-blue); }
         .admin-form label { display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px; font-weight: 700; text-transform: uppercase; }
@@ -392,12 +442,7 @@
         .admin-drop-row .item { color: var(--text-muted); font-size: 11px; }
         .admin-rank-badge { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 11px; color: #000; flex-shrink: 0; }
 
-        /* ITEM EDITOR */
-        .admin-item-row {
-            display: flex; align-items: center; gap: 10px; padding: 8px;
-            background: var(--bg-input); border-radius: 10px; margin-bottom: 6px; font-size: 12px;
-            flex-wrap: wrap;
-        }
+        .admin-item-row { display: flex; align-items: center; gap: 10px; padding: 8px; background: var(--bg-input); border-radius: 10px; margin-bottom: 6px; font-size: 12px; flex-wrap: wrap; }
         .admin-item-row img { width: 36px; height: 36px; object-fit: contain; background: #1c1f2b; border-radius: 6px; padding: 2px; }
         .admin-item-row .item-name { flex: 1; font-weight: 800; font-size: 13px; min-width: 80px; }
         .admin-item-row input { width: 70px; margin-bottom: 0 !important; padding: 6px !important; font-size: 12px !important; text-align: center; }
@@ -428,12 +473,10 @@
         @media (min-width: 1024px) {
             body { padding-left: 300px; padding-right: 320px; }
             
-            /* Скрываем мобильные элементы на ПК */
             .top-bar { display: none; }
             .sidebar { display: none; }
             .sidebar-overlay { display: none; }
 
-            /* Показываем ПК сайдбары */
             .pc-sidebar {
                 display: flex;
                 position: fixed;
@@ -468,7 +511,6 @@
                 border-radius: 0;
             }
 
-            /* Заголовки ПК сайдбаров */
             .pc-sidebar .pc-title {
                 font-size: 13px;
                 font-weight: 900;
@@ -481,7 +523,6 @@
                 margin-bottom: 4px;
             }
 
-            /* Live feed в левом сайдбаре - вертикальный */
             .pc-live-feed {
                 display: flex;
                 flex-direction: column;
@@ -535,7 +576,6 @@
                 display: none;
             }
 
-            /* Top drop в ПК сайдбаре */
             .pc-sidebar .top-drop-day {
                 margin-bottom: 8px;
                 padding: 10px;
@@ -546,7 +586,6 @@
             .pc-sidebar .top-drop-name { font-size: 13px; }
             .pc-sidebar .top-drop-price { font-size: 14px; }
 
-            /* ПК профиль в правом сайдбаре */
             .pc-profile-widget {
                 display: flex;
                 align-items: center;
@@ -610,7 +649,6 @@
                 margin-top: 3px;
             }
 
-            /* Навигация ПК */
             .pc-nav {
                 display: flex;
                 flex-direction: column;
@@ -660,7 +698,10 @@
                 border-left-color: var(--accent-gold);
             }
 
-            /* Секции - шире на ПК */
+            .pc-nav-item.pc-settings {
+                color: var(--text-main);
+            }
+
             .section {
                 max-width: 1100px;
                 padding: 25px 35px;
@@ -670,7 +711,6 @@
                 font-size: 22px;
             }
 
-            /* Сетки шире на ПК */
             .cases-grid {
                 grid-template-columns: repeat(3, 1fr);
                 gap: 14px;
@@ -684,7 +724,6 @@
                 grid-template-columns: repeat(3, 1fr);
             }
 
-            /* Апгрейд - центрируем, чуть больше на ПК */
             .upg-container {
                 max-width: 720px;
                 margin: 0 auto;
@@ -726,8 +765,6 @@
                 width: 70px;
                 height: 70px;
             }
-
-            /* Модалки остаются по центру - они position fixed inset 0 */
         }
 
         @media (min-width: 1400px) {
@@ -768,9 +805,10 @@
         <div class="pc-nav-item" data-tab="upgrader" onclick="switchTab('upgrader')"><i class="fa-solid fa-bolt"></i> Апгрейд</div>
         <div class="pc-nav-item" data-tab="coinflip" onclick="switchTab('coinflip')"><i class="fa-solid fa-coins"></i> Монетка</div>
         <div class="pc-nav-item" data-tab="donate" onclick="switchTab('donate')"><i class="fa-solid fa-star"></i> Пополнение</div>
+        <div class="pc-nav-item pc-settings" data-tab="settings" onclick="switchTab('settings')"><i class="fa-solid fa-gear"></i> Настройки</div>
         <div class="pc-nav-item admin" data-tab="admin" id="pc-nav-admin" style="display:none;" onclick="switchTab('admin')"><i class="fa-solid fa-shield-halved"></i> Админ</div>
     </div>
-    <div style="margin-top:auto; font-size:11px; color:var(--text-muted); text-align:center; padding-top:10px;">Brainrots Funny v2.8</div>
+    <div style="margin-top:auto; font-size:11px; color:var(--text-muted); text-align:center; padding-top:10px;">Brainrots Funny v2.9</div>
 </div>
 
 <!-- MOBILE: Top Bar -->
@@ -992,6 +1030,50 @@
     <div class="promo-box">
         <input type="text" class="promo-input" id="promo-code" placeholder="ВВЕДИТЕ КОД" autocomplete="off">
         <button class="btn" onclick="claimPromo()">АКТИВИРОВАТЬ</button>
+    </div>
+</div>
+
+<!-- SETTINGS (для ПК) -->
+<div id="section-settings" class="section">
+    <h2 class="section-title"><i class="fa-solid fa-gear" style="color:var(--accent-blue);"></i> Настройки</h2>
+
+    <div class="settings-section-hint">
+        <i class="fa-solid fa-lightbulb"></i>
+        <div>Здесь можно настроить звук, вибрацию и полноэкранный режим. Изменения применяются мгновенно.</div>
+    </div>
+
+    <div class="settings-container">
+        <div class="settings-item">
+            <div class="settings-item-info">
+                <div class="settings-item-title"><i class="fa-solid fa-volume-high"></i> Звуки</div>
+                <div class="settings-item-desc">Звуковые эффекты при игре</div>
+            </div>
+            <div class="toggle" id="section-toggle-sound" onclick="toggleSound()"></div>
+        </div>
+
+        <div class="settings-item">
+            <div class="settings-item-info">
+                <div class="settings-item-title"><i class="fa-solid fa-mobile-screen"></i> Вибрация</div>
+                <div class="settings-item-desc">Тактильная отдача (Telegram)</div>
+            </div>
+            <div class="toggle" id="section-toggle-haptic" onclick="toggleHaptic()"></div>
+        </div>
+
+        <div class="settings-item pc-only">
+            <div class="settings-item-info">
+                <div class="settings-item-title"><i class="fa-solid fa-expand"></i> Авто-фуллскрин</div>
+                <div class="settings-item-desc">Автоматически разворачивать при заходе на ПК</div>
+            </div>
+            <div class="toggle" id="section-toggle-fullscreen" onclick="toggleAutoFullscreen()"></div>
+        </div>
+
+        <div class="settings-item pc-only">
+            <div class="settings-item-info">
+                <div class="settings-item-title"><i class="fa-solid fa-tv"></i> Полный экран</div>
+                <div class="settings-item-desc">Развернуть игру на весь экран сейчас</div>
+            </div>
+            <button class="btn small gold" onclick="toggleFullscreenNow()" id="fullscreen-now-btn">РАЗВЕРНУТЬ</button>
+        </div>
     </div>
 </div>
 
@@ -1222,7 +1304,25 @@
             <div class="settings-label"><i class="fa-solid fa-mobile-screen"></i> Вибрация</div>
             <div class="toggle" id="toggle-haptic" onclick="toggleHaptic()"></div>
         </div>
-        <div style="margin-top:20px; font-size:11px; color:var(--text-muted); text-align:center;">Brainrots Funny v2.8</div>
+        <div style="margin-top:20px; font-size:11px; color:var(--text-muted); text-align:center;">Brainrots Funny v2.9</div>
+    </div>
+</div>
+
+<!-- Fullscreen intro modal (показывается при первом входе с ПК) -->
+<div class="modal" id="fullscreen-intro-modal">
+    <div class="modal-box">
+        <div style="font-size:56px; margin-bottom:15px; line-height:1;">🖥️</div>
+        <h3 class="modal-title">Полноэкранный режим</h3>
+        <p style="color:var(--text-muted); font-size:14px; line-height:1.6; margin-bottom:22px;">
+            Рекомендуем играть на весь экран для максимального погружения.<br>
+            Это можно отключить в любой момент в настройках.
+        </p>
+        <button class="btn gold" onclick="enableFullscreenFromIntro()" style="margin-bottom:10px;">
+            <i class="fa-solid fa-expand"></i> РАЗВЕРНУТЬ СЕЙЧАС
+        </button>
+        <button class="btn glass-item" style="background:rgba(255,255,255,0.05); border:1px solid var(--border);" onclick="dismissFullscreenIntro()">
+            НЕ СЕЙЧАС
+        </button>
     </div>
 </div>
 
@@ -1425,6 +1525,101 @@
         } catch (e) {}
     }
 
+    // === FULLSCREEN LOGIC ===
+    function checkFirstPCVisit() {
+        if (window.innerWidth < 1024) return;
+        const visited = localStorage.getItem('bf_pc_visited');
+        const setting = localStorage.getItem('bf_pc_fullscreen');
+
+        if (!visited) {
+            localStorage.setItem('bf_pc_visited', '1');
+            setTimeout(() => {
+                document.getElementById('fullscreen-intro-modal').classList.add('active');
+            }, 1200);
+        } else if (setting === '1') {
+            // Пробуем включить автоматически (может не сработать без user gesture)
+            setTimeout(tryAutoFullscreen, 500);
+        }
+    }
+
+    function tryAutoFullscreen() {
+        if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen().catch(() => {
+                // Без gesture не сработает — показываем ненавязчивую подсказку
+                notify({ type: 'info', title: 'Полный экран', message: 'Нажмите в настройках "Развернуть"', duration: 5000 });
+            });
+        }
+    }
+
+    function enableFullscreenFromIntro() {
+        localStorage.setItem('bf_pc_fullscreen', '1');
+        document.getElementById('fullscreen-intro-modal').classList.remove('active');
+        if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen().catch(() => {});
+        }
+        updateFullscreenToggles();
+        notify({ type: 'success', message: 'Полный экран включён' });
+    }
+
+    function dismissFullscreenIntro() {
+        localStorage.setItem('bf_pc_fullscreen', '0');
+        document.getElementById('fullscreen-intro-modal').classList.remove('active');
+        updateFullscreenToggles();
+    }
+
+    function toggleAutoFullscreen() {
+        const cur = localStorage.getItem('bf_pc_fullscreen') === '1';
+        localStorage.setItem('bf_pc_fullscreen', cur ? '0' : '1');
+        haptic('light');
+        updateFullscreenToggles();
+        if (!cur) {
+            if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen().catch(() => {});
+            }
+        }
+    }
+
+    function toggleFullscreenNow() {
+        if (!document.fullscreenElement) {
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen().then(() => {
+                    updateFullscreenToggles();
+                }).catch(() => {
+                    notify({ type: 'error', message: 'Не удалось развернуть' });
+                });
+            }
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen().then(() => {
+                    updateFullscreenToggles();
+                }).catch(() => {});
+            }
+        }
+    }
+
+    function updateFullscreenToggles() {
+        const autoTog = document.getElementById('section-toggle-fullscreen');
+        if (autoTog) autoTog.classList.toggle('on', localStorage.getItem('bf_pc_fullscreen') === '1');
+
+        const fsBtn = document.getElementById('fullscreen-now-btn');
+        if (fsBtn) {
+            if (document.fullscreenElement) {
+                fsBtn.textContent = 'СВЕРНУТЬ';
+                fsBtn.className = 'btn small';
+                fsBtn.style.background = 'rgba(255,255,255,0.08)';
+                fsBtn.style.color = 'var(--text-main)';
+            } else {
+                fsBtn.textContent = 'РАЗВЕРНУТЬ';
+                fsBtn.className = 'btn small gold';
+                fsBtn.style.background = '';
+                fsBtn.style.color = '';
+            }
+        }
+    }
+
+    document.addEventListener('fullscreenchange', updateFullscreenToggles);
+
+    // === API ===
     async function apiCall(endpoint, method = 'GET', body = null) {
         const headers = { 'Content-Type': 'application/json', 'X-Telegram-Init-Data': tg ? tg.initData : '' };
         const options = { method, headers };
@@ -1514,12 +1709,10 @@
         const target = document.getElementById('section-' + tabId);
         if (target) target.classList.add('active');
 
-        // Mobile nav
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         const activeNav = document.querySelector(`.nav-item[data-tab="${tabId}"]`);
         if (activeNav) activeNav.classList.add('active');
 
-        // PC nav
         document.querySelectorAll('.pc-nav-item').forEach(n => n.classList.remove('active'));
         const pcActiveNav = document.querySelector(`.pc-nav-item[data-tab="${tabId}"]`);
         if (pcActiveNav) pcActiveNav.classList.add('active');
@@ -1532,6 +1725,9 @@
             loadAdminStats();
             loadAdminPromos();
         }
+        if (tabId === 'settings') {
+            updateFullscreenToggles();
+        }
     }
 
     function openSettings() { document.getElementById('settings-modal').classList.add('active'); haptic('light'); }
@@ -1541,6 +1737,8 @@
         soundEnabled = !soundEnabled;
         localStorage.setItem('bf_sound', soundEnabled ? '1' : '0');
         document.getElementById('toggle-sound').classList.toggle('on', soundEnabled);
+        const st = document.getElementById('section-toggle-sound');
+        if (st) st.classList.toggle('on', soundEnabled);
         const btn = document.getElementById('sound-toggle');
         btn.innerHTML = soundEnabled ? '<i class="fa-solid fa-volume-high"></i>' : '<i class="fa-solid fa-volume-xmark"></i>';
         btn.classList.toggle('off', !soundEnabled);
@@ -1550,6 +1748,8 @@
         hapticEnabled = !hapticEnabled;
         localStorage.setItem('bf_haptic', hapticEnabled ? '1' : '0');
         document.getElementById('toggle-haptic').classList.toggle('on', hapticEnabled);
+        const st = document.getElementById('section-toggle-haptic');
+        if (st) st.classList.toggle('on', hapticEnabled);
         if (hapticEnabled) haptic('medium');
     }
 
@@ -1619,7 +1819,6 @@
         }
         topDayDrop = best;
 
-        // Топ дня - рендерим в оба места
         [document.getElementById('top-drop-day'), document.getElementById('pc-top-drop-day')].forEach(topBox => {
             if (!topBox) return;
             if (best) {
@@ -1635,7 +1834,6 @@
             }
         });
 
-        // Live feed - рендерим в оба места
         const itemsHtml = dropFeedData.length 
             ? dropFeedData.slice(0, 30).map(d => buildLiveDropHTML(d)).join('')
             : '<div class="live-feed-empty">Пока нет дропов</div>';
@@ -1675,9 +1873,7 @@
             const data = await apiCall('/api/user_profile/' + encodeURIComponent(uid));
             const isMe = String(data.uid) === String(MY_ID);
 
-            const displayName = isMe
-                ? 'Это вы'
-                : (nickFallback ? nickFallback : 'Игрок #' + uid);
+            const displayName = isMe ? 'Это вы' : (nickFallback ? nickFallback : 'Игрок #' + uid);
 
             document.getElementById('op-name').textContent = displayName;
             document.getElementById('op-balance').textContent = formatNum(data.balance || 0);
@@ -1707,9 +1903,7 @@
             }
         } catch (err) {
             const isMe = String(uid) === String(MY_ID);
-            const displayName = isMe
-                ? 'Это вы'
-                : (nickFallback ? nickFallback : 'Игрок #' + uid);
+            const displayName = isMe ? 'Это вы' : (nickFallback ? nickFallback : 'Игрок #' + uid);
 
             document.getElementById('op-name').textContent = displayName;
             document.getElementById('op-balance').textContent = '—';
@@ -3364,6 +3558,10 @@
     window.adminCreatePoll = adminCreatePoll;
     window.adminEndPoll = adminEndPoll;
     window.adminSaveItem = adminSaveItem;
+    window.toggleAutoFullscreen = toggleAutoFullscreen;
+    window.toggleFullscreenNow = toggleFullscreenNow;
+    window.enableFullscreenFromIntro = enableFullscreenFromIntro;
+    window.dismissFullscreenIntro = dismissFullscreenIntro;
 
     async function loadData() {
         try {
@@ -3409,13 +3607,22 @@
         } catch (e) {}
     }
 
+    // Инициализация тоглов
     document.getElementById('toggle-sound').classList.toggle('on', soundEnabled);
     document.getElementById('toggle-haptic').classList.toggle('on', hapticEnabled);
+    const sst = document.getElementById('section-toggle-sound');
+    if (sst) sst.classList.toggle('on', soundEnabled);
+    const sht = document.getElementById('section-toggle-haptic');
+    if (sht) sht.classList.toggle('on', hapticEnabled);
     const sBtn = document.getElementById('sound-toggle');
     if (!soundEnabled) {
         sBtn.innerHTML = '<i class="fa-solid fa-volume-xmark"></i>';
         sBtn.classList.add('off');
     }
+
+    // Проверка первого входа на ПК
+    checkFirstPCVisit();
+    updateFullscreenToggles();
 
     loadItems().then(() => {
         switchTab('cases');
