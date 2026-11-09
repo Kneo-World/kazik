@@ -367,7 +367,6 @@
         .admin-event-card[data-type="diamond"] { border-color: #06b6d4; }
         .admin-event-card[data-type="bloody"] { border-color: #dc2626; }
         
-        /* Картинки в админ-ивентах */
         .admin-event-card .img-wrap { width: 48px; height: 48px; margin: 0 auto 8px; display: flex; align-items: center; justify-content: center; }
         .admin-event-card .img-wrap img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 0 5px currentColor); }
         
@@ -494,8 +493,48 @@
         </div>
     </div>
 
+    <!-- МАГАЗИН КЕЙСОВ -->
     <div class="case-category">
-        <div class="case-category-title">All In</div>
+        <div class="case-category-title">Магазин</div>
+        <div class="cases-grid">
+            <div class="case-card" data-case="starter" onclick="openCaseSection('starter')">
+                <div class="case-img-wrap">
+                    <img src="assets/cases/base.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <span class="emoji-fallback" style="display:none;">📦</span>
+                </div>
+                <div class="case-title">Стартер</div>
+                <div class="case-price"><i class="fa-solid fa-coins"></i> 10</div>
+            </div>
+            <div class="case-card" data-case="meme" onclick="openCaseSection('meme')">
+                <div class="case-img-wrap">
+                    <img src="assets/cases/bro.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <span class="emoji-fallback" style="display:none;">💎</span>
+                </div>
+                <div class="case-title">Мемный</div>
+                <div class="case-price"><i class="fa-solid fa-coins"></i> 50</div>
+            </div>
+            <div class="case-card" data-case="zoo" onclick="openCaseSection('zoo')">
+                <div class="case-img-wrap">
+                    <img src="assets/cases/allin.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <span class="emoji-fallback" style="display:none;">🦁</span>
+                </div>
+                <div class="case-title">Зоопарк</div>
+                <div class="case-price"><i class="fa-solid fa-coins"></i> 100</div>
+            </div>
+            <div class="case-card" data-case="mafia" onclick="openCaseSection('mafia')">
+                <div class="case-img-wrap">
+                    <img src="assets/cases/user.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <span class="emoji-fallback" style="display:none;">💼</span>
+                </div>
+                <div class="case-title">Мафия</div>
+                <div class="case-price"><i class="fa-solid fa-coins"></i> 250</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ALL IN -->
+    <div class="case-category">
+        <div class="case-category-title">ALL IN</div>
         <div class="cases-grid">
             <div class="case-card" data-case="allin" onclick="openCaseSection('allin')">
                 <div class="case-img-wrap">
@@ -504,28 +543,6 @@
                 </div>
                 <div class="case-title">ALL IN</div>
                 <div class="case-price"><i class="fa-solid fa-coins"></i> 29</div>
-            </div>
-        </div>
-    </div>
-
-    <div class="case-category">
-        <div class="case-category-title">Standard</div>
-        <div class="cases-grid">
-            <div class="case-card" data-case="base" onclick="openCaseSection('base')">
-                <div class="case-img-wrap">
-                    <img src="assets/cases/base.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <span class="emoji-fallback" style="display:none;">📦</span>
-                </div>
-                <div class="case-title">Начальный</div>
-                <div class="case-price"><i class="fa-solid fa-coins"></i> 9</div>
-            </div>
-            <div class="case-card" data-case="bro" onclick="openCaseSection('bro')">
-                <div class="case-img-wrap">
-                    <img src="assets/cases/bro.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <span class="emoji-fallback" style="display:none;">💎</span>
-                </div>
-                <div class="case-title">Про Бро</div>
-                <div class="case-price"><i class="fa-solid fa-coins"></i> 25</div>
             </div>
         </div>
     </div>
@@ -854,7 +871,7 @@
             <div class="settings-label"><i class="fa-solid fa-mobile-screen"></i> Вибрация</div>
             <div class="toggle" id="toggle-haptic" onclick="toggleHaptic()"></div>
         </div>
-        <div style="margin-top:20px; font-size:11px; color:var(--text-muted); text-align:center;">Brainrots Funny v2.7</div>
+        <div style="margin-top:20px; font-size:11px; color:var(--text-muted); text-align:center;">Brainrots Funny v2.8</div>
     </div>
 </div>
 
@@ -901,7 +918,7 @@
     const MULTI_BASE_MS = 5500;
     const MULTI_STAGGER_MS = 300;
 
-    const CASE_PRICES = { free: 0, user: 0, base: 9, bro: 25, allin: 29 };
+    const CASE_PRICES = { free: 0, user: 0, starter: 10, meme: 50, zoo: 100, mafia: 250, allin: 29 };
 
     const RARITIES = {
         common:    { id: 'common',    name: 'Common',    color: '#6b7280' },
@@ -931,11 +948,43 @@
     let STATE = { items: {}, itemsArray: [] };
 
     const CASE_LOOT_DATA = {
-        free:  { coinChance: 70, coins: [{amount:1,weight:50},{amount:2,weight:30},{amount:3,weight:20}], items: [{id:"trios",weight:50},{id:"rot67",weight:50}] },
-        user:  { coinChance: 30, coins: [{amount:3,weight:100}], items: [{id:"trios",weight:30},{id:"rot67",weight:30},{id:"hammy",weight:20},{id:"candyslap",weight:10},{id:"esok",weight:10}] },
-        base:  { coinChance: 0,  coins: [], items: [{id:"trios",weight:20},{id:"rot67",weight:20},{id:"candyslap",weight:20},{id:"lagrande",weight:15},{id:"ketupat",weight:15},{id:"hotspot",weight:10}] },
-        bro:   { coinChance: 0,  coins: [], items: [{id:"hammy",weight:15},{id:"noobinis",weight:15},{id:"tangtang",weight:15},{id:"tictac",weight:10},{id:"bacuru",weight:10},{id:"los67",weight:10},{id:"cashcard",weight:8},{id:"ketchuru",weight:7},{id:"garama",weight:5},{id:"yinyang",weight:5}] },
-        allin: { coinChance: 0,  coins: [], items: [{id:"lagrande",weight:40},{id:"burguro",weight:20},{id:"pavone",weight:15},{id:"cerberus",weight:10},{id:"dragon",weight:5},{id:"capitano",weight:3},{id:"mmpuggy",weight:2},{id:"strawberry",weight:1}] }
+        free:  { coinChance: 70, coins: [{amount:1,weight:50},{amount:2,weight:30},{amount:3,weight:20}], items: [{id:"trios",weight:100}] },
+        user:  { coinChance: 30, coins: [{amount:3,weight:100}], items: [{id:"trios",weight:30},{id:"rot67",weight:30},{id:"hammy",weight:20},{id:"candyslap",weight:20}] },
+        starter: {
+            coinChance: 0, coins: [],
+            items: [
+                {id:"trios",weight:20}, {id:"rot67",weight:15}, {id:"hammy",weight:15}, {id:"candyslap",weight:10},
+                {id:"tictac",weight:20}, {id:"esok",weight:15}, {id:"ketchuru",weight:4.9}, {id:"burguro",weight:0.1}
+            ]
+        },
+        meme: {
+            coinChance: 0, coins: [],
+            items: [
+                {id:"tictac",weight:20}, {id:"ketupat",weight:20}, {id:"pavone",weight:20},
+                {id:"cashcard",weight:30}, {id:"garama",weight:8.8}, {id:"burguro",weight:1}, {id:"capitano",weight:0.2}
+            ]
+        },
+        zoo: {
+            coinChance: 0, coins: [],
+            items: [
+                {id:"ketchuru",weight:20}, {id:"pavone",weight:20}, {id:"garama",weight:20},
+                {id:"cerberus",weight:35}, {id:"hydra",weight:4.9}, {id:"dragon",weight:0.099}, {id:"skibidi",weight:0.001}
+            ]
+        },
+        mafia: {
+            coinChance: 0, coins: [],
+            items: [
+                {id:"garama",weight:20}, {id:"burguro",weight:20}, {id:"capitano",weight:20},
+                {id:"hydra",weight:38}, {id:"dragon",weight:1.95}, {id:"skibidi",weight:0.04}, {id:"meowl",weight:0.009}, {id:"strawberry",weight:0.001}
+            ]
+        },
+        allin: {
+            coinChance: 0, coins: [],
+            items: [
+                {id:"trios",weight:99.9}, 
+                {id:"skibidi",weight:0.1}
+            ]
+        }
     };
 
     const tg = window.Telegram?.WebApp;
@@ -1335,7 +1384,6 @@
         banner.className = 'event-banner event-' + currentEvent.type;
         banner.style.display = 'flex';
         
-        // Используем картинку мутации вместо иконки
         const imgUrl = currentEvent.img || ev.img;
         let iconHtml = '';
         if (imgUrl) {
@@ -1536,7 +1584,6 @@
 
     function renderInventory() {
         const container = document.getElementById('inventory-list');
-        // Сортируем по цене (от дорогих к дешевым)
         const inv = Object.values(state.inventory || {}).sort((a, b) => b.price - a.price);
         if (!inv.length) {
             container.innerHTML = '<div style="grid-column: span 3; text-align: center; color: var(--text-muted); padding: 20px;">Пусто</div>';
@@ -1585,8 +1632,10 @@
         const caseData = {
             free:   { img: 'assets/cases/free.png',  emoji: '🎁' },
             user:   { img: 'assets/cases/user.png',  emoji: '👤' },
-            base:   { img: 'assets/cases/base.png',  emoji: '📦' },
-            bro:    { img: 'assets/cases/bro.png',   emoji: '💎' },
+            starter:   { img: 'assets/cases/base.png',  emoji: '📦' },
+            meme:    { img: 'assets/cases/bro.png',   emoji: '💎' },
+            zoo:  { img: 'assets/cases/allin.png', emoji: '🦁' },
+            mafia:  { img: 'assets/cases/user.png', emoji: '💼' },
             allin:  { img: 'assets/cases/allin.png', emoji: '🎰' }
         }[type];
 
@@ -2152,7 +2201,6 @@
 
     function renderInvPicker() {
         const list = document.getElementById('inv-picker-list');
-        // Сортировка по цене
         const entries = Object.values(state.inventory || {}).sort((a, b) => b.price - a.price);
         list.innerHTML = entries.map(it => {
             const selected = upgInputs.includes(it.uid);
@@ -2195,7 +2243,6 @@
         if (sum === 0) return notify({ type: 'warning', message: 'Сначала выберите предметы слева' });
 
         const list = document.getElementById('target-list');
-        // Сортировка по цене (сначала дешевые)
         const sortedItems = [...STATE.itemsArray].sort((a, b) => a.price - b.price);
         
         list.innerHTML = sortedItems.map(it => {
