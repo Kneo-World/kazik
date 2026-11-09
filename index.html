@@ -29,7 +29,7 @@
         img { -webkit-user-drag: none; }
         button { font-family: inherit; }
 
-        /* TOP BAR */
+        /* TOP BAR (Mobile) */
         .top-bar { display: flex; align-items: center; justify-content: space-between; padding: 15px 20px; background: rgba(10, 11, 16, 0.85); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 90; border-bottom: 1px solid var(--border); }
         .top-bar-left { display: flex; gap: 8px; align-items: center; }
         .menu-btn { background: none; border: none; color: var(--text-main); font-size: 22px; cursor: pointer; padding: 6px 10px; border-radius: 8px; transition: 0.2s; }
@@ -44,7 +44,7 @@
         .header-name { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .header-balance { font-size: 14px; font-weight: 900; color: var(--accent-gold); display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
 
-        /* SIDEBAR */
+        /* SIDEBAR (Mobile) */
         .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
         .sidebar-overlay.active { opacity: 1; pointer-events: auto; }
         .sidebar { position: fixed; top: 0; left: 0; width: 80%; max-width: 320px; height: 100%; background: #11131c; z-index: 101; transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; flex-direction: column; box-shadow: 5px 0 30px rgba(0,0,0,0.8); border-right: 1px solid var(--border); }
@@ -70,7 +70,7 @@
         @keyframes fadeIn { from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
         .section-title { font-size: 20px; font-weight: 900; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* LIVE FEED */
+        /* LIVE FEED (Mobile) */
         .live-feed-section { background: var(--bg-card); border: 1px solid var(--border); border-radius: 15px; padding: 15px; margin-bottom: 15px; }
         .live-feed-title { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 900; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px; }
         .live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-red); box-shadow: 0 0 10px var(--accent-red); animation: livePulse 1.5s infinite; }
@@ -418,10 +418,362 @@
             .admin-item-row input { width: 60px; }
             .admin-item-row select { width: 100px; }
         }
+
+        /* ============================================ */
+        /* PC LAYOUT (только для экранов >= 1024px)    */
+        /* ============================================ */
+        .pc-sidebar { display: none; }
+        .pc-sidebar .live-feed-empty { padding: 15px; }
+
+        @media (min-width: 1024px) {
+            body { padding-left: 300px; padding-right: 320px; }
+            
+            /* Скрываем мобильные элементы на ПК */
+            .top-bar { display: none; }
+            .sidebar { display: none; }
+            .sidebar-overlay { display: none; }
+
+            /* Показываем ПК сайдбары */
+            .pc-sidebar {
+                display: flex;
+                position: fixed;
+                top: 0;
+                bottom: 0;
+                z-index: 100;
+                background: rgba(10, 11, 16, 0.92);
+                backdrop-filter: blur(15px);
+                -webkit-backdrop-filter: blur(15px);
+                border: 1px solid var(--border);
+                padding: 20px;
+                flex-direction: column;
+                gap: 12px;
+                overflow-y: auto;
+            }
+
+            .pc-sidebar.pc-left {
+                left: 0;
+                width: 300px;
+                border-left: none;
+                border-top: none;
+                border-bottom: none;
+                border-radius: 0;
+            }
+
+            .pc-sidebar.pc-right {
+                right: 0;
+                width: 320px;
+                border-right: none;
+                border-top: none;
+                border-bottom: none;
+                border-radius: 0;
+            }
+
+            /* Заголовки ПК сайдбаров */
+            .pc-sidebar .pc-title {
+                font-size: 13px;
+                font-weight: 900;
+                color: var(--text-muted);
+                text-transform: uppercase;
+                letter-spacing: 1.5px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-bottom: 4px;
+            }
+
+            /* Live feed в левом сайдбаре - вертикальный */
+            .pc-live-feed {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                overflow-y: auto;
+                flex: 1;
+                padding-right: 4px;
+            }
+
+            .pc-live-feed .live-drop-item {
+                width: 100%;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                gap: 10px;
+                padding: 8px 10px;
+                height: auto;
+                text-align: left;
+                border-radius: 12px;
+            }
+
+            .pc-live-feed .live-drop-item img {
+                width: 40px;
+                height: 40px;
+                margin: 0;
+                flex-shrink: 0;
+            }
+
+            .pc-live-feed .live-drop-item .emoji-fallback {
+                font-size: 30px;
+                line-height: 40px;
+                flex-shrink: 0;
+            }
+
+            .pc-live-feed .live-drop-item .ld-name {
+                font-size: 13px;
+                text-align: left;
+                margin: 0;
+                flex: 1;
+                color: var(--text-main);
+                font-weight: 800;
+            }
+
+            .pc-live-feed .live-drop-item .ld-price {
+                font-size: 12px;
+                margin: 0;
+                flex-shrink: 0;
+            }
+
+            .pc-live-feed .live-drop-item .ld-overlay {
+                display: none;
+            }
+
+            /* Top drop в ПК сайдбаре */
+            .pc-sidebar .top-drop-day {
+                margin-bottom: 8px;
+                padding: 10px;
+            }
+            .pc-sidebar .top-drop-img-wrap { width: 60px; height: 60px; }
+            .pc-sidebar .top-drop-img { width: 50px; height: 50px; }
+            .pc-sidebar .top-drop-emoji { font-size: 40px; }
+            .pc-sidebar .top-drop-name { font-size: 13px; }
+            .pc-sidebar .top-drop-price { font-size: 14px; }
+
+            /* ПК профиль в правом сайдбаре */
+            .pc-profile-widget {
+                display: flex;
+                align-items: center;
+                gap: 14px;
+                padding: 14px;
+                background: rgba(255,255,255,0.04);
+                border: 1px solid var(--border);
+                border-radius: 16px;
+                cursor: pointer;
+                transition: 0.2s;
+                margin-bottom: 4px;
+            }
+
+            .pc-profile-widget:hover {
+                border-color: var(--accent-gold);
+                background: rgba(251,191,36,0.05);
+            }
+
+            .pc-profile-widget .pc-avatar {
+                width: 52px;
+                height: 52px;
+                border-radius: 50%;
+                background: var(--accent-blue);
+                border: 3px solid var(--accent-gold);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 900;
+                overflow: hidden;
+                flex-shrink: 0;
+                font-size: 20px;
+                box-shadow: var(--glow-gold);
+            }
+
+            .pc-profile-widget .pc-avatar img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            .pc-profile-widget .pc-info {
+                flex: 1;
+                overflow: hidden;
+            }
+
+            .pc-profile-widget .pc-name {
+                font-size: 16px;
+                font-weight: 900;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .pc-profile-widget .pc-bal {
+                font-size: 17px;
+                font-weight: 900;
+                color: var(--accent-gold);
+                display: flex;
+                align-items: center;
+                gap: 5px;
+                margin-top: 3px;
+            }
+
+            /* Навигация ПК */
+            .pc-nav {
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+                margin-top: 10px;
+            }
+
+            .pc-nav-item {
+                display: flex;
+                align-items: center;
+                gap: 14px;
+                padding: 13px 16px;
+                border-radius: 12px;
+                color: var(--text-muted);
+                font-size: 15px;
+                font-weight: 700;
+                cursor: pointer;
+                transition: 0.2s;
+                border: 1px solid transparent;
+            }
+
+            .pc-nav-item i {
+                font-size: 18px;
+                width: 24px;
+                text-align: center;
+            }
+
+            .pc-nav-item:hover {
+                background: rgba(255,255,255,0.05);
+                color: var(--text-main);
+            }
+
+            .pc-nav-item.active {
+                background: linear-gradient(90deg, rgba(59,130,246,0.15), transparent);
+                color: var(--text-main);
+                border-left: 4px solid var(--accent-blue);
+            }
+
+            .pc-nav-item.admin {
+                color: var(--accent-gold);
+                border: 1px solid rgba(251,191,36,0.3);
+                background: rgba(251,191,36,0.05);
+            }
+
+            .pc-nav-item.admin.active {
+                background: linear-gradient(90deg, rgba(251,191,36,0.15), transparent);
+                border-left-color: var(--accent-gold);
+            }
+
+            /* Секции - шире на ПК */
+            .section {
+                max-width: 1100px;
+                padding: 25px 35px;
+            }
+
+            .section-title {
+                font-size: 22px;
+            }
+
+            /* Сетки шире на ПК */
+            .cases-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 14px;
+            }
+
+            .inv-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .donate-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            /* Апгрейд - центрируем, чуть больше на ПК */
+            .upg-container {
+                max-width: 720px;
+                margin: 0 auto;
+            }
+
+            .upg-wheel-section {
+                width: 320px;
+                height: 320px;
+                margin-bottom: 25px;
+            }
+
+            .upg-wheel-center {
+                width: 100px;
+                height: 100px;
+            }
+
+            .upg-wheel-center .val {
+                font-size: 26px;
+            }
+
+            .upg-wheel-center .title {
+                font-size: 9px;
+            }
+
+            .upg-slots-row {
+                gap: 20px;
+            }
+
+            .upg-square-box {
+                min-height: 160px;
+            }
+
+            .upg-square-box .mini-item {
+                width: 48px;
+                height: 48px;
+            }
+
+            .upg-square-box .target-preview img {
+                width: 70px;
+                height: 70px;
+            }
+
+            /* Модалки остаются по центру - они position fixed inset 0 */
+        }
+
+        @media (min-width: 1400px) {
+            .cases-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            .inv-grid {
+                grid-template-columns: repeat(5, 1fr);
+            }
+            .donate-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
     </style>
 </head>
 <body>
 
+<!-- PC: Левая панель - Live Feed -->
+<div class="pc-sidebar pc-left">
+    <div class="pc-title"><span class="live-dot"></span> Live Drops</div>
+    <div class="top-drop-day" id="pc-top-drop-day" style="display:none;"></div>
+    <div class="pc-live-feed" id="pc-live-feed">
+        <div class="live-feed-empty">Загрузка...</div>
+    </div>
+</div>
+
+<!-- PC: Правая панель - Профиль + Навигация -->
+<div class="pc-sidebar pc-right">
+    <div class="pc-profile-widget" onclick="switchTab('profile')">
+        <div class="pc-avatar" id="pc-avatar">?</div>
+        <div class="pc-info">
+            <div class="pc-name" id="pc-name">Игрок</div>
+            <div class="pc-bal"><i class="fa-solid fa-coins"></i> <span id="pc-balance">0</span></div>
+        </div>
+    </div>
+    <div class="pc-nav">
+        <div class="pc-nav-item active" data-tab="cases" onclick="switchTab('cases')"><i class="fa-solid fa-box-open"></i> Кейсы</div>
+        <div class="pc-nav-item" data-tab="upgrader" onclick="switchTab('upgrader')"><i class="fa-solid fa-bolt"></i> Апгрейд</div>
+        <div class="pc-nav-item" data-tab="coinflip" onclick="switchTab('coinflip')"><i class="fa-solid fa-coins"></i> Монетка</div>
+        <div class="pc-nav-item" data-tab="donate" onclick="switchTab('donate')"><i class="fa-solid fa-star"></i> Пополнение</div>
+        <div class="pc-nav-item admin" data-tab="admin" id="pc-nav-admin" style="display:none;" onclick="switchTab('admin')"><i class="fa-solid fa-shield-halved"></i> Админ</div>
+    </div>
+    <div style="margin-top:auto; font-size:11px; color:var(--text-muted); text-align:center; padding-top:10px;">Brainrots Funny v2.8</div>
+</div>
+
+<!-- MOBILE: Top Bar -->
 <div class="top-bar">
     <div class="top-bar-left">
         <button class="menu-btn" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></button>
@@ -435,6 +787,7 @@
     </div>
 </div>
 
+<!-- MOBILE: Sidebar -->
 <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleMenu()"></div>
 <div class="sidebar" id="sidebar">
     <div class="sidebar-header" onclick="switchTab('profile')">
@@ -457,7 +810,7 @@
 <div id="section-cases" class="section active">
     <h2 class="section-title">Кейсы</h2>
 
-    <div class="live-feed-section">
+    <div class="live-feed-section" id="mobile-live-feed-section">
         <div class="live-feed-title">
             <span class="live-dot"></span>
             Последние дропы
@@ -493,7 +846,6 @@
         </div>
     </div>
 
-    <!-- МАГАЗИН КЕЙСОВ -->
     <div class="case-category">
         <div class="case-category-title">Магазин</div>
         <div class="cases-grid">
@@ -532,7 +884,6 @@
         </div>
     </div>
 
-    <!-- ALL IN -->
     <div class="case-category">
         <div class="case-category-title">ALL IN</div>
         <div class="cases-grid">
@@ -944,7 +1295,6 @@
         { id: 'p500', stars: 500, coins: 4000, bonus: 60, best: false }
     ];
 
-    // Данные будут загружаться с бэкенда в STATE.items
     let STATE = { items: {}, itemsArray: [] };
 
     const CASE_LOOT_DATA = {
@@ -981,7 +1331,7 @@
         allin: {
             coinChance: 0, coins: [],
             items: [
-                {id:"trios",weight:99.9}, 
+                {id:"trios",weight:99.9},
                 {id:"skibidi",weight:0.1}
             ]
         }
@@ -995,8 +1345,8 @@
         if (tgUser) {
             const name = tgUser.first_name || 'Игрок';
             const avatarSrc = tgUser.photo_url ? `<img src="${tgUser.photo_url}">` : escapeHtml(name.charAt(0));
-            ['h-name', 's-name', 'p-name'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = name; });
-            ['h-avatar', 's-avatar', 'p-avatar'].forEach(id => { const el = document.getElementById(id); if (el) el.innerHTML = avatarSrc; });
+            ['h-name', 's-name', 'p-name', 'pc-name'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = name; });
+            ['h-avatar', 's-avatar', 'p-avatar', 'pc-avatar'].forEach(id => { const el = document.getElementById(id); if (el) el.innerHTML = avatarSrc; });
         }
     }
     const MY_ID = tgUser?.id;
@@ -1164,9 +1514,15 @@
         const target = document.getElementById('section-' + tabId);
         if (target) target.classList.add('active');
 
+        // Mobile nav
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         const activeNav = document.querySelector(`.nav-item[data-tab="${tabId}"]`);
         if (activeNav) activeNav.classList.add('active');
+
+        // PC nav
+        document.querySelectorAll('.pc-nav-item').forEach(n => n.classList.remove('active'));
+        const pcActiveNav = document.querySelector(`.pc-nav-item[data-tab="${tabId}"]`);
+        if (pcActiveNav) pcActiveNav.classList.add('active');
 
         if (document.getElementById('sidebar').classList.contains('active')) toggleMenu();
         window.scrollTo(0, 0);
@@ -1210,11 +1566,48 @@
         return n;
     }
 
-    function renderLiveFeed() {
-        const feed = document.getElementById('live-feed');
-        const topBox = document.getElementById('top-drop-day');
-        if (!feed || !topBox) return;
+    function buildTopDropHTML(best) {
+        const method = best.method === 'upgrade' ? 'upgrade' : 'case';
+        const methodLabel = best.method === 'upgrade' ? 'Апгрейд' : 'Кейс';
+        const methodIcon = best.method === 'upgrade' ? 'fa-bolt' : 'fa-box-open';
+        const imgHtml = best.itemImg
+            ? `<img class="top-drop-img" src="${best.itemImg}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+               <span class="top-drop-emoji" style="display:none;">🧠</span>`
+            : `<span class="top-drop-emoji">🧠</span>`;
+        return `
+            <div class="top-drop-img-wrap">${imgHtml}</div>
+            <div class="top-drop-info">
+                <div class="top-drop-name">${escapeHtml(best.itemName || 'Предмет')}</div>
+                <div class="top-drop-price"><i class="fa-solid fa-coins"></i> ${formatNum(best.price || 0)}</div>
+                <div class="top-drop-method ${method}"><i class="fa-solid ${methodIcon}"></i> ${methodLabel}</div>
+            </div>
+        `;
+    }
 
+    function buildLiveDropHTML(d) {
+        const borderColor = getRarityColorForItem(d.itemName);
+        const method = d.method === 'upgrade' ? 'upgrade' : 'case';
+        const methodLabel = d.method === 'upgrade' ? 'Апгрейд' : 'Кейс';
+        const methodIcon = d.method === 'upgrade' ? 'fa-bolt' : 'fa-box-open';
+        const imgHtml = d.itemImg
+            ? `<img src="${d.itemImg}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+               <span class="emoji-fallback" style="display:none;">🧠</span>`
+            : `<span class="emoji-fallback">🧠</span>`;
+        const safeUid = String(d.user_id || '');
+        const safeNick = escapeHtml(d.nick || '');
+        const safePrice = Number(d.price) || 0;
+        return `<div class="live-drop-item" style="border-color:${borderColor}" onclick="BF.openProfile('${safeUid}', '${safeNick}', ${safePrice})">
+            ${imgHtml}
+            <div class="ld-name">${escapeHtml(d.itemName || '')}</div>
+            <div class="ld-price"><i class="fa-solid fa-coins"></i> ${formatNum(safePrice)}</div>
+            <div class="ld-overlay ${method}">
+                <i class="fa-solid ${methodIcon} ld-method-icon"></i>
+                <div class="ld-method-text">${methodLabel}</div>
+            </div>
+        </div>`;
+    }
+
+    function renderLiveFeed() {
         const now = Date.now();
         const dayAgo = now - 24 * 3600 * 1000;
 
@@ -1226,60 +1619,32 @@
         }
         topDayDrop = best;
 
-        if (best) {
-            topBox.style.display = 'flex';
-            topBox.onclick = function(e) {
-                e.stopPropagation();
-                openOtherProfile(best.user_id, best.nick || '', best.price || 0);
-            };
-            const method = best.method === 'upgrade' ? 'upgrade' : 'case';
-            const methodLabel = best.method === 'upgrade' ? 'Апгрейд' : 'Кейс';
-            const methodIcon = best.method === 'upgrade' ? 'fa-bolt' : 'fa-box-open';
-            const imgHtml = best.itemImg
-                ? `<img class="top-drop-img" src="${best.itemImg}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                   <span class="top-drop-emoji" style="display:none;">🧠</span>`
-                : `<span class="top-drop-emoji">🧠</span>`;
-            topBox.innerHTML = `
-                <div class="top-drop-img-wrap">${imgHtml}</div>
-                <div class="top-drop-info">
-                    <div class="top-drop-name">${escapeHtml(best.itemName || 'Предмет')}</div>
-                    <div class="top-drop-price"><i class="fa-solid fa-coins"></i> ${formatNum(best.price || 0)}</div>
-                    <div class="top-drop-method ${method}"><i class="fa-solid ${methodIcon}"></i> ${methodLabel}</div>
-                </div>
-            `;
-        } else {
-            topBox.style.display = 'none';
-            topBox.innerHTML = '';
-        }
+        // Топ дня - рендерим в оба места
+        [document.getElementById('top-drop-day'), document.getElementById('pc-top-drop-day')].forEach(topBox => {
+            if (!topBox) return;
+            if (best) {
+                topBox.style.display = 'flex';
+                topBox.onclick = function(e) {
+                    e.stopPropagation();
+                    openOtherProfile(best.user_id, best.nick || '', best.price || 0);
+                };
+                topBox.innerHTML = buildTopDropHTML(best);
+            } else {
+                topBox.style.display = 'none';
+                topBox.innerHTML = '';
+            }
+        });
 
-        if (!dropFeedData.length) {
-            feed.innerHTML = '<div class="live-feed-empty">Пока нет дропов</div>';
-            return;
-        }
+        // Live feed - рендерим в оба места
+        const itemsHtml = dropFeedData.length 
+            ? dropFeedData.slice(0, 30).map(d => buildLiveDropHTML(d)).join('')
+            : '<div class="live-feed-empty">Пока нет дропов</div>';
 
-        const list = dropFeedData.slice(0, 30);
-        feed.innerHTML = list.map(d => {
-            const borderColor = getRarityColorForItem(d.itemName);
-            const method = d.method === 'upgrade' ? 'upgrade' : 'case';
-            const methodLabel = d.method === 'upgrade' ? 'Апгрейд' : 'Кейс';
-            const methodIcon = d.method === 'upgrade' ? 'fa-bolt' : 'fa-box-open';
-            const imgHtml = d.itemImg
-                ? `<img src="${d.itemImg}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                   <span class="emoji-fallback" style="display:none;">🧠</span>`
-                : `<span class="emoji-fallback">🧠</span>`;
-            const safeUid = String(d.user_id || '');
-            const safeNick = escapeHtml(d.nick || '');
-            const safePrice = Number(d.price) || 0;
-            return `<div class="live-drop-item" style="border-color:${borderColor}" onclick="BF.openProfile('${safeUid}', '${safeNick}', ${safePrice})">
-                ${imgHtml}
-                <div class="ld-name">${escapeHtml(d.itemName || '')}</div>
-                <div class="ld-price"><i class="fa-solid fa-coins"></i> ${formatNum(safePrice)}</div>
-                <div class="ld-overlay ${method}">
-                    <i class="fa-solid ${methodIcon} ld-method-icon"></i>
-                    <div class="ld-method-text">${methodLabel}</div>
-                </div>
-            </div>`;
-        }).join('');
+        const feedM = document.getElementById('live-feed');
+        if (feedM) feedM.innerHTML = itemsHtml;
+
+        const feedP = document.getElementById('pc-live-feed');
+        if (feedP) feedP.innerHTML = itemsHtml;
     }
 
     window.updateDropFeed = function(arr) {
@@ -1493,7 +1858,7 @@
     }
 
     function updateUI() {
-        ['h-balance', 's-balance', 'p-balance'].forEach(id => {
+        ['h-balance', 's-balance', 'p-balance', 'pc-balance'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.textContent = formatNum(state.balance);
         });
@@ -1579,7 +1944,7 @@
         if (document.hidden) return;
         loadEvent();
         loadPoll();
-        loadItems(); // Периодически обновляем цены
+        loadItems();
     }, 30000);
 
     function renderInventory() {
@@ -3013,6 +3378,8 @@
             if (data.isAdmin || IS_ADMIN) {
                 const navAdmin = document.getElementById('nav-admin');
                 if (navAdmin) navAdmin.style.display = 'flex';
+                const pcNavAdmin = document.getElementById('pc-nav-admin');
+                if (pcNavAdmin) pcNavAdmin.style.display = 'flex';
             }
 
             updateUI();
@@ -3050,7 +3417,6 @@
         sBtn.classList.add('off');
     }
 
-    // Инициализация
     loadItems().then(() => {
         switchTab('cases');
         renderDonate();
