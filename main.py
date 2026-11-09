@@ -40,52 +40,96 @@ RARITIES = {
     "legendary": {"id":"legendary","name":"Legendary","color":"#f59e0b"},
 }
 
-# Базовый список всех предметов (БЕЗ МУТАЦИЙ)
+# Базовый список всех предметов
 DEFAULT_ITEMS = [
     {"id":"trios",    "name":"Los Trios",           "price":4,     "rarity":"common",    "img":"assets/brainrots/los_trios.png", "emoji":"🥉"},
     {"id":"rot67",    "name":"67",                  "price":5,     "rarity":"common",    "img":"assets/brainrots/67.png", "emoji":"6️⃣7️⃣"},
     {"id":"hammy",    "name":"Spinny Hammy",        "price":5,     "rarity":"uncommon",  "img":"assets/brainrots/spinny_hammy.png", "emoji":"🐹"},
     {"id":"candyslap","name":"Candy Slap",          "price":7,     "rarity":"uncommon",  "img":"assets/brainrots/CandySlap.png", "emoji":"🍬"},
-    {"id":"noobinis", "name":"Los Noobinis",        "price":7,     "rarity":"rare",      "img":"assets/brainrots/Los_Noobinis.png", "emoji":"🤡"},
-    {"id":"tangtang", "name":"Tang Tang Keletang",  "price":8,     "rarity":"rare",      "img":"assets/brainrots/TangTangKeletang.png", "emoji":"🦴"},
+    {"id":"noobinis", "name":"Los Noobinis",        "price":5,     "rarity":"rare",      "img":"assets/brainrots/Los_Noobinis.png", "emoji":"🤡"},
+    {"id":"tangtang", "name":"Tang Tang Keletang",  "price":17,    "rarity":"rare",      "img":"assets/brainrots/TangTangKeletang.png", "emoji":"🦴"},
     {"id":"lagrande", "name":"La Grande",           "price":9,     "rarity":"epic",      "img":"assets/brainrots/La_Grande_Combinasion.png", "emoji":"🇫🇷"},
     {"id":"tictac",   "name":"Tictac Sahur",        "price":12,    "rarity":"epic",      "img":"assets/brainrots/Tictac-Sahur.png", "emoji":"🕒"},
-    {"id":"bacuru",   "name":"Bacuru and Egguru",   "price":12,    "rarity":"epic",      "img":"assets/brainrots/Bacuru_and_Egguru.png", "emoji":"🥚"},
-    {"id":"los67",    "name":"Los 67",              "price":12,    "rarity":"epic",      "img":"assets/brainrots/Los_67.png", "emoji":"🎲"},
-    {"id":"yinyang",  "name":"Yin Yang Slap",       "price":20,    "rarity":"legendary", "img":"assets/brainrots/YinYangSlap.png", "emoji":"☯️"},
-    
-    # Новые (без мутаций)
-    {"id":"burguro",     "name":"Burguro & Fryuro",     "price":15,    "rarity":"epic",      "img":"assets/brainrots/Burguro_And_Fryuro.webp", "emoji":"🍔"},
-    {"id":"capitano",    "name":"Capitano Moby",        "price":25,    "rarity":"legendary", "img":"assets/brainrots/Capitano_Moby.webp", "emoji":"🐋"},
-    {"id":"cashcard",    "name":"Cash or Card",         "price":8,     "rarity":"rare",      "img":"assets/brainrots/Cash_or_Card_New.webp", "emoji":"💳"},
-    {"id":"cerberus",    "name":"Cerberus",             "price":18,    "rarity":"epic",      "img":"assets/brainrots/Cerberus.webp", "emoji":"🐕"},
-    {"id":"dragon",      "name":"Dragon Cannelloni",    "price":22,    "rarity":"epic",      "img":"assets/brainrots/Dragon_Cannelloni.webp", "emoji":"🐉"},
-    {"id":"esok",        "name":"Esok Sekolah",         "price":6,     "rarity":"uncommon",  "img":"assets/brainrots/Esok_Sekolah.webp", "emoji":"🎒"},
-    {"id":"garama",      "name":"Garamadundung",        "price":11,    "rarity":"rare",      "img":"assets/brainrots/Garamadundung.webp", "emoji":"🥁"},
-    {"id":"hydra",       "name":"Hydra Serpent",        "price":35,    "rarity":"epic",      "img":"assets/brainrots/Hydra_Serpent.webp", "emoji":"🐍"},
-    {"id":"ketchuru",    "name":"Ketchuru",             "price":9,     "rarity":"rare",      "img":"assets/brainrots/Ketchuru.webp", "emoji":"🍅"},
-    {"id":"ketupat",     "name":"Ketupat Kepat",        "price":8,     "rarity":"uncommon",  "img":"assets/brainrots/KetupatKepat.webp", "emoji":"🍚"},
+    {"id":"bacuru",   "name":"Bacuru and Egguru",   "price":6,     "rarity":"epic",      "img":"assets/brainrots/Bacuru_and_Egguru.png", "emoji":"🥚"},
+    {"id":"los67",    "name":"Los 67",              "price":6,     "rarity":"epic",      "img":"assets/brainrots/Los_67.png", "emoji":"🎲"},
+    {"id":"yinyang",  "name":"Yin Yang Slap",       "price":17,    "rarity":"legendary", "img":"assets/brainrots/YinYangSlap.png", "emoji":"☯️"},
+    {"id":"burguro",     "name":"Burguro & Fryuro",     "price":90,    "rarity":"epic",      "img":"assets/brainrots/Burguro_And_Fryuro.webp", "emoji":"🍔"},
+    {"id":"capitano",    "name":"Capitano Moby",        "price":125,   "rarity":"legendary", "img":"assets/brainrots/Capitano_Moby.webp", "emoji":"🐋"},
+    {"id":"cashcard",    "name":"Cash or Card",         "price":63,    "rarity":"rare",      "img":"assets/brainrots/Cash_or_Card_New.webp", "emoji":"💳"},
+    {"id":"cerberus",    "name":"Cerberus",             "price":125,   "rarity":"epic",      "img":"assets/brainrots/Cerberus.webp", "emoji":"🐕"},
+    {"id":"dragon",      "name":"Dragon Cannelloni",    "price":1067,  "rarity":"epic",      "img":"assets/brainrots/Dragon_Cannelloni.webp", "emoji":"🐉"},
+    {"id":"esok",        "name":"Esok Sekolah",         "price":16,    "rarity":"uncommon",  "img":"assets/brainrots/Esok_Sekolah.webp", "emoji":"🎒"},
+    {"id":"garama",      "name":"Garamadundung",        "price":64,    "rarity":"rare",      "img":"assets/brainrots/Garamadundung.webp", "emoji":"🥁"},
+    {"id":"hydra",       "name":"Hydra Serpent",        "price":350,   "rarity":"epic",      "img":"assets/brainrots/Hydra_Serpent.webp", "emoji":"🐍"},
+    {"id":"ketchuru",    "name":"Ketchuru",             "price":29,    "rarity":"rare",      "img":"assets/brainrots/Ketchuru.webp", "emoji":"🍅"},
+    {"id":"ketupat",     "name":"Ketupat Kepat",        "price":28,    "rarity":"uncommon",  "img":"assets/brainrots/KetupatKepat.webp", "emoji":"🍚"},
     {"id":"lassis",      "name":"Las Sis",              "price":14,    "rarity":"epic",      "img":"assets/brainrots/Las_Sis.webp", "emoji":"👭"},
-    {"id":"meowl",       "name":"Meowl",                "price":13154, "rarity":"legendary", "img":"assets/brainrots/Meowl.webp", "emoji":"🦉"},
-    {"id":"mmcat",       "name":"Money Money Cat",      "price":28,    "rarity":"legendary", "img":"assets/brainrots/Money_Money_Cat.webp", "emoji":"💰"},
+    {"id":"meowl",       "name":"Meowl",                "price":14154, "rarity":"legendary", "img":"assets/brainrots/Meowl.webp", "emoji":"🦉"},
+    {"id":"mmcat",       "name":"Money Money Cat",      "price":29,    "rarity":"legendary", "img":"assets/brainrots/Money_Money_Cat.webp", "emoji":"💰"},
     {"id":"mmpuggy",     "name":"Money Money Puggy",    "price":28,    "rarity":"legendary", "img":"assets/brainrots/Money_Money_Puggy.webp", "emoji":"💵"},
-    {"id":"pavone",      "name":"Pavoneroventoliero",   "price":16,    "rarity":"epic",      "img":"assets/brainrots/Pavoneroventoliero.webp", "emoji":"🦚"},
-    {"id":"hotspot",     "name":"Pot Hotspot",          "price":7,     "rarity":"uncommon",  "img":"assets/brainrots/Pot_Hotspot.webp", "emoji":"🍲"},
-    {"id":"strawberry",  "name":"Strawberry Elephant",  "price":15000, "rarity":"legendary", "img":"assets/brainrots/Strawberry_Elephant.webp", "emoji":"🍓"},
-    {"id":"skibidi",     "name":"Skibidi Toilet",       "price":13154, "rarity":"legendary", "img":"assets/brainrots/skibidi_toilet.png", "emoji":"🚽"},
+    {"id":"pavone",      "name":"Pavoneroventoliero",   "price":38,    "rarity":"epic",      "img":"assets/brainrots/Pavoneroventoliero.webp", "emoji":"🦚"},
+    {"id":"hotspot",     "name":"Pot Hotspot",          "price":14,    "rarity":"uncommon",  "img":"assets/brainrots/Pot_Hotspot.webp", "emoji":"🍲"},
+    {"id":"strawberry",  "name":"Strawberry Elephant",  "price":15067, "rarity":"legendary", "img":"assets/brainrots/Strawberry_Elephant.webp", "emoji":"🍓"},
+    {"id":"skibidi",     "name":"Skibidi Toilet",       "price":13229, "rarity":"legendary", "img":"assets/brainrots/skibidi_toilet.png", "emoji":"🚽"},
 ]
 
-CASE_PRICES = {"free": 0, "user": 0, "base": 9, "bro": 25, "allin": 29}
-
-CASE_LOOT = {
-    "free": {"coinChance": 70, "coins": [{"amount":1,"weight":50}, {"amount":2,"weight":30}, {"amount":3,"weight":20}], "items": [{"id":"trios","weight":50},{"id":"rot67","weight":50}]},
-    "user": {"coinChance": 30, "coins": [{"amount":3,"weight":100}], "items": [{"id":"trios","weight":30},{"id":"rot67","weight":30},{"id":"hammy","weight":20},{"id":"candyslap","weight":10},{"id":"esok","weight":10}]},
-    "base": {"coinChance": 0, "coins": [], "items": [{"id":"trios","weight":20},{"id":"rot67","weight":20},{"id":"candyslap","weight":20},{"id":"lagrande","weight":15},{"id":"ketupat","weight":15},{"id":"hotspot","weight":10}]},
-    "bro": {"coinChance": 0, "coins": [], "items": [{"id":"hammy","weight":15},{"id":"noobinis","weight":15},{"id":"tangtang","weight":15},{"id":"tictac","weight":10},{"id":"bacuru","weight":10},{"id":"los67","weight":10},{"id":"cashcard","weight":8},{"id":"ketchuru","weight":7},{"id":"garama","weight":5},{"id":"yinyang","weight":5}]},
-    "allin": {"coinChance": 0, "coins": [], "items": [{"id":"lagrande","weight":40},{"id":"burguro","weight":20},{"id":"pavone","weight":15},{"id":"cerberus","weight":10},{"id":"dragon","weight":5},{"id":"capitano","weight":3},{"id":"mmpuggy","weight":2},{"id":"strawberry","weight":1}]}
+# НОВЫЕ ЦЕНЫ И КЕЙСЫ
+CASE_PRICES = {
+    "free": 0, 
+    "user": 0, 
+    "starter": 10, 
+    "meme": 50, 
+    "zoo": 100, 
+    "mafia": 250, 
+    "allin": 29
 }
 
-# Ивенты теперь используют картинки мутаций вместо FontAwesome иконок
+CASE_LOOT = {
+    "free": {"coinChance": 70, "coins": [{"amount":1,"weight":50}, {"amount":2,"weight":30}, {"amount":3,"weight":20}], "items": [{"id":"trios","weight":100}]},
+    "user": {"coinChance": 30, "coins": [{"amount":3,"weight":100}], "items": [{"id":"trios","weight":30},{"id":"rot67","weight":30},{"id":"hammy","weight":20},{"id":"candyslap","weight":20}]},
+    
+    # 1. Стартер (10)
+    "starter": {
+        "coinChance": 0, "coins": [],
+        "items": [
+            {"id":"trios","weight":20}, {"id":"rot67","weight":15}, {"id":"hammy","weight":15}, {"id":"candyslap","weight":10},
+            {"id":"tictac","weight":20}, {"id":"esok","weight":15}, {"id":"ketchuru","weight":4.9}, {"id":"burguro","weight":0.1}
+        ]
+    },
+    # 2. Мемный (50)
+    "meme": {
+        "coinChance": 0, "coins": [],
+        "items": [
+            {"id":"tictac","weight":20}, {"id":"ketupat","weight":20}, {"id":"pavone","weight":20},
+            {"id":"cashcard","weight":30}, {"id":"garama","weight":8.8}, {"id":"burguro","weight":1}, {"id":"capitano","weight":0.2}
+        ]
+    },
+    # 3. Зоопарк (100)
+    "zoo": {
+        "coinChance": 0, "coins": [],
+        "items": [
+            {"id":"ketchuru","weight":20}, {"id":"pavone","weight":20}, {"id":"garama","weight":20},
+            {"id":"cerberus","weight":35}, {"id":"hydra","weight":4.9}, {"id":"dragon","weight":0.099}, {"id":"skibidi","weight":0.001}
+        ]
+    },
+    # 4. Мафия (250)
+    "mafia": {
+        "coinChance": 0, "coins": [],
+        "items": [
+            {"id":"garama","weight":20}, {"id":"burguro","weight":20}, {"id":"capitano","weight":20},
+            {"id":"hydra","weight":38}, {"id":"dragon","weight":1.95}, {"id":"skibidi","weight":0.04}, {"id":"meowl","weight":0.009}, {"id":"strawberry","weight":0.001}
+        ]
+    },
+    # 5. ALL IN (29)
+    "allin": {
+        "coinChance": 0, "coins": [],
+        "items": [
+            {"id":"trios","weight":99.9}, 
+            {"id":"skibidi","weight":0.1}
+        ]
+    }
+}
+
 EVENT_TYPES = {
     "miniboost": {"name": "Минибуст", "multiplier": 1.5, "color": "#22c55e", "img": "assets/brainrots/Default_Mutation_Icon.webp"},
     "gold":      {"name": "Голд",     "multiplier": 2.0, "color": "#fbbf24", "img": "assets/brainrots/Gold_Mutation_Icon.webp"},
@@ -137,17 +181,10 @@ def init_firebase():
 FIREBASE_OK = init_firebase()
 
 def get_items_dict() -> dict:
-    """
-    Возвращает актуальный список предметов.
-    Берет дефолтный список и накладывает на него оверрайды (изменения цен/редкости) из Firebase.
-    """
     if not FIREBASE_OK:
         return {i["id"]: i for i in DEFAULT_ITEMS}
-    
     try:
-        # В базе храним только оверрайды: { "item_id": {"price": 100, "rarity": "epic"} }
         overrides = fbdb.reference("meta/items_overrides").get() or {}
-        
         final_dict = {}
         for item in DEFAULT_ITEMS:
             base_item = dict(item)
@@ -156,7 +193,6 @@ def get_items_dict() -> dict:
                 if "price" in ovr: base_item["price"] = int(ovr["price"])
                 if "rarity" in ovr: base_item["rarity"] = ovr["rarity"]
             final_dict[base_item["id"]] = base_item
-            
         return final_dict
     except Exception as e:
         log.error(f"Error loading items from DB: {e}")
@@ -404,9 +440,7 @@ async def health():
 
 @app.get("/api/items")
 async def api_items():
-    """Отдает список всех предметов для фронтенда"""
-    items_dict = get_items_dict()
-    return {"items": list(items_dict.values())}
+    return {"items": list(get_items_dict().values())}
 
 @app.get("/api/me")
 async def api_me(user=Depends(current_user)):
@@ -792,7 +826,6 @@ async def admin_update_item(request: Request, user=Depends(require_admin)):
     if new_price < 0: raise HTTPException(400, "Цена не может быть отрицательной")
     if new_rarity not in RARITIES: raise HTTPException(400, "Неверная редкость")
 
-    # Сохраняем только оверрайд в Firebase
     fbdb.reference(f"meta/items_overrides/{item_id}").update({
         "price": new_price,
         "rarity": new_rarity
