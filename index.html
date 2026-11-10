@@ -227,6 +227,7 @@ input,textarea,select{font-family:inherit}
 .btn-upgrade-action{width:100%;padding:16px;border-radius:15px;background:linear-gradient(135deg,var(--accent-gold),#b45309);color:#000;font-size:17px;font-weight:900;border:none;cursor:pointer;box-shadow:0 5px 20px rgba(251,191,36,.4);transition:transform .2s}
 .btn-upgrade-action:active:not(:disabled){transform:scale(.97)}
 .btn-upgrade-action:disabled{background:#272a35;color:#555;box-shadow:none;cursor:not-allowed}
+.btn-upg-fast{background:linear-gradient(135deg,var(--accent-blue),#1e3a8a);color:#fff;box-shadow:0 5px 20px rgba(59,130,246,.4);margin-top:8px;}
 
 /* COINFLIP */
 .coinflip-container{text-align:center;background:var(--bg-card);border:1px solid var(--border);border-radius:15px;padding:20px}
@@ -277,7 +278,8 @@ input,textarea,select{font-family:inherit}
 
 /* MEDALS */
 .medals-row{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;position:relative;z-index:2;margin-top:6px}
-.medal-badge{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:rgba(0,0,0,.5);border:1px solid var(--border);font-size:14px;cursor:pointer;transition:.2s;position:relative}
+.medal-badge{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:rgba(0,0,0,.5);border:1px solid var(--border);font-size:14px;cursor:pointer;transition:.2s;position:relative;overflow:hidden}
+.medal-badge img{width:100%;height:100%;object-fit:cover}
 .medal-badge:hover{transform:scale(1.2);border-color:var(--accent-gold)}
 .medal-tooltip{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:#0d0f14;border:1px solid var(--accent-gold);border-radius:8px;padding:6px 10px;font-size:11px;color:var(--text-main);white-space:nowrap;z-index:100;display:none;margin-bottom:6px}
 .medal-badge:hover .medal-tooltip{display:block}
@@ -458,6 +460,9 @@ body{padding-left:300px;padding-right:320px}
 .upg-wheel-center .val{font-size:26px}
 .upg-square-box{min-height:160px}
 .upg-square-box .mini-item{width:48px;height:48px}
+
+/* ---> ИЗМЕНЕНИЕ: Админ табы на ПК переносятся на новую строку <--- */
+.admin-tabs{flex-wrap:wrap !important; overflow-x:visible !important; padding-bottom:10px}
 }
 @media (min-width:1400px){
 .cases-grid{grid-template-columns:repeat(4,1fr)}
@@ -627,7 +632,8 @@ body{padding-left:300px;padding-right:320px}
       </div>
     </div>
     <div class="upg-sum" id="upg-sum">Сумма: <b>0</b> монет</div>
-    <button class="btn-upgrade-action" id="btn-upg" onclick="runUpgrade()" disabled>ПРОКАЧАТЬ</button>
+    <button class="btn-upgrade-action" id="btn-upg" onclick="runUpgrade(false)" disabled>ПРОКАЧАТЬ</button>
+    <button class="btn-upgrade-action btn-upg-fast" id="btn-upg-fast" onclick="runUpgrade(true)" disabled><i class="fa-solid fa-forward-step"></i> БЫСТРЫЙ АПГРЕЙД</button>
   </div>
 </div>
 
@@ -662,7 +668,7 @@ body{padding-left:300px;padding-right:320px}
         <div id="ref-next-hint" style="margin-top:4px;font-size:10px;"></div>
       </div>
     </div>
-    <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;font-weight:700;">ВЫША ССЫЛКА:</div>
+    <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;font-weight:700;">ВАША ССЫЛКА:</div>
     <div class="ref-link-box" id="ref-link">—</div>
     <button class="btn gold small" onclick="copyRefLink()" style="width:100%;"><i class="fa-solid fa-copy"></i> СКОПИРОВАТЬ</button>
   </div>
@@ -707,7 +713,7 @@ body{padding-left:300px;padding-right:320px}
   <h2 class="section-title"><i class="fa-solid fa-arrow-up-from-bracket" style="color:var(--accent-gold)"></i> Вывод</h2>
   <div class="ref-card">
     <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px;line-height:1.5;">
-      Можно выводить только: <b style="color:var(--accent-gold)">гарамы, драконов, бургеров, церберов, мявлов</b>. Минимум по стоимости ≈2 гарамы.
+      Минимум по стоимости ≈2 гарамы. Можно выводить предметы из списка. Если предмета нет в списке — можно обменять его на доступные.
     </div>
     <div style="font-size:11px;color:var(--text-muted);font-weight:700;margin-bottom:6px;">ДОСТУПНО К ВЫВОДУ:</div>
     <div class="inv-grid" id="withdraw-available"><div style="grid-column:span 3;text-align:center;color:var(--text-muted);padding:15px;">Загрузка...</div></div>
@@ -723,9 +729,9 @@ body{padding-left:300px;padding-right:320px}
   <h2 class="section-title"><i class="fa-solid fa-arrow-down-to-bracket" style="color:var(--accent-gold)"></i> Пополнение брейнротами</h2>
   <div class="ref-card">
     <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px;line-height:1.5;">
-      Выберите брейнротов стоимостью ≥ 1 гарамы (64 монеты).
+      Выберите брейнрота которого хотите получить (стоимость ≥ 1 гарамы). С вашего баланса/инвентаря ничего не списывается! Заявка уйдёт админу, и после подтверждения предмет появится у вас.
     </div>
-    <div style="font-size:11px;color:var(--text-muted);font-weight:700;margin-bottom:6px;">ВАШИ ПРЕДМЕТЫ (≥1 гарамы):</div>
+    <div style="font-size:11px;color:var(--text-muted);font-weight:700;margin-bottom:6px;">ВСЕ ДОСТУПНЫЕ ДЛЯ ПОПОЛНЕНИЯ:</div>
     <div class="inv-grid" id="deposit-available"><div style="grid-column:span 3;text-align:center;color:var(--text-muted);padding:15px;">Загрузка...</div></div>
   </div>
   <div class="ref-card">
@@ -737,6 +743,7 @@ body{padding-left:300px;padding-right:320px}
 <!-- DONATE -->
 <div id="section-donate" class="section">
   <h2 class="section-title">Пополнение звёздами</h2>
+  <div style="text-align:center;color:var(--text-muted);margin-bottom:15px;font-size:12px;">Курс: 1 ⭐ = 1.5 монеты</div>
   <div class="donate-grid" id="donate-grid"></div>
   <h2 class="section-title">Промокод</h2>
   <div class="promo-box">
@@ -763,6 +770,7 @@ body{padding-left:300px;padding-right:320px}
   <div class="case-header">
     <button class="back-btn" onclick="switchTab('chats')"><i class="fa-solid fa-arrow-left"></i> Назад</button>
     <h2 class="section-title" id="chat-with-name" style="margin:0;font-size:16px;">Чат</h2>
+    <button class="btn small" onclick="openChatProfile()" style="margin-left:auto;padding:6px 10px;"><i class="fa-solid fa-user"></i> Профиль</button>
   </div>
   <div class="chat-messages" id="chat-messages"></div>
   <div class="chat-input-row">
@@ -964,6 +972,11 @@ body{padding-left:300px;padding-right:320px}
       <div class="admin-card-title">Существующие секции</div>
       <div id="admin-sections-list"></div>
     </div>
+    <div class="admin-card">
+      <div class="admin-card-title">Разрешенные к выводу предметы</div>
+      <div id="admin-withdrawable-list" style="max-height:300px; overflow-y:auto;"></div>
+      <button class="btn green" style="margin-top:10px;" onclick="adminSaveWithdrawable()">СОХРАНИТЬ СПИСОК ВЫВОДА</button>
+    </div>
   </div>
 
   <!-- Medals -->
@@ -979,6 +992,8 @@ body{padding-left:300px;padding-right:320px}
         <textarea id="admin-medal-desc" rows="3" placeholder="Выдана за активность..."></textarea>
         <label>Иконка (эмодзи)</label>
         <input type="text" id="admin-medal-icon" value="🏅">
+        <label>Путь к картинке (с /assets/...)</label>
+        <input type="text" id="admin-medal-img" placeholder="assets/medals/vip.png">
         <label>Цвет</label>
         <input type="text" id="admin-medal-color" value="#fbbf24">
         <button class="btn gold" onclick="adminSaveMedal()">СОЗДАТЬ</button>
@@ -1169,8 +1184,11 @@ body{padding-left:300px;padding-right:320px}
     <h3 class="modal-title" id="wd-modal-title">Вывод</h3>
     <div style="font-size:11px;color:var(--text-muted);margin-bottom:10px;" id="wd-modal-hint"></div>
     <div id="wd-source-info" style="margin-bottom:10px;"></div>
-    <div class="inv-grid" id="wd-targets" style="max-height:260px; overflow-y:auto; margin-bottom:12px;"></div>
-    <div style="font-size:12px;text-align:center;margin-bottom:10px;" id="wd-summary"></div>
+    <div id="wd-exchange-section" style="display:none;">
+      <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">Выберите на что обменять (или закройте окно и нажмите "Вывести"):</div>
+      <div class="inv-grid" id="wd-targets" style="max-height:260px; overflow-y:auto; margin-bottom:12px;"></div>
+      <div style="font-size:12px;text-align:center;margin-bottom:10px;" id="wd-summary"></div>
+    </div>
     <div class="admin-form">
       <label>Ваш игровой ник</label>
       <input type="text" id="wd-nick" placeholder="Ваш ник для вывода" maxlength="64">
@@ -1184,9 +1202,9 @@ body{padding-left:300px;padding-right:320px}
   <div class="modal-box">
     <span class="close-modal" onclick="closeDepositModal()">&times;</span>
     <h3 class="modal-title">Заявка на пополнение</h3>
-    <div style="font-size:11px;color:var(--text-muted);margin-bottom:10px;">Выберите брейнротов ≥ 1 гарамы</div>
+    <div style="font-size:11px;color:var(--text-muted);margin-bottom:10px;">Выберите брейнрота, которого хотите получить</div>
     <div class="inv-grid" id="dep-selected" style="max-height:260px; overflow-y:auto; margin-bottom:12px;"></div>
-    <div style="font-size:12px;text-align:center;margin-bottom:10px;" id="dep-summary">Выбрано: 0, сумма: 0</div>
+    <div style="font-size:12px;text-align:center;margin-bottom:10px;" id="dep-summary"></div>
     <div class="admin-form">
       <label>Ваш игровой ник</label>
       <input type="text" id="dep-nick" placeholder="Ваш ник" maxlength="64">
@@ -1226,9 +1244,7 @@ body{padding-left:300px;padding-right:320px}
     <button class="btn" style="background:rgba(255,255,255,.05);" onclick="dismissFullscreenIntro()">НЕ СЕЙЧАС</button>
   </div>
 </div>
-
-<!-- ============ END HTML PART 1 ============ -->
-    <script type="module">
+<script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
@@ -1267,7 +1283,6 @@ const MULTI_BASE_MS = 5500;
 const MULTI_STAGGER_MS = 300;
 const GARAMA_PRICE = 64;
 const MIN_WITHDRAW_VALUE = 128;
-const WITHDRAWABLE_IDS = ['garama','dragon','burguro','cerberus','meowl'];
 
 const RARITIES = {
   common:{id:'common',name:'Common',color:'#6b7280'},
@@ -1285,15 +1300,16 @@ const EVENT_TYPES = {
 };
 
 const STARS_PACKAGES = [
-  {id:'p10',stars:10,coins:50,bonus:0,best:false},
-  {id:'p25',stars:25,coins:135,bonus:8,best:false},
-  {id:'p50',stars:50,coins:300,bonus:20,best:true},
-  {id:'p100',stars:100,coins:650,bonus:30,best:false},
-  {id:'p250',stars:250,coins:1750,bonus:40,best:false},
-  {id:'p500',stars:500,coins:4000,bonus:60,best:false}
+  {id:'p10',stars:10,coins:15,bonus:0,best:false},
+  {id:'p25',stars:25,coins:37,bonus:0,best:false},
+  {id:'p50',stars:50,coins:75,bonus:0,best:true},
+  {id:'p100',stars:100,coins:150,bonus:0,best:false},
+  {id:'p250',stars:250,coins:375,bonus:0,best:false},
+  {id:'p500',stars:500,coins:750,bonus:0,best:false}
 ];
 
 let STATE = {items:{},itemsArray:[],cases:{},casesArray:[],sections:[],medals:[]};
+let WD_ALLOWED = [];
 
 const tg = window.Telegram?.WebApp;
 let tgUser = tg?.initDataUnsafe?.user;
@@ -1323,9 +1339,9 @@ let upgInputs = [], upgTarget = null, isUpgrading = false;
 let cfChoice = 'heads', isCfPlaying = false;
 let currentEvent = null, currentPoll = null;
 let animState = null, dropFeedData = [], topDayDrop = null;
-let currentChatId = null, chatPollTimer = null;
-let wdSelected = [], wdSourceItem = null, wdMode = 'withdraw';
-let depSelected = [];
+let currentChatId = null, currentChatOtherUid = null, chatPollTimer = null;
+let wdSourceItem = null, wdSelected = [];
+let depSelected = null;
 let soundEnabled = localStorage.getItem('bf_sound') !== '0';
 let hapticEnabled = localStorage.getItem('bf_haptic') !== '0';
 
@@ -1377,7 +1393,6 @@ function haptic(type){
   }catch(e){}
 }
 
-// === FULLSCREEN ===
 function updateFullscreenToggles(){
   const autoTog = document.getElementById('section-toggle-fullscreen');
   if(autoTog) autoTog.classList.toggle('on', localStorage.getItem('bf_pc_fullscreen')==='1');
@@ -1399,7 +1414,6 @@ function toggleAutoFullscreen(){
   if(!cur) toggleFullscreenNow();
 }
 function toggleFullscreenNow(){
-  // Telegram Mini App
   if(tg && tg.requestFullscreen){
     try {
       if(tg.isFullscreen){ tg.exitFullscreen(); }
@@ -1408,7 +1422,6 @@ function toggleFullscreenNow(){
       return;
     } catch(e){}
   }
-  // Browser fallback
   if(!document.fullscreenElement){
     if(document.documentElement.requestFullscreen){
       document.documentElement.requestFullscreen().catch(()=>{
@@ -1442,7 +1455,6 @@ function checkFirstPCVisit(){
   }
 }
 
-// === API ===
 async function apiCall(endpoint,method='GET',body=null){
   const headers = {'Content-Type':'application/json','X-Telegram-Init-Data': tg?tg.initData:''};
   const opts = {method,headers};
@@ -1512,7 +1524,11 @@ function switchTab(tabId){
   if(document.getElementById('sidebar').classList.contains('active')) toggleMenu();
   window.scrollTo(0,0); haptic('light');
 
-  if(tabId==='admin'){ loadAdminStats(); loadAdminPromos(); loadAdminItemsList(); loadAdminCasesList(); loadAdminSectionsList(); loadAdminMedalsList(); loadAdminWithdrawals(); loadAdminDeposits(); }
+  if(tabId==='admin'){
+    loadAdminStats(); loadAdminPromos(); loadAdminItemsList();
+    loadAdminCasesList(); loadAdminSectionsList(); loadAdminMedalsList();
+    loadAdminWithdrawals(); loadAdminDeposits(); loadAdminWithdrawableList();
+  }
   if(tabId==='settings') updateFullscreenToggles();
   if(tabId==='referral') loadReferralInfo();
   if(tabId==='withdraw') loadWithdrawInfo();
@@ -1556,7 +1572,6 @@ function normalizeTs(ts){
   return n;
 }
 
-// === CASES ===
 function renderCases(){
   const cont = document.getElementById('cases-container');
   if(!cont) return;
@@ -1570,8 +1585,7 @@ function renderCases(){
     for(const c of secCases){
       const isFree = c.id==='free';
       const isUser = c.id==='user';
-      let priceText = `${formatNum(c.price)}`;
-      let idAttr = c.id;
+      const livePrice = STATE.items ? c.price : c.price;
       let timerId = isFree?'free-timer-text':(isUser?'user-timer-text':'');
       html += `<div class="case-card" data-case="${escapeHtml(c.id)}" onclick="openCaseSection('${escapeHtml(c.id)}')">
         <div class="case-img-wrap">
@@ -1580,7 +1594,7 @@ function renderCases(){
         </div>
         <div class="case-title">${escapeHtml(c.name)}</div>
         <div class="case-price" ${timerId?`id="${timerId}"`:''}>
-          ${isFree ? 'БЕСПЛАТНО' : (isUser ? 'ЗА ЮЗ' : `<i class="fa-solid fa-coins"></i> ${priceText}`)}
+          ${isFree ? 'БЕСПЛАТНО' : (isUser ? 'ЗА ЮЗ' : `<i class="fa-solid fa-coins"></i> ${formatNum(c.price)}`)}
         </div>
       </div>`;
     }
@@ -1673,13 +1687,14 @@ function renderLootPreview(type){
     const obj = STATE.items[it.id];
     if(!obj) continue;
     const col = (RARITIES[obj.rarity]||RARITIES.common).color;
+    const livePrice = obj.price;
     html += `<div class="loot-card" style="border-color:${col}">
       <div style="height:45px;display:flex;align-items:center;justify-content:center;">
         <img src="${escapeHtml(obj.img||'')}" onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
         <span class="emoji-fallback" style="display:none;font-size:30px;">${escapeHtml(obj.emoji||'🧠')}</span>
       </div>
       <div class="name">${escapeHtml(obj.name)}</div>
-      <div class="loot-price"><i class="fa-solid fa-coins"></i> ${obj.price}</div></div>`;
+      <div class="loot-price"><i class="fa-solid fa-coins"></i> ${livePrice}</div></div>`;
   }
   grid.innerHTML = html;
 }
@@ -1910,7 +1925,6 @@ function showWinModal(item){
 }
 function closeWinModal(){document.getElementById('win-modal').classList.remove('active');haptic('light');}
 
-// === EVENT/POLL ===
 function renderEventBanner(){
   const b = document.getElementById('event-banner');
   if(!b) return;
@@ -1968,7 +1982,6 @@ async function votePoll(idx){
 async function loadEvent(){try{const r=await apiCall('/api/event');currentEvent=r.event;renderEventBanner();applyEventToCases();}catch(e){}}
 async function loadPoll(){try{const r=await apiCall('/api/poll');currentPoll=r.poll;renderPollBanner();}catch(e){}}
 
-// === UI ===
 function updateUI(){
   ['h-balance','s-balance','p-balance','pc-balance'].forEach(id=>{
     const el = document.getElementById(id);
@@ -1988,7 +2001,10 @@ function renderProfileMedals(){
   const box = document.getElementById('p-medals');
   if(!box) return;
   if(state.medals_hidden || !state.my_medals || !state.my_medals.length){box.innerHTML='';return;}
-  box.innerHTML = state.my_medals.map(m=>`<div class="medal-badge" style="border-color:${escapeHtml(m.color||'#fbbf24')};">${escapeHtml(m.icon||'🏅')}<div class="medal-tooltip"><b>${escapeHtml(m.name)}</b><br>${escapeHtml(m.description||'')}</div></div>`).join('');
+  box.innerHTML = state.my_medals.map(m=>{
+    const content = m.img ? `<img src="${escapeHtml(m.img)}" onerror="this.style.display='none';this.nextElementSibling.style.display='inline';">` : escapeHtml(m.icon||'🏅');
+    return `<div class="medal-badge" style="border-color:${escapeHtml(m.color||'#fbbf24')};">${content}<div class="medal-tooltip"><b>${escapeHtml(m.name)}</b><br>${escapeHtml(m.description||'')}</div></div>`;
+  }).join('');
 }
 
 async function toggleMedalsVisibility(){
@@ -2036,24 +2052,28 @@ setInterval(()=>{if(isOpening||isUpgrading)return;if(document.hidden)return;load
 
 function renderInventory(){
   const cont = document.getElementById('inventory-list');
-  const inv = Object.values(state.inventory||{}).sort((a,b)=>b.price-a.price);
+  const inv = Object.values(state.inventory||{}).sort((a,b)=>{
+    const pa = STATE.items[a.id]?.price || a.price;
+    const pb = STATE.items[b.id]?.price || b.price;
+    return pb - pa;
+  });
   if(!inv.length){cont.innerHTML='<div style="grid-column:span 3;text-align:center;color:var(--text-muted);padding:20px;">Пусто</div>';return;}
   cont.innerHTML = inv.map(it=>{
     const r = RARITIES[it.rarity]||RARITIES.common;
-    const canWd = WITHDRAWABLE_IDS.includes(it.id);
+    const canWd = WD_ALLOWED.includes(it.id);
+    const livePrice = STATE.items[it.id]?.price || it.price;
     return `<div class="inv-item" style="border-color:${r.color}" onclick="BF.addToUpg('${it.uid}')">
       <div style="height:50px;display:flex;align-items:center;justify-content:center;">
         <img src="${escapeHtml(it.img||'')}" onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
         <span class="emoji-fallback" style="display:none;">${escapeHtml(it.emoji||'🧠')}</span>
       </div>
-      <div class="inv-price">${it.price}</div>
+      <div class="inv-price">${livePrice}</div>
       <button class="sell-btn" onclick="event.stopPropagation();BF.sellItem('${it.uid}')">Продать</button>
       ${canWd?`<button class="withdraw-btn" onclick="event.stopPropagation();BF.quickWithdraw('${it.uid}')">Вывести</button>`:''}
     </div>`;
   }).join('');
 }
 
-// === UPG ===
 function renderUpgInputs(){
   const c = document.getElementById('upg-input-box');
   if(!upgInputs.length){c.innerHTML='<div class="placeholder">+ Ваши предметы</div>';return;}
@@ -2069,6 +2089,7 @@ function renderUpgTarget(){
   const c = document.getElementById('upg-target-box');
   if(upgTarget){
     const r = RARITIES[upgTarget.rarity]||RARITIES.common;
+    const livePrice = STATE.items[upgTarget.id]?.price || upgTarget.price;
     c.innerHTML = `<div class="target-preview">
       <img src="${escapeHtml(upgTarget.img||'')}" style="filter:drop-shadow(0 0 10px ${r.color});" onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
       <div class="emoji" style="display:none;">${escapeHtml(upgTarget.emoji||'🧠')}</div>
@@ -2078,9 +2099,14 @@ function renderUpgTarget(){
   }
 }
 function updateWheelVisual(){
-  const sum = upgInputs.reduce((a,uid)=>a+(state.inventory[uid]?state.inventory[uid].price:0),0);
+  const sum = upgInputs.reduce((a,uid)=>{
+    const item = state.inventory[uid];
+    if(!item) return a;
+    return a + (STATE.items[item.id]?.price || item.price);
+  },0);
   let chance = 0;
-  if(upgTarget && sum>0) chance = Math.min(MAX_UPGRADE_CHANCE,(sum/upgTarget.price)*100);
+  const targetPrice = upgTarget ? (STATE.items[upgTarget.id]?.price || upgTarget.price) : 0;
+  if(upgTarget && sum>0) chance = Math.min(MAX_UPGRADE_CHANCE,(sum/targetPrice)*100);
   const disc = document.getElementById('upg-wheel-disc');
   const icon = document.getElementById('upg-wheel-icon');
   const cv = document.getElementById('upg-chance-val');
@@ -2099,15 +2125,22 @@ function updateWheelVisual(){
   }
 }
 function calcUpg(){
-  const sum = upgInputs.reduce((a,uid)=>a+(state.inventory[uid]?state.inventory[uid].price:0),0);
+  const sum = upgInputs.reduce((a,uid)=>{
+    const item = state.inventory[uid];
+    if(!item) return a;
+    return a + (STATE.items[item.id]?.price || item.price);
+  },0);
+  const targetPrice = upgTarget ? (STATE.items[upgTarget.id]?.price || upgTarget.price) : 0;
   let chance = 0;
-  if(upgTarget && sum>0) chance = Math.min(MAX_UPGRADE_CHANCE,(sum/upgTarget.price)*100);
+  if(upgTarget && sum>0) chance = Math.min(MAX_UPGRADE_CHANCE,(sum/targetPrice)*100);
   updateWheelVisual();
   const el = document.getElementById('upg-sum');
-  if(el) el.innerHTML = `Сумма: <b>${formatNum(sum)}</b>${upgTarget?` → <b>${formatNum(upgTarget.price)}</b>`:''}`;
+  if(el) el.innerHTML = `Сумма: <b>${formatNum(sum)}</b>${upgTarget?` → <b>${formatNum(targetPrice)}</b>`:''}`;
   const btn = document.getElementById('btn-upg');
-  const can = chance>0 && upgTarget && upgInputs.length>0;
-  btn.disabled = !can || isUpgrading;
+  const btnFast = document.getElementById('btn-upg-fast');
+  const can = chance>0 && upgTarget && upgInputs.length>0 && !isUpgrading;
+  btn.disabled = !can;
+  btnFast.disabled = !can;
   btn.textContent = can?`ПРОКАЧАТЬ (${chance.toFixed(1)}%)`:'ПРОКАЧАТЬ';
 }
 function openInvPicker(){
@@ -2118,15 +2151,20 @@ function openInvPicker(){
 }
 function renderInvPicker(){
   const list = document.getElementById('inv-picker-list');
-  const entries = Object.values(state.inventory||{}).sort((a,b)=>b.price-a.price);
+  const entries = Object.values(state.inventory||{}).sort((a,b)=>{
+    const pa = STATE.items[a.id]?.price || a.price;
+    const pb = STATE.items[b.id]?.price || b.price;
+    return pb - pa;
+  });
   list.innerHTML = entries.map(it=>{
     const sel = upgInputs.includes(it.uid);
     const r = RARITIES[it.rarity]||RARITIES.common;
+    const livePrice = STATE.items[it.id]?.price || it.price;
     return `<div class="inv-item ${sel?'selected':''}" style="border-color:${r.color}" onclick="BF.toggleUpgItem('${it.uid}')">
       <div style="height:50px;display:flex;align-items:center;justify-content:center;">
         <img src="${escapeHtml(it.img||'')}" onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
         <span class="emoji-fallback" style="display:none;">${escapeHtml(it.emoji||'🧠')}</span></div>
-      <div class="inv-price">${it.price}</div></div>`;
+      <div class="inv-price">${livePrice}</div></div>`;
   }).join('');
   const cnt = document.getElementById('inv-picker-count');
   if(cnt) cnt.textContent = `(${upgInputs.length}/${MAX_UPG_INPUTS})`;
@@ -2141,7 +2179,11 @@ function toggleUpgItem(uid){
   haptic('light'); renderInvPicker(); renderUpgInputs(); calcUpg();
 }
 function openTargetPicker(){
-  const sum = upgInputs.reduce((a,uid)=>a+(state.inventory[uid]?state.inventory[uid].price:0),0);
+  const sum = upgInputs.reduce((a,uid)=>{
+    const item = state.inventory[uid];
+    if(!item) return a;
+    return a + (STATE.items[item.id]?.price || item.price);
+  },0);
   if(sum===0) return notify({type:'warning',message:'Сначала выберите предметы'});
   const list = document.getElementById('target-list');
   const sorted = [...STATE.itemsArray].sort((a,b)=>a.price-b.price);
@@ -2160,7 +2202,11 @@ function openTargetPicker(){
 function closeTargetModal(){document.getElementById('target-modal').classList.remove('active');haptic('light');}
 function chooseTarget(id){upgTarget=STATE.items[id];closeTargetModal();renderUpgTarget();calcUpg();haptic('medium');}
 function autoSelect(type){
-  const sum = upgInputs.reduce((a,uid)=>a+(state.inventory[uid]?state.inventory[uid].price:0),0);
+  const sum = upgInputs.reduce((a,uid)=>{
+    const item = state.inventory[uid];
+    if(!item) return a;
+    return a + (STATE.items[item.id]?.price || item.price);
+  },0);
   if(sum===0) return notify({type:'warning',message:'Сначала выберите свои предметы'});
   let tp = 0;
   if(type==='x2') tp=sum*2; else if(type==='x4') tp=sum*4; else if(type==='x10') tp=sum*10;
@@ -2175,18 +2221,38 @@ function autoSelect(type){
   upgTarget = best; renderUpgTarget(); calcUpg(); haptic('light');
   notify({type:'info',message:`Цель: ${best.name} (${best.price})`});
 }
-async function runUpgrade(){
+
+// ---> ИЗМЕНЕНИЕ: Быстрый апгрейд <---
+async function runUpgrade(fast = false){
   if(isUpgrading) return;
   if(!upgTarget || !upgInputs.length) return;
   isUpgrading=true;
   const btn = document.getElementById('btn-upg');
-  btn.disabled=true; btn.textContent='ПРОКАЧКА...';
+  const btnFast = document.getElementById('btn-upg-fast');
+  btn.disabled=true; btnFast.disabled=true;
+  if(!fast) { btn.textContent='ПРОКАЧКА...'; }
   haptic('medium'); playSound('spin');
   const snapshot = [...upgInputs];
   try{
     const res = await apiCall('/api/upgrade','POST',{input_uids:snapshot,target_id:upgTarget.id});
     state.balance = res.balance; state.inventory = res.inventory;
     updateUI(); renderUpgInputs();
+    
+    if(fast){
+      isUpgrading = false;
+      if(res.success){
+        haptic('success'); playSound('win');
+        notify({type:'success', title:'АПГРЕЙД УСПЕШЕН', message: `Получен ${res.target.name}`, duration: 3000});
+        upgInputs=[]; upgTarget=null;
+        renderUpgInputs(); renderUpgTarget(); calcUpg();
+      } else {
+        haptic('error'); playSound('lose');
+        notify({type:'error', title:'ПРОВАЛ', message:'Предметы сгорели', duration: 3000});
+        upgInputs=[]; renderUpgInputs(); calcUpg();
+      }
+      return;
+    }
+
     const wa = Math.max(0.5,res.chance*3.6);
     let landA;
     if(res.success) landA = wa*(0.1+Math.random()*0.8);
@@ -2222,7 +2288,6 @@ async function runUpgrade(){
   }
 }
 
-// === COINFLIP ===
 function setChoice(c){
   cfChoice=c;
   document.getElementById('btn-heads').classList.toggle('active',c==='heads');
@@ -2294,16 +2359,19 @@ async function buyPackage(id){
   }catch(err){notify({type:'error',message:err.message});}
 }
 
-// === LOST FEED ===
+// ---> ИЗМЕНЕНИЕ: Обновление цен в дропах <---
 function buildTopDrop(best){
   const m = best.method==='upgrade'?'upgrade':'case';
   const ml = best.method==='upgrade'?'Апгрейд':'Кейс';
   const mi = best.method==='upgrade'?'fa-bolt':'fa-box-open';
   const img = best.itemImg?`<img class="top-drop-img" src="${escapeHtml(best.itemImg)}" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span class="top-drop-emoji" style="display:none;">🧠</span>`:`<span class="top-drop-emoji">🧠</span>`;
+  
+  const livePrice = STATE.items[best.itemId]?.price || best.price || 0;
+  
   return `<div class="top-drop-img-wrap">${img}</div>
     <div class="top-drop-info">
       <div class="top-drop-name">${escapeHtml(best.itemName||'Предмет')}</div>
-      <div class="top-drop-price"><i class="fa-solid fa-coins"></i> ${formatNum(best.price||0)}</div>
+      <div class="top-drop-price"><i class="fa-solid fa-coins"></i> ${formatNum(livePrice)}</div>
       <div class="top-drop-method ${m}"><i class="fa-solid ${mi}"></i> ${ml}</div>
     </div>`;
 }
@@ -2315,11 +2383,13 @@ function buildLiveDrop(d){
   const img = d.itemImg?`<img src="${escapeHtml(d.itemImg)}" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span class="emoji-fallback" style="display:none;">🧠</span>`:`<span class="emoji-fallback">🧠</span>`;
   const uid = String(d.user_id||'');
   const nick = escapeHtml(d.nick||'');
-  const price = Number(d.price)||0;
-  return `<div class="live-drop-item" style="border-color:${bc}" onclick="BF.openProfile('${uid}','${nick}',${price})">
+  
+  const livePrice = STATE.items[d.itemId]?.price || d.price || 0;
+  
+  return `<div class="live-drop-item" style="border-color:${bc}" onclick="BF.openProfile('${uid}','${nick}',${livePrice})">
     ${img}
     <div class="ld-name">${escapeHtml(d.itemName||'')}</div>
-    <div class="ld-price"><i class="fa-solid fa-coins"></i> ${formatNum(price)}</div>
+    <div class="ld-price"><i class="fa-solid fa-coins"></i> ${formatNum(livePrice)}</div>
     <div class="ld-overlay ${m}"><i class="fa-solid ${mi} ld-method-icon"></i><div class="ld-method-text">${ml}</div></div>
   </div>`;
 }
@@ -2328,12 +2398,13 @@ function renderLiveFeed(){
   let best=null;
   for(const d of dropFeedData){
     const t = normalizeTs(d.ts); if(t<da) continue;
-    if(!best || (Number(d.price)||0)>(Number(best.price)||0)) best = d;
+    const livePrice = STATE.items[d.itemId]?.price || d.price || 0;
+    if(!best || livePrice > (STATE.items[best.itemId]?.price || best.price || 0)) best = d;
   }
   topDayDrop = best;
   [document.getElementById('top-drop-day'),document.getElementById('pc-top-drop-day')].forEach(box=>{
     if(!box) return;
-    if(best){box.style.display='flex';box.onclick=e=>{e.stopPropagation();openOtherProfile(best.user_id,best.nick||'',best.price||0);};box.innerHTML=buildTopDrop(best);}
+    if(best){box.style.display='flex';box.onclick=e=>{e.stopPropagation();openOtherProfile(best.user_id,best.nick||'',0);};box.innerHTML=buildTopDrop(best);}
     else {box.style.display='none';box.innerHTML='';}
   });
   const html = dropFeedData.length ? dropFeedData.slice(0,30).map(d=>buildLiveDrop(d)).join('') : '<div class="live-feed-empty">Пока нет дропов</div>';
@@ -2342,7 +2413,6 @@ function renderLiveFeed(){
 }
 window.updateDropFeed = arr => {dropFeedData = Array.isArray(arr)?arr:[];renderLiveFeed();};
 
-// === OTHER PROFILE ===
 async function openOtherProfile(uid,nickFallback,priceFallback){
   uid = String(uid||'').trim();
   if(!uid || uid==='undefined' || uid==='null') return notify({type:'warning',message:'Профиль недоступен'});
@@ -2369,17 +2439,21 @@ async function openOtherProfile(uid,nickFallback,priceFallback){
     document.getElementById('op-cases').textContent = formatNum(data.stats?.casesOpened||0);
     document.getElementById('op-earned').textContent = formatNum(data.stats?.totalEarned||0);
     if(data.medals && data.medals.length && !data.medals_hidden){
-      document.getElementById('op-medals').innerHTML = data.medals.map(m=>`<div class="medal-badge" style="border-color:${escapeHtml(m.color||'#fbbf24')};">${escapeHtml(m.icon||'🏅')}<div class="medal-tooltip"><b>${escapeHtml(m.name)}</b><br>${escapeHtml(m.description||'')}</div></div>`).join('');
+      document.getElementById('op-medals').innerHTML = data.medals.map(m=>{
+        const content = m.img ? `<img src="${escapeHtml(m.img)}">` : escapeHtml(m.icon||'🏅');
+        return `<div class="medal-badge" style="border-color:${escapeHtml(m.color||'#fbbf24')};">${content}<div class="medal-tooltip"><b>${escapeHtml(m.name)}</b><br>${escapeHtml(m.description||'')}</div></div>`;
+      }).join('');
     }
     const inv = Object.values(data.inventory||{});
     if(!inv.length) invBox.innerHTML = '<div style="grid-column:span 3;text-align:center;color:var(--text-muted);padding:15px;">Пусто</div>';
     else invBox.innerHTML = inv.map(it=>{
       const r = RARITIES[it.rarity]||RARITIES.common;
+      const livePrice = STATE.items[it.id]?.price || it.price;
       return `<div class="inv-item" style="border-color:${r.color};cursor:default;">
         <div style="height:45px;display:flex;align-items:center;justify-content:center;">
           <img src="${escapeHtml(it.img||'')}" onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
           <span class="emoji-fallback" style="display:none;">${escapeHtml(it.emoji||'🧠')}</span></div>
-        <div class="inv-price">${it.price}</div></div>`;
+        <div class="inv-price">${livePrice}</div></div>`;
     }).join('');
   }catch(err){
     document.getElementById('op-name').textContent = nickFallback||('ID '+uid);
@@ -2393,7 +2467,6 @@ async function openOtherProfile(uid,nickFallback,priceFallback){
 }
 function closeOtherProfile(){document.getElementById('other-profile-modal').classList.remove('active');haptic('light');}
 
-// === REFERRAL ===
 async function loadReferralInfo(){
   try{
     const info = await apiCall('/api/referral/info');
@@ -2412,10 +2485,8 @@ async function loadReferralInfo(){
       document.getElementById('ref-next-hint').textContent = 'Максимальный уровень!';
     }
     document.getElementById('ref-levels-grid').innerHTML = (info.levels||[]).map(l=>`<div class="ref-level-item ${l.level===info.level.level?'active':''}"><span>Ур. ${l.level} (${l.invited}+)</span><b style="color:var(--accent-gold)">${l.pct}%</b></div>`).join('');
-    // Promo case list
     const caseSel = document.getElementById('ref-promo-case-id');
     if(caseSel) caseSel.innerHTML = STATE.casesArray.map(c=>`<option value="${escapeHtml(c.id)}">${escapeHtml(c.name)}</option>`).join('');
-    // My promos
     const pl = document.getElementById('my-promos-list');
     if(!info.my_promos || !info.my_promos.length) pl.innerHTML='<div style="text-align:center;color:var(--text-muted);padding:12px;font-size:12px;">Пока нет</div>';
     else pl.innerHTML = info.my_promos.map(p=>`<div class="admin-drop-row">
@@ -2468,21 +2539,25 @@ async function createRefPromo(){
   }catch(err){notify({type:'error',message:err.message});}
 }
 
-// === WITHDRAW ===
+// ---> ИЗМЕНЕНИЕ: Разделение вывода и обмена <---
 async function loadWithdrawInfo(){
   try{
     const info = await apiCall('/api/withdraw/options');
+    WD_ALLOWED = info.withdrawable_items.map(i=>i.id);
     const box = document.getElementById('withdraw-available');
     if(!info.available.length) box.innerHTML = '<div style="grid-column:span 3;text-align:center;color:var(--text-muted);padding:15px;">Нет предметов для вывода</div>';
     else box.innerHTML = info.available.map(it=>{
       const r = RARITIES[it.rarity]||RARITIES.common;
-      return `<div class="inv-item" style="border-color:${r.color}" onclick="openWithdrawModal('${it.uid}','withdraw')">
+      const livePrice = STATE.items[it.id]?.price || it.price;
+      return `<div class="inv-item" style="border-color:${r.color}">
         <div style="height:50px;display:flex;align-items:center;justify-content:center;">
           <img src="${escapeHtml(it.img||'')}" onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
           <span class="emoji-fallback" style="display:none;">${escapeHtml(it.emoji||'🧠')}</span></div>
-        <div class="inv-price">${it.price}</div></div>`;
+        <div class="inv-price">${livePrice}</div>
+        <button class="withdraw-btn" onclick="quickWithdraw('${it.uid}')" style="margin-top:5px;">Вывести</button>
+        <button class="withdraw-btn" onclick="openExchangeModal('${it.uid}')" style="background:rgba(59,130,246,.15);color:var(--accent-blue);border-color:rgba(59,130,246,.3);">Обменять</button>
+      </div>`;
     }).join('');
-    // My requests
     const rres = await apiCall('/api/withdraw/my_requests');
     const rl = document.getElementById('my-withdraw-requests');
     if(!rres.requests.length) rl.innerHTML='<div style="text-align:center;color:var(--text-muted);padding:12px;font-size:12px;">Заявок нет</div>';
@@ -2498,24 +2573,51 @@ async function loadWithdrawInfo(){
     }).join('');
   }catch(err){console.error(err);}
 }
-function openWithdrawModal(uid,mode){
-  wdMode = mode;
+
+function openWithdrawModal(uid, mode='withdraw'){
   const it = state.inventory[uid]; if(!it) return;
   wdSourceItem = it; wdSelected = [];
-  document.getElementById('wd-modal-title').textContent = mode==='withdraw'?'Вывод предметов':'Обмен';
+  
+  document.getElementById('wd-modal-title').textContent = mode==='withdraw'?'Вывод предмета':'Обмен предмета';
   document.getElementById('wd-modal-hint').textContent = `Источник: ${it.name} (${it.price})`;
   document.getElementById('wd-source-info').innerHTML = `<div class="wd-item-card" style="cursor:default;">
     <img src="${escapeHtml(it.img||'')}" onerror="this.style.display='none';">
     <div class="name">${escapeHtml(it.name)}</div><div class="price">${it.price}</div></div>`;
-  renderWdTargets();
+  
+  const exSec = document.getElementById('wd-exchange-section');
+  const submitBtn = document.getElementById('wd-submit-btn');
+  
+  if(mode==='exchange') {
+    exSec.style.display = 'block';
+    submitBtn.textContent = 'ОБМЕНЯТЬ';
+    submitBtn.onclick = submitExchange;
+    renderWdTargets();
+  } else {
+    exSec.style.display = 'none';
+    submitBtn.textContent = 'ОТПРАВИТЬ ЗАЯВКУ НА ВЫВОД';
+    submitBtn.onclick = submitWithdrawDirect;
+  }
+  
   document.getElementById('wd-nick').value = '';
   document.getElementById('withdraw-modal').classList.add('active');
   haptic('light');
 }
+
+function quickWithdraw(uid){
+  const it = state.inventory[uid]; if(!it) return;
+  if(!WD_ALLOWED.includes(it.id)) return notify({type:'error',message:'Этот предмет нельзя вывести напрямую'});
+  if(it.price < MIN_WITHDRAW_VALUE) return notify({type:'error',message:'Минимум 2 гарамы'});
+  openWithdrawModal(uid, 'withdraw');
+}
+
+function openExchangeModal(uid){
+  openWithdrawModal(uid, 'exchange');
+}
+
 function renderWdTargets(){
   const box = document.getElementById('wd-targets');
   const sum = wdSelected.reduce((a,t)=>a+t.price,0);
-  const items = STATE.itemsArray.filter(i=>WITHDRAWABLE_IDS.includes(i.id)).sort((a,b)=>a.price-b.price);
+  const items = STATE.itemsArray.filter(i=>WD_ALLOWED.includes(i.id)).sort((a,b)=>a.price-b.price);
   box.innerHTML = items.map(t=>{
     const dis = t.price+sum>wdSourceItem.price;
     const r = RARITIES[t.rarity]||RARITIES.common;
@@ -2533,50 +2635,45 @@ function addWdTarget(id){
   wdSelected.push(t); renderWdTargets(); haptic('light');
 }
 function closeWithdrawModal(){document.getElementById('withdraw-modal').classList.remove('active');}
-async function submitWithdraw(){
+
+async function submitWithdrawDirect(){
   const nick = document.getElementById('wd-nick').value.trim();
   if(!nick) return notify({type:'warning',message:'Введите ник'});
-  if(wdSelected.length){
-    try{
-      // Exchange first
-      const r = await apiCall('/api/withdraw/exchange','POST',{source_uid:wdSourceItem.uid,target_ids:wdSelected.map(t=>t.id)});
-      state.balance = r.balance; state.inventory = r.inventory;
-      updateUI(); closeWithdrawModal();
-      notify({type:'success',message:`Обмен завершён. Остаток: ${formatNum(r.remainder)}`});
-      await loadWithdrawInfo();
-    }catch(err){notify({type:'error',message:err.message});}
-  } else {
-    // Direct withdraw
-    const sum = wdSourceItem.price;
-    if(sum<MIN_WITHDRAW_VALUE) return notify({type:'error',message:`Минимум ${MIN_WITHDRAW_VALUE} (≈2 гарамы)`});
-    try{
-      const r = await apiCall('/api/withdraw/request','POST',{item_uids:[wdSourceItem.uid],nick});
-      notify({type:'success',message:`Заявка ${r.request_id} отправлена`});
-      closeWithdrawModal(); await loadWithdrawInfo(); await loadData();
-    }catch(err){notify({type:'error',message:err.message});}
-  }
+  try{
+    const r = await apiCall('/api/withdraw/request','POST',{item_uids:[wdSourceItem.uid],nick});
+    notify({type:'success',message:`Заявка ${r.request_id} отправлена`});
+    closeWithdrawModal(); await loadWithdrawInfo(); await loadData();
+  }catch(err){notify({type:'error',message:err.message});}
 }
 
-async function quickWithdraw(uid){
-  const it = state.inventory[uid]; if(!it) return;
-  if(!WITHDRAWABLE_IDS.includes(it.id)) return notify({type:'warning',message:'Этот предмет нельзя вывести'});
-  openWithdrawModal(uid,'withdraw');
+async function submitExchange(){
+  const nick = document.getElementById('wd-nick').value.trim();
+  if(!nick) return notify({type:'warning',message:'Введите ник'});
+  if(!wdSelected.length) return notify({type:'warning',message:'Выберите на что обменять'});
+  try{
+    const r = await apiCall('/api/withdraw/exchange','POST',{source_uid:wdSourceItem.uid,target_ids:wdSelected.map(t=>t.id)});
+    state.balance = r.balance; state.inventory = r.inventory;
+    updateUI(); closeWithdrawModal();
+    notify({type:'success',message:`Обмен завершён. Остаток: ${formatNum(r.remainder)}`});
+    await loadWithdrawInfo();
+  }catch(err){notify({type:'error',message:err.message});}
 }
 
-// === DEPOSIT ===
+// ---> ИЗМЕНЕНИЕ: Пополнение (выбор любого брейнрота с сайта) ---
 async function loadDepositInfo(){
   try{
     const info = await apiCall('/api/deposit/options');
     const box = document.getElementById('deposit-available');
-    if(!info.available.length) box.innerHTML='<div style="grid-column:span 3;text-align:center;color:var(--text-muted);padding:15px;">Нет предметов для пополнения</div>';
+    if(!info.available.length) box.innerHTML='<div style="grid-column:span 3;text-align:center;color:var(--text-muted);padding:15px;">Нет предметов</div>';
     else box.innerHTML = info.available.map(it=>{
       const r = RARITIES[it.rarity]||RARITIES.common;
-      return `<div class="inv-item" style="border-color:${r.color}" onclick="openDepositModal('${it.uid}')">
+      return `<div class="inv-item" style="border-color:${r.color}" onclick="openDepositModal('${it.id}')">
         <div style="height:50px;display:flex;align-items:center;justify-content:center;">
           <img src="${escapeHtml(it.img||'')}" onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
           <span class="emoji-fallback" style="display:none;">${escapeHtml(it.emoji||'🧠')}</span></div>
         <div class="inv-price">${it.price}</div></div>`;
     }).join('');
+    
     const rres = await apiCall('/api/deposit/my_requests');
     const rl = document.getElementById('my-deposit-requests');
     if(!rres.requests.length) rl.innerHTML='<div style="text-align:center;color:var(--text-muted);padding:12px;font-size:12px;">Заявок нет</div>';
@@ -2584,19 +2681,19 @@ async function loadDepositInfo(){
       const sc = r.status==='pending'?'var(--accent-gold)':r.status==='approved'?'var(--accent-green)':'var(--accent-red)';
       const st = {pending:'Ожидает',approved:'Одобрено',rejected:'Отклонено'}[r.status]||r.status;
       return `<div class="admin-drop-row"><div class="meta"><div class="nick">Ник: ${escapeHtml(r.nick)}</div>
-        <div class="item">${r.items.map(i=>escapeHtml(i.name)).join(', ')} (${formatNum(r.total)})</div>
+        <div class="item">${escapeHtml(r.item_name)} (${formatNum(r.item_price)})</div>
         <div class="item" style="color:${sc};font-weight:800;">${st}</div></div></div>`;
     }).join('');
   }catch(err){console.error(err);}
 }
-function openDepositModal(uid){
-  const it = state.inventory[uid]; if(!it) return;
-  if(it.price<GARAMA_PRICE) return notify({type:'error',message:'Минимум 1 гарама (64)'});
-  depSelected = [it];
-  document.getElementById('dep-selected').innerHTML = `<div class="wd-item-card selected" style="cursor:default;">
-    <img src="${escapeHtml(it.img||'')}" onerror="this.style.display='none';">
-    <div class="name">${escapeHtml(it.name)}</div><div class="price">${it.price}</div></div>`;
-  document.getElementById('dep-summary').textContent = `Выбрано: 1, сумма: ${formatNum(it.price)}`;
+
+function openDepositModal(itemId){
+  const it = STATE.items[itemId]; if(!it) return;
+  depSelected = it;
+  document.getElementById('dep-selected').innerHTML = `<div class="wd-item-card selected" style="cursor:default; grid-column:span 3;">
+    <img src="${escapeHtml(it.img||'')}" onerror="this.style.display='none';" style="width:70px;height:70px;">
+    <div class="name" style="font-size:14px;">${escapeHtml(it.name)}</div><div class="price" style="font-size:14px;">${it.price}</div></div>`;
+  document.getElementById('dep-summary').textContent = `Выбран 1 предмет, стоимость: ${formatNum(it.price)}`;
   document.getElementById('dep-nick').value = '';
   document.getElementById('deposit-modal').classList.add('active');
 }
@@ -2604,21 +2701,20 @@ function closeDepositModal(){document.getElementById('deposit-modal').classList.
 async function submitDeposit(){
   const nick = document.getElementById('dep-nick').value.trim();
   if(!nick) return notify({type:'warning',message:'Введите ник'});
-  if(!depSelected.length) return notify({type:'warning',message:'Выберите предметы'});
+  if(!depSelected) return notify({type:'warning',message:'Выберите предмет'});
   try{
-    const r = await apiCall('/api/deposit/request','POST',{item_uids:depSelected.map(i=>i.uid),nick});
+    const r = await apiCall('/api/deposit/request','POST',{item_id:depSelected.id,nick});
     notify({type:'success',message:`Заявка ${r.request_id} отправлена`});
-    closeDepositModal(); await loadDepositInfo(); await loadData();
+    closeDepositModal(); await loadDepositInfo();
   }catch(err){notify({type:'error',message:err.message});}
 }
 
-// === CHATS ===
 async function loadChatsList(){
   const box = document.getElementById('chats-list');
   try{
     const r = await apiCall('/api/chats');
     if(!r.chats || !r.chats.length){box.innerHTML='<div style="text-align:center;color:var(--text-muted);padding:20px;">Нет чатов</div>';return;}
-    box.innerHTML = r.chats.map(c=>`<div class="chat-list-item" onclick="openChat('${escapeHtml(c.chat_id)}','${escapeHtml(c.other_name)}')">
+    box.innerHTML = r.chats.map(c=>`<div class="chat-list-item" onclick="openChat('${escapeHtml(c.chat_id)}','${escapeHtml(c.other_name)}','${c.other_uid}')">
       <div class="avatar">${escapeHtml(c.other_name.charAt(0).toUpperCase())}</div>
       <div class="info"><div class="name">${escapeHtml(c.other_name)}</div>
       <div class="last-msg">${escapeHtml(c.last_message?.text||'Нет сообщений').slice(0,60)}</div></div>
@@ -2637,11 +2733,12 @@ async function startChatWith(uid,name){
   try{
     const r = await apiCall('/api/chats/start','POST',{target_uid:String(uid)});
     closeOtherProfile();
-    await openChat(r.chat_id,name);
+    await openChat(r.chat_id,name,String(uid));
   }catch(err){notify({type:'error',message:err.message});}
 }
-async function openChat(chatId,name){
+async function openChat(chatId,name,otherUid){
   currentChatId = chatId;
+  currentChatOtherUid = otherUid;
   document.getElementById('chat-with-name').textContent = name;
   switchTab('chat-view');
   await loadChatMessages();
@@ -2671,8 +2768,12 @@ async function sendChatMessage(){
   try{await apiCall('/api/chats/'+encodeURIComponent(currentChatId)+'/send','POST',{text});await loadChatMessages();}
   catch(err){notify({type:'error',message:err.message});}
 }
+function openChatProfile(){
+  if(!currentChatOtherUid) return;
+  const name = document.getElementById('chat-with-name').textContent;
+  openOtherProfile(currentChatOtherUid, name, 0);
+}
 
-// === ADMIN ===
 function adminTab(name){
   document.querySelectorAll('.admin-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===name));
   document.querySelectorAll('.admin-panel').forEach(p=>p.classList.toggle('active',p.dataset.panel===name));
@@ -2681,7 +2782,7 @@ function adminTab(name){
   if(name==='promo') loadAdminPromos();
   if(name==='items') loadAdminItemsList();
   if(name==='cases') loadAdminCasesList();
-  if(name==='sections') loadAdminSectionsList();
+  if(name==='sections') { loadAdminSectionsList(); loadAdminWithdrawableList(); }
   if(name==='medals') loadAdminMedalsList();
   if(name==='withdrawals') loadAdminWithdrawals();
   if(name==='deposits') loadAdminDeposits();
@@ -2739,7 +2840,7 @@ async function loadAdminItemsList(){
 async function adminSaveItem(id){
   const price = parseInt(document.getElementById('item-price-'+id).value);
   const rar = document.getElementById('item-rarity-'+id).value;
-  try{await apiCall('/api/admin/item/update','POST',{item_id:id,price,rarity:rar});notify({type:'success',message:'Сохранено'});await loadItems();renderInventory();calcUpg();}
+  try{await apiCall('/api/admin/item/update','POST',{item_id:id,price,rarity:rar});notify({type:'success',message:'Сохранено'});await loadItems();renderInventory();calcUpg();loadCases();}
   catch(err){notify({type:'error',message:err.message});}
 }
 async function adminDeleteItem(id){
@@ -2769,7 +2870,6 @@ async function loadAdminCasesList(){
     <button class="btn small" onclick="editCase('${escapeHtml(c.id)}')" style="padding:4px 8px;font-size:11px;">✎</button>
     <button class="btn small red" onclick="adminDeleteCase('${escapeHtml(c.id)}')" style="padding:4px 8px;font-size:11px;">×</button>
   </div>`).join('');
-  // Populate sections select
   const sel = document.getElementById('admin-case-section');
   if(sel) sel.innerHTML = STATE.sections.map(s=>`<option value="${escapeHtml(s.id)}">${escapeHtml(s.name)}</option>`).join('');
 }
@@ -2838,6 +2938,32 @@ async function adminDeleteSection(id){
   catch(err){notify({type:'error',message:err.message});}
 }
 
+// ---> ИЗМЕНЕНИЕ: Динамический список вывода в админке <---
+async function loadAdminWithdrawableList(){
+  const box = document.getElementById('admin-withdrawable-list');
+  if(!box) return;
+  try {
+    const info = await apiCall('/api/withdraw/options');
+    const current = info.withdrawable_items.map(i=>i.id);
+    box.innerHTML = STATE.itemsArray.map(it=>`
+      <label style="display:flex;align-items:center;gap:8px;padding:6px;font-size:12px;border-bottom:1px solid var(--border);">
+        <input type="checkbox" class="wd-allowed-cb" value="${it.id}" ${current.includes(it.id)?'checked':''} style="width:auto;margin:0;">
+        <img src="${escapeHtml(it.img||'')}" onerror="this.style.display='none';" style="width:24px;height:24px;">
+        <span>${escapeHtml(it.name)} (${it.price})</span>
+      </label>
+    `).join('');
+  } catch(e) { box.innerHTML = 'Ошибка загрузки'; }
+}
+async function adminSaveWithdrawable(){
+  const boxes = document.querySelectorAll('.wd-allowed-cb:checked');
+  const ids = Array.from(boxes).map(b=>b.value);
+  try {
+    await apiCall('/api/admin/withdrawable/save', 'POST', {ids});
+    notify({type:'success', message:'Список вывода сохранён'});
+    await loadWithdrawInfo();
+  } catch(e) { notify({type:'error', message:e.message}); }
+}
+
 async function loadAdminMedalsList(){
   const box = document.getElementById('admin-medals-list');
   const sel = document.getElementById('admin-medal-select');
@@ -2846,7 +2972,7 @@ async function loadAdminMedalsList(){
     const medals = r.medals || [];
     STATE.medals = medals;
     if(box) box.innerHTML = medals.length ? medals.map(m=>`<div class="admin-drop-row">
-      <div class="admin-rank-badge" style="background:${escapeHtml(m.color||'#fbbf24')}">${escapeHtml(m.icon||'🏅')}</div>
+      <div class="admin-rank-badge" style="background:${escapeHtml(m.color||'#fbbf24')}">${m.img ? `<img src="${m.img}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">` : escapeHtml(m.icon||'🏅')}</div>
       <div class="meta"><div class="nick">${escapeHtml(m.name)}</div><div class="item">${escapeHtml(m.description||'')}</div></div>
       <button class="btn small red" onclick="adminDeleteMedal('${escapeHtml(m.id)}')" style="padding:4px 8px;font-size:11px;">×</button>
     </div>`).join('') : '<div style="text-align:center;color:var(--text-muted);padding:12px;font-size:12px;">Нет медалей</div>';
@@ -2859,6 +2985,7 @@ async function adminSaveMedal(){
     name:document.getElementById('admin-medal-name').value.trim(),
     description:document.getElementById('admin-medal-desc').value.trim(),
     icon:document.getElementById('admin-medal-icon').value.trim()||'🏅',
+    img:document.getElementById('admin-medal-img').value.trim(),
     color:document.getElementById('admin-medal-color').value.trim()||'#fbbf24'
   };
   if(!body.id) return notify({type:'warning',message:'Введите ID'});
@@ -3062,7 +3189,7 @@ async function loadAdminDeposits(){
         <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;">
           <b>${escapeHtml(d.nick)}</b><span style="color:${sc}">${d.status}</span>
         </div>
-        <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">ID: ${escapeHtml(d.user_uid)} • ${d.items.map(i=>escapeHtml(i.name)).join(', ')} (${formatNum(d.total)})</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">ID: ${escapeHtml(d.user_uid)} • Предмет: ${escapeHtml(d.item_name)} (${formatNum(d.item_price)})</div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;">
           <button class="btn small green" onclick="adminUpdateDeposit('${escapeHtml(d.id)}','approved')">Одобрить</button>
           <button class="btn small red" onclick="adminUpdateDeposit('${escapeHtml(d.id)}','rejected')">Отклонить</button>
@@ -3076,7 +3203,6 @@ async function adminUpdateDeposit(id,status){
   catch(err){notify({type:'error',message:err.message});}
 }
 
-// === WINDOW BINDINGS ===
 window.BF = {
   addToUpg:uid=>{
     if(upgInputs.includes(uid)){notify({type:'info',message:'Уже добавлен'});switchTab('upgrader');return;}
@@ -3113,7 +3239,7 @@ window.adminManageSearch=adminManageSearch; window.adminQuickGive=adminQuickGive
 window.adminAddPollOption=adminAddPollOption; window.adminCreatePoll=adminCreatePoll; window.adminEndPoll=adminEndPoll;
 window.adminSaveItem=adminSaveItem; window.adminDeleteItem=adminDeleteItem; window.adminCreateItem=adminCreateItem;
 window.adminSaveCase=adminSaveCase; window.adminDeleteCase=adminDeleteCase; window.editCase=editCase; window.loadCaseToEditor=loadCaseToEditor;
-window.adminSaveSection=adminSaveSection; window.adminDeleteSection=adminDeleteSection;
+window.adminSaveSection=adminSaveSection; window.adminDeleteSection=adminDeleteSection; window.adminSaveWithdrawable=adminSaveWithdrawable;
 window.adminSaveMedal=adminSaveMedal; window.adminDeleteMedal=adminDeleteMedal; window.adminGiveMedal=adminGiveMedal; window.adminRemoveMedal=adminRemoveMedal;
 window.adminGrantRights=adminGrantRights; window.adminRevokeRights=adminRevokeRights;
 window.adminScheduleWithdrawal=adminScheduleWithdrawal; window.adminCompleteWithdrawal=adminCompleteWithdrawal; window.adminCancelWithdrawal=adminCancelWithdrawal;
@@ -3122,11 +3248,12 @@ window.toggleAutoFullscreen=toggleAutoFullscreen; window.toggleFullscreenNow=tog
 window.enableFullscreenFromIntro=enableFullscreenFromIntro; window.dismissFullscreenIntro=dismissFullscreenIntro;
 window.copyRefLink=copyRefLink; window.updateRefPromoType=updateRefPromoType; window.createRefPromo=createRefPromo;
 window.toggleMedalsVisibility=toggleMedalsVisibility;
-window.openWithdrawModal=openWithdrawModal; window.closeWithdrawModal=closeWithdrawModal; window.addWdTarget=addWdTarget; window.submitWithdraw=submitWithdraw;
+window.openWithdrawModal=openWithdrawModal; window.closeWithdrawModal=closeWithdrawModal; window.addWdTarget=addWdTarget;
+window.quickWithdraw=quickWithdraw; window.openExchangeModal=openExchangeModal;
 window.openDepositModal=openDepositModal; window.closeDepositModal=closeDepositModal; window.submitDeposit=submitDeposit;
 window.searchAndStartChat=searchAndStartChat; window.openChat=openChat; window.sendChatMessage=sendChatMessage;
+window.openChatProfile=openChatProfile;
 
-// === DATA LOADERS ===
 async function loadItems(){
   try{
     const r = await apiCall('/api/items');
@@ -3135,6 +3262,7 @@ async function loadItems(){
     STATE.itemsArray.forEach(it=>STATE.items[it.id]=it);
     populateGiveItems();
     if(activeCase) renderLootPreview(activeCase);
+    renderLiveFeed(); // Обновляем цены в дропах
   }catch(err){console.error(err);}
 }
 async function loadCases(){
@@ -3185,7 +3313,6 @@ async function checkRef(){
   try{const r = await apiCall('/api/claim_referral','POST',{ref_id:refId});if(r.ok){notify({type:'success',message:'Бонус за вход'});loadData();}}catch(e){}
 }
 
-// Init
 document.getElementById('toggle-sound')?.classList.toggle('on',soundEnabled);
 document.getElementById('toggle-haptic')?.classList.toggle('on',hapticEnabled);
 document.getElementById('section-toggle-sound')?.classList.toggle('on',soundEnabled);
