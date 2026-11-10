@@ -1,7 +1,8 @@
-import os, json, hmac, hashlib, logging, random, time
+import os, json, hmac, hashlib, logging, random, time, re, uuid
 from contextlib import asynccontextmanager
 from urllib.parse import parse_qsl
 from pathlib import Path
+from typing import Optional
 
 import firebase_admin
 from firebase_admin import credentials, db as fbdb
@@ -24,13 +25,7 @@ ALLOWED_ORIGINS = [o.strip() for o in (os.getenv("ALLOWED_ORIGINS") or "*").spli
 BOT_USERNAME = "Brain_Funbot"
 INIT_DATA_MAX_AGE = 24 * 3600
 
-ADMIN_IDS = {6636765626, 8364667153}
-
-def is_admin(user) -> bool:
-    try:
-        return int(user["id"]) in ADMIN_IDS
-    except Exception:
-        return False
+HARDCODED_ADMIN_IDS = {6636765626, 8364667153}
 
 RARITIES = {
     "common":    {"id":"common","name":"Common","color":"#6b7280"},
@@ -40,7 +35,6 @@ RARITIES = {
     "legendary": {"id":"legendary","name":"Legendary","color":"#f59e0b"},
 }
 
-# Базовый список всех предметов
 DEFAULT_ITEMS = [
     {"id":"trios",    "name":"Los Trios",           "price":4,     "rarity":"common",    "img":"assets/brainrots/los_trios.png", "emoji":"🥉"},
     {"id":"rot67",    "name":"67",                  "price":5,     "rarity":"common",    "img":"assets/brainrots/67.png", "emoji":"6️⃣7️⃣"},
@@ -73,61 +67,38 @@ DEFAULT_ITEMS = [
     {"id":"skibidi",     "name":"Skibidi Toilet",       "price":13229, "rarity":"legendary", "img":"assets/brainrots/skibidi_toilet.png", "emoji":"🚽"},
 ]
 
-# НОВЫЕ ЦЕНЫ И КЕЙСЫ
-CASE_PRICES = {
-    "free": 0, 
-    "user": 0, 
-    "starter": 10, 
-    "meme": 50, 
-    "zoo": 100, 
-    "mafia": 250, 
-    "allin": 29
-}
+DEFAULT_SECTIONS = [
+    {"id": "free_cases",   "name": "Free Cases", "order": 0, "icon": "🆓"},
+    {"id": "shop",         "name": "Магазин",    "order": 1, "icon": "🛒"},
+    {"id": "allin_section","name": "ALL IN",     "order": 2, "icon": "🎰"},
+]
 
-CASE_LOOT = {
-    "free": {"coinChance": 70, "coins": [{"amount":1,"weight":50}, {"amount":2,"weight":30}, {"amount":3,"weight":20}], "items": [{"id":"trios","weight":100}]},
-    "user": {"coinChance": 30, "coins": [{"amount":3,"weight":100}], "items": [{"id":"trios","weight":30},{"id":"rot67","weight":30},{"id":"hammy","weight":20},{"id":"candyslap","weight":20}]},
-    
-    # 1. Стартер (10)
-    "starter": {
-        "coinChance": 0, "coins": [],
-        "items": [
-            {"id":"trios","weight":20}, {"id":"rot67","weight":15}, {"id":"hammy","weight":15}, {"id":"candyslap","weight":10},
-            {"id":"tictac","weight":20}, {"id":"esok","weight":15}, {"id":"ketchuru","weight":4.9}, {"id":"burguro","weight":0.1}
-        ]
-    },
-    # 2. Мемный (50)
-    "meme": {
-        "coinChance": 0, "coins": [],
-        "items": [
-            {"id":"tictac","weight":20}, {"id":"ketupat","weight":20}, {"id":"pavone","weight":20},
-            {"id":"cashcard","weight":30}, {"id":"garama","weight":8.8}, {"id":"burguro","weight":1}, {"id":"capitano","weight":0.2}
-        ]
-    },
-    # 3. Зоопарк (100)
-    "zoo": {
-        "coinChance": 0, "coins": [],
-        "items": [
-            {"id":"ketchuru","weight":20}, {"id":"pavone","weight":20}, {"id":"garama","weight":20},
-            {"id":"cerberus","weight":35}, {"id":"hydra","weight":4.9}, {"id":"dragon","weight":0.099}, {"id":"skibidi","weight":0.001}
-        ]
-    },
-    # 4. Мафия (250)
-    "mafia": {
-        "coinChance": 0, "coins": [],
-        "items": [
-            {"id":"garama","weight":20}, {"id":"burguro","weight":20}, {"id":"capitano","weight":20},
-            {"id":"hydra","weight":38}, {"id":"dragon","weight":1.95}, {"id":"skibidi","weight":0.04}, {"id":"meowl","weight":0.009}, {"id":"strawberry","weight":0.001}
-        ]
-    },
-    # 5. ALL IN (29)
-    "allin": {
-        "coinChance": 0, "coins": [],
-        "items": [
-            {"id":"trios","weight":99.9}, 
-            {"id":"skibidi","weight":0.1}
-        ]
-    }
+DEFAULT_CASES = {
+    "free":    {"id":"free","name":"Ежедневный","section":"free_cases","price":0,"img":"assets/cases/free.png","emoji":"🎁","order":0,
+                "coinChance":70,"coins":[{"amount":1,"weight":50},{"amount":2,"weight":30},{"amount":3,"weight":20}],
+                "items":[{"id":"trios","weight":100}]},
+    "user":    {"id":"user","name":"Кейс за Юз","section":"free_cases","price":0,"img":"assets/cases/user.png","emoji":"👤","order":1,
+                "coinChance":30,"coins":[{"amount":3,"weight":100}],
+                "items":[{"id":"trios","weight":30},{"id":"rot67","weight":30},{"id":"hammy","weight":20},{"id":"candyslap","weight":20}]},
+    "starter": {"id":"starter","name":"Стартер","section":"shop","price":10,"img":"assets/cases/base.png","emoji":"📦","order":0,
+                "coinChance":0,"coins":[],
+                "items":[{"id":"trios","weight":20},{"id":"rot67","weight":15},{"id":"hammy","weight":15},{"id":"candyslap","weight":10},
+                         {"id":"tictac","weight":20},{"id":"esok","weight":15},{"id":"ketchuru","weight":4.9},{"id":"burguro","weight":0.1}]},
+    "meme":    {"id":"meme","name":"Мемный","section":"shop","price":50,"img":"assets/cases/bro.png","emoji":"💎","order":1,
+                "coinChance":0,"coins":[],
+                "items":[{"id":"tictac","weight":20},{"id":"ketupat","weight":20},{"id":"pavone","weight":20},
+                         {"id":"cashcard","weight":30},{"id":"garama","weight":8.8},{"id":"burguro","weight":1},{"id":"capitano","weight":0.2}]},
+    "zoo":     {"id":"zoo","name":"Зоопарк","section":"shop","price":100,"img":"assets/cases/allin.png","emoji":"🦁","order":2,
+                "coinChance":0,"coins":[],
+                "items":[{"id":"ketchuru","weight":20},{"id":"pavone","weight":20},{"id":"garama","weight":20},
+                         {"id":"cerberus","weight":35},{"id":"hydra","weight":4.9},{"id":"dragon","weight":0.099},{"id":"skibidi","weight":0.001}]},
+    "mafia":   {"id":"mafia","name":"Мафия","section":"shop","price":250,"img":"assets/cases/user.png","emoji":"💼","order":3,
+                "coinChance":0,"coins":[],
+                "items":[{"id":"garama","weight":20},{"id":"burguro","weight":20},{"id":"capitano","weight":20},
+                         {"id":"hydra","weight":38},{"id":"dragon","weight":1.95},{"id":"skibidi","weight":0.04},{"id":"meowl","weight":0.009},{"id":"strawberry","weight":0.001}]},
+    "allin":   {"id":"allin","name":"ALL IN","section":"allin_section","price":29,"img":"assets/cases/allin.png","emoji":"🎰","order":0,
+                "coinChance":0,"coins":[],
+                "items":[{"id":"trios","weight":99.9},{"id":"skibidi","weight":0.1}]},
 }
 
 EVENT_TYPES = {
@@ -157,6 +128,24 @@ MAX_EVENT_MINUTES = 60 * 24 * 7
 MAX_PROMO_REWARD = 1_000_000
 MAX_PROMO_USES = 1_000_000
 
+# Withdraw settings
+WITHDRAWABLE_ITEM_IDS = {"garama", "dragon", "burguro", "cerberus", "meowl"}
+MIN_WITHDRAW_VALUE = 128  # 2 garamas = 2*64
+GARAMA_PRICE = 64
+
+# Referral levels: [min_invited, bonus_pct]
+REFERRAL_LEVELS = [
+    {"level": 1, "invited": 0,    "pct": 5},
+    {"level": 2, "invited": 50,   "pct": 10},
+    {"level": 3, "invited": 200,  "pct": 15},
+    {"level": 4, "invited": 500,  "pct": 20},
+    {"level": 5, "invited": 1000, "pct": 25},
+    {"level": 6, "invited": 2000, "pct": 30},
+    {"level": 7, "invited": 5000, "pct": 35},
+    {"level": 8, "invited": 10000,"pct": 40},
+    {"level": 9, "invited": 25000,"pct": 45},
+    {"level": 10,"invited": 50000,"pct": 50},
+]
 
 def init_firebase():
     raw = os.getenv("FIREBASE_CRED_JSON")
@@ -180,11 +169,13 @@ def init_firebase():
 
 FIREBASE_OK = init_firebase()
 
+# ============ ITEMS ============
 def get_items_dict() -> dict:
     if not FIREBASE_OK:
         return {i["id"]: i for i in DEFAULT_ITEMS}
     try:
         overrides = fbdb.reference("meta/items_overrides").get() or {}
+        extra = fbdb.reference("meta/items_extra").get() or {}
         final_dict = {}
         for item in DEFAULT_ITEMS:
             base_item = dict(item)
@@ -192,12 +183,107 @@ def get_items_dict() -> dict:
                 ovr = overrides[base_item["id"]]
                 if "price" in ovr: base_item["price"] = int(ovr["price"])
                 if "rarity" in ovr: base_item["rarity"] = ovr["rarity"]
+                if "name" in ovr: base_item["name"] = ovr["name"]
+                if "img" in ovr: base_item["img"] = ovr["img"]
+                if "emoji" in ovr: base_item["emoji"] = ovr["emoji"]
+                if ovr.get("deleted"): continue
             final_dict[base_item["id"]] = base_item
+        for iid, it in extra.items():
+            if isinstance(it, dict) and not it.get("deleted"):
+                final_dict[iid] = {
+                    "id": iid, "name": it.get("name", iid),
+                    "price": int(it.get("price", 1)),
+                    "rarity": it.get("rarity", "common"),
+                    "img": it.get("img", ""), "emoji": it.get("emoji", "🧠"),
+                }
         return final_dict
     except Exception as e:
         log.error(f"Error loading items from DB: {e}")
         return {i["id"]: i for i in DEFAULT_ITEMS}
 
+# ============ CASES & SECTIONS ============
+def get_cases_dict() -> dict:
+    if not FIREBASE_OK:
+        return {cid: dict(c) for cid, c in DEFAULT_CASES.items()}
+    try:
+        db_cases = fbdb.reference("meta/cases").get() or {}
+        final = {}
+        for cid, c in DEFAULT_CASES.items():
+            base = dict(c)
+            if cid in db_cases and isinstance(db_cases[cid], dict):
+                ovr = db_cases[cid]
+                for k, v in ovr.items():
+                    if v is None: continue
+                    base[k] = v
+                if ovr.get("deleted"): continue
+            final[cid] = base
+        for cid, c in db_cases.items():
+            if cid not in DEFAULT_CASES and isinstance(c, dict) and not c.get("deleted"):
+                final[cid] = c
+        return final
+    except Exception as e:
+        log.error(f"Error loading cases: {e}")
+        return {cid: dict(c) for cid, c in DEFAULT_CASES.items()}
+
+def get_sections_list() -> list:
+    if not FIREBASE_OK:
+        return [dict(s) for s in DEFAULT_SECTIONS]
+    try:
+        db_sections = fbdb.reference("meta/sections").get() or {}
+        final = {}
+        for s in DEFAULT_SECTIONS:
+            base = dict(s)
+            if s["id"] in db_sections and isinstance(db_sections[s["id"]], dict):
+                ovr = db_sections[s["id"]]
+                for k, v in ovr.items():
+                    if v is None: continue
+                    base[k] = v
+                if ovr.get("deleted"): continue
+            final[s["id"]] = base
+        for sid, s in db_sections.items():
+            if sid not in {x["id"] for x in DEFAULT_SECTIONS} and isinstance(s, dict) and not s.get("deleted"):
+                final[sid] = s
+        return sorted(final.values(), key=lambda x: x.get("order", 999))
+    except Exception as e:
+        log.error(f"Error loading sections: {e}")
+        return [dict(s) for s in DEFAULT_SECTIONS]
+
+# ============ MEDALS ============
+def get_medals_dict() -> dict:
+    if not FIREBASE_OK: return {}
+    try:
+        medals = fbdb.reference("meta/medals").get() or {}
+        return {mid: m for mid, m in medals.items() if isinstance(m, dict)}
+    except Exception: return {}
+
+def get_user_medals(uid: str) -> list:
+    if not FIREBASE_OK: return []
+    try:
+        user_medal_ids = fbdb.reference(f"users/{uid}/medals").get() or {}
+        all_medals = get_medals_dict()
+        result = []
+        for mid, val in user_medal_ids.items():
+            if val and mid in all_medals:
+                result.append({"id": mid, **all_medals[mid]})
+        return result
+    except Exception: return []
+
+# ============ ADMIN ============
+def get_dynamic_admin_ids() -> set:
+    if not FIREBASE_OK: return set()
+    try:
+        data = fbdb.reference("meta/admins").get() or {}
+        return {int(k) for k in data.keys()}
+    except Exception: return set()
+
+def is_admin(user) -> bool:
+    try:
+        uid = int(user["id"])
+        return uid in HARDCODED_ADMIN_IDS or uid in get_dynamic_admin_ids()
+    except Exception:
+        return False
+
+# ============ USER ============
 def user_ref(uid: str):
     return fbdb.reference(f"users/{uid}")
 
@@ -205,11 +291,16 @@ def _default_user() -> dict:
     return {
         "balance": 0, "inventory": {}, "lastFree": 0, "lastUser": 0,
         "used_promos": {}, "paid_ids": {}, "refUsed": False,
+        "invited_by": "", "ref_earnings": 0,
+        "medals": {}, "medals_hidden": False,
         "stats": {
             "casesOpened": 0, "itemsSold": 0, "upgradeSuccess": 0, "upgradeFail": 0,
             "totalEarned": 0, "donationsTotal": 0, "starsSpent": 0, "uniqueCollected": [],
+            "coinsLost": 0, "coinsReferralEarned": 0,
         },
         "themes": {"dark": True}, "theme": "dark", "referrals": 0,
+        "created_promos": {},
+        "username": "", "first_name": "",
     }
 
 def _normalize(data: dict) -> dict:
@@ -231,12 +322,10 @@ def get_user_data(uid: str, strict: bool = False) -> dict | None:
 def atomic_update(uid: str, updater):
     if not FIREBASE_OK:
         return False
-
     def tx(current):
         d = _normalize(current or {})
         result = updater(d)
         return result if result is not None else None
-
     try:
         user_ref(uid).transaction(tx)
         return True
@@ -244,6 +333,7 @@ def atomic_update(uid: str, updater):
         log.exception("transaction error uid=%s", uid)
         return False
 
+# ============ AUTH ============
 def verify_init_data(init_data: str) -> dict | None:
     if not init_data or not BOT_TOKEN:
         return None
@@ -252,11 +342,9 @@ def verify_init_data(init_data: str) -> dict | None:
         received_hash = parsed.pop("hash", None)
         if not received_hash:
             return None
-
         auth_date = int(parsed.get("auth_date", 0) or 0)
         if not auth_date or (time.time() - auth_date) > INIT_DATA_MAX_AGE:
             return None
-
         dcs = "\n".join(f"{k}={v}" for k, v in sorted(parsed.items()))
         secret = hmac.new(b"WebAppData", BOT_TOKEN.encode(), hashlib.sha256).digest()
         calc = hmac.new(secret, dcs.encode(), hashlib.sha256).hexdigest()
@@ -277,47 +365,41 @@ async def require_admin(user=Depends(current_user)):
         raise HTTPException(403, "admin only")
     return user
 
+# ============ HELPERS ============
 def weighted_pick(entries):
+    if not entries: return None
     total = sum(e.get("weight", 1) for e in entries)
     r = random.random() * total
     for e in entries:
         r -= e.get("weight", 1)
-        if r <= 0:
-            return e
+        if r <= 0: return e
     return entries[-1]
 
-def roll_drop(case_type: str, items_dict: dict) -> dict:
-    cfg = CASE_LOOT[case_type]
-    if cfg["coins"] and random.random() * 100 < cfg["coinChance"]:
-        picked = weighted_pick(cfg["coins"])
-        return {"type": "coin", "amount": picked["amount"]}
-    picked = weighted_pick(cfg["items"])
-    
-    item_data = items_dict.get(picked["id"])
-    if not item_data:
-        item_data = items_dict.get("trios")
-        
+def roll_drop(case_cfg: dict, items_dict: dict) -> dict:
+    if case_cfg.get("coins") and random.random() * 100 < float(case_cfg.get("coinChance", 0)):
+        picked = weighted_pick(case_cfg["coins"])
+        return {"type": "coin", "amount": int(picked["amount"])}
+    picked = weighted_pick(case_cfg.get("items", []))
+    if not picked: 
+        picked = {"id": "trios"}
+    item_data = items_dict.get(picked["id"]) or items_dict.get("trios")
     return {"type": "item", "item": dict(item_data)}
 
 def drop_value(drop: dict) -> int:
-    if drop["type"] == "coin":
-        return int(drop["amount"])
+    if drop["type"] == "coin": return int(drop["amount"])
     return int(drop["item"]["price"])
 
-def roll_with_event_luck(case_type: str, luck_mult: float, items_dict: dict) -> dict:
-    best = roll_drop(case_type, items_dict)
+def roll_with_event_luck(case_cfg: dict, luck_mult: float, items_dict: dict) -> dict:
+    best = roll_drop(case_cfg, items_dict)
     extra = max(0.0, luck_mult - 1.0)
     integer_extra = int(extra)
     frac_extra = extra - integer_extra
-
     for _ in range(integer_extra):
-        cand = roll_drop(case_type, items_dict)
-        if drop_value(cand) > drop_value(best):
-            best = cand
+        cand = roll_drop(case_cfg, items_dict)
+        if drop_value(cand) > drop_value(best): best = cand
     if random.random() < frac_extra:
-        cand = roll_drop(case_type, items_dict)
-        if drop_value(cand) > drop_value(best):
-            best = cand
+        cand = roll_drop(case_cfg, items_dict)
+        if drop_value(cand) > drop_value(best): best = cand
     return best
 
 def make_inv_item(item: dict) -> dict:
@@ -325,16 +407,15 @@ def make_inv_item(item: dict) -> dict:
     return {**item, "uid": uid}
 
 def push_drop(nick: str, item_name: str, item_img: str | None, price: int, method: str, user_id: str):
-    if not FIREBASE_OK or not item_img:
-        return
+    if not FIREBASE_OK or not item_img: return
     try:
         drop_id = "d_%d_%s" % (int(time.time() * 1000), "".join(random.choices("abcdef", k=4)))
         fbdb.reference(f"drop_feed/{drop_id}").set({
             "nick": nick, "itemName": item_name, "itemImg": item_img,
-            "price": price, "method": method, "user_id": str(user_id), "ts": int(time.time() * 1000),
+            "price": price, "method": method, "user_id": str(user_id),
+            "ts": int(time.time() * 1000),
         })
-    except Exception:
-        pass
+    except Exception: pass
 
 def get_active_event() -> dict | None:
     if not FIREBASE_OK: return None
@@ -354,7 +435,40 @@ def get_active_poll() -> dict | None:
         return p
     except Exception: return None
 
+def get_referral_level(invited_count: int) -> dict:
+    current = REFERRAL_LEVELS[0]
+    for lvl in REFERRAL_LEVELS:
+        if invited_count >= lvl["invited"]: current = lvl
+        else: break
+    return current
 
+def apply_referral_earnings(loser_uid: str, coins_lost: int):
+    """Loser lost coins — give referrer a cut based on their referral level."""
+    if coins_lost <= 0 or not FIREBASE_OK: return
+    try:
+        loser_data = get_user_data(loser_uid)
+        referrer_uid = loser_data.get("invited_by")
+        if not referrer_uid: return
+        ref_data = get_user_data(referrer_uid, strict=True)
+        if not ref_data: return
+        lvl = get_referral_level(int(ref_data.get("referrals", 0)))
+        pct = lvl["pct"]
+        bonus = int(coins_lost * pct / 100)
+        if bonus <= 0: return
+        def upd(d):
+            d["balance"] = int(d.get("balance", 0)) + bonus
+            d["ref_earnings"] = int(d.get("ref_earnings", 0)) + bonus
+            d["stats"]["coinsReferralEarned"] = int(d["stats"].get("coinsReferralEarned", 0)) + bonus
+            d["stats"]["totalEarned"] = int(d["stats"].get("totalEarned", 0)) + bonus
+            return d
+        atomic_update(referrer_uid, upd)
+    except Exception:
+        log.exception("referral earnings error")
+
+def chat_id_for(uid_a: str, uid_b: str) -> str:
+    return "_".join(sorted([str(uid_a), str(uid_b)]))
+
+# ============ BOT ============
 bot = Bot(token=BOT_TOKEN) if BOT_TOKEN else None
 dp = Dispatcher()
 
@@ -374,8 +488,7 @@ async def pre_checkout(q: types.PreCheckoutQuery):
     try:
         payload = json.loads(q.invoice_payload)
         if payload.get("package_id") not in STARS_PACKAGES:
-            await q.answer(ok=False, error_message="Unknown package")
-            return
+            await q.answer(ok=False, error_message="Unknown package"); return
         await q.answer(ok=True)
     except Exception:
         await q.answer(ok=False, error_message="Bad payload")
@@ -383,16 +496,13 @@ async def pre_checkout(q: types.PreCheckoutQuery):
 @dp.message(lambda m: m.successful_payment)
 async def on_paid(message: types.Message):
     sp = message.successful_payment
-    try:
-        payload = json.loads(sp.invoice_payload)
-    except Exception:
-        return
+    try: payload = json.loads(sp.invoice_payload)
+    except Exception: return
     pack = STARS_PACKAGES.get(payload.get("package_id"))
     if not pack: return
     uid = str(message.from_user.id)
     charge_id = sp.telegram_payment_charge_id or sp.provider_payment_charge_id
     if not charge_id: return
-
     def upd(d):
         paid = d.setdefault("paid_ids", {})
         if charge_id in paid: return None
@@ -402,7 +512,6 @@ async def on_paid(message: types.Message):
         d["stats"]["starsSpent"] = int(d["stats"].get("starsSpent", 0)) + pack["stars"]
         d["stats"]["totalEarned"] = int(d["stats"].get("totalEarned", 0)) + pack["coins"]
         return d
-
     if atomic_update(uid, upd):
         await message.answer(f"⭐ <b>Оплата прошла!</b>\n+{pack['coins']} монет начислено.")
 
@@ -410,13 +519,14 @@ async def on_paid(message: types.Message):
 async def lifespan(app: FastAPI):
     if bot and (WEBHOOK_URL or RENDER_URL):
         try:
-            await bot.set_webhook(f"{WEBHOOK_URL or RENDER_URL}/webhook/tg", allowed_updates=dp.resolve_used_update_types(), drop_pending_updates=True)
+            await bot.set_webhook(f"{WEBHOOK_URL or RENDER_URL}/webhook/tg",
+                                  allowed_updates=dp.resolve_used_update_types(),
+                                  drop_pending_updates=True)
         except Exception: pass
     yield
     if bot:
         try:
-            await bot.delete_webhook()
-            await bot.session.close()
+            await bot.delete_webhook(); await bot.session.close()
         except Exception: pass
 
 app = FastAPI(lifespan=lifespan)
@@ -437,10 +547,18 @@ async def health():
     return {"ok": True, "firebase_ok": FIREBASE_OK}
 
 # ============ PUBLIC API ============
-
 @app.get("/api/items")
 async def api_items():
     return {"items": list(get_items_dict().values())}
+
+@app.get("/api/cases")
+async def api_cases():
+    cases = get_cases_dict()
+    sections = get_sections_list()
+    return {
+        "cases": list(cases.values()),
+        "sections": sections,
+    }
 
 @app.get("/api/me")
 async def api_me(user=Depends(current_user)):
@@ -452,6 +570,11 @@ async def api_me(user=Depends(current_user)):
     data["isAdmin"] = is_admin(user)
     data["freeCooldownMs"] = FREE_COOLDOWN_MS
     data["userCooldownMs"] = USER_COOLDOWN_MS
+    data["telegram_username"] = user.get("username", "")
+    data["my_medals"] = get_user_medals(uid)
+    lvl = get_referral_level(int(data.get("referrals", 0)))
+    data["referral_level"] = lvl
+    data["referral_pct"] = lvl["pct"]
     return data
 
 @app.get("/api/event")
@@ -465,13 +588,9 @@ async def api_poll(user=Depends(current_user)):
     uid = str(user["id"])
     my_vote = p.get("voters", {}).get(uid)
     options = p.get("options", [])
-    return {
-        "poll": {
-            "id": p.get("id"), "question": p.get("question"), "options": options,
-            "endsAt": p.get("endsAt"), "myVote": my_vote if my_vote is not None else None,
-            "totalVotes": sum(int(o.get("votes", 0)) for o in options),
-        }
-    }
+    return {"poll": {"id": p.get("id"), "question": p.get("question"), "options": options,
+                     "endsAt": p.get("endsAt"), "myVote": my_vote if my_vote is not None else None,
+                     "totalVotes": sum(int(o.get("votes", 0)) for o in options)}}
 
 @app.post("/api/poll/vote")
 async def api_poll_vote(request: Request, user=Depends(current_user)):
@@ -479,11 +598,9 @@ async def api_poll_vote(request: Request, user=Depends(current_user)):
     try: option_index = int(body.get("option_index", -1))
     except: raise HTTPException(400, "bad option")
     if not FIREBASE_OK: raise HTTPException(503, "Database unavailable")
-
     uid = str(user["id"])
     ref = fbdb.reference("meta/poll")
     result = {"ok": False, "reason": None}
-
     def tx(current):
         if not current: result["reason"] = "no poll"; return None
         if current.get("endsAt") and int(current["endsAt"]) < int(time.time() * 1000):
@@ -497,10 +614,8 @@ async def api_poll_vote(request: Request, user=Depends(current_user)):
         opts[option_index]["votes"] = int(opts[option_index].get("votes", 0)) + 1
         result["ok"] = True
         return current
-
     try: ref.transaction(tx)
     except: raise HTTPException(500, "transaction failed")
-
     if not result["ok"]: raise HTTPException(400, result["reason"] or "failed")
     return {"ok": True}
 
@@ -509,26 +624,30 @@ async def api_open_case(request: Request, user=Depends(current_user)):
     body = await request.json()
     case_type = body.get("case_type", "")
     multiplier = int(body.get("multiplier", 1))
-
-    if case_type not in CASE_LOOT: raise HTTPException(400, "Неизвестный кейс")
+    cases = get_cases_dict()
+    if case_type not in cases: raise HTTPException(400, "Неизвестный кейс")
     if multiplier < 1 or multiplier > MAX_MULTIPLIER: raise HTTPException(400, "Неверный множитель")
     if case_type in ("free", "user"): multiplier = 1
 
+    case_cfg = cases[case_type]
     uid = str(user["id"])
     nick = user.get("first_name") or "Player"
     now = int(time.time() * 1000)
     data = get_user_data(uid)
 
     if case_type == "free":
-        if now - int(data.get("lastFree", 0)) < FREE_COOLDOWN_MS: raise HTTPException(400, "Бесплатный кейс ещё не готов")
+        if now - int(data.get("lastFree", 0)) < FREE_COOLDOWN_MS:
+            raise HTTPException(400, "Бесплатный кейс ещё не готов")
         price = 0
     elif case_type == "user":
         uname = (user.get("first_name", "") + user.get("last_name", "") + user.get("username", "")).lower()
-        if BOT_USERNAME.lower() not in uname: raise HTTPException(400, "Вы не указали бота в нике!")
-        if now - int(data.get("lastUser", 0)) < USER_COOLDOWN_MS: raise HTTPException(400, "Кейс за Юз ещё не готов")
+        if BOT_USERNAME.lower() not in uname:
+            raise HTTPException(400, "Вы не указали бота в нике!")
+        if now - int(data.get("lastUser", 0)) < USER_COOLDOWN_MS:
+            raise HTTPException(400, "Кейс за Юз ещё не готов")
         price = 0
     else:
-        price = CASE_PRICES[case_type] * multiplier
+        price = int(case_cfg.get("price", 0)) * multiplier
 
     if int(data.get("balance", 0)) < price: raise HTTPException(400, "Недостаточно монет")
 
@@ -536,12 +655,11 @@ async def api_open_case(request: Request, user=Depends(current_user)):
     luck_mult = float(event["multiplier"]) if event else 1.0
     items_dict = get_items_dict()
 
-    results = [roll_with_event_luck(case_type, luck_mult, items_dict) for _ in range(multiplier)]
+    results = [roll_with_event_luck(case_cfg, luck_mult, items_dict) for _ in range(multiplier)]
 
     def upd(d):
         if price > 0:
             if int(d.get("balance", 0)) < price: return None
-
         if case_type == "free": d["lastFree"] = now
         elif case_type == "user": d["lastUser"] = now
         else: d["balance"] = int(d.get("balance", 0)) - price
@@ -564,17 +682,14 @@ async def api_open_case(request: Request, user=Depends(current_user)):
         return d
 
     if not atomic_update(uid, upd): raise HTTPException(400, "Не удалось открыть кейс.")
-
     for r in results:
         if r["type"] != "coin":
             push_drop(nick, r["item"]["name"], r["item"]["img"], r["item"]["price"], "case", uid)
 
     new_data = get_user_data(uid)
-    return {
-        "ok": True, "results": results, "balance": new_data["balance"],
-        "inventory": new_data["inventory"], "lastFree": new_data.get("lastFree", 0),
-        "lastUser": new_data.get("lastUser", 0), "eventBoost": luck_mult,
-    }
+    return {"ok": True, "results": results, "balance": new_data["balance"],
+            "inventory": new_data["inventory"], "lastFree": new_data.get("lastFree", 0),
+            "lastUser": new_data.get("lastUser", 0), "eventBoost": luck_mult}
 
 @app.post("/api/sell_item")
 async def api_sell_item(request: Request, user=Depends(current_user)):
@@ -582,7 +697,6 @@ async def api_sell_item(request: Request, user=Depends(current_user)):
     item_uid = body.get("uid", "")
     if not item_uid: raise HTTPException(400, "Не указан предмет")
     uid = str(user["id"])
-
     def upd(d):
         inv = d.get("inventory", {})
         if item_uid not in inv: return None
@@ -590,7 +704,6 @@ async def api_sell_item(request: Request, user=Depends(current_user)):
         d["balance"] = int(d.get("balance", 0)) + int(item.get("price", 0))
         d["stats"]["itemsSold"] = int(d["stats"].get("itemsSold", 0)) + 1
         return d
-
     if not atomic_update(uid, upd): raise HTTPException(400, "Ошибка продажи")
     data = get_user_data(uid)
     return {"ok": True, "balance": data["balance"], "inventory": data["inventory"]}
@@ -598,7 +711,6 @@ async def api_sell_item(request: Request, user=Depends(current_user)):
 @app.post("/api/sell_all")
 async def api_sell_all(request: Request, user=Depends(current_user)):
     uid = str(user["id"])
-
     def upd(d):
         inv = d.get("inventory", {})
         if not inv: return None
@@ -608,7 +720,6 @@ async def api_sell_all(request: Request, user=Depends(current_user)):
         d["balance"] = int(d.get("balance", 0)) + total
         d["stats"]["itemsSold"] = int(d["stats"].get("itemsSold", 0)) + count
         return d
-
     if not atomic_update(uid, upd): raise HTTPException(400, "Нечего продавать")
     data = get_user_data(uid)
     return {"ok": True, "balance": data["balance"], "inventory": data["inventory"]}
@@ -618,36 +729,28 @@ async def api_upgrade(request: Request, user=Depends(current_user)):
     body = await request.json()
     input_uids = body.get("input_uids", [])
     target_id = body.get("target_id", "")
-
     if not isinstance(input_uids, list) or not (1 <= len(input_uids) <= MAX_UPG_INPUTS):
         raise HTTPException(400, f"Выберите от 1 до {MAX_UPG_INPUTS} предметов")
     if len(set(input_uids)) != len(input_uids): raise HTTPException(400, "Дубликаты предметов")
-
     items_dict = get_items_dict()
     target = items_dict.get(target_id)
     if not target: raise HTTPException(400, "Неизвестная цель")
-
     uid = str(user["id"])
     data = get_user_data(uid)
     inv = data.get("inventory", {})
-
     total = 0
     for iuid in input_uids:
         if iuid not in inv: raise HTTPException(400, "Предмет не найден в инвентаре")
         total += int(inv[iuid]["price"])
-
     if total <= 0: raise HTTPException(400, "Сумма предметов некорректна")
     if int(target["price"]) <= total: raise HTTPException(400, "Цель должна стоить больше суммы")
-
     chance = min(MAX_UPGRADE_CHANCE, (total / int(target["price"])) * 100)
     success = random.random() * 100 <= chance
-
     def upd(d):
         inv2 = d.get("inventory", {})
         for iuid in input_uids:
             if iuid not in inv2: return None
         for iuid in input_uids: del inv2[iuid]
-
         if success:
             new_item = make_inv_item(target)
             inv2[new_item["uid"]] = new_item
@@ -657,45 +760,39 @@ async def api_upgrade(request: Request, user=Depends(current_user)):
             d["stats"]["uniqueCollected"] = list(uniq)
         else:
             d["stats"]["upgradeFail"] = int(d["stats"].get("upgradeFail", 0)) + 1
+            d["stats"]["coinsLost"] = int(d["stats"].get("coinsLost", 0)) + total
         return d
-
     if not atomic_update(uid, upd): raise HTTPException(400, "Ошибка апгрейда")
-
     if success:
         push_drop(user.get("first_name") or "Player", target["name"], target["img"], target["price"], "upgrade", uid)
-
+    else:
+        apply_referral_earnings(uid, total)
     new_data = get_user_data(uid)
-    return {
-        "ok": True, "success": success, "chance": chance,
-        "target": target, "balance": new_data["balance"], "inventory": new_data["inventory"],
-    }
+    return {"ok": True, "success": success, "chance": chance, "target": target,
+            "balance": new_data["balance"], "inventory": new_data["inventory"]}
 
 @app.post("/api/coinflip")
 async def api_coinflip(request: Request, user=Depends(current_user)):
     body = await request.json()
     bet = int(body.get("bet", 0))
     choice = body.get("choice", "heads")
-
     if choice not in ("heads", "tails"): raise HTTPException(400, "Неверный выбор")
     if bet <= 0: raise HTTPException(400, "Ставка должна быть больше 0")
     if bet > MAX_COINFLIP_BET: raise HTTPException(400, "Слишком большая ставка")
-
     uid = str(user["id"])
     data = get_user_data(uid)
     if int(data.get("balance", 0)) < bet: raise HTTPException(400, "Недостаточно монет")
-
     won = random.random() < 0.5
     coin_result = choice if won else ("tails" if choice == "heads" else "heads")
-
     def upd(d):
         bal = int(d.get("balance", 0))
         if bal < bet: return None
         d["balance"] = bal - bet
         if won: d["balance"] += bet * 2
+        else: d["stats"]["coinsLost"] = int(d["stats"].get("coinsLost", 0)) + bet
         return d
-
     if not atomic_update(uid, upd): raise HTTPException(400, "Ошибка ставки")
-
+    if not won: apply_referral_earnings(uid, bet)
     new_data = get_user_data(uid)
     return {"ok": True, "won": won, "result": coin_result, "balance": new_data["balance"]}
 
@@ -705,84 +802,94 @@ async def api_claim_promo(request: Request, user=Depends(current_user)):
     code = str(body.get("code", "")).strip().upper()
     if not code: raise HTTPException(400, "Введите код")
     if not FIREBASE_OK: raise HTTPException(503, "База данных недоступна")
-
     uid = str(user["id"])
     data = get_user_data(uid)
     if code in data.get("used_promos", {}): raise HTTPException(400, "Вы уже использовали этот промокод")
-
     promo_ref = fbdb.reference(f"promos/{code}")
     promo_data = promo_ref.get()
     if not promo_data: raise HTTPException(404, "Промокод не найден")
-
     max_uses = int(promo_data.get("max_uses", 0))
     used = int(promo_data.get("used", 0))
-    reward = int(promo_data.get("reward", 0))
-
     if used >= max_uses: raise HTTPException(400, "Промокод больше не активен")
+    promo_type = promo_data.get("type", "coins")
+    reward = int(promo_data.get("reward", 0))
+    case_id = promo_data.get("case_id", "")
+
+    if promo_type == "case" and case_id:
+        cases = get_cases_dict()
+        if case_id not in cases: raise HTTPException(400, "Кейс не найден")
+        case_cfg = cases[case_id]
+        items_dict = get_items_dict()
+        results = [roll_drop(case_cfg, items_dict)]
+    else:
+        results = None
 
     def tx_promo(current):
         if current is None: return None
         if int(current.get("used", 0)) >= int(current.get("max_uses", 0)): return None
         current["used"] = int(current.get("used", 0)) + 1
         return current
-
     try: promo_ref.transaction(tx_promo)
     except: raise HTTPException(400, "Не удалось активировать промокод")
 
     def upd(d):
         d["used_promos"] = d.get("used_promos", {})
         d["used_promos"][code] = True
-        d["balance"] = int(d.get("balance", 0)) + reward
-        d["stats"]["totalEarned"] = int(d["stats"].get("totalEarned", 0)) + reward
+        if results:
+            inv = d.setdefault("inventory", {})
+            for r in results:
+                if r["type"] == "coin":
+                    d["balance"] = int(d.get("balance", 0)) + r["amount"]
+                else:
+                    new_item = make_inv_item(r["item"])
+                    inv[new_item["uid"]] = new_item
+        else:
+            d["balance"] = int(d.get("balance", 0)) + reward
+            d["stats"]["totalEarned"] = int(d["stats"].get("totalEarned", 0)) + reward
         return d
-
     if not atomic_update(uid, upd): raise HTTPException(400, "Ошибка активации")
-
     new_data = get_user_data(uid)
-    return {"ok": True, "reward": reward, "balance": new_data["balance"]}
+    return {"ok": True, "reward": reward, "results": results, "balance": new_data["balance"],
+            "inventory": new_data["inventory"]}
 
 @app.post("/api/claim_referral")
 async def api_claim_referral(request: Request, user=Depends(current_user)):
     body = await request.json()
     ref_id = str(body.get("ref_id", "")).strip()
     if not ref_id or ref_id == str(user["id"]): raise HTTPException(400, "Неверная ссылка")
-
     uid = str(user["id"])
     state = {"ok": False}
-
     def upd(d):
         if d.get("refUsed"): return None
         if d.get("stats", {}).get("casesOpened", 0) > 0: return None
         d["refUsed"] = True
+        d["invited_by"] = ref_id
         d["balance"] = int(d.get("balance", 0)) + 2
         d["stats"]["totalEarned"] = int(d["stats"].get("totalEarned", 0)) + 2
         state["ok"] = True
         return d
-
-    if not atomic_update(uid, upd) or not state["ok"]: raise HTTPException(400, "Рефка уже использована или вы уже играли")
-
+    if not atomic_update(uid, upd) or not state["ok"]:
+        raise HTTPException(400, "Рефка уже использована или вы уже играли")
     def upd2(d):
         d["referrals"] = int(d.get("referrals", 0)) + 1
         d["balance"] = int(d.get("balance", 0)) + 4
         d["stats"]["totalEarned"] = int(d["stats"].get("totalEarned", 0)) + 4
         return d
-
     atomic_update(ref_id, upd2)
     return {"ok": True, "bonus": 2}
 
 @app.get("/api/user_profile/{target_uid}")
 async def api_user_profile(target_uid: str, user=Depends(current_user)):
-    if not target_uid or target_uid == "undefined" or target_uid == "null":
+    if not target_uid or target_uid in ("undefined", "null"):
         raise HTTPException(400, "Неверный ID игрока")
-    
     data = get_user_data(target_uid, strict=True)
     if data is None: raise HTTPException(404, "Игрок не найден в базе данных")
-
-    return {
-        "uid": target_uid, "balance": int(data.get("balance", 0) or 0),
-        "inventory": data.get("inventory") or {}, "stats": data.get("stats") or {},
-        "lastFree": int(data.get("lastFree", 0) or 0), "lastUser": int(data.get("lastUser", 0) or 0),
-    }
+    medals = get_user_medals(target_uid) if not data.get("medals_hidden") else []
+    return {"uid": target_uid, "balance": int(data.get("balance", 0) or 0),
+            "inventory": data.get("inventory") or {}, "stats": data.get("stats") or {},
+            "lastFree": int(data.get("lastFree", 0) or 0), "lastUser": int(data.get("lastUser", 0) or 0),
+            "medals": medals, "medals_hidden": bool(data.get("medals_hidden")),
+            "username": data.get("username", ""), "first_name": data.get("first_name", "")}
 
 @app.post("/api/create-invoice-link")
 async def create_invoice(request: Request, user=Depends(current_user)):
@@ -791,7 +898,6 @@ async def create_invoice(request: Request, user=Depends(current_user)):
     pack_id = body.get("package_id")
     pack = STARS_PACKAGES.get(pack_id)
     if not pack: raise HTTPException(400, "unknown package")
-
     payload = json.dumps({"package_id": pack_id, "coins": pack["coins"]})
     try:
         link = await bot.create_invoice_link(
@@ -806,9 +912,367 @@ async def create_invoice(request: Request, user=Depends(current_user)):
         raise HTTPException(500, str(e))
     return {"invoice_link": link, "stars": pack["stars"], "coins": pack["coins"]}
 
+# ============ MEDALS (public view) ============
+@app.get("/api/medals")
+async def api_medals():
+    return {"medals": list(get_medals_dict().values())}
+
+@app.post("/api/me/medals/toggle")
+async def api_toggle_medals(request: Request, user=Depends(current_user)):
+    body = await request.json()
+    hidden = bool(body.get("hidden", False))
+    uid = str(user["id"])
+    def upd(d):
+        d["medals_hidden"] = hidden
+        return d
+    atomic_update(uid, upd)
+    return {"ok": True, "hidden": hidden}
+
+# ============ REFERRAL ============
+@app.get("/api/referral/info")
+async def api_referral_info(user=Depends(current_user)):
+    uid = str(user["id"])
+    data = get_user_data(uid)
+    invited = int(data.get("referrals", 0))
+    lvl = get_referral_level(invited)
+    next_lvl = None
+    for L in REFERRAL_LEVELS:
+        if L["invited"] > invited: next_lvl = L; break
+    promos = data.get("created_promos", {}) or {}
+    my_promo_list = []
+    for code in promos:
+        try:
+            p = fbdb.reference(f"promos/{code}").get()
+            if p: my_promo_list.append({"code": code, **p})
+        except Exception: pass
+    return {
+        "referrals": invited, "level": lvl, "next_level": next_lvl,
+        "ref_earnings": int(data.get("ref_earnings", 0)),
+        "levels": REFERRAL_LEVELS,
+        "my_promos": my_promo_list,
+        "bot_username": BOT_USERNAME,
+        "invite_link": f"https://t.me/{BOT_USERNAME}?startapp=ref_{uid}",
+    }
+
+@app.post("/api/referral/create_promo")
+async def api_referral_create_promo(request: Request, user=Depends(current_user)):
+    if not FIREBASE_OK: raise HTTPException(503)
+    body = await request.json()
+    code = str(body.get("code", "")).strip().upper()
+    ptype = body.get("type", "coins")  # coins | case
+    reward = int(body.get("reward", 0))
+    case_id = str(body.get("case_id", ""))
+    max_uses = int(body.get("max_uses", 1))
+
+    if not code or not re.match(r"^[A-Z0-9_-]{2,32}$", code):
+        raise HTTPException(400, "Код 2-32 символа (A-Z, 0-9, _, -)")
+    if max_uses < 1 or max_uses > 10000:
+        raise HTTPException(400, "Использований 1..10000")
+    if ptype not in ("coins", "case"):
+        raise HTTPException(400, "Неверный тип")
+
+    if ptype == "coins":
+        if reward < 1 or reward > 10000:
+            raise HTTPException(400, "Награда 1..10000")
+        cost_per_use = reward
+    else:
+        cases = get_cases_dict()
+        if case_id not in cases: raise HTTPException(400, "Кейс не найден")
+        cost_per_use = int(cases[case_id].get("price", 0)) or 1
+        reward = 0
+
+    total_cost = cost_per_use * max_uses
+    uid = str(user["id"])
+    data = get_user_data(uid)
+    if int(data.get("balance", 0)) < total_cost:
+        raise HTTPException(400, f"Нужно {total_cost} монет")
+
+    if fbdb.reference(f"promos/{code}").get():
+        raise HTTPException(400, "Промокод уже существует")
+
+    def upd(d):
+        if int(d.get("balance", 0)) < total_cost: return None
+        d["balance"] = int(d.get("balance", 0)) - total_cost
+        created = d.setdefault("created_promos", {})
+        created[code] = {"ts": int(time.time() * 1000), "cost": total_cost}
+        return d
+    if not atomic_update(uid, upd):
+        raise HTTPException(400, "Ошибка списания")
+
+    fbdb.reference(f"promos/{code}").set({
+        "reward": reward, "max_uses": max_uses, "used": 0,
+        "type": ptype, "case_id": case_id if ptype == "case" else "",
+        "createdAt": int(time.time() * 1000), "createdBy": uid,
+    })
+    return {"ok": True, "code": code, "cost": total_cost}
+
+# ============ WITHDRAW ============
+@app.get("/api/withdraw/options")
+async def api_withdraw_options(user=Depends(current_user)):
+    uid = str(user["id"])
+    data = get_user_data(uid)
+    inv = data.get("inventory", {}) or {}
+    items_dict = get_items_dict()
+    avail = []
+    total_val = 0
+    for iuid, it in inv.items():
+        if it.get("id") in WITHDRAWABLE_ITEM_IDS:
+            avail.append({"uid": iuid, **it})
+            total_val += int(it.get("price", 0))
+    withdrawable_defs = [it for it in items_dict.values() if it["id"] in WITHDRAWABLE_ITEM_IDS]
+    return {
+        "available": avail,
+        "withdrawable_items": withdrawable_defs,
+        "min_value": MIN_WITHDRAW_VALUE,
+        "total_available_value": total_val,
+        "garama_price": GARAMA_PRICE,
+    }
+
+@app.post("/api/withdraw/exchange")
+async def api_withdraw_exchange(request: Request, user=Depends(current_user)):
+    if not FIREBASE_OK: raise HTTPException(503)
+    body = await request.json()
+    source_uid = str(body.get("source_uid", ""))
+    target_ids = body.get("target_ids", [])
+    if not source_uid or not isinstance(target_ids, list) or not target_ids:
+        raise HTTPException(400, "Выберите предмет и цели")
+    items_dict = get_items_dict()
+    uid = str(user["id"])
+    data = get_user_data(uid)
+    inv = data.get("inventory", {}) or {}
+    if source_uid not in inv: raise HTTPException(400, "Предмет не найден")
+    source_item = inv[source_uid]
+    source_price = int(source_item.get("price", 0))
+    target_total = 0
+    targets = []
+    for tid in target_ids:
+        if tid not in WITHDRAWABLE_ITEM_IDS:
+            raise HTTPException(400, f"Предмет {tid} не подходит для обмена")
+        tgt = items_dict.get(tid)
+        if not tgt: raise HTTPException(400, f"Неизвестный предмет {tid}")
+        targets.append(tgt)
+        target_total += int(tgt["price"])
+    if target_total > source_price:
+        raise HTTPException(400, "Цели дороже источника")
+    remainder = source_price - target_total
+
+    def upd(d):
+        inv2 = d.get("inventory", {})
+        if source_uid not in inv2: return None
+        del inv2[source_uid]
+        for tgt in targets:
+            new_it = make_inv_item(tgt)
+            inv2[new_it["uid"]] = new_it
+        d["balance"] = int(d.get("balance", 0)) + remainder
+        return d
+    if not atomic_update(uid, upd): raise HTTPException(400, "Ошибка обмена")
+    new_data = get_user_data(uid)
+    return {"ok": True, "balance": new_data["balance"], "inventory": new_data["inventory"],
+            "remainder": remainder}
+
+@app.post("/api/withdraw/request")
+async def api_withdraw_request(request: Request, user=Depends(current_user)):
+    if not FIREBASE_OK: raise HTTPException(503)
+    body = await request.json()
+    item_uids = body.get("item_uids", [])
+    nick = str(body.get("nick", "")).strip()
+    if not item_uids or not nick: raise HTTPException(400, "Выберите предметы и укажите ник")
+    if len(nick) < 2 or len(nick) > 64: raise HTTPException(400, "Ник 2..64 символа")
+    uid = str(user["id"])
+    data = get_user_data(uid)
+    inv = data.get("inventory", {}) or {}
+    total = 0
+    selected = []
+    for iuid in item_uids:
+        if iuid not in inv: raise HTTPException(400, "Предмет не найден")
+        it = inv[iuid]
+        if it.get("id") not in WITHDRAWABLE_ITEM_IDS:
+            raise HTTPException(400, f"Предмет {it.get('name')} нельзя вывести")
+        selected.append(it)
+        total += int(it.get("price", 0))
+    if total < MIN_WITHDRAW_VALUE:
+        raise HTTPException(400, f"Минимум {MIN_WITHDRAW_VALUE} монет (≈2 гарамы)")
+
+    def upd(d):
+        inv2 = d.get("inventory", {})
+        for iuid in item_uids:
+            if iuid not in inv2: return None
+        for iuid in item_uids: del inv2[iuid]
+        return d
+    if not atomic_update(uid, upd): raise HTTPException(400, "Ошибка")
+
+    rid = "wr_" + uuid.uuid4().hex[:10]
+    fbdb.reference(f"withdraw_requests/{rid}").set({
+        "id": rid, "user_uid": uid, "nick": nick,
+        "items": [{"id": i["id"], "name": i["name"], "price": i["price"], "img": i.get("img", "")} for i in selected],
+        "total": total, "status": "pending",
+        "created_at": int(time.time() * 1000),
+        "scheduled_at": 0, "comment": "",
+    })
+    return {"ok": True, "request_id": rid, "total": total}
+
+@app.get("/api/withdraw/my_requests")
+async def api_withdraw_my(user=Depends(current_user)):
+    if not FIREBASE_OK: return {"requests": []}
+    uid = str(user["id"])
+    try:
+        allr = fbdb.reference("withdraw_requests").get() or {}
+        return {"requests": [r for r in allr.values() if isinstance(r, dict) and r.get("user_uid") == uid]}
+    except Exception: return {"requests": []}
+
+# ============ DEPOSIT ============
+@app.get("/api/deposit/options")
+async def api_deposit_options(user=Depends(current_user)):
+    uid = str(user["id"])
+    data = get_user_data(uid)
+    inv = data.get("inventory", {}) or {}
+    min_price = GARAMA_PRICE
+    available = []
+    for iuid, it in inv.items():
+        if int(it.get("price", 0)) >= min_price:
+            available.append({"uid": iuid, **it})
+    return {"available": available, "min_value": min_price}
+
+@app.post("/api/deposit/request")
+async def api_deposit_request(request: Request, user=Depends(current_user)):
+    if not FIREBASE_OK: raise HTTPException(503)
+    body = await request.json()
+    item_uids = body.get("item_uids", [])
+    nick = str(body.get("nick", "")).strip()
+    if not item_uids or not nick: raise HTTPException(400, "Выберите предметы и укажите ник")
+    uid = str(user["id"])
+    data = get_user_data(uid)
+    inv = data.get("inventory", {}) or {}
+    total = 0
+    selected = []
+    for iuid in item_uids:
+        if iuid not in inv: raise HTTPException(400, "Предмет не найден")
+        it = inv[iuid]
+        if int(it.get("price", 0)) < GARAMA_PRICE:
+            raise HTTPException(400, f"Предмет {it.get('name')} дешевле гарамы")
+        selected.append(it)
+        total += int(it.get("price", 0))
+    def upd(d):
+        inv2 = d.get("inventory", {})
+        for iuid in item_uids:
+            if iuid not in inv2: return None
+        for iuid in item_uids: del inv2[iuid]
+        return d
+    if not atomic_update(uid, upd): raise HTTPException(400, "Ошибка")
+
+    rid = "dp_" + uuid.uuid4().hex[:10]
+    fbdb.reference(f"deposit_requests/{rid}").set({
+        "id": rid, "user_uid": uid, "nick": nick,
+        "items": [{"id": i["id"], "name": i["name"], "price": i["price"], "img": i.get("img", "")} for i in selected],
+        "total": total, "status": "pending",
+        "created_at": int(time.time() * 1000), "comment": "",
+    })
+    return {"ok": True, "request_id": rid}
+
+@app.get("/api/deposit/my_requests")
+async def api_deposit_my(user=Depends(current_user)):
+    if not FIREBASE_OK: return {"requests": []}
+    uid = str(user["id"])
+    try:
+        allr = fbdb.reference("deposit_requests").get() or {}
+        return {"requests": [r for r in allr.values() if isinstance(r, dict) and r.get("user_uid") == uid]}
+    except Exception: return {"requests": []}
+
+# ============ CHATS ============
+@app.post("/api/chats/find_user")
+async def api_chats_find(request: Request, user=Depends(current_user)):
+    body = await request.json()
+    q = str(body.get("query", "")).strip().lstrip("@")
+    if not q: raise HTTPException(400, "Введите ID или username")
+    # If numeric — telegram id
+    if q.isdigit():
+        target_uid = q
+        ud = get_user_data(target_uid, strict=True)
+        if not ud: raise HTTPException(404, "Пользователь не найден")
+        return {"uid": target_uid, "username": ud.get("username", ""), "first_name": ud.get("first_name", "")}
+    # Otherwise search all users by username
+    if not FIREBASE_OK: raise HTTPException(503)
+    try:
+        users = fbdb.reference("users").get() or {}
+        for uid_k, u in users.items():
+            if isinstance(u, dict) and str(u.get("username", "")).lower() == q.lower():
+                return {"uid": str(uid_k), "username": u.get("username", ""), "first_name": u.get("first_name", "")}
+    except Exception: pass
+    raise HTTPException(404, "Пользователь не найден")
+
+@app.get("/api/chats")
+async def api_chats_list(user=Depends(current_user)):
+    if not FIREBASE_OK: return {"chats": []}
+    uid = str(user["id"])
+    try:
+        allchats = fbdb.reference("chats").get() or {}
+        result = []
+        for cid, ch in allchats.items():
+            if not isinstance(ch, dict): continue
+            if uid not in ch.get("members", []): continue
+            last = None
+            msgs = ch.get("messages", {}) or {}
+            if msgs:
+                last_msg = max(msgs.values(), key=lambda m: int(m.get("ts", 0)))
+                last = {"text": last_msg.get("text", ""), "from": last_msg.get("from"),
+                        "ts": int(last_msg.get("ts", 0))}
+            other = [m for m in ch.get("members", []) if m != uid]
+            other_uid = other[0] if other else ""
+            other_data = get_user_data(other_uid, strict=True) or {}
+            result.append({
+                "chat_id": cid, "other_uid": other_uid,
+                "other_name": other_data.get("first_name") or other_data.get("username") or f"ID {other_uid}",
+                "last_message": last,
+            })
+        result.sort(key=lambda x: (x["last_message"]["ts"] if x["last_message"] else 0), reverse=True)
+        return {"chats": result}
+    except Exception: return {"chats": []}
+
+@app.get("/api/chats/{chat_id}/messages")
+async def api_chat_messages(chat_id: str, user=Depends(current_user)):
+    if not FIREBASE_OK: raise HTTPException(503)
+    uid = str(user["id"])
+    try: ch = fbdb.reference(f"chats/{chat_id}").get()
+    except: ch = None
+    if not ch or uid not in ch.get("members", []):
+        raise HTTPException(403, "Нет доступа")
+    msgs = ch.get("messages", {}) or {}
+    return {"messages": sorted(msgs.values(), key=lambda m: int(m.get("ts", 0)))}
+
+@app.post("/api/chats/{chat_id}/send")
+async def api_chat_send(chat_id: str, request: Request, user=Depends(current_user)):
+    if not FIREBASE_OK: raise HTTPException(503)
+    body = await request.json()
+    text = str(body.get("text", "")).strip()
+    if not text or len(text) > 2000: raise HTTPException(400, "Текст 1..2000 символов")
+    uid = str(user["id"])
+    try: ch = fbdb.reference(f"chats/{chat_id}").get()
+    except: ch = None
+    if not ch or uid not in ch.get("members", []):
+        raise HTTPException(403, "Нет доступа")
+    mid = "m_" + uuid.uuid4().hex[:10]
+    fbdb.reference(f"chats/{chat_id}/messages/{mid}").set({
+        "id": mid, "from": uid, "text": text, "ts": int(time.time() * 1000),
+    })
+    return {"ok": True, "message_id": mid}
+
+@app.post("/api/chats/start")
+async def api_chat_start(request: Request, user=Depends(current_user)):
+    if not FIREBASE_OK: raise HTTPException(503)
+    body = await request.json()
+    target_uid = str(body.get("target_uid", "")).strip()
+    if not target_uid or target_uid == str(user["id"]): raise HTTPException(400, "Неверный пользователь")
+    if not get_user_data(target_uid, strict=True): raise HTTPException(404, "Пользователь не найден")
+    cid = chat_id_for(str(user["id"]), target_uid)
+    existing = fbdb.reference(f"chats/{cid}").get()
+    if not existing:
+        fbdb.reference(f"chats/{cid}").set({
+            "chat_id": cid, "members": [str(user["id"]), target_uid],
+            "created_at": int(time.time() * 1000), "messages": {},
+        })
+    return {"ok": True, "chat_id": cid}
 
 # ============ ADMIN API ============
-
 @app.get("/api/admin/items")
 async def admin_get_items(user=Depends(require_admin)):
     if not FIREBASE_OK: raise HTTPException(503)
@@ -819,45 +1283,193 @@ async def admin_update_item(request: Request, user=Depends(require_admin)):
     if not FIREBASE_OK: raise HTTPException(503)
     body = await request.json()
     item_id = body.get("item_id")
-    new_price = int(body.get("price", 0))
-    new_rarity = body.get("rarity")
-
     if not item_id: raise HTTPException(400, "no item_id")
-    if new_price < 0: raise HTTPException(400, "Цена не может быть отрицательной")
-    if new_rarity not in RARITIES: raise HTTPException(400, "Неверная редкость")
-
-    fbdb.reference(f"meta/items_overrides/{item_id}").update({
-        "price": new_price,
-        "rarity": new_rarity
-    })
+    update = {}
+    if "price" in body:
+        p = int(body["price"])
+        if p < 0: raise HTTPException(400, "Цена < 0")
+        update["price"] = p
+    if "rarity" in body:
+        if body["rarity"] not in RARITIES: raise HTTPException(400, "Неверная редкость")
+        update["rarity"] = body["rarity"]
+    if "name" in body: update["name"] = str(body["name"])[:64]
+    if "img" in body: update["img"] = str(body["img"])[:256]
+    if "emoji" in body: update["emoji"] = str(body["emoji"])[:8]
+    fbdb.reference(f"meta/items_overrides/{item_id}").update(update)
     return {"ok": True}
 
+@app.post("/api/admin/item/create")
+async def admin_create_item(request: Request, user=Depends(require_admin)):
+    if not FIREBASE_OK: raise HTTPException(503)
+    body = await request.json()
+    iid = str(body.get("id", "")).strip().lower()
+    if not iid or not re.match(r"^[a-z0-9_]{2,32}$", iid):
+        raise HTTPException(400, "ID 2..32 (a-z, 0-9, _)")
+    if iid in {i["id"] for i in DEFAULT_ITEMS}:
+        raise HTTPException(400, "ID уже существует")
+    fbdb.reference(f"meta/items_extra/{iid}").set({
+        "name": str(body.get("name", iid))[:64],
+        "price": max(1, int(body.get("price", 1))),
+        "rarity": body.get("rarity", "common") if body.get("rarity") in RARITIES else "common",
+        "img": str(body.get("img", ""))[:256],
+        "emoji": str(body.get("emoji", "🧠"))[:8],
+    })
+    return {"ok": True, "id": iid}
+
+@app.post("/api/admin/item/delete")
+async def admin_delete_item(request: Request, user=Depends(require_admin)):
+    if not FIREBASE_OK: raise HTTPException(503)
+    body = await request.json()
+    iid = str(body.get("item_id", ""))
+    if not iid: raise HTTPException(400, "no item_id")
+    if iid in {i["id"] for i in DEFAULT_ITEMS}:
+        fbdb.reference(f"meta/items_overrides/{iid}").update({"deleted": True})
+    else:
+        fbdb.reference(f"meta/items_extra/{iid}").delete()
+    return {"ok": True}
+
+# ============ CASES ADMIN ============
+@app.post("/api/admin/case/save")
+async def admin_case_save(request: Request, user=Depends(require_admin)):
+    if not FIREBASE_OK: raise HTTPException(503)
+    body = await request.json()
+    cid = str(body.get("id", "")).strip()
+    if not cid or not re.match(r"^[a-z0-9_]{2,32}$", cid):
+        raise HTTPException(400, "ID кейса 2..32 (a-z, 0-9, _)")
+    case = {
+        "id": cid,
+        "name": str(body.get("name", cid))[:64],
+        "section": str(body.get("section", "shop")),
+        "price": max(0, int(body.get("price", 0))),
+        "img": str(body.get("img", ""))[:256],
+        "emoji": str(body.get("emoji", "📦"))[:8],
+        "order": int(body.get("order", 0)),
+        "coinChance": max(0, min(100, float(body.get("coinChance", 0)))),
+        "coins": body.get("coins", []),
+        "items": body.get("items", []),
+    }
+    fbdb.reference(f"meta/cases/{cid}").set(case)
+    return {"ok": True, "case": case}
+
+@app.post("/api/admin/case/delete")
+async def admin_case_delete(request: Request, user=Depends(require_admin)):
+    if not FIREBASE_OK: raise HTTPException(503)
+    body = await request.json()
+    cid = str(body.get("id", ""))
+    if not cid: raise HTTPException(400, "no id")
+    if cid in DEFAULT_CASES:
+        fbdb.reference(f"meta/cases/{cid}").update({"deleted": True})
+    else:
+        fbdb.reference(f"meta/cases/{cid}").delete()
+    return {"ok": True}
+
+# ============ SECTIONS ADMIN ============
+@app.post("/api/admin/section/save")
+async def admin_section_save(request: Request, user=Depends(require_admin)):
+    if not FIREBASE_OK: raise HTTPException(503)
+    body = await request.json()
+    sid = str(body.get("id", "")).strip()
+    if not sid or not re.match(r"^[a-z0-9_]{2,32}$", sid):
+        raise HTTPException(400, "ID секции 2..32")
+    sec = {
+        "id": sid,
+        "name": str(body.get("name", sid))[:64],
+        "order": int(body.get("order", 0)),
+        "icon": str(body.get("icon", "📁"))[:8],
+    }
+    fbdb.reference(f"meta/sections/{sid}").set(sec)
+    return {"ok": True, "section": sec}
+
+@app.post("/api/admin/section/delete")
+async def admin_section_delete(request: Request, user=Depends(require_admin)):
+    if not FIREBASE_OK: raise HTTPException(503)
+    body = await request.json()
+    sid = str(body.get("id", ""))
+    if not sid: raise HTTPException(400, "no id")
+    if sid in {s["id"] for s in DEFAULT_SECTIONS}:
+        fbdb.reference(f"meta/sections/{sid}").update({"deleted": True})
+    else:
+        fbdb.reference(f"meta/sections/{sid}").delete()
+    return {"ok": True}
+
+# ============ MEDALS ADMIN ============
+@app.post("/api/admin/medal/save")
+async def admin_medal_save(request: Request, user=Depends(require_admin)):
+    if not FIREBASE_OK: raise HTTPException(503)
+    body = await request.json()
+    mid = str(body.get("id", "")).strip()
+    if not mid or not re.match(r"^[a-z0-9_]{2,32}$", mid):
+        raise HTTPException(400, "ID медали 2..32")
+    medal = {
+        "id": mid,
+        "name": str(body.get("name", mid))[:64],
+        "description": str(body.get("description", ""))[:512],
+        "icon": str(body.get("icon", "🏅"))[:8],
+        "color": str(body.get("color", "#fbbf24"))[:16],
+    }
+    fbdb.reference(f"meta/medals/{mid}").set(medal)
+    return {"ok": True, "medal": medal}
+
+@app.post("/api/admin/medal/delete")
+async def admin_medal_delete(request: Request, user=Depends(require_admin)):
+    if not FIREBASE_OK: raise HTTPException(503)
+    body = await request.json()
+    mid = str(body.get("id", ""))
+    if not mid: raise HTTPException(400, "no id")
+    fbdb.reference(f"meta/medals/{mid}").delete()
+    return {"ok": True}
+
+@app.post("/api/admin/medal/give")
+async def admin_medal_give(request: Request, user=Depends(require_admin)):
+    if not FIREBASE_OK: raise HTTPException(503)
+    body = await request.json()
+    target_uid = str(body.get("user_id", "")).strip()
+    mid = str(body.get("medal_id", "")).strip()
+    if not target_uid or not mid: raise HTTPException(400, "user_id и medal_id обязательны")
+    medal = fbdb.reference(f"meta/medals/{mid}").get()
+    if not medal: raise HTTPException(404, "Медаль не найдена")
+    def upd(d):
+        d.setdefault("medals", {})[mid] = True
+        return d
+    if not atomic_update(target_uid, upd): raise HTTPException(400, "Ошибка")
+    return {"ok": True}
+
+@app.post("/api/admin/medal/remove")
+async def admin_medal_remove(request: Request, user=Depends(require_admin)):
+    if not FIREBASE_OK: raise HTTPException(503)
+    body = await request.json()
+    target_uid = str(body.get("user_id", "")).strip()
+    mid = str(body.get("medal_id", "")).strip()
+    def upd(d):
+        m = d.get("medals", {})
+        if mid in m: del m[mid]
+        return d
+    if not atomic_update(target_uid, upd): raise HTTPException(400, "Ошибка")
+    return {"ok": True}
+
+# ============ EVENTS ADMIN ============
 @app.post("/api/admin/event")
 async def admin_set_event(request: Request, user=Depends(require_admin)):
     if not FIREBASE_OK: raise HTTPException(503)
     body = await request.json()
     ev_type = body.get("type")
-
     if ev_type is None or ev_type == "":
         fbdb.reference("meta/event").delete()
         return {"ok": True, "event": None}
-
     if ev_type not in EVENT_TYPES: raise HTTPException(400, "unknown event type")
-
     try: duration_minutes = int(body.get("duration_minutes", 60))
     except: raise HTTPException(400, "bad duration")
-    if duration_minutes < 1 or duration_minutes > MAX_EVENT_MINUTES: raise HTTPException(400, f"duration 1..{MAX_EVENT_MINUTES}")
-
+    if duration_minutes < 1 or duration_minutes > MAX_EVENT_MINUTES:
+        raise HTTPException(400, f"duration 1..{MAX_EVENT_MINUTES}")
     now = int(time.time() * 1000)
     meta = EVENT_TYPES[ev_type]
-    ev = {
-        "type": ev_type, "name": meta["name"], "multiplier": meta["multiplier"],
-        "color": meta["color"], "img": meta["img"], "startedAt": now,
-        "endsAt": now + duration_minutes * 60 * 1000, "startedBy": str(user["id"]),
-    }
+    ev = {"type": ev_type, "name": meta["name"], "multiplier": meta["multiplier"],
+          "color": meta["color"], "img": meta["img"], "startedAt": now,
+          "endsAt": now + duration_minutes * 60 * 1000, "startedBy": str(user["id"])}
     fbdb.reference("meta/event").set(ev)
     return {"ok": True, "event": ev}
 
+# ============ PROMO ADMIN ============
 @app.post("/api/admin/promo")
 async def admin_create_promo(request: Request, user=Depends(require_admin)):
     if not FIREBASE_OK: raise HTTPException(503)
@@ -865,20 +1477,16 @@ async def admin_create_promo(request: Request, user=Depends(require_admin)):
     code = str(body.get("code", "")).strip().upper()
     reward = int(body.get("reward", 0))
     max_uses = int(body.get("max_uses", 0))
-
-    if not code or len(code) < 2 or len(code) > 32: raise HTTPException(400, "Код 2..32 символа")
-    if not all(c.isalnum() or c in "_-" for c in code): raise HTTPException(400, "Только буквы, цифры, _ и -")
+    if not code or len(code) < 2 or len(code) > 32: raise HTTPException(400, "Код 2..32")
+    if not all(c.isalnum() or c in "_-" for c in code): raise HTTPException(400, "Только буквы/цифры/_/-")
     if reward <= 0 or reward > MAX_PROMO_REWARD: raise HTTPException(400, f"Награда 1..{MAX_PROMO_REWARD}")
     if max_uses < 1 or max_uses > MAX_PROMO_USES: raise HTTPException(400, f"Использований 1..{MAX_PROMO_USES}")
-
     ref = fbdb.reference(f"promos/{code}")
     if ref.get(): raise HTTPException(400, "Промокод уже существует")
-
-    ref.set({
-        "reward": reward, "max_uses": max_uses, "used": 0,
-        "createdAt": int(time.time() * 1000), "createdBy": str(user["id"]),
-    })
-    return {"ok": True, "code": code, "reward": reward, "max_uses": max_uses}
+    ref.set({"reward": reward, "max_uses": max_uses, "used": 0,
+             "type": "coins", "case_id": "",
+             "createdAt": int(time.time() * 1000), "createdBy": str(user["id"])})
+    return {"ok": True, "code": code}
 
 @app.get("/api/admin/promos")
 async def admin_list_promos(user=Depends(require_admin)):
@@ -888,10 +1496,9 @@ async def admin_list_promos(user=Depends(require_admin)):
     result = []
     for code, p in promos.items():
         if not isinstance(p, dict): continue
-        result.append({
-            "code": code, "reward": p.get("reward", 0), "used": p.get("used", 0),
-            "max_uses": p.get("max_uses", 0), "createdAt": p.get("createdAt", 0),
-        })
+        result.append({"code": code, "reward": p.get("reward", 0), "used": p.get("used", 0),
+                       "max_uses": p.get("max_uses", 0), "createdAt": p.get("createdAt", 0),
+                       "type": p.get("type", "coins"), "case_id": p.get("case_id", "")})
     result.sort(key=lambda x: x.get("createdAt", 0), reverse=True)
     return {"promos": result}
 
@@ -904,6 +1511,7 @@ async def admin_delete_promo(request: Request, user=Depends(require_admin)):
     fbdb.reference(f"promos/{code}").delete()
     return {"ok": True}
 
+# ============ GIVE ADMIN ============
 @app.post("/api/admin/give")
 async def admin_give(request: Request, user=Depends(require_admin)):
     if not FIREBASE_OK: raise HTTPException(503)
@@ -911,17 +1519,13 @@ async def admin_give(request: Request, user=Depends(require_admin)):
     target_id = str(body.get("user_id", "")).strip()
     coins = int(body.get("coins", 0) or 0)
     item_id = body.get("item_id")
-
     if not target_id: raise HTTPException(400, "Укажите Telegram ID")
     if coins == 0 and not item_id: raise HTTPException(400, "Нечего выдавать")
-    if coins < 0: raise HTTPException(400, "Монет не может быть отрицательно")
-    if coins > MAX_GIVE_COINS: raise HTTPException(400, f"Максимум {MAX_GIVE_COINS} монет")
-    
+    if coins < 0: raise HTTPException(400, "Монет < 0")
+    if coins > MAX_GIVE_COINS: raise HTTPException(400, f"Макс {MAX_GIVE_COINS}")
     items_dict = get_items_dict()
     if item_id and item_id not in items_dict: raise HTTPException(400, "Неизвестный предмет")
-
     gave = {"coins": 0, "item": None}
-
     def upd(d):
         if coins > 0:
             d["balance"] = int(d.get("balance", 0)) + coins
@@ -932,9 +1536,8 @@ async def admin_give(request: Request, user=Depends(require_admin)):
             d.setdefault("inventory", {})[new_item["uid"]] = new_item
             gave["item"] = new_item
         return d
-
-    if not atomic_update(target_id, upd): raise HTTPException(400, "Не удалось обновить пользователя")
-    return {"ok": True, "gave": gave, "target_id": target_id}
+    if not atomic_update(target_id, upd): raise HTTPException(400, "Ошибка")
+    return {"ok": True, "gave": gave}
 
 @app.post("/api/admin/reset_cooldowns")
 async def admin_reset_cooldowns(request: Request, user=Depends(require_admin)):
@@ -942,15 +1545,35 @@ async def admin_reset_cooldowns(request: Request, user=Depends(require_admin)):
     body = await request.json()
     target_id = str(body.get("user_id", "")).strip()
     if not target_id: raise HTTPException(400, "Укажите user_id")
-
     def upd(d):
         d["lastFree"] = 0
         d["lastUser"] = 0
         return d
+    if not atomic_update(target_id, upd): raise HTTPException(400, "Ошибка")
+    return {"ok": True}
 
-    if not atomic_update(target_id, upd): raise HTTPException(400, "Не удалось сбросить кулдауны")
-    return {"ok": True, "user_id": target_id}
+# ============ ADMIN RIGHTS ============
+@app.post("/api/admin/grant_admin")
+async def admin_grant_admin(request: Request, user=Depends(require_admin)):
+    if not FIREBASE_OK: raise HTTPException(503)
+    body = await request.json()
+    target = str(body.get("user_id", "")).strip()
+    if not target: raise HTTPException(400, "user_id")
+    fbdb.reference(f"meta/admins/{target}").set(True)
+    return {"ok": True}
 
+@app.post("/api/admin/revoke_admin")
+async def admin_revoke_admin(request: Request, user=Depends(require_admin)):
+    if not FIREBASE_OK: raise HTTPException(503)
+    body = await request.json()
+    target = str(body.get("user_id", "")).strip()
+    if not target: raise HTTPException(400, "user_id")
+    if int(target) in HARDCODED_ADMIN_IDS:
+        raise HTTPException(400, "Нельзя снять с хардкод админа")
+    fbdb.reference(f"meta/admins/{target}").delete()
+    return {"ok": True}
+
+# ============ POLL ADMIN ============
 @app.post("/api/admin/poll")
 async def admin_create_poll(request: Request, user=Depends(require_admin)):
     if not FIREBASE_OK: raise HTTPException(503)
@@ -958,27 +1581,22 @@ async def admin_create_poll(request: Request, user=Depends(require_admin)):
     question = str(body.get("question", "")).strip()
     options = body.get("options", [])
     duration_minutes = body.get("duration_minutes")
-
-    if not question or len(question) > 300: raise HTTPException(400, "Вопрос 1..300 символов")
-    if not isinstance(options, list) or len(options) < 2 or len(options) > 6: raise HTTPException(400, "Нужно 2..6 вариантов")
-
+    if not question or len(question) > 300: raise HTTPException(400, "Вопрос 1..300")
+    if not isinstance(options, list) or len(options) < 2 or len(options) > 6:
+        raise HTTPException(400, "2..6 вариантов")
     cleaned = [str(o).strip() for o in options]
     for o in cleaned:
-        if not o or len(o) > 100: raise HTTPException(400, "Каждый вариант 1..100 символов")
-
+        if not o or len(o) > 100: raise HTTPException(400, "Каждый вариант 1..100")
     now = int(time.time() * 1000)
     ends_at = None
     if duration_minutes:
         try: dm = int(duration_minutes)
         except: raise HTTPException(400, "bad duration")
-        if dm < 1 or dm > 60 * 24 * 30: raise HTTPException(400, "Длительность 1..43200 минут")
+        if dm < 1 or dm > 60 * 24 * 30: raise HTTPException(400, "1..43200 минут")
         ends_at = now + dm * 60 * 1000
-
-    poll = {
-        "id": "poll_" + str(now), "question": question,
-        "options": [{"text": o, "votes": 0} for o in cleaned],
-        "createdAt": now, "endsAt": ends_at, "createdBy": str(user["id"]), "voters": {},
-    }
+    poll = {"id": "poll_" + str(now), "question": question,
+            "options": [{"text": o, "votes": 0} for o in cleaned],
+            "createdAt": now, "endsAt": ends_at, "createdBy": str(user["id"]), "voters": {}}
     fbdb.reference("meta/poll").set(poll)
     return {"ok": True}
 
@@ -988,73 +1606,129 @@ async def admin_end_poll(user=Depends(require_admin)):
     fbdb.reference("meta/poll").delete()
     return {"ok": True}
 
+# ============ ADMIN WITHDRAW/DEPOSIT ============
+@app.get("/api/admin/withdrawals")
+async def admin_withdrawals(user=Depends(require_admin)):
+    if not FIREBASE_OK: return {"requests": []}
+    try:
+        allr = fbdb.reference("withdraw_requests").get() or {}
+        reqs = [r for r in allr.values() if isinstance(r, dict)]
+        reqs.sort(key=lambda r: r.get("created_at", 0), reverse=True)
+        return {"requests": reqs}
+    except Exception: return {"requests": []}
+
+@app.post("/api/admin/withdrawal/schedule")
+async def admin_withdrawal_schedule(request: Request, user=Depends(require_admin)):
+    if not FIREBASE_OK: raise HTTPException(503)
+    body = await request.json()
+    rid = str(body.get("id", ""))
+    sched_at = int(body.get("scheduled_at", 0))
+    comment = str(body.get("comment", ""))[:256]
+    if not rid: raise HTTPException(400, "no id")
+    fbdb.reference(f"withdraw_requests/{rid}").update({
+        "status": "scheduled", "scheduled_at": sched_at, "comment": comment,
+    })
+    return {"ok": True}
+
+@app.post("/api/admin/withdrawal/complete")
+async def admin_withdrawal_complete(request: Request, user=Depends(require_admin)):
+    if not FIREBASE_OK: raise HTTPException(503)
+    body = await request.json()
+    rid = str(body.get("id", ""))
+    if not rid: raise HTTPException(400, "no id")
+    fbdb.reference(f"withdraw_requests/{rid}").update({
+        "status": "completed", "completed_at": int(time.time() * 1000),
+    })
+    return {"ok": True}
+
+@app.post("/api/admin/withdrawal/cancel")
+async def admin_withdrawal_cancel(request: Request, user=Depends(require_admin)):
+    if not FIREBASE_OK: raise HTTPException(503)
+    body = await request.json()
+    rid = str(body.get("id", ""))
+    if not rid: raise HTTPException(400, "no id")
+    fbdb.reference(f"withdraw_requests/{rid}").update({"status": "cancelled"})
+    return {"ok": True}
+
+@app.get("/api/admin/deposits")
+async def admin_deposits(user=Depends(require_admin)):
+    if not FIREBASE_OK: return {"requests": []}
+    try:
+        allr = fbdb.reference("deposit_requests").get() or {}
+        reqs = [r for r in allr.values() if isinstance(r, dict)]
+        reqs.sort(key=lambda r: r.get("created_at", 0), reverse=True)
+        return {"requests": reqs}
+    except Exception: return {"requests": []}
+
+@app.post("/api/admin/deposit/update")
+async def admin_deposit_update(request: Request, user=Depends(require_admin)):
+    if not FIREBASE_OK: raise HTTPException(503)
+    body = await request.json()
+    rid = str(body.get("id", ""))
+    status = str(body.get("status", ""))
+    comment = str(body.get("comment", ""))[:256]
+    if not rid or status not in ("pending", "approved", "rejected"): raise HTTPException(400, "bad args")
+    fbdb.reference(f"deposit_requests/{rid}").update({"status": status, "comment": comment})
+    return {"ok": True}
+
+# ============ ADMIN STATS ============
 @app.get("/api/admin/stats")
 async def admin_stats(user=Depends(require_admin)):
     if not FIREBASE_OK:
-        return {"firebase_ok": False, "total_users": 0, "total_balance": 0, "total_opened": 0, "total_inventory_items": 0, "total_unique_collected": 0, "active_24h": 0, "total_referrals": 0, "total_donations": 0, "total_stars": 0, "top_by_balance": [], "top_by_opened": [], "recent_drops": [], "recent_count_1h": 0, "recent_count_24h": 0, "active_event": None, "active_poll": None}
-
+        return {"firebase_ok": False, "total_users": 0, "total_balance": 0, "total_opened": 0,
+                "total_inventory_items": 0, "total_unique_collected": 0, "active_24h": 0,
+                "total_referrals": 0, "total_donations": 0, "total_stars": 0,
+                "top_by_balance": [], "top_by_opened": [], "recent_drops": [],
+                "recent_count_1h": 0, "recent_count_24h": 0, "active_event": None, "active_poll": None}
     try: users = fbdb.reference("users").get() or {}
     except: users = {}
-
-    total_users = 0; total_balance = 0; total_opened = 0; total_inventory_items = 0; total_unique_collected = 0; active_24h = 0; total_referrals = 0; total_donations = 0; total_stars = 0
+    total_users = total_balance = total_opened = total_inv = total_uniq = 0
+    active_24h = total_refs = total_don = total_stars = 0
     user_list = []
     now_ms = int(time.time() * 1000); day_ago = now_ms - 24 * 3600 * 1000
-
     for uid, u in users.items():
         if not isinstance(u, dict): continue
         total_users += 1
         try: bal = int(u.get("balance", 0) or 0)
         except: bal = 0
         total_balance += bal
-        stats = u.get("stats")
-        if not isinstance(stats, dict): stats = {}
+        stats = u.get("stats") if isinstance(u.get("stats"), dict) else {}
         try: opened = int(stats.get("casesOpened", 0) or 0)
         except: opened = 0
         total_opened += opened
         uniq = stats.get("uniqueCollected")
-        if isinstance(uniq, list): total_unique_collected += len(uniq)
-        try: total_donations += int(stats.get("donationsTotal", 0) or 0)
+        if isinstance(uniq, list): total_uniq += len(uniq)
+        try: total_don += int(stats.get("donationsTotal", 0) or 0)
         except: pass
         try: total_stars += int(stats.get("starsSpent", 0) or 0)
         except: pass
-        inv = u.get("inventory")
-        if isinstance(inv, dict): total_inventory_items += len(inv)
-        try: total_referrals += int(u.get("referrals", 0) or 0)
+        if isinstance(u.get("inventory"), dict): total_inv += len(u["inventory"])
+        try: total_refs += int(u.get("referrals", 0) or 0)
         except: pass
-        try: last_free = int(u.get("lastFree", 0) or 0)
-        except: last_free = 0
-        try: last_user = int(u.get("lastUser", 0) or 0)
-        except: last_user = 0
-        last_activity = max(last_free, last_user)
-        if last_activity > day_ago: active_24h += 1
+        try: lf = int(u.get("lastFree", 0) or 0); lu = int(u.get("lastUser", 0) or 0)
+        except: lf = lu = 0
+        if max(lf, lu) > day_ago: active_24h += 1
         user_list.append({"uid": str(uid), "balance": bal, "opened": opened})
-
-    top_by_balance = sorted(user_list, key=lambda x: x["balance"], reverse=True)[:5]
-    top_by_opened = sorted(user_list, key=lambda x: x["opened"], reverse=True)[:5]
-
+    top_bal = sorted(user_list, key=lambda x: x["balance"], reverse=True)[:5]
+    top_open = sorted(user_list, key=lambda x: x["opened"], reverse=True)[:5]
     try:
         drops = fbdb.reference("drop_feed").get() or {}
         drops_list = list(drops.values()) if isinstance(drops, dict) else []
-        def get_ts(d):
-            if not isinstance(d, dict): return 0
-            try: return int(d.get("ts", 0))
-            except: return 0
-        recent = sorted(drops_list, key=lambda d: get_ts(d), reverse=True)[:20]
-        recent_count_1h = sum(1 for d in drops_list if get_ts(d) > now_ms - 3600 * 1000)
-        recent_count_24h = sum(1 for d in drops_list if get_ts(d) > day_ago)
-    except: recent = []; recent_count_1h = 0; recent_count_24h = 0
-
-    ev = get_active_event()
-    poll = get_active_poll()
-
-    return {
-        "firebase_ok": True, "total_users": total_users, "total_balance": total_balance, "total_opened": total_opened,
-        "total_inventory_items": total_inventory_items, "total_unique_collected": total_unique_collected,
-        "active_24h": active_24h, "total_referrals": total_referrals, "total_donations": total_donations, "total_stars": total_stars,
-        "top_by_balance": top_by_balance, "top_by_opened": top_by_opened, "recent_drops": recent,
-        "recent_count_1h": recent_count_1h, "recent_count_24h": recent_count_24h, "active_event": ev,
-        "active_poll": {"question": poll.get("question") if poll else None, "endsAt": poll.get("endsAt") if poll else None, "totalVotes": sum(int(o.get("votes", 0)) for o in poll.get("options", [])) if poll else 0} if poll else None,
-    }
+        def gts(d): return int(d.get("ts", 0)) if isinstance(d, dict) else 0
+        recent = sorted(drops_list, key=gts, reverse=True)[:20]
+        c1h = sum(1 for d in drops_list if gts(d) > now_ms - 3600 * 1000)
+        c24h = sum(1 for d in drops_list if gts(d) > day_ago)
+    except: recent = []; c1h = c24h = 0
+    ev = get_active_event(); poll = get_active_poll()
+    return {"firebase_ok": True, "total_users": total_users, "total_balance": total_balance,
+            "total_opened": total_opened, "total_inventory_items": total_inv,
+            "total_unique_collected": total_uniq, "active_24h": active_24h,
+            "total_referrals": total_refs, "total_donations": total_don, "total_stars": total_stars,
+            "top_by_balance": top_bal, "top_by_opened": top_open, "recent_drops": recent,
+            "recent_count_1h": c1h, "recent_count_24h": c24h, "active_event": ev,
+            "active_poll": {"question": poll.get("question") if poll else None,
+                            "endsAt": poll.get("endsAt") if poll else None,
+                            "totalVotes": sum(int(o.get("votes", 0)) for o in poll.get("options", [])) if poll else 0} if poll else None}
 
 @app.post("/webhook/tg")
 async def tg_webhook(request: Request):
