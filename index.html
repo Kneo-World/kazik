@@ -460,8 +460,6 @@ body{padding-left:300px;padding-right:320px}
 .upg-wheel-center .val{font-size:26px}
 .upg-square-box{min-height:160px}
 .upg-square-box .mini-item{width:48px;height:48px}
-
-/* ---> ИЗМЕНЕНИЕ: Админ табы на ПК переносятся на новую строку <--- */
 .admin-tabs{flex-wrap:wrap !important; overflow-x:visible !important; padding-bottom:10px}
 }
 @media (min-width:1400px){
@@ -506,7 +504,7 @@ body{padding-left:300px;padding-right:320px}
     <div class="pc-nav-item" data-tab="coinflip" onclick="switchTab('coinflip')"><i class="fa-solid fa-coins"></i> Монетка</div>
     <div class="pc-nav-item" data-tab="referral" onclick="switchTab('referral')"><i class="fa-solid fa-users"></i> Реферал</div>
     <div class="pc-nav-item" data-tab="withdraw" onclick="switchTab('withdraw')"><i class="fa-solid fa-arrow-up-from-bracket"></i> Вывод</div>
-    <div class="pc-nav-item" data-tab="deposit" onclick="switchTab('deposit')"><i class="fa-solid fa-arrow-down-to-bracket"></i> Пополнение</div>
+    <div class="pc-nav-item" data-tab="deposit" onclick="switchTab('deposit')"><i class="fa-solid fa-circle-down"></i> Пополнение</div>
     <div class="pc-nav-item" data-tab="donate" onclick="switchTab('donate')"><i class="fa-solid fa-star"></i> Звёзды</div>
     <div class="pc-nav-item" data-tab="chats" onclick="switchTab('chats')"><i class="fa-solid fa-comments"></i> Чаты</div>
     <div class="pc-nav-item" data-tab="settings" onclick="switchTab('settings')"><i class="fa-solid fa-gear"></i> Настройки</div>
@@ -545,7 +543,7 @@ body{padding-left:300px;padding-right:320px}
     <div class="nav-item" data-tab="coinflip" onclick="switchTab('coinflip')"><i class="fa-solid fa-coins"></i> Монетка</div>
     <div class="nav-item" data-tab="referral" onclick="switchTab('referral')"><i class="fa-solid fa-users"></i> Реферал</div>
     <div class="nav-item" data-tab="withdraw" onclick="switchTab('withdraw')"><i class="fa-solid fa-arrow-up-from-bracket"></i> Вывод</div>
-    <div class="nav-item" data-tab="deposit" onclick="switchTab('deposit')"><i class="fa-solid fa-arrow-down-to-bracket"></i> Пополнение</div>
+    <div class="nav-item" data-tab="deposit" onclick="switchTab('deposit')"><i class="fa-solid fa-circle-down"></i> Пополнение</div>
     <div class="nav-item" data-tab="donate" onclick="switchTab('donate')"><i class="fa-solid fa-star"></i> Звёзды</div>
     <div class="nav-item" data-tab="chats" onclick="switchTab('chats')"><i class="fa-solid fa-comments"></i> Чаты</div>
     <div class="nav-item admin" data-tab="admin" id="nav-admin" style="display:none;" onclick="switchTab('admin')"><i class="fa-solid fa-shield-halved"></i> Админ</div>
@@ -713,7 +711,7 @@ body{padding-left:300px;padding-right:320px}
   <h2 class="section-title"><i class="fa-solid fa-arrow-up-from-bracket" style="color:var(--accent-gold)"></i> Вывод</h2>
   <div class="ref-card">
     <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px;line-height:1.5;">
-      Минимум по стоимости ≈2 гарамы. Можно выводить предметы из списка. Если предмета нет в списке — можно обменять его на доступные.
+      Минимум по стоимости ≈2 гарамы. Выбирайте сразу несколько предметов для вывода или обмена.
     </div>
     <div style="font-size:11px;color:var(--text-muted);font-weight:700;margin-bottom:6px;">ДОСТУПНО К ВЫВОДУ:</div>
     <div class="inv-grid" id="withdraw-available"><div style="grid-column:span 3;text-align:center;color:var(--text-muted);padding:15px;">Загрузка...</div></div>
@@ -726,12 +724,12 @@ body{padding-left:300px;padding-right:320px}
 
 <!-- DEPOSIT -->
 <div id="section-deposit" class="section">
-  <h2 class="section-title"><i class="fa-solid fa-arrow-down-to-bracket" style="color:var(--accent-gold)"></i> Пополнение брейнротами</h2>
+  <h2 class="section-title"><i class="fa-solid fa-circle-down" style="color:var(--accent-gold)"></i> Пополнение брейнротами</h2>
   <div class="ref-card">
     <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px;line-height:1.5;">
-      Выберите брейнрота которого хотите получить (стоимость ≥ 1 гарамы). С вашего баланса/инвентаря ничего не списывается! Заявка уйдёт админу, и после подтверждения предмет появится у вас.
+      Выберите брейнрота которого хотите получить. С вашего баланса/инвентаря ничего не списывается! Заявка уйдёт админу, и после подтверждения предмет появится у вас.
     </div>
-    <div style="font-size:11px;color:var(--text-muted);font-weight:700;margin-bottom:6px;">ВСЕ ДОСТУПНЫЕ ДЛЯ ПОПОЛНЕНИЯ:</div>
+    <div style="font-size:11px;color:var(--text-muted);font-weight:700;margin-bottom:6px;">ДОСТУПНЫЕ ДЛЯ ПОПОЛНЕНИЯ:</div>
     <div class="inv-grid" id="deposit-available"><div style="grid-column:span 3;text-align:center;color:var(--text-muted);padding:15px;">Загрузка...</div></div>
   </div>
   <div class="ref-card">
@@ -856,6 +854,7 @@ body{padding-left:300px;padding-right:320px}
     <button class="admin-tab" data-tab="items" onclick="adminTab('items')"><i class="fa-solid fa-gem"></i> Брейнроты</button>
     <button class="admin-tab" data-tab="cases" onclick="adminTab('cases')"><i class="fa-solid fa-box"></i> Кейсы</button>
     <button class="admin-tab" data-tab="sections" onclick="adminTab('sections')"><i class="fa-solid fa-layer-group"></i> Секции</button>
+    <button class="admin-tab" data-tab="lists" onclick="adminTab('lists')"><i class="fa-solid fa-list-check"></i> Списки</button>
     <button class="admin-tab" data-tab="medals" onclick="adminTab('medals')"><i class="fa-solid fa-medal"></i> Медали</button>
     <button class="admin-tab" data-tab="promo" onclick="adminTab('promo')"><i class="fa-solid fa-ticket"></i> Промо</button>
     <button class="admin-tab" data-tab="give" onclick="adminTab('give')"><i class="fa-solid fa-gift"></i> Выдать</button>
@@ -972,17 +971,25 @@ body{padding-left:300px;padding-right:320px}
       <div class="admin-card-title">Существующие секции</div>
       <div id="admin-sections-list"></div>
     </div>
+  </div>
+
+  <!-- Lists (Economy) -->
+  <div class="admin-panel" data-panel="lists">
     <div class="admin-card">
       <div class="admin-card-title">Разрешенные к выводу предметы</div>
       <div id="admin-withdrawable-list" style="max-height:300px; overflow-y:auto;"></div>
-      <button class="btn green" style="margin-top:10px;" onclick="adminSaveWithdrawable()">СОХРАНИТЬ СПИСОК ВЫВОДА</button>
     </div>
+    <div class="admin-card">
+      <div class="admin-card-title">Разрешенные к пополнению предметы</div>
+      <div id="admin-depositable-list" style="max-height:300px; overflow-y:auto;"></div>
+    </div>
+    <button class="btn green" style="margin-top:10px; width:100%;" onclick="adminSaveLists()">СОХРАНИТЬ СПИСКИ</button>
   </div>
 
   <!-- Medals -->
   <div class="admin-panel" data-panel="medals">
     <div class="admin-card">
-      <div class="admin-card-title">Создать медаль</div>
+      <div class="admin-card-title">Создать / редактировать медаль</div>
       <div class="admin-form">
         <label>ID медали</label>
         <input type="text" id="admin-medal-id" placeholder="vip" style="text-transform:lowercase;">
@@ -996,7 +1003,7 @@ body{padding-left:300px;padding-right:320px}
         <input type="text" id="admin-medal-img" placeholder="assets/medals/vip.png">
         <label>Цвет</label>
         <input type="text" id="admin-medal-color" value="#fbbf24">
-        <button class="btn gold" onclick="adminSaveMedal()">СОЗДАТЬ</button>
+        <button class="btn gold" onclick="adminSaveMedal()">СОХРАНИТЬ МЕДАЛЬ</button>
       </div>
     </div>
     <div class="admin-card">
@@ -1181,19 +1188,26 @@ body{padding-left:300px;padding-right:320px}
 <div class="modal" id="withdraw-modal" onclick="if(event.target===this) closeWithdrawModal()">
   <div class="modal-box">
     <span class="close-modal" onclick="closeWithdrawModal()">&times;</span>
-    <h3 class="modal-title" id="wd-modal-title">Вывод</h3>
+    <h3 class="modal-title" id="wd-modal-title">Действия с предметами</h3>
     <div style="font-size:11px;color:var(--text-muted);margin-bottom:10px;" id="wd-modal-hint"></div>
-    <div id="wd-source-info" style="margin-bottom:10px;"></div>
+    <div id="wd-source-info" style="margin-bottom:10px; display:flex; flex-wrap:wrap; gap:5px; justify-content:center;"></div>
+    
     <div id="wd-exchange-section" style="display:none;">
-      <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">Выберите на что обменять (или закройте окно и нажмите "Вывести"):</div>
+      <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">Выберите на что обменять:</div>
       <div class="inv-grid" id="wd-targets" style="max-height:260px; overflow-y:auto; margin-bottom:12px;"></div>
       <div style="font-size:12px;text-align:center;margin-bottom:10px;" id="wd-summary"></div>
     </div>
+
+    <div style="display:flex; gap:8px; margin-bottom:12px;">
+      <button class="btn gold" id="wd-submit-btn" onclick="submitWithdrawDirect()">ВЫВЕСТИ</button>
+      <button class="btn" style="background:rgba(59,130,246,.15); color:var(--accent-blue); border:1px solid rgba(59,130,246,.3);" onclick="switchWdMode('exchange')" id="wd-switch-exchange-btn">ОБМЕНЯТЬ</button>
+      <button class="btn" style="background:rgba(255,255,255,.05); color:var(--text-main); border:1px solid var(--border); display:none;" onclick="switchWdMode('withdraw')" id="wd-switch-withdraw-btn">ВЕРНУТЬСЯ</button>
+    </div>
+
     <div class="admin-form">
       <label>Ваш игровой ник</label>
       <input type="text" id="wd-nick" placeholder="Ваш ник для вывода" maxlength="64">
     </div>
-    <button class="btn gold" id="wd-submit-btn" onclick="submitWithdraw()">ОТПРАВИТЬ ЗАЯВКУ</button>
   </div>
 </div>
 
@@ -1310,6 +1324,7 @@ const STARS_PACKAGES = [
 
 let STATE = {items:{},itemsArray:[],cases:{},casesArray:[],sections:[],medals:[]};
 let WD_ALLOWED = [];
+let DEP_ALLOWED = [];
 
 const tg = window.Telegram?.WebApp;
 let tgUser = tg?.initDataUnsafe?.user;
@@ -1331,7 +1346,8 @@ let state = {
   balance:0, inventory:{}, lastFree:0, lastUser:0, hasUserCase:false,
   stats:{casesOpened:0,itemsSold:0,upgradeSuccess:0,upgradeFail:0,totalEarned:0},
   isAdmin:false, telegram_username:'', my_medals:[], medals_hidden:false,
-  referrals:0, referral_level:{level:1,invited:0,pct:5}, ref_earnings:0
+  referrals:0, referral_level:{level:1,invited:0,pct:5}, ref_earnings:0,
+  photo_url:''
 };
 
 let activeCase = null, mult = 1, isOpening = false;
@@ -1340,8 +1356,11 @@ let cfChoice = 'heads', isCfPlaying = false;
 let currentEvent = null, currentPoll = null;
 let animState = null, dropFeedData = [], topDayDrop = null;
 let currentChatId = null, currentChatOtherUid = null, chatPollTimer = null;
-let wdSourceItem = null, wdSelected = [];
-let depSelected = null;
+let wdSelectedItems = []; 
+let wdSourceItems = []; 
+let wdExchangeMode = false;
+let wdSelectedTargets = [];
+let depSelectedItem = null;
 let soundEnabled = localStorage.getItem('bf_sound') !== '0';
 let hapticEnabled = localStorage.getItem('bf_haptic') !== '0';
 
@@ -1527,7 +1546,7 @@ function switchTab(tabId){
   if(tabId==='admin'){
     loadAdminStats(); loadAdminPromos(); loadAdminItemsList();
     loadAdminCasesList(); loadAdminSectionsList(); loadAdminMedalsList();
-    loadAdminWithdrawals(); loadAdminDeposits(); loadAdminWithdrawableList();
+    loadAdminWithdrawals(); loadAdminDeposits(); loadAdminLists();
   }
   if(tabId==='settings') updateFullscreenToggles();
   if(tabId==='referral') loadReferralInfo();
@@ -1585,7 +1604,6 @@ function renderCases(){
     for(const c of secCases){
       const isFree = c.id==='free';
       const isUser = c.id==='user';
-      const livePrice = STATE.items ? c.price : c.price;
       let timerId = isFree?'free-timer-text':(isUser?'user-timer-text':'');
       html += `<div class="case-card" data-case="${escapeHtml(c.id)}" onclick="openCaseSection('${escapeHtml(c.id)}')">
         <div class="case-img-wrap">
@@ -2222,7 +2240,6 @@ function autoSelect(type){
   notify({type:'info',message:`Цель: ${best.name} (${best.price})`});
 }
 
-// ---> ИЗМЕНЕНИЕ: Быстрый апгрейд <---
 async function runUpgrade(fast = false){
   if(isUpgrading) return;
   if(!upgTarget || !upgInputs.length) return;
@@ -2359,7 +2376,6 @@ async function buyPackage(id){
   }catch(err){notify({type:'error',message:err.message});}
 }
 
-// ---> ИЗМЕНЕНИЕ: Обновление цен в дропах <---
 function buildTopDrop(best){
   const m = best.method==='upgrade'?'upgrade':'case';
   const ml = best.method==='upgrade'?'Апгрейд':'Кейс';
@@ -2419,7 +2435,9 @@ async function openOtherProfile(uid,nickFallback,priceFallback){
   haptic('light');
   const modal = document.getElementById('other-profile-modal');
   const invBox = document.getElementById('op-inventory');
-  document.getElementById('op-avatar').textContent = (nickFallback||'?').charAt(0).toUpperCase();
+  const avBox = document.getElementById('op-avatar');
+  
+  avBox.textContent = (nickFallback||'?').charAt(0).toUpperCase();
   document.getElementById('op-name').textContent = nickFallback || 'Загрузка...';
   document.getElementById('op-username').textContent = '';
   document.getElementById('op-medals').innerHTML = '';
@@ -2435,6 +2453,14 @@ async function openOtherProfile(uid,nickFallback,priceFallback){
     const isMe = String(data.uid)===String(MY_ID);
     document.getElementById('op-name').textContent = isMe?'Это вы':(nickFallback||('Игрок #'+uid));
     document.getElementById('op-username').textContent = data.username?'@'+data.username:'';
+    
+    // ---> ИЗМЕНЕНИЕ: Загрузка реальной аватарки <---
+    if (data.photo_url) {
+      avBox.innerHTML = `<img src="${escapeHtml(data.photo_url)}">`;
+    } else {
+      avBox.textContent = (data.first_name || nickFallback || '?').charAt(0).toUpperCase();
+    }
+    
     document.getElementById('op-balance').textContent = formatNum(data.balance||0);
     document.getElementById('op-cases').textContent = formatNum(data.stats?.casesOpened||0);
     document.getElementById('op-earned').textContent = formatNum(data.stats?.totalEarned||0);
@@ -2539,7 +2565,7 @@ async function createRefPromo(){
   }catch(err){notify({type:'error',message:err.message});}
 }
 
-// ---> ИЗМЕНЕНИЕ: Разделение вывода и обмена <---
+// ---> ИЗМЕНЕНИЕ: Мультивыбор для вывода <---
 async function loadWithdrawInfo(){
   try{
     const info = await apiCall('/api/withdraw/options');
@@ -2549,15 +2575,29 @@ async function loadWithdrawInfo(){
     else box.innerHTML = info.available.map(it=>{
       const r = RARITIES[it.rarity]||RARITIES.common;
       const livePrice = STATE.items[it.id]?.price || it.price;
-      return `<div class="inv-item" style="border-color:${r.color}">
+      const isSel = wdSelectedItems.some(x => x.uid === it.uid);
+      return `<div class="inv-item ${isSel?'selected':''}" style="border-color:${r.color}" onclick="toggleWdItem('${it.uid}')">
         <div style="height:50px;display:flex;align-items:center;justify-content:center;">
           <img src="${escapeHtml(it.img||'')}" onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
           <span class="emoji-fallback" style="display:none;">${escapeHtml(it.emoji||'🧠')}</span></div>
         <div class="inv-price">${livePrice}</div>
-        <button class="withdraw-btn" onclick="quickWithdraw('${it.uid}')" style="margin-top:5px;">Вывести</button>
-        <button class="withdraw-btn" onclick="openExchangeModal('${it.uid}')" style="background:rgba(59,130,246,.15);color:var(--accent-blue);border-color:rgba(59,130,246,.3);">Обменять</button>
       </div>`;
     }).join('');
+    
+    // Кнопка действий
+    const actBox = document.getElementById('wd-action-box');
+    if (actBox) {
+      if (wdSelectedItems.length > 0) {
+        const sum = wdSelectedItems.reduce((a,b)=>a+b.price,0);
+        actBox.style.display = 'block';
+        actBox.innerHTML = `Выбрано ${wdSelectedItems.length} предметов на ${formatNum(sum)} монет<br>
+          <button class="btn gold" style="margin-top:8px;" onclick="openWdModal('withdraw')">Вывести</button>
+          <button class="btn" style="margin-top:8px;background:rgba(59,130,246,.15);color:var(--accent-blue);" onclick="openWdModal('exchange')">Обменять</button>`;
+      } else {
+        actBox.style.display = 'none';
+      }
+    }
+
     const rres = await apiCall('/api/withdraw/my_requests');
     const rl = document.getElementById('my-withdraw-requests');
     if(!rres.requests.length) rl.innerHTML='<div style="text-align:center;color:var(--text-muted);padding:12px;font-size:12px;">Заявок нет</div>';
@@ -2574,95 +2614,111 @@ async function loadWithdrawInfo(){
   }catch(err){console.error(err);}
 }
 
-function openWithdrawModal(uid, mode='withdraw'){
-  const it = state.inventory[uid]; if(!it) return;
-  wdSourceItem = it; wdSelected = [];
+function toggleWdItem(uid){
+  const it = state.inventory[uid];
+  if(!it) return;
+  const idx = wdSelectedItems.findIndex(x=>x.uid === uid);
+  if(idx >= 0) wdSelectedItems.splice(idx, 1);
+  else wdSelectedItems.push(it);
+  loadWithdrawInfo();
+}
+
+function openWdModal(mode){
+  if(wdSelectedItems.length === 0) return;
+  wdExchangeMode = (mode === 'exchange');
+  wdSourceItems = [...wdSelectedItems];
+  wdSelectedTargets = [];
   
-  document.getElementById('wd-modal-title').textContent = mode==='withdraw'?'Вывод предмета':'Обмен предмета';
-  document.getElementById('wd-modal-hint').textContent = `Источник: ${it.name} (${it.price})`;
-  document.getElementById('wd-source-info').innerHTML = `<div class="wd-item-card" style="cursor:default;">
-    <img src="${escapeHtml(it.img||'')}" onerror="this.style.display='none';">
-    <div class="name">${escapeHtml(it.name)}</div><div class="price">${it.price}</div></div>`;
+  document.getElementById('wd-modal-title').textContent = wdExchangeMode ? 'Обмен предметов' : 'Вывод предметов';
+  document.getElementById('wd-modal-hint').textContent = `Выбрано предметов: ${wdSourceItems.length}`;
+  
+  const sourceHtml = wdSourceItems.map(it=>`<div class="wd-item-card" style="cursor:default; width:60px; padding:5px;">
+    <img src="${escapeHtml(it.img||'')}" style="width:30px;height:30px;" onerror="this.style.display='none';">
+    <div class="name" style="font-size:9px;">${escapeHtml(it.name)}</div></div>`).join('');
+  document.getElementById('wd-source-info').innerHTML = sourceHtml;
   
   const exSec = document.getElementById('wd-exchange-section');
-  const submitBtn = document.getElementById('wd-submit-btn');
-  
-  if(mode==='exchange') {
+  if(wdExchangeMode) {
     exSec.style.display = 'block';
-    submitBtn.textContent = 'ОБМЕНЯТЬ';
-    submitBtn.onclick = submitExchange;
     renderWdTargets();
   } else {
     exSec.style.display = 'none';
-    submitBtn.textContent = 'ОТПРАВИТЬ ЗАЯВКУ НА ВЫВОД';
-    submitBtn.onclick = submitWithdrawDirect;
   }
+  
+  document.getElementById('wd-switch-exchange-btn').style.display = wdExchangeMode ? 'none' : 'inline-block';
+  document.getElementById('wd-switch-withdraw-btn').style.display = wdExchangeMode ? 'inline-block' : 'none';
+  document.getElementById('wd-submit-btn').style.display = wdExchangeMode ? 'none' : 'inline-block';
   
   document.getElementById('wd-nick').value = '';
   document.getElementById('withdraw-modal').classList.add('active');
   haptic('light');
 }
 
-function quickWithdraw(uid){
-  const it = state.inventory[uid]; if(!it) return;
-  if(!WD_ALLOWED.includes(it.id)) return notify({type:'error',message:'Этот предмет нельзя вывести напрямую'});
-  if(it.price < MIN_WITHDRAW_VALUE) return notify({type:'error',message:'Минимум 2 гарамы'});
-  openWithdrawModal(uid, 'withdraw');
-}
-
-function openExchangeModal(uid){
-  openWithdrawModal(uid, 'exchange');
+function switchWdMode(mode) {
+  wdExchangeMode = (mode === 'exchange');
+  document.getElementById('wd-modal-title').textContent = wdExchangeMode ? 'Обмен предметов' : 'Вывод предметов';
+  document.getElementById('wd-exchange-section').style.display = wdExchangeMode ? 'block' : 'none';
+  document.getElementById('wd-switch-exchange-btn').style.display = wdExchangeMode ? 'none' : 'inline-block';
+  document.getElementById('wd-switch-withdraw-btn').style.display = wdExchangeMode ? 'inline-block' : 'none';
+  document.getElementById('wd-submit-btn').style.display = wdExchangeMode ? 'none' : 'inline-block';
+  if(wdExchangeMode) renderWdTargets();
 }
 
 function renderWdTargets(){
   const box = document.getElementById('wd-targets');
-  const sum = wdSelected.reduce((a,t)=>a+t.price,0);
+  const sum = wdSelectedTargets.reduce((a,t)=>a+t.price,0);
+  const sourceTotal = wdSourceItems.reduce((a,b)=>a+b.price,0);
   const items = STATE.itemsArray.filter(i=>WD_ALLOWED.includes(i.id)).sort((a,b)=>a.price-b.price);
+  
   box.innerHTML = items.map(t=>{
-    const dis = t.price+sum>wdSourceItem.price;
+    const dis = t.price+sum>sourceTotal;
     const r = RARITIES[t.rarity]||RARITIES.common;
     return `<div class="wd-item-card ${dis?'disabled':''}" style="border-color:${r.color}" ${dis?'':`onclick="addWdTarget('${t.id}')"`}>
       <img src="${escapeHtml(t.img||'')}" onerror="this.style.display='none';">
       <div class="name">${escapeHtml(t.name)}</div><div class="price">${t.price}</div></div>`;
   }).join('');
-  const rem = wdSourceItem.price-sum;
-  document.getElementById('wd-summary').innerHTML = `Выбрано: ${wdSelected.length} (${formatNum(sum)}) • Остаток на баланс: <b style="color:var(--accent-gold)">${formatNum(rem)}</b>`;
+  const rem = sourceTotal-sum;
+  document.getElementById('wd-summary').innerHTML = `Выбрано: ${wdSelectedTargets.length} (${formatNum(sum)}) • Остаток на баланс: <b style="color:var(--accent-gold)">${formatNum(rem)}</b>`;
 }
 function addWdTarget(id){
   const t = STATE.items[id]; if(!t) return;
-  const sum = wdSelected.reduce((a,x)=>a+x.price,0);
-  if(sum+t.price>wdSourceItem.price) return notify({type:'warning',message:'Превышена стоимость источника'});
-  wdSelected.push(t); renderWdTargets(); haptic('light');
+  const sum = wdSelectedTargets.reduce((a,x)=>a+x.price,0);
+  const sourceTotal = wdSourceItems.reduce((a,b)=>a+b.price,0);
+  if(sum+t.price>sourceTotal) return notify({type:'warning',message:'Превышена стоимость источников'});
+  wdSelectedTargets.push(t); renderWdTargets(); haptic('light');
 }
-function closeWithdrawModal(){document.getElementById('withdraw-modal').classList.remove('active');}
+function closeWithdrawModal(){
+  document.getElementById('withdraw-modal').classList.remove('active');
+  wdSelectedItems = []; // Сбрасываем выбор после закрытия
+  loadWithdrawInfo();
+}
 
 async function submitWithdrawDirect(){
   const nick = document.getElementById('wd-nick').value.trim();
   if(!nick) return notify({type:'warning',message:'Введите ник'});
   try{
-    const r = await apiCall('/api/withdraw/request','POST',{item_uids:[wdSourceItem.uid],nick});
+    const r = await apiCall('/api/withdraw/request','POST',{item_uids:wdSourceItems.map(i=>i.uid),nick});
     notify({type:'success',message:`Заявка ${r.request_id} отправлена`});
-    closeWithdrawModal(); await loadWithdrawInfo(); await loadData();
+    closeWithdrawModal(); await loadData();
   }catch(err){notify({type:'error',message:err.message});}
 }
 
 async function submitExchange(){
   const nick = document.getElementById('wd-nick').value.trim();
   if(!nick) return notify({type:'warning',message:'Введите ник'});
-  if(!wdSelected.length) return notify({type:'warning',message:'Выберите на что обменять'});
+  if(!wdSelectedTargets.length) return notify({type:'warning',message:'Выберите на что обменять'});
   try{
-    const r = await apiCall('/api/withdraw/exchange','POST',{source_uid:wdSourceItem.uid,target_ids:wdSelected.map(t=>t.id)});
+    const r = await apiCall('/api/withdraw/exchange','POST',{source_uids:wdSourceItems.map(i=>i.uid),target_ids:wdSelectedTargets.map(t=>t.id)});
     state.balance = r.balance; state.inventory = r.inventory;
     updateUI(); closeWithdrawModal();
     notify({type:'success',message:`Обмен завершён. Остаток: ${formatNum(r.remainder)}`});
-    await loadWithdrawInfo();
   }catch(err){notify({type:'error',message:err.message});}
 }
 
-// ---> ИЗМЕНЕНИЕ: Пополнение (выбор любого брейнрота с сайта) ---
 async function loadDepositInfo(){
   try{
     const info = await apiCall('/api/deposit/options');
+    DEP_ALLOWED = info.available.map(i=>i.id);
     const box = document.getElementById('deposit-available');
     if(!info.available.length) box.innerHTML='<div style="grid-column:span 3;text-align:center;color:var(--text-muted);padding:15px;">Нет предметов</div>';
     else box.innerHTML = info.available.map(it=>{
@@ -2679,21 +2735,22 @@ async function loadDepositInfo(){
     if(!rres.requests.length) rl.innerHTML='<div style="text-align:center;color:var(--text-muted);padding:12px;font-size:12px;">Заявок нет</div>';
     else rl.innerHTML = rres.requests.sort((a,b)=>b.created_at-a.created_at).map(r=>{
       const sc = r.status==='pending'?'var(--accent-gold)':r.status==='approved'?'var(--accent-green)':'var(--accent-red)';
-      const st = {pending:'Ожидает',approved:'Одобрено',rejected:'Отклонено'}[r.status]||r.status;
+      const st = {pending:'Ожидает',approved:'Одобрено',rejected:'Отклонено',scheduled:'Запланировано'}[r.status]||r.status;
+      const sched = r.scheduled_at?`<div style="font-size:11px;color:var(--accent-blue);margin-top:4px;">Выдача: ${new Date(r.scheduled_at).toLocaleString('ru-RU')}</div>`:'';
       return `<div class="admin-drop-row"><div class="meta"><div class="nick">Ник: ${escapeHtml(r.nick)}</div>
         <div class="item">${escapeHtml(r.item_name)} (${formatNum(r.item_price)})</div>
-        <div class="item" style="color:${sc};font-weight:800;">${st}</div></div></div>`;
+        <div class="item" style="color:${sc};font-weight:800;">${st}</div>${sched}</div></div>`;
     }).join('');
   }catch(err){console.error(err);}
 }
 
 function openDepositModal(itemId){
   const it = STATE.items[itemId]; if(!it) return;
-  depSelected = it;
+  depSelectedItem = it;
   document.getElementById('dep-selected').innerHTML = `<div class="wd-item-card selected" style="cursor:default; grid-column:span 3;">
     <img src="${escapeHtml(it.img||'')}" onerror="this.style.display='none';" style="width:70px;height:70px;">
     <div class="name" style="font-size:14px;">${escapeHtml(it.name)}</div><div class="price" style="font-size:14px;">${it.price}</div></div>`;
-  document.getElementById('dep-summary').textContent = `Выбран 1 предмет, стоимость: ${formatNum(it.price)}`;
+  document.getElementById('dep-summary').textContent = `Выбран предмет: ${formatNum(it.price)}`;
   document.getElementById('dep-nick').value = '';
   document.getElementById('deposit-modal').classList.add('active');
 }
@@ -2701,9 +2758,9 @@ function closeDepositModal(){document.getElementById('deposit-modal').classList.
 async function submitDeposit(){
   const nick = document.getElementById('dep-nick').value.trim();
   if(!nick) return notify({type:'warning',message:'Введите ник'});
-  if(!depSelected) return notify({type:'warning',message:'Выберите предмет'});
+  if(!depSelectedItem) return notify({type:'warning',message:'Выберите предмет'});
   try{
-    const r = await apiCall('/api/deposit/request','POST',{item_id:depSelected.id,nick});
+    const r = await apiCall('/api/deposit/request','POST',{item_id:depSelectedItem.id,nick});
     notify({type:'success',message:`Заявка ${r.request_id} отправлена`});
     closeDepositModal(); await loadDepositInfo();
   }catch(err){notify({type:'error',message:err.message});}
@@ -2782,7 +2839,8 @@ function adminTab(name){
   if(name==='promo') loadAdminPromos();
   if(name==='items') loadAdminItemsList();
   if(name==='cases') loadAdminCasesList();
-  if(name==='sections') { loadAdminSectionsList(); loadAdminWithdrawableList(); }
+  if(name==='sections') loadAdminSectionsList();
+  if(name==='lists') loadAdminLists();
   if(name==='medals') loadAdminMedalsList();
   if(name==='withdrawals') loadAdminWithdrawals();
   if(name==='deposits') loadAdminDeposits();
@@ -2938,29 +2996,36 @@ async function adminDeleteSection(id){
   catch(err){notify({type:'error',message:err.message});}
 }
 
-// ---> ИЗМЕНЕНИЕ: Динамический список вывода в админке <---
-async function loadAdminWithdrawableList(){
-  const box = document.getElementById('admin-withdrawable-list');
-  if(!box) return;
-  try {
-    const info = await apiCall('/api/withdraw/options');
-    const current = info.withdrawable_items.map(i=>i.id);
-    box.innerHTML = STATE.itemsArray.map(it=>`
-      <label style="display:flex;align-items:center;gap:8px;padding:6px;font-size:12px;border-bottom:1px solid var(--border);">
-        <input type="checkbox" class="wd-allowed-cb" value="${it.id}" ${current.includes(it.id)?'checked':''} style="width:auto;margin:0;">
-        <img src="${escapeHtml(it.img||'')}" onerror="this.style.display='none';" style="width:24px;height:24px;">
-        <span>${escapeHtml(it.name)} (${it.price})</span>
-      </label>
-    `).join('');
-  } catch(e) { box.innerHTML = 'Ошибка загрузки'; }
+async function loadAdminLists(){
+  const boxW = document.getElementById('admin-withdrawable-list');
+  const boxD = document.getElementById('admin-depositable-list');
+  if(!boxW || !boxD) return;
+  
+  const infoW = await apiCall('/api/withdraw/options');
+  const currentW = infoW.withdrawable_items.map(i=>i.id);
+  
+  const infoD = await apiCall('/api/deposit/options');
+  const currentD = infoD.available.map(i=>i.id);
+  
+  const buildList = (items, current, prefix) => items.map(it=>`
+    <label style="display:flex;align-items:center;gap:8px;padding:6px;font-size:12px;border-bottom:1px solid var(--border);">
+      <input type="checkbox" class="${prefix}-cb" value="${it.id}" ${current.includes(it.id)?'checked':''} style="width:auto;margin:0;">
+      <img src="${escapeHtml(it.img||'')}" onerror="this.style.display='none';" style="width:24px;height:24px;">
+      <span>${escapeHtml(it.name)} (${it.price})</span>
+    </label>
+  `).join('');
+  
+  boxW.innerHTML = buildList(STATE.itemsArray, currentW, 'wd-allowed');
+  boxD.innerHTML = buildList(STATE.itemsArray, currentD, 'dep-allowed');
 }
-async function adminSaveWithdrawable(){
-  const boxes = document.querySelectorAll('.wd-allowed-cb:checked');
-  const ids = Array.from(boxes).map(b=>b.value);
+async function adminSaveLists(){
+  const wdIds = Array.from(document.querySelectorAll('.wd-allowed-cb:checked')).map(b=>b.value);
+  const depIds = Array.from(document.querySelectorAll('.dep-allowed-cb:checked')).map(b=>b.value);
   try {
-    await apiCall('/api/admin/withdrawable/save', 'POST', {ids});
-    notify({type:'success', message:'Список вывода сохранён'});
+    await apiCall('/api/admin/lists/save', 'POST', {withdrawable: wdIds, depositable: depIds});
+    notify({type:'success', message:'Списки сохранены'});
     await loadWithdrawInfo();
+    await loadDepositInfo();
   } catch(e) { notify({type:'error', message:e.message}); }
 }
 
@@ -2974,10 +3039,22 @@ async function loadAdminMedalsList(){
     if(box) box.innerHTML = medals.length ? medals.map(m=>`<div class="admin-drop-row">
       <div class="admin-rank-badge" style="background:${escapeHtml(m.color||'#fbbf24')}">${m.img ? `<img src="${m.img}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">` : escapeHtml(m.icon||'🏅')}</div>
       <div class="meta"><div class="nick">${escapeHtml(m.name)}</div><div class="item">${escapeHtml(m.description||'')}</div></div>
+      <button class="btn small" onclick="editMedal('${escapeHtml(m.id)}')" style="padding:4px 8px;font-size:11px;background:var(--accent-blue);">✎</button>
       <button class="btn small red" onclick="adminDeleteMedal('${escapeHtml(m.id)}')" style="padding:4px 8px;font-size:11px;">×</button>
     </div>`).join('') : '<div style="text-align:center;color:var(--text-muted);padding:12px;font-size:12px;">Нет медалей</div>';
     if(sel) sel.innerHTML = medals.map(m=>`<option value="${escapeHtml(m.id)}">${escapeHtml(m.name)}</option>`).join('');
   }catch(err){if(box)box.innerHTML='<div style="text-align:center;color:var(--accent-red);padding:12px;">'+escapeHtml(err.message)+'</div>';}
+}
+function editMedal(id){
+  const m = STATE.medals.find(x=>x.id === id);
+  if(!m) return;
+  document.getElementById('admin-medal-id').value = m.id;
+  document.getElementById('admin-medal-name').value = m.name || '';
+  document.getElementById('admin-medal-desc').value = m.description || '';
+  document.getElementById('admin-medal-icon').value = m.icon || '🏅';
+  document.getElementById('admin-medal-img').value = m.img || '';
+  document.getElementById('admin-medal-color').value = m.color || '#fbbf24';
+  document.getElementById('admin-medal-id').scrollIntoView({behavior:'smooth'});
 }
 async function adminSaveMedal(){
   const body = {
@@ -2989,7 +3066,7 @@ async function adminSaveMedal(){
     color:document.getElementById('admin-medal-color').value.trim()||'#fbbf24'
   };
   if(!body.id) return notify({type:'warning',message:'Введите ID'});
-  try{await apiCall('/api/admin/medal/save','POST',body);notify({type:'success',message:'Медаль создана'});await loadAdminMedalsList();}
+  try{await apiCall('/api/admin/medal/save','POST',body);notify({type:'success',message:'Медаль сохранена'});await loadAdminMedalsList();}
   catch(err){notify({type:'error',message:err.message});}
 }
 async function adminDeleteMedal(id){
@@ -3184,19 +3261,31 @@ async function loadAdminDeposits(){
     const reqs = r.requests||[];
     if(!reqs.length){box.innerHTML='<div style="text-align:center;color:var(--text-muted);padding:12px;font-size:12px;">Нет заявок</div>';return;}
     box.innerHTML = reqs.map(d=>{
-      const sc = {pending:'var(--accent-gold)',approved:'var(--accent-green)',rejected:'var(--accent-red)'}[d.status]||'var(--text-muted)';
+      const sc = {pending:'var(--accent-gold)',approved:'var(--accent-green)',rejected:'var(--accent-red)',scheduled:'var(--accent-blue)'}[d.status]||'var(--text-muted)';
+      const st = {pending:'Ожидает',approved:'Одобрено',rejected:'Отклонено',scheduled:'Запланировано'}[d.status]||d.status;
+      const sched = d.scheduled_at?`<div style="font-size:11px;color:var(--accent-blue);margin-top:4px;">Выдача: ${new Date(d.scheduled_at).toLocaleString('ru-RU')}</div>`:'';
       return `<div class="admin-card">
         <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;">
-          <b>${escapeHtml(d.nick)}</b><span style="color:${sc}">${d.status}</span>
+          <b>${escapeHtml(d.nick)}</b><span style="color:${sc}">${st}</span>
         </div>
         <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">ID: ${escapeHtml(d.user_uid)} • Предмет: ${escapeHtml(d.item_name)} (${formatNum(d.item_price)})</div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        ${sched}
+        <div style="display:flex;gap:6px;flex-wrap:wrap; margin-top:8px;">
+          <button class="btn small" onclick="adminScheduleDeposit('${escapeHtml(d.id)}')">Запланировать</button>
           <button class="btn small green" onclick="adminUpdateDeposit('${escapeHtml(d.id)}','approved')">Одобрить</button>
           <button class="btn small red" onclick="adminUpdateDeposit('${escapeHtml(d.id)}','rejected')">Отклонить</button>
         </div>
       </div>`;
     }).join('');
   }catch(err){box.innerHTML=`<div style="color:var(--accent-red);padding:12px;text-align:center;">${escapeHtml(err.message)}</div>`;}
+}
+async function adminScheduleDeposit(id){
+  const dt = prompt('Дата и время (например: 2025-12-31 18:00):');
+  if(!dt) return;
+  const ts = new Date(dt).getTime();
+  if(isNaN(ts)) return notify({type:'error',message:'Неверная дата'});
+  try{await apiCall('/api/admin/deposit/update','POST',{id,status:'scheduled',scheduled_at:ts,comment:''});notify({type:'success',message:'Запланировано'});await loadAdminDeposits();}
+  catch(err){notify({type:'error',message:err.message});}
 }
 async function adminUpdateDeposit(id,status){
   try{await apiCall('/api/admin/deposit/update','POST',{id,status,comment:''});notify({type:'success',message:'Обновлено'});await loadAdminDeposits();}
@@ -3211,7 +3300,12 @@ window.BF = {
   },
   removeUpg:uid=>{upgInputs=upgInputs.filter(u=>u!==uid);renderUpgInputs();calcUpg();haptic('light');},
   toggleUpgItem,chooseTarget,openProfile:openOtherProfile,
-  quickWithdraw,
+  quickWithdraw: (uid) => {
+    const it = state.inventory[uid]; if(!it) return;
+    if(!WD_ALLOWED.includes(it.id)) return notify({type:'error',message:'Этот предмет нельзя вывести напрямую'});
+    wdSelectedItems = [it];
+    openWdModal('withdraw');
+  },
   sellItem:async uid=>{
     try{const r = await apiCall('/api/sell_item','POST',{uid});state.balance=r.balance;state.inventory=r.inventory;
       if(upgInputs.includes(uid)) upgInputs=upgInputs.filter(u=>u!==uid);
@@ -3239,17 +3333,16 @@ window.adminManageSearch=adminManageSearch; window.adminQuickGive=adminQuickGive
 window.adminAddPollOption=adminAddPollOption; window.adminCreatePoll=adminCreatePoll; window.adminEndPoll=adminEndPoll;
 window.adminSaveItem=adminSaveItem; window.adminDeleteItem=adminDeleteItem; window.adminCreateItem=adminCreateItem;
 window.adminSaveCase=adminSaveCase; window.adminDeleteCase=adminDeleteCase; window.editCase=editCase; window.loadCaseToEditor=loadCaseToEditor;
-window.adminSaveSection=adminSaveSection; window.adminDeleteSection=adminDeleteSection; window.adminSaveWithdrawable=adminSaveWithdrawable;
-window.adminSaveMedal=adminSaveMedal; window.adminDeleteMedal=adminDeleteMedal; window.adminGiveMedal=adminGiveMedal; window.adminRemoveMedal=adminRemoveMedal;
+window.adminSaveSection=adminSaveSection; window.adminDeleteSection=adminDeleteSection; window.adminSaveLists=adminSaveLists;
+window.adminSaveMedal=adminSaveMedal; window.adminDeleteMedal=adminDeleteMedal; window.adminGiveMedal=adminGiveMedal; window.adminRemoveMedal=adminRemoveMedal; window.editMedal=editMedal;
 window.adminGrantRights=adminGrantRights; window.adminRevokeRights=adminRevokeRights;
 window.adminScheduleWithdrawal=adminScheduleWithdrawal; window.adminCompleteWithdrawal=adminCompleteWithdrawal; window.adminCancelWithdrawal=adminCancelWithdrawal;
-window.adminUpdateDeposit=adminUpdateDeposit;
+window.adminScheduleDeposit=adminScheduleDeposit; window.adminUpdateDeposit=adminUpdateDeposit;
 window.toggleAutoFullscreen=toggleAutoFullscreen; window.toggleFullscreenNow=toggleFullscreenNow;
 window.enableFullscreenFromIntro=enableFullscreenFromIntro; window.dismissFullscreenIntro=dismissFullscreenIntro;
 window.copyRefLink=copyRefLink; window.updateRefPromoType=updateRefPromoType; window.createRefPromo=createRefPromo;
 window.toggleMedalsVisibility=toggleMedalsVisibility;
-window.openWithdrawModal=openWithdrawModal; window.closeWithdrawModal=closeWithdrawModal; window.addWdTarget=addWdTarget;
-window.quickWithdraw=quickWithdraw; window.openExchangeModal=openExchangeModal;
+window.toggleWdItem=toggleWdItem; window.openWdModal=openWdModal; window.closeWithdrawModal=closeWithdrawModal; window.addWdTarget=addWdTarget; window.submitWithdrawDirect=submitWithdrawDirect; window.submitExchange=submitExchange; window.switchWdMode=switchWdMode;
 window.openDepositModal=openDepositModal; window.closeDepositModal=closeDepositModal; window.submitDeposit=submitDeposit;
 window.searchAndStartChat=searchAndStartChat; window.openChat=openChat; window.sendChatMessage=sendChatMessage;
 window.openChatProfile=openChatProfile;
@@ -3262,7 +3355,7 @@ async function loadItems(){
     STATE.itemsArray.forEach(it=>STATE.items[it.id]=it);
     populateGiveItems();
     if(activeCase) renderLootPreview(activeCase);
-    renderLiveFeed(); // Обновляем цены в дропах
+    renderLiveFeed();
   }catch(err){console.error(err);}
 }
 async function loadCases(){
