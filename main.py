@@ -65,6 +65,7 @@ DEFAULT_ITEMS = [
     {"id":"hotspot",     "name":"Pot Hotspot",          "price":14,    "rarity":"uncommon",  "img":"assets/brainrots/Pot_Hotspot.webp", "emoji":"🍲"},
     {"id":"strawberry",  "name":"Strawberry Elephant",  "price":15067, "rarity":"legendary", "img":"assets/brainrots/Strawberry_Elephant.webp", "emoji":"🍓"},
     {"id":"skibidi",     "name":"Skibidi Toilet",       "price":13229, "rarity":"legendary", "img":"assets/brainrots/skibidi_toilet.png", "emoji":"🚽"},
+    {"id":"pegas",       "name":"Pegasus",              "price":5000,  "rarity":"legendary", "img":"assets/brainrots/pegas.webp", "emoji":"🦄"}, # Добавлен Пегас
 ]
 
 DEFAULT_SECTIONS = [
@@ -108,7 +109,6 @@ EVENT_TYPES = {
     "bloody":    {"name": "Кровавый", "multiplier": 4.0, "color": "#dc2626", "img": "assets/brainrots/Bloodrot_Mutation_Icon.webp"},
 }
 
-# ---> ИЗМЕНЕНИЕ: Курс 1 звезда = 1.5 монеты <---
 STARS_PACKAGES = {
     "p10":  {"stars":10,  "coins":15,   "bonus":0},
     "p25":  {"stars":25,  "coins":37,   "bonus":0},
@@ -129,8 +129,8 @@ MAX_EVENT_MINUTES = 60 * 24 * 7
 MAX_PROMO_REWARD = 1_000_000
 MAX_PROMO_USES = 1_000_000
 
-# ---> ИЗМЕНЕНИЕ: Динамический список на вывод <---
-DEFAULT_WITHDRAWABLE = {"garama", "dragon", "burguro", "cerberus", "meowl"}
+# ---> ИЗМЕНЕНИЕ: Обновленный список доступных к выводу <---
+DEFAULT_WITHDRAWABLE = {"garama", "burguro", "pegas", "cerberus", "dragon", "skibidi", "meowl", "strawberry"}
 MIN_WITHDRAW_VALUE = 128  # 2 garamas = 2*64
 GARAMA_PRICE = 64
 
@@ -246,17 +246,23 @@ def get_sections_list() -> list:
         log.error(f"Error loading sections: {e}")
         return [dict(s) for s in DEFAULT_SECTIONS]
 
-# ---> ИЗМЕНЕНИЕ: Динамический список на вывод <---
 def get_withdrawable_ids() -> set:
     if not FIREBASE_OK: return DEFAULT_WITHDRAWABLE
     try:
         data = fbdb.reference("meta/withdrawable_items").get()
-        if isinstance(data, list):
-            return set(data)
-        if isinstance(data, dict):
-            return set(k for k,v in data.items() if v)
+        if isinstance(data, list): return set(data)
+        if isinstance(data, dict): return set(k for k,v in data.items() if v)
         return DEFAULT_WITHDRAWABLE
     except Exception: return DEFAULT_WITHDRAWABLE
+
+def get_depositable_ids() -> set:
+    if not FIREBASE_OK: return set(i["id"] for i in DEFAULT_ITEMS if i["price"] >= GARAMA_PRICE)
+    try:
+        data = fbdb.reference("meta/depositable_items").get()
+        if isinstance(data, list): return set(data)
+        if isinstance(data, dict): return set(k for k,v in data.items() if v)
+        return set(i["id"] for i in DEFAULT_ITEMS if i["price"] >= GARAMA_PRICE)
+    except Exception: return set(i["id"] for i in DEFAULT_ITEMS if i["price"] >= GARAMA_PRICE)
 
 def get_medals_dict() -> dict:
     if not FIREBASE_OK: return {}
@@ -307,7 +313,7 @@ def _default_user() -> dict:
         },
         "themes": {"dark": True}, "theme": "dark", "referrals": 0,
         "created_promos": {},
-        "username": "", "first_name": "",
+        "username": "", "first_name": "", "photo_url": "",
     }
 
 def _normalize(data: dict) -> dict:
@@ -411,7 +417,6 @@ def make_inv_item(item: dict) -> dict:
     uid = "u_%d_%s" % (int(time.time() * 1000), "".join(random.choices("abcdef0123456789", k=6)))
     return {**item, "uid": uid}
 
-# ---> ИЗМЕНЕНИЕ: Добавлен itemId в drop_feed <---
 def push_drop(nick: str, item_id: str, item_name: str, item_img: str | None, price: int, method: str, user_id: str):
     if not FIREBASE_OK or not item_img: return
     try:
@@ -560,7 +565,6 @@ async def api_cases():
     sections = get_sections_list()
     return {"cases": list(cases.values()), "sections": sections}
 
-# ---> ИЗМЕНЕНИЕ: Сохраняем username и first_name для поиска <---
 @app.get("/api/me")
 async def api_me(user=Depends(current_user)):
     uid = str(user["id"])
@@ -580,6 +584,7 @@ async def api_me(user=Depends(current_user)):
     def save_un(d):
         d["username"] = user.get("username", "")
         d["first_name"] = user.get("first_name", "")
+        d["photo_url"] = user.get("photo_url", "")
         return d
     atomic_update(uid, save_un)
     return data
@@ -899,7 +904,8 @@ async def api_user_profile(target_uid: str, user=Depends(current_user)):
             "inventory": data.get("inventory") or {}, "stats": data.get("stats") or {},
             "lastFree": int(data.get("lastFree", 0) or 0), "lastUser": int(data.get("lastUser", 0) or 0),
             "medals": medals, "medals_hidden": bool(data.get("medals_hidden")),
-            "username": data.get("username", ""), "first_name": data.get("first_name", "")}
+            "username": data.get("username", ""), "first_name": data.get("first_name", ""),
+            "photo_url": data.get("photo_url", "")}
 
 @app.post("/api/create-invoice-link")
 async def create_invoice(request: Request, user=Depends(current_user)):
@@ -1038,22 +1044,27 @@ async def api_withdraw_options(user=Depends(current_user)):
         "garama_price": GARAMA_PRICE,
     }
 
+# ---> ИЗМЕНЕНИЕ: Поддержка нескольких исходников для обмена <---
 @app.post("/api/withdraw/exchange")
 async def api_withdraw_exchange(request: Request, user=Depends(current_user)):
     if not FIREBASE_OK: raise HTTPException(503)
     body = await request.json()
-    source_uid = str(body.get("source_uid", ""))
+    source_uids = body.get("source_uids", [])
     target_ids = body.get("target_ids", [])
-    if not source_uid or not isinstance(target_ids, list) or not target_ids:
-        raise HTTPException(400, "Выберите предмет и цели")
+    if not isinstance(source_uids, list) or not source_uids or not isinstance(target_ids, list) or not target_ids:
+        raise HTTPException(400, "Выберите предметы для обмена")
+    
     items_dict = get_items_dict()
     wd_ids = get_withdrawable_ids()
     uid = str(user["id"])
     data = get_user_data(uid)
     inv = data.get("inventory", {}) or {}
-    if source_uid not in inv: raise HTTPException(400, "Предмет не найден")
-    source_item = inv[source_uid]
-    source_price = int(items_dict.get(source_item["id"], {}).get("price", source_item.get("price", 0)))
+    
+    source_total = 0
+    for suid in source_uids:
+        if suid not in inv: raise HTTPException(400, "Исходный предмет не найден")
+        source_total += int(items_dict.get(inv[suid]["id"], {}).get("price", inv[suid].get("price", 0)))
+        
     target_total = 0
     targets = []
     for tid in target_ids:
@@ -1063,14 +1074,17 @@ async def api_withdraw_exchange(request: Request, user=Depends(current_user)):
         if not tgt: raise HTTPException(400, f"Неизвестный предмет {tid}")
         targets.append(tgt)
         target_total += int(tgt["price"])
-    if target_total > source_price:
-        raise HTTPException(400, "Цели дороже источника")
-    remainder = source_price - target_total
+        
+    if target_total > source_total:
+        raise HTTPException(400, "Цели дороже источников")
+        
+    remainder = source_total - target_total
 
     def upd(d):
         inv2 = d.get("inventory", {})
-        if source_uid not in inv2: return None
-        del inv2[source_uid]
+        for suid in source_uids:
+            if suid not in inv2: return None
+        for suid in source_uids: del inv2[suid]
         for tgt in targets:
             new_it = make_inv_item(tgt)
             inv2[new_it["uid"]] = new_it
@@ -1078,8 +1092,7 @@ async def api_withdraw_exchange(request: Request, user=Depends(current_user)):
         return d
     if not atomic_update(uid, upd): raise HTTPException(400, "Ошибка обмена")
     new_data = get_user_data(uid)
-    return {"ok": True, "balance": new_data["balance"], "inventory": new_data["inventory"],
-            "remainder": remainder}
+    return {"ok": True, "balance": new_data["balance"], "inventory": new_data["inventory"], "remainder": remainder}
 
 @app.post("/api/withdraw/request")
 async def api_withdraw_request(request: Request, user=Depends(current_user)):
@@ -1135,11 +1148,11 @@ async def api_withdraw_my(user=Depends(current_user)):
         return {"requests": [r for r in allr.values() if isinstance(r, dict) and r.get("user_uid") == uid]}
     except Exception: return {"requests": []}
 
-# ---> ИЗМЕНЕНИЕ: Пополнение теперь показывает ВСЕ брейнроты, а не инвентарь <---
 @app.get("/api/deposit/options")
 async def api_deposit_options(user=Depends(current_user)):
     items_dict = get_items_dict()
-    available = [it for it in items_dict.values() if int(it.get("price", 0)) >= GARAMA_PRICE]
+    dep_ids = get_depositable_ids()
+    available = [it for it in items_dict.values() if it["id"] in dep_ids]
     return {"available": available, "min_value": GARAMA_PRICE}
 
 @app.post("/api/deposit/request")
@@ -1152,15 +1165,14 @@ async def api_deposit_request(request: Request, user=Depends(current_user)):
     items_dict = get_items_dict()
     if item_id not in items_dict: raise HTTPException(400, "Предмет не найден")
     item = items_dict[item_id]
-    if int(item["price"]) < GARAMA_PRICE:
-        raise HTTPException(400, f"Предмет дешевле гарамы")
+    if item_id not in get_depositable_ids(): raise HTTPException(400, "Этот предмет нельзя получить через пополнение")
     
     uid = str(user["id"])
     rid = "dp_" + uuid.uuid4().hex[:10]
     fbdb.reference(f"deposit_requests/{rid}").set({
         "id": rid, "user_uid": uid, "nick": nick,
         "item_id": item_id, "item_name": item["name"], "item_price": item["price"],
-        "status": "pending",
+        "status": "pending", "scheduled_at": 0,
         "created_at": int(time.time() * 1000), "comment": "",
     })
     return {"ok": True, "request_id": rid}
@@ -1382,7 +1394,6 @@ async def admin_section_delete(request: Request, user=Depends(require_admin)):
         fbdb.reference(f"meta/sections/{sid}").delete()
     return {"ok": True}
 
-# ---> ИЗМЕНЕНИЕ: Добавлено поле img для медалей <---
 @app.post("/api/admin/medal/save")
 async def admin_medal_save(request: Request, user=Depends(require_admin)):
     if not FIREBASE_OK: raise HTTPException(503)
@@ -1645,7 +1656,7 @@ async def admin_deposits(user=Depends(require_admin)):
         return {"requests": reqs}
     except Exception: return {"requests": []}
 
-# ---> ИЗМЕНЕНИЕ: Выдача предмета при одобрении пополнения <---
+# ---> ИЗМЕНЕНИЕ: Добавлено планирование пополнений <---
 @app.post("/api/admin/deposit/update")
 async def admin_deposit_update(request: Request, user=Depends(require_admin)):
     if not FIREBASE_OK: raise HTTPException(503)
@@ -1653,7 +1664,10 @@ async def admin_deposit_update(request: Request, user=Depends(require_admin)):
     rid = str(body.get("id", ""))
     status = str(body.get("status", ""))
     comment = str(body.get("comment", ""))[:256]
-    if not rid or status not in ("pending", "approved", "rejected"): raise HTTPException(400, "bad args")
+    sched_at = int(body.get("scheduled_at", 0))
+    
+    if not rid or status not in ("pending", "approved", "rejected", "scheduled"): 
+        raise HTTPException(400, "bad args")
     
     req_ref = fbdb.reference(f"deposit_requests/{rid}")
     req = req_ref.get()
@@ -1672,17 +1686,26 @@ async def admin_deposit_update(request: Request, user=Depends(require_admin)):
         if not atomic_update(target_uid, upd):
             raise HTTPException(400, "Ошибка выдачи предмета игроку")
 
-    req_ref.update({"status": status, "comment": comment})
+    update_data = {"status": status, "comment": comment}
+    if status == "scheduled":
+        update_data["scheduled_at"] = sched_at
+        
+    req_ref.update(update_data)
     return {"ok": True}
 
-# ---> ИЗМЕНЕНИЕ: Сохранение динамического списка вывода <---
-@app.post("/api/admin/withdrawable/save")
-async def admin_withdrawable_save(request: Request, user=Depends(require_admin)):
+# ---> ИЗМЕНЕНИЕ: Сохранение списков для вывода и пополнения <---
+@app.post("/api/admin/lists/save")
+async def admin_lists_save(request: Request, user=Depends(require_admin)):
     if not FIREBASE_OK: raise HTTPException(503)
     body = await request.json()
-    ids = body.get("ids", [])
-    if not isinstance(ids, list): raise HTTPException(400, "ids должен быть списком")
-    fbdb.reference("meta/withdrawable_items").set({k: True for k in ids})
+    wd_ids = body.get("withdrawable", [])
+    dep_ids = body.get("depositable", [])
+    
+    if isinstance(wd_ids, list):
+        fbdb.reference("meta/withdrawable_items").set({k: True for k in wd_ids})
+    if isinstance(dep_ids, list):
+        fbdb.reference("meta/depositable_items").set({k: True for k in dep_ids})
+        
     return {"ok": True}
 
 @app.get("/api/admin/stats")
