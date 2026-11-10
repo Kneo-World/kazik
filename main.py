@@ -108,13 +108,14 @@ EVENT_TYPES = {
     "bloody":    {"name": "Кровавый", "multiplier": 4.0, "color": "#dc2626", "img": "assets/brainrots/Bloodrot_Mutation_Icon.webp"},
 }
 
+# ---> ИЗМЕНЕНИЕ: Курс 1 звезда = 1.5 монеты <---
 STARS_PACKAGES = {
-    "p10":  {"stars":10,  "coins":50,   "bonus":0},
-    "p25":  {"stars":25,  "coins":135,  "bonus":8},
-    "p50":  {"stars":50,  "coins":300,  "bonus":20},
-    "p100": {"stars":100, "coins":650,  "bonus":30},
-    "p250": {"stars":250, "coins":1750, "bonus":40},
-    "p500": {"stars":500, "coins":4000, "bonus":60},
+    "p10":  {"stars":10,  "coins":15,   "bonus":0},
+    "p25":  {"stars":25,  "coins":37,   "bonus":0},
+    "p50":  {"stars":50,  "coins":75,   "bonus":0},
+    "p100": {"stars":100, "coins":150,  "bonus":0},
+    "p250": {"stars":250, "coins":375,  "bonus":0},
+    "p500": {"stars":500, "coins":750,  "bonus":0},
 }
 
 FREE_COOLDOWN_MS = 24 * 3600 * 1000
@@ -128,12 +129,11 @@ MAX_EVENT_MINUTES = 60 * 24 * 7
 MAX_PROMO_REWARD = 1_000_000
 MAX_PROMO_USES = 1_000_000
 
-# Withdraw settings
-WITHDRAWABLE_ITEM_IDS = {"garama", "dragon", "burguro", "cerberus", "meowl"}
+# ---> ИЗМЕНЕНИЕ: Динамический список на вывод <---
+DEFAULT_WITHDRAWABLE = {"garama", "dragon", "burguro", "cerberus", "meowl"}
 MIN_WITHDRAW_VALUE = 128  # 2 garamas = 2*64
 GARAMA_PRICE = 64
 
-# Referral levels: [min_invited, bonus_pct]
 REFERRAL_LEVELS = [
     {"level": 1, "invited": 0,    "pct": 5},
     {"level": 2, "invited": 50,   "pct": 10},
@@ -169,7 +169,6 @@ def init_firebase():
 
 FIREBASE_OK = init_firebase()
 
-# ============ ITEMS ============
 def get_items_dict() -> dict:
     if not FIREBASE_OK:
         return {i["id"]: i for i in DEFAULT_ITEMS}
@@ -201,7 +200,6 @@ def get_items_dict() -> dict:
         log.error(f"Error loading items from DB: {e}")
         return {i["id"]: i for i in DEFAULT_ITEMS}
 
-# ============ CASES & SECTIONS ============
 def get_cases_dict() -> dict:
     if not FIREBASE_OK:
         return {cid: dict(c) for cid, c in DEFAULT_CASES.items()}
@@ -248,7 +246,18 @@ def get_sections_list() -> list:
         log.error(f"Error loading sections: {e}")
         return [dict(s) for s in DEFAULT_SECTIONS]
 
-# ============ MEDALS ============
+# ---> ИЗМЕНЕНИЕ: Динамический список на вывод <---
+def get_withdrawable_ids() -> set:
+    if not FIREBASE_OK: return DEFAULT_WITHDRAWABLE
+    try:
+        data = fbdb.reference("meta/withdrawable_items").get()
+        if isinstance(data, list):
+            return set(data)
+        if isinstance(data, dict):
+            return set(k for k,v in data.items() if v)
+        return DEFAULT_WITHDRAWABLE
+    except Exception: return DEFAULT_WITHDRAWABLE
+
 def get_medals_dict() -> dict:
     if not FIREBASE_OK: return {}
     try:
@@ -268,7 +277,6 @@ def get_user_medals(uid: str) -> list:
         return result
     except Exception: return []
 
-# ============ ADMIN ============
 def get_dynamic_admin_ids() -> set:
     if not FIREBASE_OK: return set()
     try:
@@ -283,7 +291,6 @@ def is_admin(user) -> bool:
     except Exception:
         return False
 
-# ============ USER ============
 def user_ref(uid: str):
     return fbdb.reference(f"users/{uid}")
 
@@ -333,7 +340,6 @@ def atomic_update(uid: str, updater):
         log.exception("transaction error uid=%s", uid)
         return False
 
-# ============ AUTH ============
 def verify_init_data(init_data: str) -> dict | None:
     if not init_data or not BOT_TOKEN:
         return None
@@ -365,7 +371,6 @@ async def require_admin(user=Depends(current_user)):
         raise HTTPException(403, "admin only")
     return user
 
-# ============ HELPERS ============
 def weighted_pick(entries):
     if not entries: return None
     total = sum(e.get("weight", 1) for e in entries)
@@ -406,12 +411,13 @@ def make_inv_item(item: dict) -> dict:
     uid = "u_%d_%s" % (int(time.time() * 1000), "".join(random.choices("abcdef0123456789", k=6)))
     return {**item, "uid": uid}
 
-def push_drop(nick: str, item_name: str, item_img: str | None, price: int, method: str, user_id: str):
+# ---> ИЗМЕНЕНИЕ: Добавлен itemId в drop_feed <---
+def push_drop(nick: str, item_id: str, item_name: str, item_img: str | None, price: int, method: str, user_id: str):
     if not FIREBASE_OK or not item_img: return
     try:
         drop_id = "d_%d_%s" % (int(time.time() * 1000), "".join(random.choices("abcdef", k=4)))
         fbdb.reference(f"drop_feed/{drop_id}").set({
-            "nick": nick, "itemName": item_name, "itemImg": item_img,
+            "nick": nick, "itemId": item_id, "itemName": item_name, "itemImg": item_img,
             "price": price, "method": method, "user_id": str(user_id),
             "ts": int(time.time() * 1000),
         })
@@ -443,7 +449,6 @@ def get_referral_level(invited_count: int) -> dict:
     return current
 
 def apply_referral_earnings(loser_uid: str, coins_lost: int):
-    """Loser lost coins — give referrer a cut based on their referral level."""
     if coins_lost <= 0 or not FIREBASE_OK: return
     try:
         loser_data = get_user_data(loser_uid)
@@ -468,7 +473,6 @@ def apply_referral_earnings(loser_uid: str, coins_lost: int):
 def chat_id_for(uid_a: str, uid_b: str) -> str:
     return "_".join(sorted([str(uid_a), str(uid_b)]))
 
-# ============ BOT ============
 bot = Bot(token=BOT_TOKEN) if BOT_TOKEN else None
 dp = Dispatcher()
 
@@ -546,7 +550,6 @@ async def root():
 async def health():
     return {"ok": True, "firebase_ok": FIREBASE_OK}
 
-# ============ PUBLIC API ============
 @app.get("/api/items")
 async def api_items():
     return {"items": list(get_items_dict().values())}
@@ -555,11 +558,9 @@ async def api_items():
 async def api_cases():
     cases = get_cases_dict()
     sections = get_sections_list()
-    return {
-        "cases": list(cases.values()),
-        "sections": sections,
-    }
+    return {"cases": list(cases.values()), "sections": sections}
 
+# ---> ИЗМЕНЕНИЕ: Сохраняем username и first_name для поиска <---
 @app.get("/api/me")
 async def api_me(user=Depends(current_user)):
     uid = str(user["id"])
@@ -575,6 +576,12 @@ async def api_me(user=Depends(current_user)):
     lvl = get_referral_level(int(data.get("referrals", 0)))
     data["referral_level"] = lvl
     data["referral_pct"] = lvl["pct"]
+
+    def save_un(d):
+        d["username"] = user.get("username", "")
+        d["first_name"] = user.get("first_name", "")
+        return d
+    atomic_update(uid, save_un)
     return data
 
 @app.get("/api/event")
@@ -684,7 +691,7 @@ async def api_open_case(request: Request, user=Depends(current_user)):
     if not atomic_update(uid, upd): raise HTTPException(400, "Не удалось открыть кейс.")
     for r in results:
         if r["type"] != "coin":
-            push_drop(nick, r["item"]["name"], r["item"]["img"], r["item"]["price"], "case", uid)
+            push_drop(nick, r["item"]["id"], r["item"]["name"], r["item"]["img"], r["item"]["price"], "case", uid)
 
     new_data = get_user_data(uid)
     return {"ok": True, "results": results, "balance": new_data["balance"],
@@ -697,11 +704,13 @@ async def api_sell_item(request: Request, user=Depends(current_user)):
     item_uid = body.get("uid", "")
     if not item_uid: raise HTTPException(400, "Не указан предмет")
     uid = str(user["id"])
+    items_dict = get_items_dict()
     def upd(d):
         inv = d.get("inventory", {})
         if item_uid not in inv: return None
         item = inv.pop(item_uid)
-        d["balance"] = int(d.get("balance", 0)) + int(item.get("price", 0))
+        live_price = int(items_dict.get(item.get("id"), {}).get("price", item.get("price", 0)))
+        d["balance"] = int(d.get("balance", 0)) + live_price
         d["stats"]["itemsSold"] = int(d["stats"].get("itemsSold", 0)) + 1
         return d
     if not atomic_update(uid, upd): raise HTTPException(400, "Ошибка продажи")
@@ -711,10 +720,11 @@ async def api_sell_item(request: Request, user=Depends(current_user)):
 @app.post("/api/sell_all")
 async def api_sell_all(request: Request, user=Depends(current_user)):
     uid = str(user["id"])
+    items_dict = get_items_dict()
     def upd(d):
         inv = d.get("inventory", {})
         if not inv: return None
-        total = sum(int(i.get("price", 0)) for i in inv.values())
+        total = sum(int(items_dict.get(i.get("id"), {}).get("price", i.get("price", 0))) for i in inv.values())
         count = len(inv)
         d["inventory"] = {}
         d["balance"] = int(d.get("balance", 0)) + total
@@ -741,7 +751,7 @@ async def api_upgrade(request: Request, user=Depends(current_user)):
     total = 0
     for iuid in input_uids:
         if iuid not in inv: raise HTTPException(400, "Предмет не найден в инвентаре")
-        total += int(inv[iuid]["price"])
+        total += int(items_dict.get(inv[iuid].get("id"), {}).get("price", inv[iuid].get("price", 0)))
     if total <= 0: raise HTTPException(400, "Сумма предметов некорректна")
     if int(target["price"]) <= total: raise HTTPException(400, "Цель должна стоить больше суммы")
     chance = min(MAX_UPGRADE_CHANCE, (total / int(target["price"])) * 100)
@@ -764,7 +774,7 @@ async def api_upgrade(request: Request, user=Depends(current_user)):
         return d
     if not atomic_update(uid, upd): raise HTTPException(400, "Ошибка апгрейда")
     if success:
-        push_drop(user.get("first_name") or "Player", target["name"], target["img"], target["price"], "upgrade", uid)
+        push_drop(user.get("first_name") or "Player", target["id"], target["name"], target["img"], target["price"], "upgrade", uid)
     else:
         apply_referral_earnings(uid, total)
     new_data = get_user_data(uid)
@@ -912,7 +922,6 @@ async def create_invoice(request: Request, user=Depends(current_user)):
         raise HTTPException(500, str(e))
     return {"invoice_link": link, "stars": pack["stars"], "coins": pack["coins"]}
 
-# ============ MEDALS (public view) ============
 @app.get("/api/medals")
 async def api_medals():
     return {"medals": list(get_medals_dict().values())}
@@ -928,7 +937,6 @@ async def api_toggle_medals(request: Request, user=Depends(current_user)):
     atomic_update(uid, upd)
     return {"ok": True, "hidden": hidden}
 
-# ============ REFERRAL ============
 @app.get("/api/referral/info")
 async def api_referral_info(user=Depends(current_user)):
     uid = str(user["id"])
@@ -959,7 +967,7 @@ async def api_referral_create_promo(request: Request, user=Depends(current_user)
     if not FIREBASE_OK: raise HTTPException(503)
     body = await request.json()
     code = str(body.get("code", "")).strip().upper()
-    ptype = body.get("type", "coins")  # coins | case
+    ptype = body.get("type", "coins")
     reward = int(body.get("reward", 0))
     case_id = str(body.get("case_id", ""))
     max_uses = int(body.get("max_uses", 1))
@@ -1006,20 +1014,22 @@ async def api_referral_create_promo(request: Request, user=Depends(current_user)
     })
     return {"ok": True, "code": code, "cost": total_cost}
 
-# ============ WITHDRAW ============
 @app.get("/api/withdraw/options")
 async def api_withdraw_options(user=Depends(current_user)):
     uid = str(user["id"])
     data = get_user_data(uid)
     inv = data.get("inventory", {}) or {}
     items_dict = get_items_dict()
+    wd_ids = get_withdrawable_ids()
     avail = []
     total_val = 0
     for iuid, it in inv.items():
-        if it.get("id") in WITHDRAWABLE_ITEM_IDS:
-            avail.append({"uid": iuid, **it})
-            total_val += int(it.get("price", 0))
-    withdrawable_defs = [it for it in items_dict.values() if it["id"] in WITHDRAWABLE_ITEM_IDS]
+        if it.get("id") in wd_ids:
+            live_it = dict(it)
+            live_it["price"] = items_dict.get(it["id"], {}).get("price", it.get("price", 0))
+            avail.append({"uid": iuid, **live_it})
+            total_val += int(live_it["price"])
+    withdrawable_defs = [it for it in items_dict.values() if it["id"] in wd_ids]
     return {
         "available": avail,
         "withdrawable_items": withdrawable_defs,
@@ -1037,16 +1047,17 @@ async def api_withdraw_exchange(request: Request, user=Depends(current_user)):
     if not source_uid or not isinstance(target_ids, list) or not target_ids:
         raise HTTPException(400, "Выберите предмет и цели")
     items_dict = get_items_dict()
+    wd_ids = get_withdrawable_ids()
     uid = str(user["id"])
     data = get_user_data(uid)
     inv = data.get("inventory", {}) or {}
     if source_uid not in inv: raise HTTPException(400, "Предмет не найден")
     source_item = inv[source_uid]
-    source_price = int(source_item.get("price", 0))
+    source_price = int(items_dict.get(source_item["id"], {}).get("price", source_item.get("price", 0)))
     target_total = 0
     targets = []
     for tid in target_ids:
-        if tid not in WITHDRAWABLE_ITEM_IDS:
+        if tid not in wd_ids:
             raise HTTPException(400, f"Предмет {tid} не подходит для обмена")
         tgt = items_dict.get(tid)
         if not tgt: raise HTTPException(400, f"Неизвестный предмет {tid}")
@@ -1081,15 +1092,19 @@ async def api_withdraw_request(request: Request, user=Depends(current_user)):
     uid = str(user["id"])
     data = get_user_data(uid)
     inv = data.get("inventory", {}) or {}
+    items_dict = get_items_dict()
+    wd_ids = get_withdrawable_ids()
     total = 0
     selected = []
     for iuid in item_uids:
         if iuid not in inv: raise HTTPException(400, "Предмет не найден")
         it = inv[iuid]
-        if it.get("id") not in WITHDRAWABLE_ITEM_IDS:
+        if it.get("id") not in wd_ids:
             raise HTTPException(400, f"Предмет {it.get('name')} нельзя вывести")
-        selected.append(it)
-        total += int(it.get("price", 0))
+        live_it = dict(it)
+        live_it["price"] = items_dict.get(it["id"], {}).get("price", it.get("price", 0))
+        selected.append(live_it)
+        total += int(live_it["price"])
     if total < MIN_WITHDRAW_VALUE:
         raise HTTPException(400, f"Минимум {MIN_WITHDRAW_VALUE} монет (≈2 гарамы)")
 
@@ -1120,51 +1135,32 @@ async def api_withdraw_my(user=Depends(current_user)):
         return {"requests": [r for r in allr.values() if isinstance(r, dict) and r.get("user_uid") == uid]}
     except Exception: return {"requests": []}
 
-# ============ DEPOSIT ============
+# ---> ИЗМЕНЕНИЕ: Пополнение теперь показывает ВСЕ брейнроты, а не инвентарь <---
 @app.get("/api/deposit/options")
 async def api_deposit_options(user=Depends(current_user)):
-    uid = str(user["id"])
-    data = get_user_data(uid)
-    inv = data.get("inventory", {}) or {}
-    min_price = GARAMA_PRICE
-    available = []
-    for iuid, it in inv.items():
-        if int(it.get("price", 0)) >= min_price:
-            available.append({"uid": iuid, **it})
-    return {"available": available, "min_value": min_price}
+    items_dict = get_items_dict()
+    available = [it for it in items_dict.values() if int(it.get("price", 0)) >= GARAMA_PRICE]
+    return {"available": available, "min_value": GARAMA_PRICE}
 
 @app.post("/api/deposit/request")
 async def api_deposit_request(request: Request, user=Depends(current_user)):
     if not FIREBASE_OK: raise HTTPException(503)
     body = await request.json()
-    item_uids = body.get("item_uids", [])
+    item_id = str(body.get("item_id", ""))
     nick = str(body.get("nick", "")).strip()
-    if not item_uids or not nick: raise HTTPException(400, "Выберите предметы и укажите ник")
+    if not item_id or not nick: raise HTTPException(400, "Выберите предмет и укажите ник")
+    items_dict = get_items_dict()
+    if item_id not in items_dict: raise HTTPException(400, "Предмет не найден")
+    item = items_dict[item_id]
+    if int(item["price"]) < GARAMA_PRICE:
+        raise HTTPException(400, f"Предмет дешевле гарамы")
+    
     uid = str(user["id"])
-    data = get_user_data(uid)
-    inv = data.get("inventory", {}) or {}
-    total = 0
-    selected = []
-    for iuid in item_uids:
-        if iuid not in inv: raise HTTPException(400, "Предмет не найден")
-        it = inv[iuid]
-        if int(it.get("price", 0)) < GARAMA_PRICE:
-            raise HTTPException(400, f"Предмет {it.get('name')} дешевле гарамы")
-        selected.append(it)
-        total += int(it.get("price", 0))
-    def upd(d):
-        inv2 = d.get("inventory", {})
-        for iuid in item_uids:
-            if iuid not in inv2: return None
-        for iuid in item_uids: del inv2[iuid]
-        return d
-    if not atomic_update(uid, upd): raise HTTPException(400, "Ошибка")
-
     rid = "dp_" + uuid.uuid4().hex[:10]
     fbdb.reference(f"deposit_requests/{rid}").set({
         "id": rid, "user_uid": uid, "nick": nick,
-        "items": [{"id": i["id"], "name": i["name"], "price": i["price"], "img": i.get("img", "")} for i in selected],
-        "total": total, "status": "pending",
+        "item_id": item_id, "item_name": item["name"], "item_price": item["price"],
+        "status": "pending",
         "created_at": int(time.time() * 1000), "comment": "",
     })
     return {"ok": True, "request_id": rid}
@@ -1178,19 +1174,16 @@ async def api_deposit_my(user=Depends(current_user)):
         return {"requests": [r for r in allr.values() if isinstance(r, dict) and r.get("user_uid") == uid]}
     except Exception: return {"requests": []}
 
-# ============ CHATS ============
 @app.post("/api/chats/find_user")
 async def api_chats_find(request: Request, user=Depends(current_user)):
     body = await request.json()
     q = str(body.get("query", "")).strip().lstrip("@")
     if not q: raise HTTPException(400, "Введите ID или username")
-    # If numeric — telegram id
     if q.isdigit():
         target_uid = q
         ud = get_user_data(target_uid, strict=True)
         if not ud: raise HTTPException(404, "Пользователь не найден")
         return {"uid": target_uid, "username": ud.get("username", ""), "first_name": ud.get("first_name", "")}
-    # Otherwise search all users by username
     if not FIREBASE_OK: raise HTTPException(503)
     try:
         users = fbdb.reference("users").get() or {}
@@ -1272,7 +1265,6 @@ async def api_chat_start(request: Request, user=Depends(current_user)):
         })
     return {"ok": True, "chat_id": cid}
 
-# ============ ADMIN API ============
 @app.get("/api/admin/items")
 async def admin_get_items(user=Depends(require_admin)):
     if not FIREBASE_OK: raise HTTPException(503)
@@ -1328,7 +1320,6 @@ async def admin_delete_item(request: Request, user=Depends(require_admin)):
         fbdb.reference(f"meta/items_extra/{iid}").delete()
     return {"ok": True}
 
-# ============ CASES ADMIN ============
 @app.post("/api/admin/case/save")
 async def admin_case_save(request: Request, user=Depends(require_admin)):
     if not FIREBASE_OK: raise HTTPException(503)
@@ -1363,7 +1354,6 @@ async def admin_case_delete(request: Request, user=Depends(require_admin)):
         fbdb.reference(f"meta/cases/{cid}").delete()
     return {"ok": True}
 
-# ============ SECTIONS ADMIN ============
 @app.post("/api/admin/section/save")
 async def admin_section_save(request: Request, user=Depends(require_admin)):
     if not FIREBASE_OK: raise HTTPException(503)
@@ -1392,7 +1382,7 @@ async def admin_section_delete(request: Request, user=Depends(require_admin)):
         fbdb.reference(f"meta/sections/{sid}").delete()
     return {"ok": True}
 
-# ============ MEDALS ADMIN ============
+# ---> ИЗМЕНЕНИЕ: Добавлено поле img для медалей <---
 @app.post("/api/admin/medal/save")
 async def admin_medal_save(request: Request, user=Depends(require_admin)):
     if not FIREBASE_OK: raise HTTPException(503)
@@ -1405,6 +1395,7 @@ async def admin_medal_save(request: Request, user=Depends(require_admin)):
         "name": str(body.get("name", mid))[:64],
         "description": str(body.get("description", ""))[:512],
         "icon": str(body.get("icon", "🏅"))[:8],
+        "img": str(body.get("img", ""))[:256],
         "color": str(body.get("color", "#fbbf24"))[:16],
     }
     fbdb.reference(f"meta/medals/{mid}").set(medal)
@@ -1447,7 +1438,6 @@ async def admin_medal_remove(request: Request, user=Depends(require_admin)):
     if not atomic_update(target_uid, upd): raise HTTPException(400, "Ошибка")
     return {"ok": True}
 
-# ============ EVENTS ADMIN ============
 @app.post("/api/admin/event")
 async def admin_set_event(request: Request, user=Depends(require_admin)):
     if not FIREBASE_OK: raise HTTPException(503)
@@ -1469,7 +1459,6 @@ async def admin_set_event(request: Request, user=Depends(require_admin)):
     fbdb.reference("meta/event").set(ev)
     return {"ok": True, "event": ev}
 
-# ============ PROMO ADMIN ============
 @app.post("/api/admin/promo")
 async def admin_create_promo(request: Request, user=Depends(require_admin)):
     if not FIREBASE_OK: raise HTTPException(503)
@@ -1511,7 +1500,6 @@ async def admin_delete_promo(request: Request, user=Depends(require_admin)):
     fbdb.reference(f"promos/{code}").delete()
     return {"ok": True}
 
-# ============ GIVE ADMIN ============
 @app.post("/api/admin/give")
 async def admin_give(request: Request, user=Depends(require_admin)):
     if not FIREBASE_OK: raise HTTPException(503)
@@ -1552,7 +1540,6 @@ async def admin_reset_cooldowns(request: Request, user=Depends(require_admin)):
     if not atomic_update(target_id, upd): raise HTTPException(400, "Ошибка")
     return {"ok": True}
 
-# ============ ADMIN RIGHTS ============
 @app.post("/api/admin/grant_admin")
 async def admin_grant_admin(request: Request, user=Depends(require_admin)):
     if not FIREBASE_OK: raise HTTPException(503)
@@ -1573,7 +1560,6 @@ async def admin_revoke_admin(request: Request, user=Depends(require_admin)):
     fbdb.reference(f"meta/admins/{target}").delete()
     return {"ok": True}
 
-# ============ POLL ADMIN ============
 @app.post("/api/admin/poll")
 async def admin_create_poll(request: Request, user=Depends(require_admin)):
     if not FIREBASE_OK: raise HTTPException(503)
@@ -1606,7 +1592,6 @@ async def admin_end_poll(user=Depends(require_admin)):
     fbdb.reference("meta/poll").delete()
     return {"ok": True}
 
-# ============ ADMIN WITHDRAW/DEPOSIT ============
 @app.get("/api/admin/withdrawals")
 async def admin_withdrawals(user=Depends(require_admin)):
     if not FIREBASE_OK: return {"requests": []}
@@ -1660,6 +1645,7 @@ async def admin_deposits(user=Depends(require_admin)):
         return {"requests": reqs}
     except Exception: return {"requests": []}
 
+# ---> ИЗМЕНЕНИЕ: Выдача предмета при одобрении пополнения <---
 @app.post("/api/admin/deposit/update")
 async def admin_deposit_update(request: Request, user=Depends(require_admin)):
     if not FIREBASE_OK: raise HTTPException(503)
@@ -1668,10 +1654,37 @@ async def admin_deposit_update(request: Request, user=Depends(require_admin)):
     status = str(body.get("status", ""))
     comment = str(body.get("comment", ""))[:256]
     if not rid or status not in ("pending", "approved", "rejected"): raise HTTPException(400, "bad args")
-    fbdb.reference(f"deposit_requests/{rid}").update({"status": status, "comment": comment})
+    
+    req_ref = fbdb.reference(f"deposit_requests/{rid}")
+    req = req_ref.get()
+    if not req: raise HTTPException(404, "Заявка не найдена")
+    
+    if status == "approved" and req.get("status") != "approved":
+        target_uid = req["user_uid"]
+        item_id = req["item_id"]
+        items_dict = get_items_dict()
+        if item_id not in items_dict: raise HTTPException(400, "Предмет не найден на сайте")
+        
+        def upd(d):
+            new_item = make_inv_item(items_dict[item_id])
+            d.setdefault("inventory", {})[new_item["uid"]] = new_item
+            return d
+        if not atomic_update(target_uid, upd):
+            raise HTTPException(400, "Ошибка выдачи предмета игроку")
+
+    req_ref.update({"status": status, "comment": comment})
     return {"ok": True}
 
-# ============ ADMIN STATS ============
+# ---> ИЗМЕНЕНИЕ: Сохранение динамического списка вывода <---
+@app.post("/api/admin/withdrawable/save")
+async def admin_withdrawable_save(request: Request, user=Depends(require_admin)):
+    if not FIREBASE_OK: raise HTTPException(503)
+    body = await request.json()
+    ids = body.get("ids", [])
+    if not isinstance(ids, list): raise HTTPException(400, "ids должен быть списком")
+    fbdb.reference("meta/withdrawable_items").set({k: True for k in ids})
+    return {"ok": True}
+
 @app.get("/api/admin/stats")
 async def admin_stats(user=Depends(require_admin)):
     if not FIREBASE_OK:
