@@ -44,8 +44,11 @@
             min-height: 100vh;
         }
 
+        /* ГЛОБАЛЬНОЕ ОГРАНИЧЕНИЕ КАРТИНОК */
         img {
             -webkit-user-drag: none;
+            max-width: 100%;
+            max-height: 100%;
         }
 
         button {
@@ -329,6 +332,7 @@
             max-width: 800px;
             margin: 0 auto;
             width: 100%;
+            overflow: hidden; /* Фикс вылезания картинок */
         }
 
         .section.active {
@@ -1327,6 +1331,7 @@
             border: 1px solid var(--border);
             border-radius: 20px;
             padding: 20px 15px;
+            overflow: hidden;
         }
 
         .upg-layout {
@@ -1352,6 +1357,7 @@
             cursor: pointer;
             transition: 0.2s;
             text-align: center;
+            overflow: hidden;
         }
 
         .upg-left:hover,
@@ -1364,6 +1370,8 @@
             font-size: 15px;
             font-weight: 900;
             margin-bottom: 6px;
+            position: relative;
+            z-index: 2;
         }
 
         .upg-left .desc,
@@ -1371,6 +1379,8 @@
             font-size: 11px;
             color: var(--text-muted);
             line-height: 1.4;
+            position: relative;
+            z-index: 2;
         }
 
         .upg-center {
@@ -1378,6 +1388,7 @@
             height: 280px;
             position: relative;
             flex-shrink: 0;
+            z-index: 10;
         }
 
         .upg-wheel-disc {
@@ -1662,6 +1673,7 @@
             margin-bottom: 6px;
             cursor: pointer;
             transition: 0.2s;
+            overflow: hidden;
         }
 
         .upg-inv-item:hover {
@@ -1677,17 +1689,23 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            flex: 1;
+            min-width: 0;
         }
 
         .upg-inv-item img {
             width: 40px;
             height: 40px;
             object-fit: contain;
+            flex-shrink: 0;
         }
 
         .upg-inv-item .name {
             font-size: 13px;
             font-weight: 800;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .upg-inv-item .price {
@@ -1702,6 +1720,7 @@
             display: flex;
             align-items: center;
             gap: 6px;
+            flex-shrink: 0;
         }
 
         .upg-empty {
@@ -1882,42 +1901,45 @@
         }
 
         .profile-name-text {
-            font-size: 26px;
+            font-size: 24px;
             font-weight: 900;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            flex-shrink: 1;
             max-width: 100%;
+            flex-shrink: 1;
         }
 
         .profile-medals-inline {
             display: flex;
-            gap: 4px;
+            gap: 6px;
             align-items: center;
             flex-shrink: 0;
+            overflow-x: auto;
+            max-width: 150px;
+            padding-bottom: 2px;
         }
 
+        .profile-medals-inline::-webkit-scrollbar { display: none; }
+
         .medal-badge {
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             background: #0d0f14;
             border: 2px solid var(--border);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            font-size: 20px;
             cursor: pointer;
             position: relative;
+            flex-shrink: 0;
             transition: 0.2s;
-            overflow: visible;
         }
 
-        .medal-badge:hover {
-            transform: scale(1.1);
-            border-color: var(--accent-gold);
-            z-index: 10;
+        .medal-badge:active {
+            transform: scale(0.9);
         }
 
         .medal-badge img {
@@ -1925,29 +1947,6 @@
             height: 100%;
             object-fit: cover;
             border-radius: 50%;
-        }
-
-        .medal-badge .tooltip {
-            position: absolute;
-            bottom: 120%;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #0d0f14;
-            border: 1px solid var(--accent-gold);
-            border-radius: 8px;
-            padding: 8px 12px;
-            font-size: 12px;
-            color: var(--text-main);
-            white-space: nowrap;
-            z-index: 100;
-            display: none;
-            pointer-events: none;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.8);
-            text-align: center;
-        }
-
-        .medal-badge:hover .tooltip {
-            display: block;
         }
 
         /* INVENTORY & WITHDRAW */
@@ -1966,6 +1965,7 @@
             cursor: pointer;
             position: relative;
             transition: 0.2s;
+            overflow: hidden;
         }
 
         .inv-item:hover {
@@ -1977,6 +1977,7 @@
             width: 50px;
             height: 50px;
             object-fit: contain;
+            margin: 0 auto;
         }
 
         .inv-item .emoji-fallback {
@@ -2098,6 +2099,7 @@
             overflow-y: auto;
             text-align: center;
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+            overflow-x: hidden;
         }
 
         .modal-box::-webkit-scrollbar { width: 5px; }
@@ -2136,6 +2138,7 @@
             margin: 0 auto 15px;
             filter: drop-shadow(0 0 30px rgba(251, 191, 36, 0.8));
             animation: winPulse 1.2s ease-in-out infinite alternate;
+            object-fit: contain;
         }
 
         .win-item-emoji {
@@ -2694,6 +2697,7 @@
             cursor: pointer;
             transition: 0.2s;
             position: relative;
+            overflow: hidden;
         }
 
         .wd-item-card:hover {
@@ -2709,6 +2713,7 @@
             width: 50px;
             height: 50px;
             object-fit: contain;
+            margin: 0 auto;
         }
 
         .wd-item-card .name {
@@ -2859,6 +2864,85 @@
             font-weight: 800;
             cursor: pointer;
             font-size: 14px;
+        }
+
+        /* PROFILE BANNER FIX */
+        .profile-banner {
+            background: linear-gradient(135deg, #1e2235, #11131c);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 25px 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .profile-banner::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 200px;
+            background: var(--accent-blue);
+            filter: blur(80px);
+            opacity: 0.3;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .profile-avatar-big {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 12px;
+            background: var(--accent-blue);
+            border: 4px solid var(--accent-gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: bold;
+            box-shadow: var(--glow-gold);
+            position: relative;
+            z-index: 2;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .profile-avatar-big img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-username {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 700;
+            position: relative;
+            z-index: 2;
+            margin-top: 4px;
+        }
+
+        .profile-bal-big {
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--accent-gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 8px;
+            text-shadow: 0 0 20px rgba(251, 191, 36, 0.4);
+            position: relative;
+            z-index: 2;
         }
 
         /* PC LAYOUT */
@@ -4097,7 +4181,7 @@
         tg.expand();
         if (tgUser) {
             const name = tgUser.first_name || 'Игрок';
-            const av = tgUser.photo_url ? `<img src="${tgUser.photo_url}">` : escapeHtml(name.charAt(0));
+            const av = tgUser.photo_url ? `<img src="${tgUser.photo_url}">` : window.escapeHtml(name.charAt(0));
             ['h-name', 's-name', 'p-name', 'pc-name'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = name; });
             ['h-avatar', 's-avatar', 'p-avatar', 'pc-avatar'].forEach(id => { const el = document.getElementById(id); if (el) el.innerHTML = av; });
             const pu = document.getElementById('p-username');
@@ -4150,7 +4234,7 @@
     let hapticEnabled = localStorage.getItem('bf_haptic') !== '0';
 
     // ==========================================
-    // ГЛОБАЛЬНЫЕ ФУНКЦИИ (чтобы не было ReferenceError)
+    // ГЛОБАЛЬНЫЕ ФУНКЦИИ
     // ==========================================
 
     window.escapeHtml = function(str) {
@@ -4925,13 +5009,24 @@
         if (document.getElementById('section-case-opening').classList.contains('active') && !isOpening) window.updateOpenBtnState();
     };
 
+    window.showMedalInfo = function(medalId) {
+        const m = state.my_medals.find(x => x.id === medalId) || STATE.medals.find(x => x.id === medalId);
+        if (!m) return;
+        const text = `<b>${window.escapeHtml(m.name)}</b>\n\n${window.escapeHtml(m.description || 'Описание отсутствует')}`;
+        if (tg && tg.showAlert) {
+            tg.showAlert(text);
+        } else {
+            alert(text.replace(/<[^>]*>/g, ''));
+        }
+    };
+
     window.renderProfileMedals = function() {
         const box = document.getElementById('p-medals');
         if (!box) return;
         if (state.medals_hidden || !state.my_medals || !state.my_medals.length) { box.innerHTML = ''; return; }
         box.innerHTML = state.my_medals.map(m => {
             const content = m.img ? `<img src="${window.escapeHtml(m.img)}" onerror="this.style.display='none';this.nextElementSibling.style.display='inline';"><span style="display:none;">${window.escapeHtml(m.icon||'🏅')}</span>` : window.escapeHtml(m.icon || '🏅');
-            return `<div class="medal-badge" style="border-color:${window.escapeHtml(m.color||'#fbbf24')};">${content}<div class="tooltip"><b>${window.escapeHtml(m.name)}</b><br>${window.escapeHtml(m.description||'')}</div></div>`;
+            return `<div class="medal-badge" style="border-color:${window.escapeHtml(m.color||'#fbbf24')};" onclick="window.showMedalInfo('${m.id}')">${content}</div>`;
         }).join('');
     };
 
@@ -5125,8 +5220,8 @@
             const it = state.inventory[uid];
             if (!it) return '';
             const r = RARITIES[it.rarity] || RARITIES.common;
-            return `<div class="mini-item" title="${window.escapeHtml(it.name)}" onclick="event.stopPropagation();BF.removeUpg('${uid}')" style="border-bottom:2px solid ${r.color}; width:50px; height:50px;">
-                <img src="${window.escapeHtml(it.img || '')}" onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
+            return `<div class="mini-item" title="${window.escapeHtml(it.name)}" onclick="event.stopPropagation();BF.removeUpg('${uid}')" style="border-bottom:2px solid ${r.color}; width:50px; height:50px; position:relative;">
+                <img src="${window.escapeHtml(it.img || '')}" style="width:100%; height:100%; object-fit:contain;" onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
                 <span class="emoji-fallback" style="display:none;">${window.escapeHtml(it.emoji || '🧠')}</span></div>`;
         }).join('');
     };
@@ -6609,10 +6704,11 @@
             document.getElementById('op-balance').textContent = window.formatNum(data.balance||0);
             document.getElementById('op-cases').textContent = window.formatNum(data.stats?.casesOpened||0);
             document.getElementById('op-earned').textContent = window.formatNum(data.stats?.totalEarned||0);
+            
             if(data.medals && data.medals.length && !data.medals_hidden){
                 document.getElementById('op-medals').innerHTML = data.medals.map(m=>{
                     const content = m.img ? `<img src="${window.escapeHtml(m.img)}">` : window.escapeHtml(m.icon||'🏅');
-                    return `<div class="medal-badge" style="border-color:${window.escapeHtml(m.color||'#fbbf24')};">${content}<div class="tooltip"><b>${window.escapeHtml(m.name)}</b><br>${window.escapeHtml(m.description||'')}</div></div>`;
+                    return `<div class="medal-badge" style="border-color:${window.escapeHtml(m.color||'#fbbf24')};" onclick="window.showMedalInfo('${m.id}')">${content}</div>`;
                 }).join('');
             }
             const inv = Object.values(data.inventory||{});
