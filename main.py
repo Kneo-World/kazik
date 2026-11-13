@@ -1,4 +1,4 @@
-import os, json, hmac, hashlib, logging, random, time, re, uuid
+import os, json, hmac, hashlib, logging, random, time, re, uuid, math
 from contextlib import asynccontextmanager
 from urllib.parse import parse_qsl
 from pathlib import Path
@@ -65,7 +65,7 @@ DEFAULT_ITEMS = [
     {"id":"hotspot",     "name":"Pot Hotspot",          "price":14,    "rarity":"uncommon",  "img":"assets/brainrots/Pot_Hotspot.webp", "emoji":"🍲"},
     {"id":"strawberry",  "name":"Strawberry Elephant",  "price":15067, "rarity":"legendary", "img":"assets/brainrots/Strawberry_Elephant.webp", "emoji":"🍓"},
     {"id":"skibidi",     "name":"Skibidi Toilet",       "price":13229, "rarity":"legendary", "img":"assets/brainrots/skibidi_toilet.png", "emoji":"🚽"},
-    {"id":"pegas",       "name":"Pegasus",              "price":5000,  "rarity":"legendary", "img":"assets/brainrots/pegas.webp", "emoji":"🦄"}, # Добавлен Пегас
+    {"id":"pegas",       "name":"Pegasus",              "price":5000,  "rarity":"legendary", "img":"assets/brainrots/pegas.webp", "emoji":"🦄"},
 ]
 
 DEFAULT_SECTIONS = [
@@ -129,9 +129,8 @@ MAX_EVENT_MINUTES = 60 * 24 * 7
 MAX_PROMO_REWARD = 1_000_000
 MAX_PROMO_USES = 1_000_000
 
-# ---> ИЗМЕНЕНИЕ: Обновленный список доступных к выводу <---
 DEFAULT_WITHDRAWABLE = {"garama", "burguro", "pegas", "cerberus", "dragon", "skibidi", "meowl", "strawberry"}
-MIN_WITHDRAW_VALUE = 128  # 2 garamas = 2*64
+MIN_WITHDRAW_VALUE = 128
 GARAMA_PRICE = 64
 
 REFERRAL_LEVELS = [
@@ -314,6 +313,7 @@ def _default_user() -> dict:
         "themes": {"dark": True}, "theme": "dark", "referrals": 0,
         "created_promos": {},
         "username": "", "first_name": "", "photo_url": "",
+        "rocket_session": {}
     }
 
 def _normalize(data: dict) -> dict:
@@ -739,6 +739,29 @@ async def api_sell_all(request: Request, user=Depends(current_user)):
     data = get_user_data(uid)
     return {"ok": True, "balance": data["balance"], "inventory": data["inventory"]}
 
+@app.post("/api/shop/buy")
+async def api_shop_buy(request: Request, user=Depends(current_user)):
+    body = await request.json()
+    item_id = str(body.get("item_id", ""))
+    items_dict = get_items_dict()
+    item = items_dict.get(item_id)
+    if not item: raise HTTPException(404, "Предмет не найден")
+    
+    cost = int(item["price"] * 1.5)
+    uid = str(user["id"])
+    
+    def upd(d):
+        if int(d.get("balance", 0)) < cost: return None
+        d["balance"] = int(d.get("balance", 0)) - cost
+        new_item = make_inv_item(item)
+        new_item["bought"] = True
+        d.setdefault("inventory", {})[new_item["uid"]] = new_item
+        return d
+        
+    if not atomic_update(uid, upd): raise HTTPException(400, "Недостаточно монет")
+    data = get_user_data(uid)
+    return {"ok": True, "balance": data["balance"], "inventory": data["inventory"]}
+
 @app.post("/api/upgrade")
 async def api_upgrade(request: Request, user=Depends(current_user)):
     body = await request.json()
@@ -786,30 +809,90 @@ async def api_upgrade(request: Request, user=Depends(current_user)):
     return {"ok": True, "success": success, "chance": chance, "target": target,
             "balance": new_data["balance"], "inventory": new_data["inventory"]}
 
-@app.post("/api/coinflip")
-async def api_coinflip(request: Request, user=Depends(current_user)):
+@app.post("/api/rocket/start")
+async def api_rocket_start(request: Request, user=Depends(current_user)):
     body = await request.json()
-    bet = int(body.get("bet", 0))
-    choice = body.get("choice", "heads")
-    if choice not in ("heads", "tails"): raise HTTPException(400, "Неверный выбор")
-    if bet <= 0: raise HTTPException(400, "Ставка должна быть больше 0")
-    if bet > MAX_COINFLIP_BET: raise HTTPException(400, "Слишком большая ставка")
+    bet_coins = int(body.get("bet_coins", 0))
+    bet_items = body.get("bet_items", [])
+    
+    if bet_coins < 10 and not bet_items:
+        raise HTTPException(400, "Минимальная ставка 10 монет или предметы")
+        
     uid = str(user["id"])
     data = get_user_data(uid)
-    if int(data.get("balance", 0)) < bet: raise HTTPException(400, "Недостаточно монет")
-    won = random.random() < 0.5
-    coin_result = choice if won else ("tails" if choice == "heads" else "heads")
+    inv = data.get("inventory", {})
+    items_dict = get_items_dict()
+    
+    total_val = bet_coins
+    for iuid in bet_items:
+        if iuid not in inv: raise HTTPException(400, "Предмет не найден")
+        total_val += int(items_dict.get(inv[iuid]["id"], {}).get("price", 0))
+        
+    if int(data.get("balance", 0)) < bet_coins:
+        raise HTTPException(400, "Недостаточно монет")
+        
+    crash_at = 1.0 + random.uniform(0.1, 5.0)
+    
     def upd(d):
-        bal = int(d.get("balance", 0))
-        if bal < bet: return None
-        d["balance"] = bal - bet
-        if won: d["balance"] += bet * 2
-        else: d["stats"]["coinsLost"] = int(d["stats"].get("coinsLost", 0)) + bet
+        if int(d.get("balance", 0)) < bet_coins: return None
+        d["balance"] = int(d.get("balance", 0)) - bet_coins
+        inv2 = d.setdefault("inventory", {})
+        for iuid in bet_items:
+            if iuid not in inv2: return None
+        for iuid in bet_items: del inv2[iuid]
+        
+        d["rocket_session"] = {
+            "start_time": int(time.time() * 1000),
+            "bet_coins": bet_coins,
+            "bet_items": bet_items,
+            "crash_at": crash_at,
+            "total_val": total_val
+        }
         return d
-    if not atomic_update(uid, upd): raise HTTPException(400, "Ошибка ставки")
-    if not won: apply_referral_earnings(uid, bet)
+        
+    if not atomic_update(uid, upd): raise HTTPException(400, "Ошибка старта")
     new_data = get_user_data(uid)
-    return {"ok": True, "won": won, "result": coin_result, "balance": new_data["balance"]}
+    return {"ok": True, "balance": new_data["balance"], "inventory": new_data["inventory"], "start_time": new_data["rocket_session"]["start_time"]}
+
+@app.post("/api/rocket/cashout")
+async def api_rocket_cashout(request: Request, user=Depends(current_user)):
+    body = await request.json()
+    client_mult = float(body.get("multiplier", 1.0))
+    
+    uid = str(user["id"])
+    data = get_user_data(uid)
+    sess = data.get("rocket_session")
+    if not sess: raise HTTPException(400, "Нет активной игры")
+    
+    now = int(time.time() * 1000)
+    elapsed = (now - sess["start_time"]) / 1000.0
+    server_mult = 1.0 + elapsed * 0.1
+    
+    crash_at = sess["crash_at"]
+    
+    if client_mult > server_mult + 0.3:
+        raise HTTPException(400, "Неверный множитель")
+        
+    if server_mult >= crash_at:
+        def upd(d):
+            d["rocket_session"] = {}
+            return d
+        atomic_update(uid, upd)
+        raise HTTPException(400, "Ракета упала! Вы проиграли.")
+        
+    total_val = sess["total_val"]
+    win_amount = int(total_val * server_mult)
+    
+    def upd(d):
+        d["rocket_session"] = {}
+        inv = d.setdefault("inventory", {})
+        d["balance"] = int(d.get("balance", 0)) + win_amount
+        d["stats"]["totalEarned"] = int(d["stats"].get("totalEarned", 0)) + win_amount
+        return d
+        
+    if not atomic_update(uid, upd): raise HTTPException(400, "Ошибка")
+    new_data = get_user_data(uid)
+    return {"ok": True, "multiplier": server_mult, "balance": new_data["balance"], "inventory": new_data["inventory"]}
 
 @app.post("/api/claim_promo")
 async def api_claim_promo(request: Request, user=Depends(current_user)):
@@ -1030,7 +1113,7 @@ async def api_withdraw_options(user=Depends(current_user)):
     avail = []
     total_val = 0
     for iuid, it in inv.items():
-        if it.get("id") in wd_ids:
+        if it.get("id") in wd_ids and not it.get("bought"):
             live_it = dict(it)
             live_it["price"] = items_dict.get(it["id"], {}).get("price", it.get("price", 0))
             avail.append({"uid": iuid, **live_it})
@@ -1044,7 +1127,6 @@ async def api_withdraw_options(user=Depends(current_user)):
         "garama_price": GARAMA_PRICE,
     }
 
-# ---> ИЗМЕНЕНИЕ: Поддержка нескольких исходников для обмена <---
 @app.post("/api/withdraw/exchange")
 async def api_withdraw_exchange(request: Request, user=Depends(current_user)):
     if not FIREBASE_OK: raise HTTPException(503)
@@ -1112,7 +1194,7 @@ async def api_withdraw_request(request: Request, user=Depends(current_user)):
     for iuid in item_uids:
         if iuid not in inv: raise HTTPException(400, "Предмет не найден")
         it = inv[iuid]
-        if it.get("id") not in wd_ids:
+        if it.get("id") not in wd_ids or it.get("bought"):
             raise HTTPException(400, f"Предмет {it.get('name')} нельзя вывести")
         live_it = dict(it)
         live_it["price"] = items_dict.get(it["id"], {}).get("price", it.get("price", 0))
@@ -1147,6 +1229,29 @@ async def api_withdraw_my(user=Depends(current_user)):
         allr = fbdb.reference("withdraw_requests").get() or {}
         return {"requests": [r for r in allr.values() if isinstance(r, dict) and r.get("user_uid") == uid]}
     except Exception: return {"requests": []}
+
+@app.post("/api/withdraw/cancel")
+async def api_withdraw_cancel_user(request: Request, user=Depends(current_user)):
+    body = await request.json()
+    rid = str(body.get("id", ""))
+    uid = str(user["id"])
+    req_ref = fbdb.reference(f"withdraw_requests/{rid}")
+    req = req_ref.get()
+    if not req or req.get("user_uid") != uid: raise HTTPException(403, "Нет доступа")
+    if req.get("status") not in ("pending", "scheduled"): raise HTTPException(400, "Нельзя отменить")
+    
+    req_ref.update({"status": "cancelled"})
+    def upd(d):
+        inv = d.setdefault("inventory", {})
+        items_dict = get_items_dict()
+        for it in req.get("items", []):
+            orig_item = items_dict.get(it["id"])
+            if orig_item:
+                new_item = make_inv_item(orig_item)
+                inv[new_item["uid"]] = new_item
+        return d
+    atomic_update(uid, upd)
+    return {"ok": True}
 
 @app.get("/api/deposit/options")
 async def api_deposit_options(user=Depends(current_user)):
@@ -1185,6 +1290,18 @@ async def api_deposit_my(user=Depends(current_user)):
         allr = fbdb.reference("deposit_requests").get() or {}
         return {"requests": [r for r in allr.values() if isinstance(r, dict) and r.get("user_uid") == uid]}
     except Exception: return {"requests": []}
+
+@app.post("/api/deposit/cancel")
+async def api_deposit_cancel_user(request: Request, user=Depends(current_user)):
+    body = await request.json()
+    rid = str(body.get("id", ""))
+    uid = str(user["id"])
+    req_ref = fbdb.reference(f"deposit_requests/{rid}")
+    req = req_ref.get()
+    if not req or req.get("user_uid") != uid: raise HTTPException(403, "Нет доступа")
+    if req.get("status") != "pending": raise HTTPException(400, "Нельзя отменить")
+    req_ref.update({"status": "cancelled"})
+    return {"ok": True}
 
 @app.post("/api/chats/find_user")
 async def api_chats_find(request: Request, user=Depends(current_user)):
@@ -1656,7 +1773,6 @@ async def admin_deposits(user=Depends(require_admin)):
         return {"requests": reqs}
     except Exception: return {"requests": []}
 
-# ---> ИЗМЕНЕНИЕ: Добавлено планирование пополнений <---
 @app.post("/api/admin/deposit/update")
 async def admin_deposit_update(request: Request, user=Depends(require_admin)):
     if not FIREBASE_OK: raise HTTPException(503)
@@ -1693,7 +1809,6 @@ async def admin_deposit_update(request: Request, user=Depends(require_admin)):
     req_ref.update(update_data)
     return {"ok": True}
 
-# ---> ИЗМЕНЕНИЕ: Сохранение списков для вывода и пополнения <---
 @app.post("/api/admin/lists/save")
 async def admin_lists_save(request: Request, user=Depends(require_admin)):
     if not FIREBASE_OK: raise HTTPException(503)
