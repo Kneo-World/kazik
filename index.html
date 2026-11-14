@@ -59,7 +59,7 @@
             font-family: inherit;
         }
 
-        /* TOP BAR */
+        /* TOP BAR (MOBILE) */
         .top-bar {
             display: flex;
             align-items: center;
@@ -332,7 +332,7 @@
             max-width: 800px;
             margin: 0 auto;
             width: 100%;
-            overflow: hidden; /* Фикс вылезания картинок */
+            overflow: hidden; 
         }
 
         .section.active {
@@ -1731,7 +1731,7 @@
             line-height: 1.5;
         }
 
-        /* ROCKET GAME */
+        /* ROCKET GAME (ONLINE) */
         .rocket-container {
             background: var(--bg-card);
             border: 1px solid var(--border);
@@ -1740,20 +1740,23 @@
             text-align: center;
             position: relative;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
 
         .rocket-canvas-wrap {
             width: 100%;
-            height: 300px;
+            height: 250px;
             background: #0d0f14;
             border-radius: 15px;
-            margin-bottom: 20px;
             position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
             border: 1px solid var(--border);
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.8);
         }
 
         .rocket-mult {
@@ -1762,12 +1765,24 @@
             color: var(--accent-green);
             z-index: 2;
             text-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
-            transition: color 0.3s;
+            transition: color 0.3s, transform 0.3s;
         }
 
         .rocket-mult.crashed {
             color: var(--accent-red);
             text-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+            transform: scale(1.2);
+        }
+
+        .rocket-mult.waiting {
+            color: var(--text-muted);
+            font-size: 30px;
+            animation: pulse 1s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { opacity: 0.5; }
+            to { opacity: 1; }
         }
 
         .rocket-img {
@@ -1777,18 +1792,22 @@
             left: 20px;
             transition: transform 0.1s linear;
             z-index: 1;
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.5));
         }
 
         .rocket-controls {
             display: flex;
             flex-direction: column;
             gap: 12px;
+            background: var(--bg-input);
+            padding: 15px;
+            border-radius: 15px;
+            border: 1px solid var(--border);
         }
 
         .rocket-bet-type {
             display: flex;
             gap: 8px;
-            margin-bottom: 8px;
         }
 
         .rocket-bet-type button {
@@ -1796,7 +1815,7 @@
             padding: 10px;
             border-radius: 10px;
             border: 1px solid var(--border);
-            background: var(--bg-input);
+            background: var(--bg-card);
             color: var(--text-muted);
             font-weight: 800;
             cursor: pointer;
@@ -1816,7 +1835,7 @@
 
         .rocket-input-row input {
             flex: 1;
-            background: var(--bg-input);
+            background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: 10px;
             padding: 12px;
@@ -1828,7 +1847,7 @@
         }
 
         .rocket-input-row button {
-            padding: 0 20px;
+            padding: 0 15px;
             border-radius: 10px;
             border: none;
             font-weight: 900;
@@ -1884,6 +1903,40 @@
             box-shadow: none;
             cursor: not-allowed;
         }
+
+        .rocket-history {
+            margin-top: 15px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 10px;
+            height: 200px;
+            overflow-y: auto;
+            text-align: left;
+        }
+
+        .rocket-history-title {
+            font-size: 12px;
+            font-weight: 900;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .rocket-history-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 13px;
+            animation: fadeIn 0.3s;
+        }
+
+        .rocket-history-item.win { color: var(--accent-green); }
+        .rocket-history-item.lose { color: var(--accent-red); }
 
         /* PROFILE MEDALS REDESIGN */
         .profile-name-row {
@@ -2945,194 +2998,92 @@
             z-index: 2;
         }
 
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stat-box__val {
+            font-size: 22px;
+            font-weight: 900;
+            color: var(--text-main);
+        }
+
+        .stat-box__lbl {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-top: 6px;
+        }
+
         /* PC LAYOUT */
-        .pc-sidebar {
+        .pc-top-bar {
             display: none;
         }
 
         @media (min-width: 1024px) {
             body {
-                padding-left: 300px;
-                padding-right: 320px;
+                padding-top: 70px; /* Space for top navbar */
             }
 
             .top-bar { display: none; }
             .sidebar { display: none; }
             .sidebar-overlay { display: none; }
 
-            .pc-sidebar {
+            .pc-top-bar {
                 display: flex;
                 position: fixed;
                 top: 0;
-                bottom: 0;
-                z-index: 100;
+                left: 0;
+                right: 0;
+                height: 70px;
                 background: rgba(10, 11, 16, 0.92);
                 backdrop-filter: blur(15px);
-                border: 1px solid var(--border);
-                padding: 20px;
-                flex-direction: column;
-                gap: 12px;
-                overflow-y: auto;
-            }
-
-            .pc-sidebar.pc-left {
-                left: 0;
-                width: 300px;
-                border-left: none;
-                border-top: none;
-                border-bottom: none;
-                border-radius: 0;
-            }
-
-            .pc-sidebar.pc-right {
-                right: 0;
-                width: 320px;
-                border-right: none;
-                border-top: none;
-                border-bottom: none;
-                border-radius: 0;
-            }
-
-            .pc-sidebar .pc-title {
-                font-size: 13px;
-                font-weight: 900;
-                color: var(--text-muted);
-                text-transform: uppercase;
-                letter-spacing: 1.5px;
-                display: flex;
+                border-bottom: 1px solid var(--border);
+                z-index: 100;
                 align-items: center;
-                gap: 8px;
-                margin-bottom: 4px;
+                padding: 0 30px;
+                justify-content: space-between;
             }
 
-            .pc-live-feed {
-                display: flex;
-                flex-direction: column;
-                gap: 8px;
-                overflow-y: auto;
-                flex: 1;
-                padding-right: 4px;
-            }
-
-            .pc-live-feed .live-drop-item {
-                width: 100%;
-                display: flex;
-                flex-direction: row;
-                align-items: center;
-                gap: 10px;
-                padding: 8px 10px;
-                height: auto;
-                text-align: left;
-                border-radius: 12px;
-            }
-
-            .pc-live-feed .live-drop-item img {
-                width: 40px;
-                height: 40px;
-                margin: 0;
-                flex-shrink: 0;
-            }
-
-            .pc-live-feed .live-drop-item .emoji-fallback {
-                font-size: 30px;
-                line-height: 40px;
-                flex-shrink: 0;
-            }
-
-            .pc-live-feed .live-drop-item .ld-name {
-                font-size: 13px;
-                text-align: left;
-                margin: 0;
-                flex: 1;
-                color: var(--text-main);
-                font-weight: 800;
-            }
-
-            .pc-live-feed .live-drop-item .ld-price {
-                font-size: 12px;
-                margin: 0;
-                flex-shrink: 0;
-            }
-
-            .pc-live-feed .live-drop-item .ld-overlay {
-                display: none;
-            }
-
-            .pc-profile-widget {
-                display: flex;
-                align-items: center;
-                gap: 14px;
-                padding: 14px;
-                background: rgba(255, 255, 255, 0.04);
-                border: 1px solid var(--border);
-                border-radius: 16px;
-                cursor: pointer;
-                transition: 0.2s;
-                margin-bottom: 4px;
-            }
-
-            .pc-profile-widget:hover {
-                border-color: var(--accent-gold);
-                background: rgba(251, 191, 36, 0.05);
-            }
-
-            .pc-profile-widget .pc-avatar {
-                width: 52px;
-                height: 52px;
-                border-radius: 50%;
-                background: var(--accent-blue);
-                border: 3px solid var(--accent-gold);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-weight: 900;
-                overflow: hidden;
-                flex-shrink: 0;
+            .pc-top-bar .pc-logo {
                 font-size: 20px;
-                box-shadow: var(--glow-gold);
-            }
-
-            .pc-profile-widget .pc-avatar img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-            }
-
-            .pc-profile-widget .pc-info {
-                flex: 1;
-                overflow: hidden;
-            }
-
-            .pc-profile-widget .pc-name {
-                font-size: 16px;
-                font-weight: 900;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-
-            .pc-profile-widget .pc-bal {
-                font-size: 17px;
                 font-weight: 900;
                 color: var(--accent-gold);
                 display: flex;
                 align-items: center;
-                gap: 5px;
-                margin-top: 3px;
+                gap: 10px;
+                text-transform: uppercase;
             }
 
-            .pc-nav {
+            .pc-nav-horizontal {
                 display: flex;
-                flex-direction: column;
-                gap: 4px;
-                margin-top: 10px;
+                gap: 15px;
+                align-items: center;
+                flex: 1;
+                justify-content: center;
             }
 
             .pc-nav-item {
                 display: flex;
                 align-items: center;
-                gap: 14px;
-                padding: 12px 16px;
+                gap: 8px;
+                padding: 10px 16px;
                 border-radius: 12px;
                 color: var(--text-muted);
                 font-size: 14px;
@@ -3143,9 +3094,7 @@
             }
 
             .pc-nav-item i {
-                font-size: 17px;
-                width: 24px;
-                text-align: center;
+                font-size: 16px;
             }
 
             .pc-nav-item:hover {
@@ -3156,7 +3105,8 @@
             .pc-nav-item.active {
                 background: linear-gradient(90deg, rgba(59, 130, 246, 0.15), transparent);
                 color: var(--text-main);
-                border-left: 4px solid var(--accent-blue);
+                border-bottom: 3px solid var(--accent-blue);
+                border-radius: 12px 12px 0 0;
             }
 
             .pc-nav-item.admin {
@@ -3166,8 +3116,67 @@
             }
 
             .pc-nav-item.admin.active {
-                background: linear-gradient(90deg, rgba(251, 191, 36, 0.15), transparent);
-                border-left-color: var(--accent-gold);
+                border-bottom: 3px solid var(--accent-gold);
+            }
+
+            .pc-profile-widget {
+                display: flex;
+                align-items: center;
+                gap: 14px;
+                padding: 8px 15px;
+                background: rgba(255, 255, 255, 0.04);
+                border: 1px solid var(--border);
+                border-radius: 30px;
+                cursor: pointer;
+                transition: 0.2s;
+            }
+
+            .pc-profile-widget:hover {
+                border-color: var(--accent-gold);
+                background: rgba(251, 191, 36, 0.05);
+            }
+
+            .pc-profile-widget .pc-avatar {
+                width: 36px;
+                height: 36px;
+                border-radius: 50%;
+                background: var(--accent-blue);
+                border: 2px solid var(--accent-gold);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 900;
+                overflow: hidden;
+                flex-shrink: 0;
+                font-size: 16px;
+            }
+
+            .pc-profile-widget .pc-avatar img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            .pc-profile-widget .pc-info {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .pc-profile-widget .pc-name {
+                font-size: 14px;
+                font-weight: 900;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .pc-profile-widget .pc-bal {
+                font-size: 14px;
+                font-weight: 900;
+                color: var(--accent-gold);
+                display: flex;
+                align-items: center;
+                gap: 5px;
             }
 
             .section {
@@ -3180,12 +3189,12 @@
             }
 
             .cases-grid {
-                grid-template-columns: repeat(3, 1fr);
+                grid-template-columns: repeat(4, 1fr);
                 gap: 14px;
             }
 
             .inv-grid {
-                grid-template-columns: repeat(4, 1fr);
+                grid-template-columns: repeat(5, 1fr);
             }
 
             .donate-grid {
@@ -3193,7 +3202,7 @@
             }
 
             .upg-container {
-                max-width: 780px;
+                max-width: 900px;
                 margin: 0 auto;
             }
 
@@ -3225,15 +3234,26 @@
                 overflow-x: visible !important;
                 padding-bottom: 10px;
             }
+
+            .profile-banner {
+                max-width: 800px;
+                margin: 0 auto 20px;
+            }
+            
+            .stats-grid {
+                max-width: 800px;
+                margin: 0 auto 20px;
+                grid-template-columns: repeat(4, 1fr);
+            }
         }
 
         @media (min-width: 1400px) {
             .cases-grid {
-                grid-template-columns: repeat(4, 1fr);
+                grid-template-columns: repeat(5, 1fr);
             }
 
             .inv-grid {
-                grid-template-columns: repeat(5, 1fr);
+                grid-template-columns: repeat(6, 1fr);
             }
         }
 
@@ -3277,6 +3297,10 @@
                 order: 2;
                 width: 100%;
             }
+
+            .donate-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
 
         @media (max-width: 400px) {
@@ -3292,27 +3316,39 @@
             .top-drop-emoji { font-size: 42px; }
             .rocket-mult { font-size: 40px; }
         }
+
+        /* DONATE GRID FIX */
+        .donate-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .donate-card {
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 15px;
+            padding: 15px 10px;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+            transition: 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
     </style>
 </head>
 <body>
 
-<!-- PC LEFT: Live Drops -->
-<div class="pc-sidebar pc-left">
-    <div class="pc-title"><span class="live-dot"></span> Live Drops</div>
-    <div class="top-drop-day" id="pc-top-drop-day" style="display:none;"></div>
-    <div class="pc-live-feed" id="pc-live-feed"><div class="live-feed-empty">Загрузка...</div></div>
-</div>
-
-<!-- PC RIGHT: Profile + Nav -->
-<div class="pc-sidebar pc-right">
-    <div class="pc-profile-widget" onclick="window.switchTab('profile')">
-        <div class="pc-avatar" id="pc-avatar">?</div>
-        <div class="pc-info">
-            <div class="pc-name" id="pc-name">Игрок</div>
-            <div class="pc-bal"><i class="fa-solid fa-coins"></i> <span id="pc-balance">0</span></div>
-        </div>
+<!-- PC TOP BAR (HORIZONTAL NAVIGATION) -->
+<div class="pc-top-bar">
+    <div class="pc-logo">
+        <i class="fa-solid fa-brain"></i> Brainrots
     </div>
-    <div class="pc-nav">
+    <div class="pc-nav-horizontal">
         <div class="pc-nav-item active" data-tab="cases" onclick="window.switchTab('cases')"><i class="fa-solid fa-box-open"></i> Кейсы</div>
         <div class="pc-nav-item" data-tab="upgrader" onclick="window.switchTab('upgrader')"><i class="fa-solid fa-bolt"></i> Апгрейд</div>
         <div class="pc-nav-item" data-tab="rocket" onclick="window.switchTab('rocket')"><i class="fa-solid fa-rocket"></i> Ракета</div>
@@ -3324,7 +3360,13 @@
         <div class="pc-nav-item" data-tab="settings" onclick="window.switchTab('settings')"><i class="fa-solid fa-gear"></i> Настройки</div>
         <div class="pc-nav-item admin" data-tab="admin" id="pc-nav-admin" style="display:none;" onclick="window.switchTab('admin')"><i class="fa-solid fa-shield-halved"></i> Админ</div>
     </div>
-    <div style="margin-top:auto; font-size:11px; color:var(--text-muted); text-align:center; padding-top:10px;">Brainrots Funny v3.0</div>
+    <div class="pc-profile-widget" onclick="window.switchTab('profile')">
+        <div class="pc-avatar" id="pc-avatar">?</div>
+        <div class="pc-info">
+            <div class="pc-name" id="pc-name">Игрок</div>
+            <div class="pc-bal"><i class="fa-solid fa-coins"></i> <span id="pc-balance">0</span></div>
+        </div>
+    </div>
 </div>
 
 <!-- MOBILE TOP BAR -->
@@ -3453,13 +3495,16 @@
             <button class="btn-sound" onclick="window.toggleSound()"><i class="fa-solid fa-volume-high"></i></button>
         </div>
 
-        <!-- Табы: Мои брейнроты / Магазин -->
+        <!-- Табы: Мои брейнроты / Цель / Магазин -->
         <div class="upg-tabs">
             <div class="upg-tab active" id="tab-my-items" onclick="window.switchUpgTab('my')">
-                Мои брейнроты <span class="upg-tab-count" id="my-items-count">0 шт.</span>
+                Мои <span class="upg-tab-count" id="my-items-count">0</span>
+            </div>
+            <div class="upg-tab" id="tab-target" onclick="window.switchUpgTab('target')">
+                Цель 🎯
             </div>
             <div class="upg-tab" id="tab-shop" onclick="window.switchUpgTab('shop')">
-                Брейнроты 🛒
+                Магазин 🛒
             </div>
         </div>
 
@@ -3470,12 +3515,12 @@
     </div>
 </div>
 
-<!-- ROCKET GAME -->
+<!-- ROCKET GAME (ONLINE) -->
 <div id="section-rocket" class="section">
     <h2 class="section-title">Ракета</h2>
     <div class="rocket-container">
         <div class="rocket-canvas-wrap">
-            <div class="rocket-mult" id="rocket-mult">1.00x</div>
+            <div class="rocket-mult waiting" id="rocket-mult">Ожидание...</div>
             <div class="rocket-img" id="rocket-img">🚀</div>
         </div>
         
@@ -3499,8 +3544,16 @@
                 <div id="rocket-items-list"></div>
             </div>
 
-            <button class="btn-rocket-start" id="btn-rocket-start" onclick="window.startRocket()">Взлет (Начать)</button>
+            <button class="btn-rocket-start" id="btn-rocket-start" onclick="window.startRocket()">Сделать ставку</button>
             <button class="btn-rocket-cashout" id="btn-rocket-cashout" style="display:none;" onclick="window.cashoutRocket()">Забрать <span id="rocket-cashout-val"></span></button>
+        </div>
+
+        <div class="rocket-history">
+            <div class="rocket-history-title">
+                <span>Ставки игроков</span>
+                <span id="rocket-timer" style="color:var(--accent-gold);"></span>
+            </div>
+            <div id="rocket-history-list"></div>
         </div>
     </div>
 </div>
@@ -3650,12 +3703,15 @@
             </button>
         </div>
     </div>
+    
+    <!-- ИСПРАВЛЕННАЯ СТАТИСТИКА (ПО ЦЕНТРУ) -->
     <div class="stats-grid">
         <div class="stat-box"><div class="stat-box__val" id="stat-cases">0</div><div class="stat-box__lbl">Кейсов</div></div>
         <div class="stat-box"><div class="stat-box__val" id="stat-earned">0</div><div class="stat-box__lbl">Заработано</div></div>
         <div class="stat-box"><div class="stat-box__val" id="stat-upg">0</div><div class="stat-box__lbl">Апгрейдов</div></div>
         <div class="stat-box"><div class="stat-box__val" id="stat-inv">0</div><div class="stat-box__lbl">Предметов</div></div>
     </div>
+    
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
         <h2 class="section-title" style="margin:0;"><i class="fa-solid fa-sack-dollar"></i> Инвентарь</h2>
         <button class="btn red" style="width:auto; padding:8px 14px; font-size:12px;" onclick="window.sellAll()">Продать всё</button>
@@ -3827,7 +3883,7 @@
 
     <div class="admin-panel" data-panel="lists">
         <div class="admin-card">
-            <div class="admin-card-title">Разрешенные к выводу предметы</div>
+            <div class="admin-card-title">Разрешенные к выводу/обмену</div>
             <div id="admin-withdrawable-list" style="max-height:300px; overflow-y:auto;"></div>
         </div>
         <div class="admin-card">
@@ -3978,6 +4034,19 @@
 
 <!-- ============ MODALS ============ -->
 
+<!-- Medal Modal (Custom) -->
+<div class="modal" id="medal-modal" onclick="if(event.target===this) window.closeMedalModal()">
+    <div class="modal-box" style="text-align:left;">
+        <span class="close-modal" onclick="window.closeMedalModal()">&times;</span>
+        <div style="text-align:center; margin-bottom:15px;">
+            <div id="medal-modal-icon" style="font-size:60px; margin-bottom:10px; filter:drop-shadow(0 0 15px rgba(251,191,36,0.5));"></div>
+            <h3 class="modal-title" id="medal-modal-name" style="margin-bottom:5px;">Название</h3>
+            <div id="medal-modal-desc" style="font-size:14px; color:var(--text-muted); line-height:1.5; background:var(--bg-input); padding:12px; border-radius:10px;">Описание</div>
+        </div>
+        <button class="btn" onclick="window.closeMedalModal()">Закрыть</button>
+    </div>
+</div>
+
 <!-- Inv Picker -->
 <div class="modal" id="inv-picker-modal" onclick="if(event.target===this) window.closeInvPicker()">
     <div class="modal-box">
@@ -4041,9 +4110,14 @@
             <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">Выберите на что обменять:</div>
             <div class="inv-grid" id="wd-targets" style="max-height:260px; overflow-y:auto; margin-bottom:12px;"></div>
             <div style="font-size:12px;text-align:center;margin-bottom:10px;" id="wd-summary"></div>
+            
+            <!-- Кнопка Подтвердить обмен -->
+            <button class="btn green" style="margin-bottom:10px;" id="wd-confirm-exchange-btn" onclick="window.submitExchange()">
+                <i class="fa-solid fa-check"></i> ПОДТВЕРДИТЬ ОБМЕН
+            </button>
         </div>
 
-        <div style="display:flex; gap:8px; margin-bottom:12px;">
+        <div style="display:flex; gap:8px; margin-bottom:12px;" id="wd-btn-row">
             <button class="btn gold" id="wd-submit-btn" onclick="window.submitWithdrawDirect()">ВЫВЕСТИ</button>
             <button class="btn" style="background:rgba(59,130,246,.15); color:var(--accent-blue); border:1px solid rgba(59,130,246,.3);" onclick="window.switchWdMode('exchange')" id="wd-switch-exchange-btn">ОБМЕНЯТЬ</button>
             <button class="btn" style="background:rgba(255,255,255,.05); color:var(--text-main); border:1px solid var(--border); display:none;" onclick="window.switchWdMode('withdraw')" id="wd-switch-withdraw-btn">ВЕРНУТЬСЯ</button>
@@ -4143,7 +4217,9 @@
     const MULTI_BASE_MS = 5500;
     const MULTI_STAGGER_MS = 300;
     const GARAMA_PRICE = 64;
-    const MIN_WITHDRAW_VALUE = 128;
+    
+    // Динамическая минималка для вывода (2 гарамы)
+    let MIN_WITHDRAW_VALUE = 128;
 
     const RARITIES = {
         common: { id: 'common', name: 'Common', color: '#6b7280' },
@@ -4229,6 +4305,13 @@
     let rocketBetType = 'coins';
     let rocketStartTime = 0;
     let rocketIsPlaying = false;
+    let rocketState = 'waiting'; // waiting, flying, crashed
+    let rocketWaitTimer = null;
+    let rocketWaitSeconds = 15;
+    let rocketCrashPoint = 1.0;
+    let rocketHistory = [];
+    let rocketTotalBet = 0;
+    let rocketFakePlayers = [];
 
     let soundEnabled = localStorage.getItem('bf_sound') !== '0';
     let hapticEnabled = localStorage.getItem('bf_haptic') !== '0';
@@ -4458,7 +4541,7 @@
         if (tabId === 'chats') window.loadChatsList();
         if (tabId === 'upgrader') { window.renderUpgTabContent(); window.calcUpg(); }
         if (tabId === 'profile') window.renderProfileMedals();
-        if (tabId === 'rocket') window.renderRocketItems();
+        if (tabId === 'rocket') { window.renderRocketItems(); window.updateRocketUI(); }
     };
 
     window.openSettings = function() { document.getElementById('settings-modal').classList.add('active'); }
@@ -5009,15 +5092,31 @@
         if (document.getElementById('section-case-opening').classList.contains('active') && !isOpening) window.updateOpenBtnState();
     };
 
+    // КАСТОМНОЕ УВЕДОМЛЕНИЕ ДЛЯ МЕДАЛЕК
     window.showMedalInfo = function(medalId) {
         const m = state.my_medals.find(x => x.id === medalId) || STATE.medals.find(x => x.id === medalId);
         if (!m) return;
-        const text = `<b>${window.escapeHtml(m.name)}</b>\n\n${window.escapeHtml(m.description || 'Описание отсутствует')}`;
-        if (tg && tg.showAlert) {
-            tg.showAlert(text);
+        
+        const modal = document.getElementById('medal-modal');
+        const icon = document.getElementById('medal-modal-icon');
+        const name = document.getElementById('medal-modal-name');
+        const desc = document.getElementById('medal-modal-desc');
+
+        if (m.img) {
+            icon.innerHTML = `<img src="${window.escapeHtml(m.img)}" style="width:80px; height:80px; object-fit:contain; border-radius:50%; border:3px solid ${window.escapeHtml(m.color||'#fbbf24')};">`;
         } else {
-            alert(text.replace(/<[^>]*>/g, ''));
+            icon.innerHTML = `<span style="font-size:80px; line-height:1;">${window.escapeHtml(m.icon || '🏅')}</span>`;
         }
+
+        name.textContent = m.name;
+        desc.textContent = m.description || 'Описание отсутствует.';
+        
+        modal.classList.add('active');
+        window.haptic('light');
+    };
+
+    window.closeMedalModal = function() {
+        document.getElementById('medal-modal').classList.remove('active');
     };
 
     window.renderProfileMedals = function() {
@@ -5122,7 +5221,13 @@
         }
         cont.innerHTML = inv.map(it => {
             const r = RARITIES[it.rarity] || RARITIES.common;
-            const canWd = WD_ALLOWED.includes(it.id) && !it.bought;
+            
+            // Динамическая проверка на кнопку вывести
+            const garama = STATE.items['garama'];
+            const gPrice = garama ? garama.price : 64;
+            const minVal = gPrice * 2;
+            const canWd = WD_ALLOWED.includes(it.id) && !it.bought && it.price >= minVal;
+
             const livePrice = STATE.items[it.id]?.price || it.price;
             return `<div class="inv-item" style="border-color:${r.color}" onclick="BF.addToUpg('${it.uid}')">
                 <div style="height:50px;display:flex;align-items:center;justify-content:center;">
@@ -5139,6 +5244,7 @@
     window.switchUpgTab = function(tab) {
         upgTab = tab;
         document.getElementById('tab-my-items').classList.toggle('active', tab === 'my');
+        document.getElementById('tab-target').classList.toggle('active', tab === 'target');
         document.getElementById('tab-shop').classList.toggle('active', tab === 'shop');
         window.renderUpgTabContent();
     };
@@ -5147,7 +5253,7 @@
         const box = document.getElementById('upg-tab-content');
         if (!box) return;
         if (upgTab === 'my') {
-            document.getElementById('my-items-count').textContent = Object.keys(state.inventory || {}).length + ' шт.';
+            document.getElementById('my-items-count').textContent = Object.keys(state.inventory || {}).length;
             const inv = Object.values(state.inventory || {}).sort((a, b) => b.price - a.price);
             if (!inv.length) {
                 box.innerHTML = `<div class="upg-empty">
@@ -5171,6 +5277,38 @@
                     </div>
                     <div class="right">
                         ${sel ? '<i class="fa-solid fa-check" style="color:var(--accent-gold);"></i>' : ''}
+                    </div>
+                </div>`;
+            }).join('') + `</div>`;
+        } else if (upgTab === 'target') {
+            const sum = upgInputs.reduce((a, uid) => {
+                const item = state.inventory[uid];
+                if (!item) return a;
+                return a + (STATE.items[item.id]?.price || item.price);
+            }, 0);
+            
+            if (sum === 0) {
+                box.innerHTML = `<div class="upg-empty">
+                    <div style="font-size:40px;margin-bottom:10px;">🎯</div>
+                    Сначала выбери свои брейнроты во вкладке "Мои".
+                </div>`;
+                return;
+            }
+            
+            const sorted = [...STATE.itemsArray].sort((a, b) => a.price - b.price);
+            box.innerHTML = `<div class="upg-list-container">` + sorted.map(it => {
+                const dis = it.price <= sum;
+                const r = RARITIES[it.rarity] || RARITIES.common;
+                return `<div class="upg-inv-item" style="opacity:${dis?0.35:1}; cursor:${dis?'not-allowed':'pointer'};" ${dis?'':`onclick="BF.chooseTarget('${it.id}')"`}>
+                    <div class="left">
+                        <img src="${window.escapeHtml(it.img || '')}" onerror="this.style.display='none';">
+                        <div>
+                            <div class="name">${window.escapeHtml(it.name)}</div>
+                            <div class="price"><i class="fa-solid fa-coins"></i> ${it.price}</div>
+                        </div>
+                    </div>
+                    <div class="right">
+                        ${upgTarget && upgTarget.id === it.id ? '<i class="fa-solid fa-bullseye" style="color:var(--accent-gold);"></i>' : '<i class="fa-solid fa-arrow-right"></i>'}
                     </div>
                 </div>`;
             }).join('') + `</div>`;
@@ -5314,29 +5452,11 @@
     };
 
     window.openTargetPicker = function() {
-        const sum = upgInputs.reduce((a, uid) => {
-            const item = state.inventory[uid];
-            if (!item) return a;
-            return a + (STATE.items[item.id]?.price || item.price);
-        }, 0);
-        if (sum === 0) return window.notify({ type: 'warning', message: 'Сначала выберите предметы' });
-        const list = document.getElementById('target-list');
-        const sorted = [...STATE.itemsArray].sort((a, b) => a.price - b.price);
-        list.innerHTML = sorted.map(it => {
-            const dis = it.price <= sum;
-            const r = RARITIES[it.rarity] || RARITIES.common;
-            return `<div class="inv-item" style="border-color:${r.color};opacity:${dis?0.35:1};cursor:${dis?'not-allowed':'pointer'};" ${dis?'':`onclick="BF.chooseTarget('${it.id}')"`}>
-                <div style="height:50px;display:flex;align-items:center;justify-content:center;">
-                    <img src="${window.escapeHtml(it.img || '')}" onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
-                    <span class="emoji-fallback" style="display:none;">${window.escapeHtml(it.emoji || '🧠')}</span></div>
-                <div class="inv-price">${it.price}</div></div>`;
-        }).join('');
-        document.getElementById('target-modal').classList.add('active');
-        window.haptic('light');
+        window.switchUpgTab('target');
     };
 
     window.closeTargetModal = function() { document.getElementById('target-modal').classList.remove('active'); window.haptic('light'); }
-    window.chooseTarget = function(id) { upgTarget = STATE.items[id]; window.closeTargetModal(); window.renderUpgTarget(); window.calcUpg(); window.haptic('medium'); }
+    window.chooseTarget = function(id) { upgTarget = STATE.items[id]; window.renderUpgTarget(); window.calcUpg(); window.haptic('medium'); window.renderUpgTabContent(); }
 
     window.autoSelect = function(type) {
         const sum = upgInputs.reduce((a, uid) => {
@@ -5454,7 +5574,9 @@
         }
     };
 
+    // --- ROCKET GAME LOGIC (ONLINE) ---
     window.setRocketBetType = function(type) {
+        if (rocketState === 'flying') return;
         rocketBetType = type;
         document.getElementById('rocket-coins-input').style.display = type === 'coins' ? 'block' : 'none';
         document.getElementById('rocket-items-input').style.display = type === 'items' ? 'block' : 'none';
@@ -5493,19 +5615,155 @@
         window.renderRocketItems();
     };
 
+    window.updateRocketUI = function() {
+        const startBtn = document.getElementById('btn-rocket-start');
+        const cashoutBtn = document.getElementById('btn-rocket-cashout');
+        const multEl = document.getElementById('rocket-mult');
+        const imgEl = document.getElementById('rocket-img');
+        const timerEl = document.getElementById('rocket-timer');
+
+        if (rocketState === 'waiting') {
+            startBtn.disabled = false;
+            startBtn.textContent = 'Сделать ставку';
+            cashoutBtn.style.display = 'none';
+            multEl.className = 'rocket-mult waiting';
+            multEl.textContent = `Ожидание ${rocketWaitSeconds}с`;
+            imgEl.textContent = '🚀';
+            imgEl.style.transform = 'translate(0, 0)';
+            timerEl.textContent = '';
+        } else if (rocketState === 'flying') {
+            startBtn.disabled = true;
+            startBtn.textContent = 'Летит...';
+            startBtn.style.display = 'none';
+            cashoutBtn.style.display = 'block';
+            multEl.className = 'rocket-mult';
+            multEl.textContent = rocketMultiplier.toFixed(2) + 'x';
+            timerEl.textContent = '';
+        } else if (rocketState === 'crashed') {
+            startBtn.style.display = 'block';
+            startBtn.disabled = true;
+            startBtn.textContent = 'Упала!';
+            cashoutBtn.style.display = 'none';
+            multEl.className = 'rocket-mult crashed';
+            multEl.textContent = 'УПАЛА!';
+            imgEl.textContent = '💥';
+            timerEl.textContent = '';
+        }
+    };
+
+    window.addRocketHistory = function(name, amount, isWin, mult) {
+        const list = document.getElementById('rocket-history-list');
+        const el = document.createElement('div');
+        el.className = `rocket-history-item ${isWin ? 'win' : 'lose'}`;
+        if (isWin) {
+            el.innerHTML = `<span><b>${name}</b> забрал ${window.formatNum(amount)} монет</span> <b>${mult.toFixed(2)}x</b>`;
+        } else {
+            el.innerHTML = `<span><b>${name}</b> проиграл ${window.formatNum(amount)} монет</span> <b>${mult.toFixed(2)}x</b>`;
+        }
+        list.prepend(el);
+        if (list.children.length > 20) list.lastChild.remove();
+    };
+
+    window.startRocketCycle = function() {
+        if (rocketState === 'flying' || rocketState === 'crashed') return;
+        
+        rocketState = 'waiting';
+        rocketWaitSeconds = 15;
+        rocketMultiplier = 1.0;
+        rocketCrashPoint = 1.1 + Math.random() * 8.0; // Random crash point
+        window.updateRocketUI();
+
+        if (rocketWaitTimer) clearInterval(rocketWaitTimer);
+        
+        // Simulate other players joining
+        const fakeNames = ['Kneo', 'User123', 'Brainrot', 'ProGamer', 'Noob', 'Lucky', 'RocketMan'];
+        const randomName = fakeNames[Math.floor(Math.random() * fakeNames.length)] + Math.floor(Math.random() * 99);
+        const fakeBet = Math.floor(Math.random() * 500) + 10;
+        if (Math.random() < 0.7) {
+            window.addRocketHistory(randomName, fakeBet, false, 1.0); // Pending
+        }
+
+        rocketWaitTimer = setInterval(() => {
+            rocketWaitSeconds--;
+            document.getElementById('rocket-mult').textContent = `Ожидание ${rocketWaitSeconds}с`;
+            if (rocketWaitSeconds <= 0) {
+                clearInterval(rocketWaitTimer);
+                startRocketFlight();
+            }
+        }, 1000);
+    };
+
+    window.startRocketFlight = function() {
+        rocketState = 'flying';
+        rocketMultiplier = 1.0;
+        window.updateRocketUI();
+        window.playSound('open');
+
+        const startTime = Date.now();
+        if (rocketInterval) clearInterval(rocketInterval);
+
+        rocketInterval = setInterval(() => {
+            const elapsed = (Date.now() - startTime) / 1000;
+            rocketMultiplier = 1.0 + (elapsed * 0.15); // 0.15x per second
+
+            document.getElementById('rocket-mult').textContent = rocketMultiplier.toFixed(2) + 'x';
+            
+            const rx = Math.min(80, rocketMultiplier * 15);
+            const ry = Math.min(80, rocketMultiplier * 15);
+            document.getElementById('rocket-img').style.transform = `translate(${rx}px, -${ry}px)`;
+
+            // Simulate other players cashing out
+            if (Math.random() < 0.05 && rocketMultiplier > 1.1) {
+                const fakeNames = ['Kneo', 'User123', 'Brainrot', 'ProGamer', 'Noob', 'Lucky', 'RocketMan'];
+                const randomName = fakeNames[Math.floor(Math.random() * fakeNames.length)] + Math.floor(Math.random() * 99);
+                const fakeBet = Math.floor(Math.random() * 500) + 10;
+                const winAmount = Math.floor(fakeBet * rocketMultiplier);
+                window.addRocketHistory(randomName, winAmount, true, rocketMultiplier);
+                
+                // Add to live drops
+                if (Math.random() < 0.2) {
+                    window.updateDropFeed([{
+                        nick: randomName,
+                        itemName: 'Ракета',
+                        itemImg: 'assets/cases/allin.png',
+                        price: winAmount,
+                        method: 'case',
+                        ts: Date.now(),
+                        user_id: 'fake'
+                    }, ...dropFeedData]);
+                }
+            }
+
+            // Cashout value for current user
+            if (isPlayingLocal) {
+                const cashoutVal = Math.floor(rocketTotalBet * rocketMultiplier);
+                document.getElementById('rocket-cashout-val').textContent = `${cashoutVal} 🪙 (${rocketMultiplier.toFixed(2)}x)`;
+            }
+
+            if (rocketMultiplier >= rocketCrashPoint) {
+                crashRocket();
+            }
+        }, 100);
+    };
+
+    let isPlayingLocal = false;
+
     window.startRocket = async function() {
-        if (rocketIsPlaying) return;
+        if (rocketState !== 'waiting') return window.notify({ type: 'error', message: 'Ракета уже летит!' });
+        if (isPlayingLocal) return window.notify({ type: 'error', message: 'Вы уже сделали ставку!' });
+
         let bCoins = 0;
         let bItems = [];
         if (rocketBetType === 'coins') {
             bCoins = parseInt(document.getElementById('rocket-bet').value) || 0;
             if (bCoins < 10) return window.notify({ type: 'error', message: 'Минимум 10 монет' });
             if (bCoins > state.balance) return window.notify({ type: 'error', message: 'Недостаточно монет' });
+            rocketTotalBet = bCoins;
         } else {
             if (!rocketBetItems.length) return window.notify({ type: 'error', message: 'Выберите предметы' });
             bItems = rocketBetItems;
-            let total = bItems.reduce((a, uid) => a + (state.inventory[uid]?.price || 0), 0);
-            if (total < 10) return window.notify({ type: 'error', message: 'Сумма предметов минимум 10' });
+            rocketTotalBet = bItems.reduce((a, uid) => a + (state.inventory[uid]?.price || 0), 0);
+            if (rocketTotalBet < 10) return window.notify({ type: 'error', message: 'Сумма предметов минимум 10' });
         }
         
         try {
@@ -5514,82 +5772,39 @@
             state.inventory = res.inventory;
             window.updateUI();
             
-            rocketIsPlaying = true;
-            rocketMultiplier = 1.0;
-            rocketStartTime = Date.now();
+            isPlayingLocal = true;
+            window.updateRocketUI();
+            window.notify({ type: 'success', message: 'Ставка принята! Ждем взлета.' });
             
-            document.getElementById('btn-rocket-start').style.display = 'none';
-            document.getElementById('btn-rocket-cashout').style.display = 'block';
-            document.getElementById('rocket-mult').className = 'rocket-mult';
-            document.getElementById('rocket-bet-type-box').style.opacity = '0.5';
-            document.getElementById('rocket-bet-type-box').style.pointerEvents = 'none';
-            document.getElementById('rocket-coins-input').style.opacity = '0.5';
-            document.getElementById('rocket-coins-input').style.pointerEvents = 'none';
-            document.getElementById('rocket-items-input').style.opacity = '0.5';
-            document.getElementById('rocket-items-input').style.pointerEvents = 'none';
-            
-            document.getElementById('rocket-img').style.transform = 'translate(0, 0)';
-            
-            const totalBet = bCoins + bItems.reduce((a, uid) => a + (STATE.items[state.inventory[uid]?.id]?.price || 0), 0);
-            
-            let tick = 0;
-            rocketInterval = setInterval(() => {
-                tick++;
-                rocketMultiplier += 0.1;
-                document.getElementById('rocket-mult').textContent = rocketMultiplier.toFixed(2) + 'x';
-                
-                const rx = Math.min(80, rocketMultiplier * 10);
-                const ry = Math.min(80, rocketMultiplier * 10);
-                document.getElementById('rocket-img').style.transform = `translate(${rx}px, -${ry}px)`;
-                
-                if (Math.random() < 0.02 + (rocketMultiplier * 0.01)) {
-                    window.crashRocket();
-                }
-                
-                const cashoutVal = Math.floor(totalBet * rocketMultiplier);
-                document.getElementById('rocket-cashout-val').textContent = `${cashoutVal} 🪙 (${rocketMultiplier.toFixed(2)}x)`;
-                
-                if (tick % 2 === 0) window.playSound('tick');
-            }, 1000);
         } catch (e) {
             window.notify({ type: 'error', message: e.message });
         }
     };
 
     window.crashRocket = function() {
-        if (!rocketIsPlaying) return;
+        if (rocketState !== 'flying') return;
         clearInterval(rocketInterval);
-        rocketIsPlaying = false;
-        document.getElementById('rocket-mult').textContent = 'УПАЛА!';
-        document.getElementById('rocket-mult').className = 'rocket-mult crashed';
+        rocketState = 'crashed';
         document.getElementById('rocket-img').textContent = '💥';
+        window.updateRocketUI();
         window.playSound('lose');
         window.haptic('error');
         
-        document.getElementById('btn-rocket-cashout').style.display = 'none';
-        document.getElementById('btn-rocket-start').style.display = 'block';
-        document.getElementById('rocket-bet-type-box').style.opacity = '1';
-        document.getElementById('rocket-bet-type-box').style.pointerEvents = 'auto';
-        document.getElementById('rocket-coins-input').style.opacity = '1';
-        document.getElementById('rocket-coins-input').style.pointerEvents = 'auto';
-        document.getElementById('rocket-items-input').style.opacity = '1';
-        document.getElementById('rocket-items-input').style.pointerEvents = 'auto';
-        
-        rocketBetItems = [];
-        window.renderRocketItems();
+        if (isPlayingLocal) {
+            window.notify({ type: 'error', title: 'ПРОИГРЫШ', message: 'Ракета упала! Вы потеряли ставку.' });
+            isPlayingLocal = false;
+        }
         
         setTimeout(() => {
-            document.getElementById('rocket-mult').textContent = '1.00x';
-            document.getElementById('rocket-mult').className = 'rocket-mult';
-            document.getElementById('rocket-img').textContent = '🚀';
-            document.getElementById('rocket-img').style.transform = 'translate(0, 0)';
+            rocketState = 'waiting';
+            window.startRocketCycle();
         }, 3000);
     };
 
     window.cashoutRocket = async function() {
-        if (!rocketIsPlaying) return;
+        if (rocketState !== 'flying' || !isPlayingLocal) return;
         clearInterval(rocketInterval);
-        rocketIsPlaying = false;
+        isPlayingLocal = false;
         
         try {
             const res = await window.apiCall('/api/rocket/cashout', 'POST', { multiplier: rocketMultiplier });
@@ -5600,40 +5815,29 @@
             window.haptic('success');
             window.burstConfetti();
             
-            document.getElementById('rocket-mult').textContent = 'УСПЕХ!';
             document.getElementById('rocket-cashout-val').textContent = '';
-            
             window.notify({ type: 'success', message: `Забрано ${window.formatNum(res.balance - state.balance + res.balance)}!`, title: 'ПОБЕДА' });
+            
+            window.addRocketHistory('Вы', res.balance, true, rocketMultiplier);
+            crashRocket(); // Trigger crash for others
             
         } catch (e) {
             window.notify({ type: 'error', message: e.message });
+            crashRocket();
         }
-        
-        document.getElementById('btn-rocket-cashout').style.display = 'none';
-        document.getElementById('btn-rocket-start').style.display = 'block';
-        document.getElementById('btn-rocket-start').disabled = false;
-        document.getElementById('rocket-bet-type-box').style.opacity = '1';
-        document.getElementById('rocket-bet-type-box').style.pointerEvents = 'auto';
-        document.getElementById('rocket-coins-input').style.opacity = '1';
-        document.getElementById('rocket-coins-input').style.pointerEvents = 'auto';
-        document.getElementById('rocket-items-input').style.opacity = '1';
-        document.getElementById('rocket-items-input').style.pointerEvents = 'auto';
-        
-        rocketBetItems = [];
-        window.renderRocketItems();
-        
-        setTimeout(() => {
-            document.getElementById('rocket-mult').textContent = '1.00x';
-            document.getElementById('rocket-mult').className = 'rocket-mult';
-            document.getElementById('rocket-img').textContent = '🚀';
-            document.getElementById('rocket-img').style.transform = 'translate(0, 0)';
-        }, 3000);
     };
+
+    // --- END ROCKET GAME ---
 
     window.loadWithdrawInfo = async function() {
         try {
             const info = await window.apiCall('/api/withdraw/options');
             WD_ALLOWED = info.withdrawable_items.map(i => i.id);
+            
+            // Dynamic min value
+            const garama = STATE.items['garama'];
+            MIN_WITHDRAW_VALUE = (garama ? garama.price : 64) * 2;
+            
             const box = document.getElementById('withdraw-available');
             if (!info.available.length) {
                 box.innerHTML = '<div style="grid-column:span 3;text-align:center;color:var(--text-muted);padding:15px;">Нет предметов для вывода</div>';
@@ -5757,6 +5961,8 @@
         const box = document.getElementById('wd-targets');
         const sum = wdSelectedTargets.reduce((a, t) => a + t.price, 0);
         const sourceTotal = wdSourceItems.reduce((a, b) => a + b.price, 0);
+        
+        // Dynamic withdrawable items list
         const items = STATE.itemsArray.filter(i => WD_ALLOWED.includes(i.id)).sort((a, b) => a.price - b.price);
         
         box.innerHTML = items.map(t => {
@@ -5790,6 +5996,10 @@
     window.submitWithdrawDirect = async function() {
         const nick = document.getElementById('wd-nick').value.trim();
         if (!nick) return window.notify({ type: 'warning', message: 'Введите ник' });
+        
+        const total = wdSourceItems.reduce((a, b) => a + b.price, 0);
+        if (total < MIN_WITHDRAW_VALUE) return window.notify({ type: 'error', message: `Минимум ${MIN_WITHDRAW_VALUE} монет (2 гарамы)` });
+
         try {
             const r = await window.apiCall('/api/withdraw/request', 'POST', { item_uids: wdSourceItems.map(i => i.uid), nick });
             window.notify({ type: 'success', message: `Заявка ${r.request_id} отправлена` });
@@ -7091,6 +7301,7 @@
             window.checkRef();
             window.loadEvent();
             window.loadPoll();
+            window.startRocketCycle(); // Запуск ракеты
         });
     });
 })();
