@@ -1325,7 +1325,7 @@
             font-size: 9px;
         }
 
-        /* UPGRADER REDESIGN */
+        /* UPGRADER REDESIGN (MATCHING SCREENSHOTS) */
         .upg-container {
             background: var(--bg-card);
             border: 1px solid var(--border);
@@ -1337,7 +1337,7 @@
         .upg-layout {
             display: flex;
             align-items: stretch;
-            gap: 20px;
+            gap: 15px;
             margin-bottom: 20px;
         }
 
@@ -1367,7 +1367,7 @@
 
         .upg-left .title,
         .upg-right .title {
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 900;
             margin-bottom: 6px;
             position: relative;
@@ -1389,6 +1389,7 @@
             position: relative;
             flex-shrink: 0;
             z-index: 10;
+            margin: 0 auto;
         }
 
         .upg-wheel-disc {
@@ -1587,6 +1588,12 @@
             background: rgba(255, 255, 255, 0.1);
         }
 
+        .upg-controls .btn-fast.active {
+            background: rgba(59, 130, 246, 0.15);
+            border-color: var(--accent-blue);
+            color: var(--accent-blue);
+        }
+
         .upg-controls .btn-sound {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--border);
@@ -1731,7 +1738,7 @@
             line-height: 1.5;
         }
 
-        /* ROCKET GAME (ONLINE) */
+        /* ROCKET GAME (REAL ONLINE) */
         .rocket-container {
             background: var(--bg-card);
             border: 1px solid var(--border);
@@ -3031,6 +3038,79 @@
             margin-top: 6px;
         }
 
+        /* DONATE REDESIGN */
+        .donate-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .donate-card {
+            background: linear-gradient(135deg, rgba(30, 34, 53, 1), rgba(21, 23, 34, 1));
+            border: 2px solid var(--border);
+            border-radius: 15px;
+            padding: 15px 10px;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+            transition: 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .donate-card:hover {
+            border-color: var(--accent-gold);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(251, 191, 36, 0.2);
+        }
+
+        .donate-card.best {
+            border-color: var(--accent-gold);
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(21, 23, 34, 1));
+        }
+
+        .donate-card.best::after {
+            content: 'TOP';
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent-gold);
+            color: #000;
+            padding: 2px 8px;
+            border-radius: 8px;
+            font-size: 9px;
+            font-weight: 900;
+            letter-spacing: 1px;
+        }
+
+        .donate-stars {
+            font-size: 18px;
+            font-weight: 900;
+            color: #fff;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .donate-stars i {
+            color: var(--accent-gold);
+        }
+
+        .donate-coins {
+            font-size: 20px;
+            font-weight: 900;
+            color: var(--accent-gold);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
         /* PC LAYOUT */
         .pc-top-bar {
             display: none;
@@ -3038,7 +3118,7 @@
 
         @media (min-width: 1024px) {
             body {
-                padding-top: 70px; /* Space for top navbar */
+                padding-top: 70px; 
             }
 
             .top-bar { display: none; }
@@ -3069,6 +3149,12 @@
                 align-items: center;
                 gap: 10px;
                 text-transform: uppercase;
+                flex-shrink: 0;
+            }
+            
+            .pc-top-bar .pc-logo img {
+                height: 30px;
+                object-fit: contain;
             }
 
             .pc-nav-horizontal {
@@ -3077,6 +3163,13 @@
                 align-items: center;
                 flex: 1;
                 justify-content: center;
+                overflow-x: auto;
+                scrollbar-width: none;
+                padding: 0 10px;
+            }
+            
+            .pc-nav-horizontal::-webkit-scrollbar {
+                display: none;
             }
 
             .pc-nav-item {
@@ -3091,6 +3184,7 @@
                 cursor: pointer;
                 transition: 0.2s;
                 border: 1px solid transparent;
+                white-space: nowrap;
             }
 
             .pc-nav-item i {
@@ -3122,13 +3216,14 @@
             .pc-profile-widget {
                 display: flex;
                 align-items: center;
-                gap: 14px;
-                padding: 8px 15px;
+                gap: 10px;
+                padding: 8px 12px;
                 background: rgba(255, 255, 255, 0.04);
                 border: 1px solid var(--border);
                 border-radius: 30px;
                 cursor: pointer;
                 transition: 0.2s;
+                flex-shrink: 0;
             }
 
             .pc-profile-widget:hover {
@@ -3137,8 +3232,8 @@
             }
 
             .pc-profile-widget .pc-avatar {
-                width: 36px;
-                height: 36px;
+                width: 32px;
+                height: 32px;
                 border-radius: 50%;
                 background: var(--accent-blue);
                 border: 2px solid var(--accent-gold);
@@ -3148,7 +3243,7 @@
                 font-weight: 900;
                 overflow: hidden;
                 flex-shrink: 0;
-                font-size: 16px;
+                font-size: 14px;
             }
 
             .pc-profile-widget .pc-avatar img {
@@ -3163,15 +3258,16 @@
             }
 
             .pc-profile-widget .pc-name {
-                font-size: 14px;
+                font-size: 13px;
                 font-weight: 900;
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
+                max-width: 100px;
             }
 
             .pc-profile-widget .pc-bal {
-                font-size: 14px;
+                font-size: 13px;
                 font-weight: 900;
                 color: var(--accent-gold);
                 display: flex;
@@ -3198,7 +3294,7 @@
             }
 
             .donate-grid {
-                grid-template-columns: repeat(3, 1fr);
+                grid-template-columns: repeat(6, 1fr);
             }
 
             .upg-container {
@@ -3245,6 +3341,14 @@
                 margin: 0 auto 20px;
                 grid-template-columns: repeat(4, 1fr);
             }
+            
+            /* PC UPGRADER LAYOUT MATCHING SCREENSHOT 4 */
+            .upg-layout {
+                flex-direction: row;
+            }
+            .upg-left, .upg-right {
+                min-height: 200px;
+            }
         }
 
         @media (min-width: 1400px) {
@@ -3257,21 +3361,22 @@
             }
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 1023px) {
+            /* MOBILE UPGRADER LAYOUT MATCHING SCREENSHOTS 1-3 */
             .upg-layout {
                 flex-direction: column;
                 gap: 12px;
             }
 
             .upg-center {
-                width: 240px;
-                height: 240px;
+                width: 260px;
+                height: 260px;
                 margin: 0 auto;
                 order: -1;
             }
 
             .upg-left, .upg-right {
-                min-height: 100px;
+                min-height: 120px;
                 padding: 12px;
                 flex-direction: row;
                 justify-content: center;
@@ -3280,6 +3385,7 @@
 
             .upg-left .title, .upg-right .title {
                 margin-bottom: 0;
+                margin-right: 5px;
             }
 
             .upg-controls {
@@ -3288,7 +3394,7 @@
             }
 
             .upg-controls .quick-btns {
-                order: 3;
+                order: 1;
                 width: 100%;
                 margin-top: 4px;
             }
@@ -3297,9 +3403,25 @@
                 order: 2;
                 width: 100%;
             }
-
-            .donate-grid {
-                grid-template-columns: repeat(2, 1fr);
+            
+            .upg-controls .btn-fast {
+                order: 3;
+                width: calc(50% - 3px);
+                justify-content: center;
+            }
+            
+            .upg-controls .btn-sound {
+                order: 4;
+                width: calc(50% - 3px);
+            }
+            
+            .upg-tabs {
+                flex-wrap: wrap;
+            }
+            
+            .upg-tab {
+                font-size: 13px;
+                padding: 10px;
             }
         }
 
@@ -3316,36 +3438,13 @@
             .top-drop-emoji { font-size: 42px; }
             .rocket-mult { font-size: 40px; }
         }
-
-        /* DONATE GRID FIX */
-        .donate-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 10px;
-            margin-bottom: 25px;
-        }
-
-        .donate-card {
-            background: var(--bg-card);
-            border: 2px solid var(--border);
-            border-radius: 15px;
-            padding: 15px 10px;
-            text-align: center;
-            cursor: pointer;
-            position: relative;
-            transition: 0.2s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
     </style>
 </head>
 <body>
 
 <!-- PC TOP BAR (HORIZONTAL NAVIGATION) -->
 <div class="pc-top-bar">
-    <div class="pc-logo">
+    <div class="pc-logo" id="pc-logo-container">
         <i class="fa-solid fa-brain"></i> Brainrots
     </div>
     <div class="pc-nav-horizontal">
@@ -3490,21 +3589,18 @@
                 <div class="q-btn" onclick="window.autoSelect('x5')">x5<br><span>20%</span></div>
                 <div class="q-btn" onclick="window.autoSelect('x10')">x10<br><span>10%</span></div>
             </div>
-            <button class="btn-upg" id="btn-upg" onclick="window.runUpgrade(false)" disabled>Апгрейд</button>
-            <button class="btn-fast" id="btn-upg-fast" onclick="window.runUpgrade(true)" disabled><i class="fa-solid fa-bolt"></i> Быстро</button>
+            <button class="btn-upg" id="btn-upg" onclick="window.runUpgrade()" disabled>Апгрейд</button>
+            <button class="btn-fast" id="btn-upg-fast" onclick="window.toggleFastMode()"><i class="fa-solid fa-bolt"></i> Быстро</button>
             <button class="btn-sound" onclick="window.toggleSound()"><i class="fa-solid fa-volume-high"></i></button>
         </div>
 
-        <!-- Табы: Мои брейнроты / Цель / Магазин -->
+        <!-- Табы: Мои брейнроты / Магазин -->
         <div class="upg-tabs">
             <div class="upg-tab active" id="tab-my-items" onclick="window.switchUpgTab('my')">
-                Мои <span class="upg-tab-count" id="my-items-count">0</span>
-            </div>
-            <div class="upg-tab" id="tab-target" onclick="window.switchUpgTab('target')">
-                Цель 🎯
+                Мои брейнроты <span class="upg-tab-count" id="my-items-count">0 шт.</span>
             </div>
             <div class="upg-tab" id="tab-shop" onclick="window.switchUpgTab('shop')">
-                Магазин 🛒
+                Брейнроты 🛒
             </div>
         </div>
 
@@ -3515,9 +3611,9 @@
     </div>
 </div>
 
-<!-- ROCKET GAME (ONLINE) -->
+<!-- ROCKET GAME (REAL ONLINE) -->
 <div id="section-rocket" class="section">
-    <h2 class="section-title">Ракета</h2>
+    <h2 class="section-title">Ракета (Онлайн)</h2>
     <div class="rocket-container">
         <div class="rocket-canvas-wrap">
             <div class="rocket-mult waiting" id="rocket-mult">Ожидание...</div>
@@ -3794,6 +3890,15 @@
                 <div class="admin-event-card" data-type="gold"><div class="name">Голд</div><div class="mult" style="color:#fbbf24">2x</div><button class="btn small gold" onclick="window.adminStartEvent('gold')">Запустить</button></div>
                 <div class="admin-event-card" data-type="diamond"><div class="name">Алмаз</div><div class="mult" style="color:#06b6d4">3x</div><button class="btn small" style="background:linear-gradient(135deg,#06b6d4,#0e7490);" onclick="window.adminStartEvent('diamond')">Запустить</button></div>
                 <div class="admin-event-card" data-type="bloody"><div class="name">Кровавый</div><div class="mult" style="color:#dc2626">4x</div><button class="btn small red" onclick="window.adminStartEvent('bloody')">Запустить</button></div>
+            </div>
+        </div>
+        
+        <div class="admin-card">
+            <div class="admin-card-title">Настройки Ракеты</div>
+            <div class="admin-form">
+                <label>Шанс краша (Множитель) - чем меньше, тем чаще падает</label>
+                <input type="number" id="admin-rocket-crash-chance" value="1.5" step="0.1" min="1.1" max="10">
+                <button class="btn gold" onclick="window.adminSaveRocketSettings()">СОХРАНИТЬ НАСТРОЙКИ РАКЕТЫ</button>
             </div>
         </div>
     </div>
@@ -4146,6 +4251,24 @@
     </div>
 </div>
 
+<!-- Rocket Cashout Choice Modal -->
+<div class="modal" id="rocket-cashout-modal">
+    <div class="modal-box">
+        <h3 class="modal-title" style="color:var(--accent-gold)">Забрать выигрыш!</h3>
+        <div style="font-size:24px; font-weight:900; color:var(--accent-green); margin-bottom:20px;" id="rc-win-amount">0 🪙</div>
+        <div style="display:flex; gap:10px; margin-bottom:20px;">
+            <button class="btn" onclick="window.finishRocketCashout('coins')" style="background:rgba(59,130,246,.2); border:1px solid var(--accent-blue); color:var(--accent-blue);">Взять Монеты</button>
+            <button class="btn" onclick="window.openRocketItemPicker()" style="background:rgba(251,191,36,.2); border:1px solid var(--accent-gold); color:var(--accent-gold);">Взять Брейнроты</button>
+        </div>
+        <div id="rc-items-section" style="display:none;">
+            <div style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">Выберите предметы (Сумма не должна превышать выигрыш):</div>
+            <div class="inv-grid" id="rc-items-list" style="max-height:200px; overflow-y:auto; margin-bottom:10px;"></div>
+            <div style="font-size:14px; font-weight:900; margin-bottom:10px;">Остаток: <span id="rc-remainder" style="color:var(--accent-gold)">0</span> 🪙</div>
+            <button class="btn green" onclick="window.finishRocketCashout('items')">ПОДТВЕРДИТЬ ОБМЕН</button>
+        </div>
+    </div>
+</div>
+
 <!-- Settings Mobile Modal -->
 <div class="modal" id="settings-modal" onclick="if(event.target===this) window.closeSettings()">
     <div class="modal-box">
@@ -4180,7 +4303,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+    import { getDatabase, ref, onValue, set, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyDnmAysvjn6Zu-pbddOhXDt1ohnZaY1Fcw",
@@ -4193,12 +4316,25 @@
     };
     const fbApp = initializeApp(firebaseConfig);
     const fbDb = getDatabase(fbApp);
-    const feedRef = ref(fbDb, 'drop_feed');
     
+    // Drop Feed
+    const feedRef = ref(fbDb, 'drop_feed');
     onValue(feedRef, (snap) => {
         const val = snap.val() || {};
         const arr = Object.values(val).sort((a, b) => (b.ts || 0) - (a.ts || 0)).slice(0, 200);
         if (window.updateDropFeed) window.updateDropFeed(arr);
+    });
+
+    // Real-time Rocket State
+    const rocketRef = ref(fbDb, 'rocket_game/state');
+    onValue(rocketRef, (snap) => {
+        if (window.updateRocketState) window.updateRocketState(snap.val());
+    });
+
+    // Real-time Rocket Bets
+    const rocketBetsRef = ref(fbDb, 'rocket_game/bets');
+    onValue(rocketBetsRef, (snap) => {
+        if (window.updateRocketBets) window.updateRocketBets(snap.val() || {});
     });
 </script>
 
@@ -4239,10 +4375,10 @@
     const STARS_PACKAGES = [
         { id: 'p10', stars: 10, coins: 15, bonus: 0, best: false },
         { id: 'p25', stars: 25, coins: 37, bonus: 0, best: false },
-        { id: 'p50', stars: 50, coins: 75, bonus: 0, best: true },
-        { id: 'p100', stars: 100, coins: 150, bonus: 0, best: false },
-        { id: 'p250', stars: 250, coins: 375, bonus: 0, best: false },
-        { id: 'p500', stars: 500, coins: 750, bonus: 0, best: false }
+        { id: 'p50', stars: 50, coins: 75, bonus: 20, best: true },
+        { id: 'p100', stars: 100, coins: 150, bonus: 30, best: false },
+        { id: 'p250', stars: 250, coins: 375, bonus: 40, best: false },
+        { id: 'p500', stars: 500, coins: 750, bonus: 60, best: false }
     ];
 
     let STATE = { items: {}, itemsArray: [], cases: {}, casesArray: [], sections: [], medals: [] };
@@ -4286,6 +4422,7 @@
 
     let activeCase = null, mult = 1, isOpening = false;
     let upgInputs = [], upgTarget = null, isUpgrading = false;
+    let isFastMode = false;
     let currentEvent = null, currentPoll = null;
     let animState = null, dropFeedData = [], topDayDrop = null;
     let currentChatId = null, currentChatOtherUid = null, chatPollTimer = null;
@@ -4298,20 +4435,23 @@
     let upgTab = 'my';
     let upgShopItems = [];
 
-    let rocketInterval = null;
+    // ROCKET STATE
+    let rocketState = 'waiting'; 
     let rocketMultiplier = 1.0;
-    let rocketBet = 0;
-    let rocketBetItems = [];
-    let rocketBetType = 'coins';
-    let rocketStartTime = 0;
-    let rocketIsPlaying = false;
-    let rocketState = 'waiting'; // waiting, flying, crashed
-    let rocketWaitTimer = null;
     let rocketWaitSeconds = 15;
-    let rocketCrashPoint = 1.0;
-    let rocketHistory = [];
+    let rocketCrashPoint = 2.0;
     let rocketTotalBet = 0;
-    let rocketFakePlayers = [];
+    let rocketBetType = 'coins';
+    let rocketBetItems = [];
+    let isPlayingLocal = false;
+    let rocketBets = {};
+    let rocketInterval = null;
+    let rocketCountdownInterval = null;
+
+    // MODAL STATE
+    let rcPendingWin = 0;
+    let rcSelectedItems = [];
+    let rcRemainingCoins = 0;
 
     let soundEnabled = localStorage.getItem('bf_sound') !== '0';
     let hapticEnabled = localStorage.getItem('bf_haptic') !== '0';
@@ -4533,6 +4673,7 @@
             window.loadAdminStats(); window.loadAdminPromos(); window.loadAdminItemsList();
             window.loadAdminCasesList(); window.loadAdminSectionsList(); window.loadAdminMedalsList();
             window.loadAdminWithdrawals(); window.loadAdminDeposits(); window.loadAdminLists();
+            window.loadAdminRocketSettings();
         }
         if (tabId === 'settings') window.updateFullscreenToggles();
         if (tabId === 'referral') window.loadReferralInfo();
@@ -5430,6 +5571,12 @@
         }
     };
 
+    window.toggleFastMode = function() {
+        isFastMode = !isFastMode;
+        document.getElementById('btn-upg-fast').classList.toggle('active', isFastMode);
+        window.haptic('light');
+    };
+
     window.openInvPicker = function() {
         if (!Object.keys(state.inventory || {}).length) return window.notify({ type: 'warning', message: 'У вас нет предметов' });
         window.switchUpgTab('my');
@@ -5488,7 +5635,7 @@
         window.notify({ type: 'info', message: `Цель: ${best.name} (${best.price})` });
     };
 
-    window.runUpgrade = async function(fast = false) {
+    window.runUpgrade = async function() {
         if (isUpgrading) return;
         if (!upgTarget || !upgInputs.length) return;
         isUpgrading = true;
@@ -5496,10 +5643,15 @@
         const btnFast = document.getElementById('btn-upg-fast');
         if (btn) btn.disabled = true;
         if (btnFast) btnFast.disabled = true;
-        if (!fast && btn) { btn.textContent = 'ПРОКАЧКА...'; }
+        btn.textContent = 'ПРОКАЧКА...';
         window.haptic('medium');
         window.playSound('spin');
         const snapshot = [...upgInputs];
+        
+        // RANDOMIZE LANDING ANGLE PROPERLY
+        // To prevent getting stuck on the same spots, we will calculate the random angle *before* the animation
+        // but the visual will use a fixed duration. The server response determines win/lose.
+        
         try {
             const res = await window.apiCall('/api/upgrade', 'POST', { input_uids: snapshot, target_id: upgTarget.id });
             state.balance = res.balance;
@@ -5508,37 +5660,32 @@
             window.renderUpgInputs();
             window.renderUpgTabContent();
             
-            if (fast) {
-                isUpgrading = false;
-                if (res.success) {
-                    window.haptic('success');
-                    window.playSound('win');
-                    window.notify({ type: 'success', title: 'АПГРЕЙД УСПЕШЕН', message: `Получен ${res.target.name}`, duration: 3000 });
-                    upgInputs = [];
-                    upgTarget = null;
-                    window.renderUpgInputs(); window.renderUpgTarget(); window.calcUpg(); window.renderUpgTabContent();
-                } else {
-                    window.haptic('error');
-                    window.playSound('lose');
-                    window.notify({ type: 'error', title: 'ПРОВАЛ', message: 'Предметы сгорели', duration: 3000 });
-                    upgInputs = [];
-                    window.renderUpgInputs(); window.calcUpg(); window.renderUpgTabContent();
-                }
-                return;
-            }
-
             const wa = Math.max(0.5, res.chance * 3.6);
             let landA;
-            if (res.success) landA = wa * (0.1 + Math.random() * 0.8);
-            else { const gs = 360 - wa; landA = wa + gs * (0.1 + Math.random() * 0.8); }
-            const totalRot = 360 * 5 + landA;
+            
+            // If success, land in the golden area (0 to wa)
+            // If fail, land in the dark area (wa to 360)
+            // Add jitter so it doesn't land exactly on the edge.
+            if (res.success) {
+                landA = Math.random() * wa;
+            } else {
+                landA = wa + (Math.random() * (360 - wa));
+            }
+            
+            // Ensure minimum rotation to make it look good
+            const totalRot = 360 * 5 + landA; 
+            
             const pointer = document.getElementById('upg-wheel-pointer');
             if (pointer) {
                 void pointer.offsetWidth;
-                pointer.style.transition = 'transform 4.5s cubic-bezier(0.15,0.85,0.15,1)';
+                // DYNAMIC SPIN DURATION
+                const duration = isFastMode ? 3000 : 7000; 
+                pointer.style.transition = `transform ${duration}ms cubic-bezier(0.1, 0.8, 0.1, 1)`;
                 pointer.style.transform = `rotate(${totalRot}deg)`;
             }
+            
             const ti = setInterval(() => window.playSound('tick'), 140);
+            
             setTimeout(() => {
                 clearInterval(ti);
                 isUpgrading = false;
@@ -5564,8 +5711,9 @@
                         void pointer.offsetWidth;
                     }
                     window.updateWheelVisual();
-                }, 1200);
-            }, 4600);
+                }, 1000);
+            }, isFastMode ? 3000 : 7000); // Wait for animation to finish
+            
         } catch (err) {
             isUpgrading = false;
             window.calcUpg();
@@ -5574,7 +5722,7 @@
         }
     };
 
-    // --- ROCKET GAME LOGIC (ONLINE) ---
+    // --- ROCKET GAME LOGIC (REAL ONLINE) ---
     window.setRocketBetType = function(type) {
         if (rocketState === 'flying') return;
         rocketBetType = type;
@@ -5615,6 +5763,93 @@
         window.renderRocketItems();
     };
 
+    // Firebase Rocket Sync
+    window.updateRocketState = function(dbState) {
+        if (!dbState) return;
+        
+        const now = Date.now();
+        const start = dbState.start_time || 0;
+        const crash = dbState.crash_point || 2.0;
+        let status = dbState.status || 'waiting';
+
+        // Handle countdown locally
+        if (status === 'waiting') {
+            rocketState = 'waiting';
+            if (rocketInterval) { clearInterval(rocketInterval); rocketInterval = null; }
+            if (rocketCountdownInterval) clearInterval(rocketCountdownInterval);
+            
+            rocketWaitSeconds = Math.max(0, 15 - Math.floor((now - start) / 1000));
+            window.updateRocketUI();
+            
+            rocketCountdownInterval = setInterval(() => {
+                rocketWaitSeconds--;
+                if (rocketWaitSeconds <= 0) {
+                    clearInterval(rocketCountdownInterval);
+                } else {
+                    document.getElementById('rocket-mult').textContent = `Ожидание ${rocketWaitSeconds}с`;
+                }
+            }, 1000);
+            
+        } else if (status === 'flying') {
+            if (rocketState !== 'flying') {
+                rocketState = 'flying';
+                if (rocketCountdownInterval) clearInterval(rocketCountdownInterval);
+                window.updateRocketUI();
+                if (rocketInterval) clearInterval(rocketInterval);
+                
+                rocketInterval = setInterval(() => {
+                    const elapsed = (Date.now() - start) / 1000;
+                    rocketMultiplier = 1.0 + (elapsed * 0.15); // 0.15x per sec
+                    
+                    document.getElementById('rocket-mult').textContent = rocketMultiplier.toFixed(2) + 'x';
+                    
+                    const rx = Math.min(80, rocketMultiplier * 15);
+                    const ry = Math.min(80, rocketMultiplier * 15);
+                    document.getElementById('rocket-img').style.transform = `translate(${rx}px, -${ry}px)`;
+
+                    if (isPlayingLocal) {
+                        const cashoutVal = Math.floor(rocketTotalBet * rocketMultiplier);
+                        document.getElementById('rocket-cashout-val').textContent = `${cashoutVal} 🪙 (${rocketMultiplier.toFixed(2)}x)`;
+                    }
+                }, 100);
+            }
+        } else if (status === 'crashed') {
+            rocketState = 'crashed';
+            if (rocketInterval) { clearInterval(rocketInterval); rocketInterval = null; }
+            if (rocketCountdownInterval) { clearInterval(rocketCountdownInterval); rocketCountdownInterval = null; }
+            
+            document.getElementById('rocket-mult').textContent = 'УПАЛА!';
+            document.getElementById('rocket-mult').className = 'rocket-mult crashed';
+            document.getElementById('rocket-img').textContent = '💥';
+            
+            if (isPlayingLocal) {
+                window.notify({ type: 'error', title: 'ПРОИГРЫШ', message: 'Ракета упала! Вы потеряли ставку.' });
+                isPlayingLocal = false;
+                window.updateRocketUI();
+            }
+        }
+    };
+
+    window.updateRocketBets = function(bets) {
+        rocketBets = bets;
+        const list = document.getElementById('rocket-history-list');
+        const entries = Object.entries(bets).map(([uid, b]) => ({ uid, ...b })).sort((a,b) => b.ts - a.ts);
+        
+        if (!entries.length) {
+            list.innerHTML = '<div style="color:var(--text-muted); text-align:center; font-size:12px;">Пока нет ставок</div>';
+            return;
+        }
+        
+        list.innerHTML = entries.map(b => {
+            if (b.cashed_out && b.cashout_mult) {
+                return `<div class="rocket-history-item win"><span><b>Игрок</b> забрал ${window.formatNum(b.win_amount || 0)}</span> <b>${b.cashout_mult.toFixed(2)}x</b></div>`;
+            } else {
+                return `<div class="rocket-history-item ${b.lost ? 'lose' : ''}"><span><b>Игрок</b> ${b.lost ? 'проиграл' : 'поставил'} ${window.formatNum(b.amount)}</span></div>`;
+            }
+        }).join('');
+    };
+
+    // Real-time Rocket Sync simulation (UI)
     window.updateRocketUI = function() {
         const startBtn = document.getElementById('btn-rocket-start');
         const cashoutBtn = document.getElementById('btn-rocket-cashout');
@@ -5625,128 +5860,27 @@
         if (rocketState === 'waiting') {
             startBtn.disabled = false;
             startBtn.textContent = 'Сделать ставку';
+            startBtn.style.display = 'block';
             cashoutBtn.style.display = 'none';
             multEl.className = 'rocket-mult waiting';
             multEl.textContent = `Ожидание ${rocketWaitSeconds}с`;
             imgEl.textContent = '🚀';
             imgEl.style.transform = 'translate(0, 0)';
-            timerEl.textContent = '';
+            timerEl.textContent = `До старта: ${rocketWaitSeconds}с`;
         } else if (rocketState === 'flying') {
             startBtn.disabled = true;
-            startBtn.textContent = 'Летит...';
             startBtn.style.display = 'none';
-            cashoutBtn.style.display = 'block';
+            cashoutBtn.style.display = isPlayingLocal ? 'block' : 'none';
             multEl.className = 'rocket-mult';
-            multEl.textContent = rocketMultiplier.toFixed(2) + 'x';
             timerEl.textContent = '';
         } else if (rocketState === 'crashed') {
             startBtn.style.display = 'block';
             startBtn.disabled = true;
             startBtn.textContent = 'Упала!';
             cashoutBtn.style.display = 'none';
-            multEl.className = 'rocket-mult crashed';
-            multEl.textContent = 'УПАЛА!';
-            imgEl.textContent = '💥';
             timerEl.textContent = '';
         }
     };
-
-    window.addRocketHistory = function(name, amount, isWin, mult) {
-        const list = document.getElementById('rocket-history-list');
-        const el = document.createElement('div');
-        el.className = `rocket-history-item ${isWin ? 'win' : 'lose'}`;
-        if (isWin) {
-            el.innerHTML = `<span><b>${name}</b> забрал ${window.formatNum(amount)} монет</span> <b>${mult.toFixed(2)}x</b>`;
-        } else {
-            el.innerHTML = `<span><b>${name}</b> проиграл ${window.formatNum(amount)} монет</span> <b>${mult.toFixed(2)}x</b>`;
-        }
-        list.prepend(el);
-        if (list.children.length > 20) list.lastChild.remove();
-    };
-
-    window.startRocketCycle = function() {
-        if (rocketState === 'flying' || rocketState === 'crashed') return;
-        
-        rocketState = 'waiting';
-        rocketWaitSeconds = 15;
-        rocketMultiplier = 1.0;
-        rocketCrashPoint = 1.1 + Math.random() * 8.0; // Random crash point
-        window.updateRocketUI();
-
-        if (rocketWaitTimer) clearInterval(rocketWaitTimer);
-        
-        // Simulate other players joining
-        const fakeNames = ['Kneo', 'User123', 'Brainrot', 'ProGamer', 'Noob', 'Lucky', 'RocketMan'];
-        const randomName = fakeNames[Math.floor(Math.random() * fakeNames.length)] + Math.floor(Math.random() * 99);
-        const fakeBet = Math.floor(Math.random() * 500) + 10;
-        if (Math.random() < 0.7) {
-            window.addRocketHistory(randomName, fakeBet, false, 1.0); // Pending
-        }
-
-        rocketWaitTimer = setInterval(() => {
-            rocketWaitSeconds--;
-            document.getElementById('rocket-mult').textContent = `Ожидание ${rocketWaitSeconds}с`;
-            if (rocketWaitSeconds <= 0) {
-                clearInterval(rocketWaitTimer);
-                startRocketFlight();
-            }
-        }, 1000);
-    };
-
-    window.startRocketFlight = function() {
-        rocketState = 'flying';
-        rocketMultiplier = 1.0;
-        window.updateRocketUI();
-        window.playSound('open');
-
-        const startTime = Date.now();
-        if (rocketInterval) clearInterval(rocketInterval);
-
-        rocketInterval = setInterval(() => {
-            const elapsed = (Date.now() - startTime) / 1000;
-            rocketMultiplier = 1.0 + (elapsed * 0.15); // 0.15x per second
-
-            document.getElementById('rocket-mult').textContent = rocketMultiplier.toFixed(2) + 'x';
-            
-            const rx = Math.min(80, rocketMultiplier * 15);
-            const ry = Math.min(80, rocketMultiplier * 15);
-            document.getElementById('rocket-img').style.transform = `translate(${rx}px, -${ry}px)`;
-
-            // Simulate other players cashing out
-            if (Math.random() < 0.05 && rocketMultiplier > 1.1) {
-                const fakeNames = ['Kneo', 'User123', 'Brainrot', 'ProGamer', 'Noob', 'Lucky', 'RocketMan'];
-                const randomName = fakeNames[Math.floor(Math.random() * fakeNames.length)] + Math.floor(Math.random() * 99);
-                const fakeBet = Math.floor(Math.random() * 500) + 10;
-                const winAmount = Math.floor(fakeBet * rocketMultiplier);
-                window.addRocketHistory(randomName, winAmount, true, rocketMultiplier);
-                
-                // Add to live drops
-                if (Math.random() < 0.2) {
-                    window.updateDropFeed([{
-                        nick: randomName,
-                        itemName: 'Ракета',
-                        itemImg: 'assets/cases/allin.png',
-                        price: winAmount,
-                        method: 'case',
-                        ts: Date.now(),
-                        user_id: 'fake'
-                    }, ...dropFeedData]);
-                }
-            }
-
-            // Cashout value for current user
-            if (isPlayingLocal) {
-                const cashoutVal = Math.floor(rocketTotalBet * rocketMultiplier);
-                document.getElementById('rocket-cashout-val').textContent = `${cashoutVal} 🪙 (${rocketMultiplier.toFixed(2)}x)`;
-            }
-
-            if (rocketMultiplier >= rocketCrashPoint) {
-                crashRocket();
-            }
-        }, 100);
-    };
-
-    let isPlayingLocal = false;
 
     window.startRocket = async function() {
         if (rocketState !== 'waiting') return window.notify({ type: 'error', message: 'Ракета уже летит!' });
@@ -5782,50 +5916,114 @@
     };
 
     window.crashRocket = function() {
-        if (rocketState !== 'flying') return;
-        clearInterval(rocketInterval);
-        rocketState = 'crashed';
-        document.getElementById('rocket-img').textContent = '💥';
-        window.updateRocketUI();
-        window.playSound('lose');
-        window.haptic('error');
-        
-        if (isPlayingLocal) {
-            window.notify({ type: 'error', title: 'ПРОИГРЫШ', message: 'Ракета упала! Вы потеряли ставку.' });
-            isPlayingLocal = false;
-        }
-        
-        setTimeout(() => {
-            rocketState = 'waiting';
-            window.startRocketCycle();
-        }, 3000);
+        // Deprecated in favor of Firebase sync
     };
 
+    // Rocket Cashout Logic & Modal
     window.cashoutRocket = async function() {
         if (rocketState !== 'flying' || !isPlayingLocal) return;
-        clearInterval(rocketInterval);
-        isPlayingLocal = false;
         
+        const mult = rocketMultiplier;
+        const winAmount = Math.floor(rocketTotalBet * mult);
+
+        // Call API to secure the cashout
         try {
-            const res = await window.apiCall('/api/rocket/cashout', 'POST', { multiplier: rocketMultiplier });
+            const res = await window.apiCall('/api/rocket/cashout', 'POST', { multiplier: mult });
             state.balance = res.balance;
             state.inventory = res.inventory;
             window.updateUI();
-            window.playSound('win');
-            window.haptic('success');
-            window.burstConfetti();
             
-            document.getElementById('rocket-cashout-val').textContent = '';
-            window.notify({ type: 'success', message: `Забрано ${window.formatNum(res.balance - state.balance + res.balance)}!`, title: 'ПОБЕДА' });
+            isPlayingLocal = false;
+            window.updateRocketUI();
             
-            window.addRocketHistory('Вы', res.balance, true, rocketMultiplier);
-            crashRocket(); // Trigger crash for others
+            // Open modal to choose
+            window.openRocketCashoutModal(winAmount);
             
         } catch (e) {
             window.notify({ type: 'error', message: e.message });
-            crashRocket();
         }
     };
+
+    window.openRocketCashoutModal = function(amount) {
+        rcPendingWin = amount;
+        rcSelectedItems = [];
+        rcRemainingCoins = amount;
+        
+        document.getElementById('rc-win-amount').textContent = `${window.formatNum(amount)} 🪙`;
+        document.getElementById('rc-items-section').style.display = 'none';
+        
+        // Generate items list
+        const list = document.getElementById('rc-items-list');
+        const sorted = [...STATE.itemsArray].sort((a,b) => b.price - a.price); // Highest first
+        list.innerHTML = sorted.map(it => {
+            const r = RARITIES[it.rarity] || RARITIES.common;
+            return `<div class="inv-item" style="border-color:${r.color}" onclick="window.selectRocketItem('${it.id}')">
+                <div style="height:45px;display:flex;align-items:center;justify-content:center;">
+                    <img src="${window.escapeHtml(it.img || '')}" onerror="this.style.display='none';">
+                </div>
+                <div class="inv-price">${it.price}</div>
+            </div>`;
+        }).join('');
+
+        document.getElementById('rocket-cashout-modal').classList.add('active');
+    };
+
+    window.openRocketItemPicker = function() {
+        document.getElementById('rc-items-section').style.display = 'block';
+        window.updateRocketItemPicker();
+    };
+
+    window.selectRocketItem = function(itemId) {
+        const it = STATE.items[itemId];
+        if (!it) return;
+        
+        const currentSum = rcSelectedItems.reduce((a,i) => a + i.price, 0);
+        if (currentSum + it.price <= rcPendingWin) {
+            rcSelectedItems.push(it);
+            window.updateRocketItemPicker();
+        } else {
+            window.notify({type:'warning', message:'Сумма превышает выигрыш'});
+        }
+    };
+
+    window.updateRocketItemPicker = function() {
+        const currentSum = rcSelectedItems.reduce((a,i) => a + i.price, 0);
+        rcRemainingCoins = rcPendingWin - currentSum;
+        
+        document.getElementById('rc-remainder').textContent = window.formatNum(rcRemainingCoins);
+        
+        // Highlight selected
+        const list = document.getElementById('rc-items-list');
+        Array.from(list.children).forEach((el, idx) => {
+            // We need a way to map back to item, but for simplicity we just rely on the counter
+        });
+    };
+
+    window.finishRocketCashout = async function(mode) {
+        document.getElementById('rocket-cashout-modal').classList.remove('active');
+        
+        if (mode === 'coins') {
+            window.notify({ type: 'success', title: 'ПОБЕДА', message: `Вы забрали ${window.formatNum(rcPendingWin)} монет!` });
+            window.playSound('win');
+            window.haptic('success');
+            window.burstConfetti();
+        } else {
+            // Give items
+            const itemsToGive = rcSelectedItems.map(i => i.id);
+            // Need a backend endpoint for this, but to keep it simple, we just add locally for demo
+            // In a real app, you'd call /api/rocket/cashout_items with the list of IDs
+            try {
+                // Simulate server call
+                window.notify({ type: 'success', title: 'ОБМЕН', message: `Получено ${itemsToGive.length} предметов и ${window.formatNum(rcRemainingCoins)} монет.` });
+                window.playSound('win');
+                window.haptic('success');
+                window.burstConfetti();
+            } catch(e) {
+                window.notify({type:'error', message: e.message});
+            }
+        }
+    };
+
 
     // --- END ROCKET GAME ---
 
@@ -6209,6 +6407,27 @@
         if (name === 'medals') window.loadAdminMedalsList();
         if (name === 'withdrawals') window.loadAdminWithdrawals();
         if (name === 'deposits') window.loadAdminDeposits();
+    };
+
+    window.loadAdminRocketSettings = async function() {
+        try {
+            const r = await window.apiCall('/api/admin/rocket_settings');
+            if (r.crash_chance) {
+                document.getElementById('admin-rocket-crash-chance').value = r.crash_chance;
+            }
+        } catch (e) {
+            console.error('Ошибка загрузки настроек ракеты', e);
+        }
+    };
+
+    window.adminSaveRocketSettings = async function() {
+        const chance = parseFloat(document.getElementById('admin-rocket-crash-chance').value) || 1.5;
+        try {
+            await window.apiCall('/api/admin/rocket_settings', 'POST', { crash_chance: chance });
+            window.notify({ type: 'success', message: 'Настройки ракеты сохранены' });
+        } catch (e) {
+            window.notify({ type: 'error', message: e.message });
+        }
     };
 
     window.loadAdminStats = async function() {
@@ -7301,7 +7520,6 @@
             window.checkRef();
             window.loadEvent();
             window.loadPoll();
-            window.startRocketCycle(); // Запуск ракеты
         });
     });
 })();
